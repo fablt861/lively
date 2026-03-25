@@ -211,26 +211,26 @@ export function VideoRoom({
                     />
                 )}
 
-                {/* User Credit Counter (Moved to top-right) */}
+                {/* User Credit Counter */}
                 {role === "user" && isConnected && !showPaywall && !showAuthModal && userCredits !== null && (
-                    <div className={`absolute top-6 right-6 z-30 flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 shadow-lg transition-all duration-700 overflow-hidden ${userCredits <= 2 ? 'max-w-[400px] sm:max-w-2xl border-red-500/50 shadow-red-500/20' : 'max-w-[150px] sm:max-w-[200px]'}`}>
-                        <span className="text-white/80 text-xs font-semibold tracking-wider uppercase whitespace-nowrap hidden sm:block">Balance</span>
-                        <span className={`font-mono text-base sm:text-lg font-bold whitespace-nowrap flex items-center gap-1.5 ${userCredits <= 2 ? 'text-red-400 animate-pulse' : 'text-white'}`}>
-                            {userCredits} <Coins size={18} className="text-yellow-400 fill-yellow-500/30" />
+                    <div className={`absolute top-[170px] right-6 md:top-6 md:right-6 z-30 flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 shadow-lg transition-all duration-700 overflow-hidden ${userCredits <= 2 ? 'max-w-[calc(100vw-3rem)] md:max-w-2xl border-red-500/50 shadow-red-500/20' : 'max-w-[150px] sm:max-w-[200px]'}`}>
+                        <span className="text-white/80 text-[10px] md:text-xs font-semibold tracking-wider uppercase whitespace-nowrap hidden sm:block">Balance</span>
+                        <span className={`font-mono text-sm md:text-lg font-bold whitespace-nowrap flex items-center gap-1.5 ${userCredits <= 2 ? 'text-red-400 animate-pulse' : 'text-white'}`}>
+                            {userCredits} <Coins size={14} className="md:w-[18px] text-yellow-400 fill-yellow-500/30" />
                         </span>
 
                         {/* Low Credits Expanded Warning */}
                         {userCredits <= 2 && (
                             <div className="flex items-center gap-2 sm:gap-4 pl-3 sm:pl-4 ml-2 border-l border-white/10">
-                                <span className="text-red-400 text-[10px] sm:text-sm whitespace-nowrap hidden md:block animate-pulse font-medium">
-                                    Crédits bientôt épuisés, déconnexion en vue
+                                <span className="text-red-400 text-[9px] sm:text-sm whitespace-nowrap hidden md:block animate-pulse font-medium">
+                                    Crédits bas
                                 </span>
                                 <button
                                     onClick={() => {
                                         setShowPaywall(true);
                                         if (handleOutOfCredits) handleOutOfCredits();
                                     }}
-                                    className="px-3 py-1.5 sm:px-5 sm:py-2 bg-red-500 hover:bg-red-400 text-white rounded-full text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap shadow-lg shadow-red-500/20"
+                                    className="px-2 py-1 sm:px-5 sm:py-2 bg-red-500 hover:bg-red-400 text-white rounded-full text-[9px] sm:text-sm font-semibold transition-colors whitespace-nowrap shadow-lg shadow-red-500/20"
                                 >
                                     Top Up
                                 </button>
@@ -279,8 +279,7 @@ export function VideoRoom({
                 </div>
 
                 {/* Local Video (Picture in Picture) */}
-                <div className="absolute top-24 left-6 md:top-auto md:bottom-24 md:left-6 md:right-auto z-10 w-28 md:w-48 aspect-[3/4] bg-[#050505] rounded-2xl md:rounded-[2rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/10 transition-all duration-500 hover:scale-105 hover:shadow-[0_0_40px_rgba(99,102,241,0.2)] cursor-pointer group">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                <div className="absolute top-4 right-4 md:top-auto md:bottom-24 md:left-6 md:right-auto z-40 w-24 md:w-48 aspect-[3/4] bg-neutral-900 rounded-2xl md:rounded-[2rem] overflow-hidden shadow-2xl border border-white/20 transition-all duration-500 hover:scale-105 cursor-pointer group">
                     <video
                         ref={localVideoRef}
                         autoPlay
@@ -295,41 +294,38 @@ export function VideoRoom({
                     )}
                 </div>
 
-                {/* TikTok Controls Overlay (Vertical on mobile right, Horizontal bottom center on desktop) */}
-                <div className="absolute top-1/2 -translate-y-1/2 right-4 md:top-auto md:transform-none md:bottom-8 md:left-1/2 md:-translate-x-1/2 md:right-auto z-40 flex flex-col md:flex-row items-center justify-center gap-6 px-3 py-6 md:px-8 md:py-4 bg-transparent md:bg-black/40 md:backdrop-blur-xl rounded-full border-none md:border md:border-white/10 md:shadow-2xl translate-y-20 md:translate-y-0">
+                {/* Desktop Controls Overlay (Hidden on Mobile) */}
+                <div className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 z-40 flex-row items-center justify-center gap-6 px-8 py-4 bg-black/40 backdrop-blur-xl rounded-full border border-white/10 shadow-2xl transition-all">
                     <button
                         onClick={() => window.location.href = '/'}
-                        className="p-3 md:p-4 rounded-full transition-all duration-300 hover:scale-110 shadow-[0_0_15px_rgba(239,68,68,0.5)] md:shadow-none bg-red-500/90 hover:bg-red-600 text-white md:bg-red-500 md:hover:bg-red-600"
+                        className="p-4 rounded-full transition-all duration-300 hover:scale-110 bg-red-500 hover:bg-red-600 text-white"
                         title="Quitter"
                     >
-                        <PhoneOff size={22} className="md:w-6 md:h-6" />
+                        <PhoneOff size={24} />
                     </button>
 
                     <button
                         onClick={handleToggleAudio}
-                        className={`p-3 md:p-4 rounded-full transition-all duration-300 hover:scale-110 shadow-xl md:shadow-none ${isAudioMuted ? "bg-red-500/80 text-white" : "bg-black/60 backdrop-blur-md hover:bg-black/80 text-white md:bg-white/10 md:hover:bg-white/20"
-                            }`}
+                        className={`p-4 rounded-full transition-all duration-300 hover:scale-110 ${isAudioMuted ? "bg-red-500/80 text-white" : "bg-white/10 hover:bg-white/20 text-white"}`}
                     >
-                        {isAudioMuted ? <MicOff size={22} className="md:w-6 md:h-6" /> : <Mic size={22} className="md:w-6 md:h-6" />}
+                        {isAudioMuted ? <MicOff size={24} /> : <Mic size={24} />}
                     </button>
 
                     <button
                         onClick={nextPartner}
-                        className="group relative flex flex-col md:flex-row items-center justify-center w-[60px] h-[60px] md:w-auto md:h-auto md:px-8 md:py-4 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 hover:opacity-90 shadow-[0_0_20px_rgba(168,85,247,0.4)] md:shadow-lg md:shadow-purple-500/30 transition-all duration-300 hover:scale-105 active:scale-95"
+                        className="group relative flex items-center justify-center px-8 py-4 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 hover:opacity-90 shadow-lg shadow-purple-500/30 transition-all duration-300 hover:scale-105 active:scale-95"
                     >
-                        <div className="absolute inset-0 rounded-full bg-white opacity-0 group-hover:opacity-20 transition-opacity"></div>
-                        <div className="flex flex-col md:flex-row items-center gap-1 md:gap-2 relative z-10">
-                            <SkipForward size={22} className="text-white fill-white md:w-6 md:h-6" />
-                            <span className="text-white font-bold tracking-widest uppercase text-[9px] md:text-base leading-none">Next</span>
+                        <div className="flex items-center gap-2 relative z-10">
+                            <SkipForward size={24} className="text-white fill-white" />
+                            <span className="text-white font-bold tracking-widest uppercase text-base leading-none">Next</span>
                         </div>
                     </button>
 
                     <button
                         onClick={handleToggleVideo}
-                        className={`p-3 md:p-4 rounded-full transition-all duration-300 hover:scale-110 shadow-xl md:shadow-none ${isVideoMuted ? "bg-red-500/80 text-white" : "bg-black/60 backdrop-blur-md hover:bg-black/80 text-white md:bg-white/10 md:hover:bg-white/20"
-                            }`}
+                        className={`p-4 rounded-full transition-all duration-300 hover:scale-110 ${isVideoMuted ? "bg-red-500/80 text-white" : "bg-white/10 hover:bg-white/20 text-white"}`}
                     >
-                        {isVideoMuted ? <VideoOff size={22} className="md:w-6 md:h-6" /> : <Video size={22} className="md:w-6 md:h-6" />}
+                        {isVideoMuted ? <VideoOff size={24} /> : <Video size={24} />}
                     </button>
                 </div>
             </div>
@@ -384,6 +380,38 @@ export function VideoRoom({
                 </div>
 
                 <form onSubmit={handleSend} className="p-4 pb-8 md:pb-6 md:bg-neutral-950/80 backdrop-blur-3xl border-t border-white/5 pointer-events-auto w-full group">
+                    {/* Mobile Controls Row (Above input) */}
+                    <div className="flex md:hidden items-center justify-between mb-4 px-2">
+                        <button
+                            type="button"
+                            onClick={handleToggleAudio}
+                            className={`w-12 h-12 flex items-center justify-center rounded-2xl transition-all ${isAudioMuted ? "bg-red-500 text-white shadow-lg shadow-red-500/20" : "bg-white/10 text-white"}`}
+                        >
+                            {isAudioMuted ? <MicOff size={20} /> : <Mic size={20} />}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleToggleVideo}
+                            className={`w-12 h-12 flex items-center justify-center rounded-2xl transition-all ${isVideoMuted ? "bg-red-500 text-white shadow-lg shadow-red-500/20" : "bg-white/10 text-white"}`}
+                        >
+                            {isVideoMuted ? <VideoOff size={20} /> : <Video size={20} />}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={nextPartner}
+                            className="flex-1 mx-4 h-12 flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold uppercase tracking-widest text-xs shadow-lg shadow-indigo-500/20 active:scale-95 transition-all"
+                        >
+                            <SkipForward size={18} className="fill-white" /> Next
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => window.location.href = '/'}
+                            className="w-12 h-12 flex items-center justify-center rounded-2xl bg-red-500/20 text-red-500 border border-red-500/20"
+                        >
+                            <PhoneOff size={20} />
+                        </button>
+                    </div>
+
                     <div className="relative flex items-center">
                         <input
                             type="text"

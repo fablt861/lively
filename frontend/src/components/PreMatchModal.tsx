@@ -33,18 +33,18 @@ export function PreMatchModal({ localStream, onJoin }: PreMatchModalProps) {
 
             <div className="relative z-10 w-full max-w-lg p-6 flex flex-col items-center">
                 {/* Logo Area */}
-                <div className="mb-12 text-center">
-                    <span className="text-5xl font-black tracking-tighter text-white drop-shadow-2xl">
+                <div className="mb-6 md:mb-12 text-center scale-90 md:scale-100">
+                    <span className="text-4xl md:text-5xl font-black tracking-tighter text-white drop-shadow-2xl">
                         KINKY<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">.</span>
                     </span>
-                    <div className="mt-2 text-indigo-400/60 text-[10px] uppercase font-black tracking-[0.4em] animate-pulse">
+                    <div className="mt-1 md:mt-2 text-indigo-400/60 text-[8px] md:text-[10px] uppercase font-black tracking-[0.4em] animate-pulse">
                         Ready to connect?
                     </div>
                 </div>
 
                 {/* Camera Preview Circular */}
-                <div className="relative mb-12">
-                    <div className="w-56 h-56 md:w-64 md:h-64 rounded-full overflow-hidden border-[3px] border-white/40 shadow-[0_0_80px_rgba(99,102,241,0.2)] bg-neutral-900 group">
+                <div className="relative mb-8 md:mb-12">
+                    <div className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-[3px] border-white/40 shadow-[0_0_80px_rgba(99,102,241,0.2)] bg-neutral-900 group">
                         <video
                             ref={videoRef}
                             autoPlay
@@ -52,39 +52,32 @@ export function PreMatchModal({ localStream, onJoin }: PreMatchModalProps) {
                             muted
                             className="w-full h-full object-cover scale-105"
                         />
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Camera className="text-white/60" size={32} />
-                        </div>
-                    </div>
-                    {/* Status Badge */}
-                    <div className="absolute -bottom-2 right-8 px-4 py-1.5 bg-green-500 text-white text-[10px] font-bold rounded-full shadow-lg shadow-green-500/40 animate-bounce">
-                        CAMÉRA OK
                     </div>
                 </div>
 
-                <div className="text-center mb-10">
-                    <h2 className="text-4xl font-bold text-white mb-4 tracking-tight">Voulez-vous lancer la recherche ?</h2>
-                    <p className="text-white/40 text-sm max-w-xs mx-auto leading-relaxed">
-                        Vérifiez votre cadrage et votre éclairage. Une fois prêt, cliquez ci-dessous pour rencontrer votre prochain partenaire.
+                <div className="text-center mb-6 md:mb-10 px-4">
+                    <h2 className="text-2xl md:text-4xl font-bold text-white mb-2 md:mb-4 tracking-tight">C'est le moment ?</h2>
+                    <p className="text-white/40 text-xs md:text-sm max-w-xs mx-auto leading-relaxed">
+                        Vérifiez votre cadrage. Une fois prêt, cliquez ci-dessous pour lancer.
                     </p>
                 </div>
 
                 <button
                     onClick={onJoin}
-                    className="group relative flex items-center gap-4 px-12 py-6 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 rounded-full text-white font-black text-lg uppercase tracking-widest shadow-[0_20px_50px_rgba(168,85,247,0.3)] transition-all hover:scale-105 active:scale-95 overflow-hidden"
+                    className="group relative flex items-center gap-3 md:gap-4 px-8 md:px-12 py-4 md:py-6 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 rounded-full text-white font-black text-base md:text-lg uppercase tracking-widest shadow-xl transition-all active:scale-95 overflow-hidden"
                 >
                     <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
-                    <Play className="fill-white" size={24} />
+                    <Play className="fill-white md:w-6 md:h-6" size={20} />
                     Lancer le Live
                 </button>
 
                 {/* Small Trust Badges */}
-                <div className="mt-16 flex items-center gap-8 text-white/40 font-bold uppercase tracking-widest text-[10px]">
-                    <div className="flex items-center gap-2">
-                        <Shield size={14} className="text-white/20" /> Anonyme
+                <div className="mt-6 md:mt-16 flex items-center gap-6 md:gap-8 text-white/40 font-bold uppercase tracking-widest text-[8px] md:text-[10px]">
+                    <div className="flex items-center gap-1.5 md:gap-2">
+                        <Shield size={12} className="text-white/20 md:w-3.5 md:h-3.5" /> Anonyme
                     </div>
-                    <div className="flex items-center gap-2">
-                        <Zap size={14} className="text-white/20" /> Instantané
+                    <div className="flex items-center gap-1.5 md:gap-2">
+                        <Zap size={12} className="text-white/20 md:w-3.5 md:h-3.5" /> Instantané
                     </div>
                 </div>
             </div>
