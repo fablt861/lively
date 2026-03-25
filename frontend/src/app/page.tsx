@@ -19,8 +19,11 @@ export default function Home() {
 
             {/* Navbar */}
             <nav className="relative z-20 flex justify-between items-center px-6 py-6 lg:px-12 w-full max-w-7xl mx-auto">
-                <div className="text-3xl font-bold tracking-tighter text-white drop-shadow-md cursor-default">
-                    LIVELY<span className="text-indigo-500">.</span>
+                <div className="flex items-center gap-3">
+                    <img src="/kinky_logo.png" alt="Kinky Logo" className="w-10 h-10 object-contain rounded-lg shadow-lg" />
+                    <div className="text-3xl font-bold tracking-tighter text-white drop-shadow-md cursor-default flex items-center">
+                        KINKY<span className="text-indigo-500">.</span>LIVE
+                    </div>
                 </div>
                 <div className="flex items-center gap-4">
                     <Link href="/login" className="text-sm font-medium text-white/50 hover:text-white transition-colors">
@@ -53,14 +56,14 @@ export default function Home() {
                     </h1>
 
                     <p className="text-lg sm:text-xl text-neutral-400 font-light max-w-xl leading-relaxed">
-                        Le chat roulette VIP de nouvelle génération. Connexion vidéo instantanée, 100% anonyme, avec les modèles les plus exclusives du moment.
+                        Le chat roulette VIP de nouvelle génération. Connexion vidéo instantanée, 100% anonyme, avec les modèles les plus exclusives du moment sur Kinky.live.
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center gap-5 w-full sm:w-auto pt-6">
                         <button
                             onClick={() => {
-                                const token = localStorage.getItem('lively_token');
-                                const role = localStorage.getItem('lively_role');
+                                const token = localStorage.getItem('kinky_token');
+                                const role = localStorage.getItem('kinky_role');
 
                                 if (token) {
                                     if (role === 'model') {
