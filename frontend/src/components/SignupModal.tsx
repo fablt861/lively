@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ArrowRight, ShieldCheck, Mail, Lock, User } from "lucide-react";
 
 interface SignupModalProps {
-    onSignup: () => void;
+    onSignup: (email: string) => void;
 }
 
 export function SignupModal({ onSignup }: SignupModalProps) {
@@ -14,7 +14,7 @@ export function SignupModal({ onSignup }: SignupModalProps) {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!agreed || !email || !pseudo || !password) return;
-        onSignup();
+        onSignup(email);
     };
 
     return (

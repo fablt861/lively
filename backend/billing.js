@@ -75,8 +75,18 @@ function initBillingLoop() {
                 const rateUserCreditsPerSec = settings.pricePerMinute * 10 / 60.0;
                 const rateModelUsdPerSec = settings.modelPayoutPerMinute / 60.0;
 
-                // Atomically deduct user credits
-                await redis.incrbyfloat(`user:${session.userId}:credits`, -rateUserCreditsPerSec);
+                // Atomically deduct user credits / increment free use
+                if (session.userId.includes('@')) {
+                    // Registered user
+                    await redis.incrbyfloat(`user:${session.userId}:credits`, -rateUserCreditsPerSec);
+                } else {
+                    // Guest user (userId is IP)
+                    const nextVal = await redis.incrbyfloat(`free_secs:${session.userId}`, 1);
+                    if (nextVal >= 60) {
+                        console.log(`[Billing] Guest ${session.userId} reached limit. Stopping.`);
+                        await stopBilling(roomId);
+                    }
+                }
 
                 // Anti-fraud: Model earns only after antiFraudDelaySec seconds
                 if (durationSec > settings.antiFraudDelaySec) {

@@ -53,7 +53,8 @@ export function useWebRTC(role: "user" | "model" | null) {
     useEffect(() => {
         if (socket && role) {
             const language = navigator.language || "en";
-            socket.emit("join_queue", { role, language });
+            const email = localStorage.getItem("kinky_user_email") || null;
+            socket.emit("join_queue", { role, language, email });
             setIsMatching(true);
         }
     }, [socket, role]);

@@ -14,14 +14,28 @@ function setupMatching(io, socket) {
     let isProcessing = false;
 
     // Join role queue
-    socket.on('join_queue', async ({ role, language }) => {
+    socket.on('join_queue', async ({ role, language, email }) => {
         if (isProcessing) return;
         isProcessing = true;
         try {
             socket.role = role;
             socket.language = language || 'en';
+            socket.userEmail = email; // Persistent ID for registered users
 
-            console.log(`[Queue] Socket ${socket.id} joined as ${role} (${socket.language})`);
+            // Get IP for guest tracking
+            const userIp = socket.handshake.headers['x-forwarded-for'] || socket.handshake.address;
+            socket.userIp = userIp;
+
+            console.log(`[Queue] Socket ${socket.id} joined as ${role}. IP: ${userIp}, Email: ${email}`);
+
+            // If Guest: check free limit
+            if (role === 'user' && !email) {
+                const freeUsed = await redis.get(`free_secs:${userIp}`) || 0;
+                if (parseInt(freeUsed) >= 60) {
+                    console.log(`[Limit] IP ${userIp} reached free guest limit.`);
+                    return socket.emit('out_of_credits', { reason: 'guest_limit_reached' });
+                }
+            }
 
             const isNew = await redis.set(`has_joined:${socket.id}`, '1', 'NX', 'EX', 86400);
             if (isNew) {
@@ -98,7 +112,10 @@ async function handleJoinQueue(io, socket) {
 
             const userId = isModel ? partnerId : socket.id;
             const modelId = isModel ? socket.id : partnerId;
-            await startBilling(roomId, userId, modelId);
+
+            // Pass billing ID: Email if registered, IP if guest
+            const userBillingId = isModel ? (partnerSocket.userEmail || partnerSocket.userIp) : (socket.userEmail || socket.userIp);
+            await startBilling(roomId, userBillingId, modelId);
 
             io.to(roomId).emit('matched', { roomId, initiator: socket.id });
             foundPartner = true;

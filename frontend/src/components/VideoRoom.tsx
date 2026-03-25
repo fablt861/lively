@@ -172,9 +172,10 @@ export function VideoRoom({
                 </div>
 
                 {showSignup && (
-                    <SignupModal onSignup={() => {
+                    <SignupModal onSignup={(email) => {
                         localStorage.setItem('kinky_account_status', 'registered');
                         localStorage.setItem('kinky_credits', '5');
+                        localStorage.setItem('kinky_user_email', email);
                         setAccountStatus('registered');
                         setUserCredits(5);
                         setShowSignup(false);
