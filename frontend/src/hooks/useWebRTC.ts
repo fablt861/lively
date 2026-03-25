@@ -3,11 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
-const ICE_SERVERS = [
-    { urls: "stun:stun.l.google.com:19302" },
-    // Prepare for Twilio/Metered TURNS
-    // { urls: "turn:global.turn.twilio.com:3478", username: "...", credential: "..." }
-];
+// Default STUN servers as fallback
+const DEFAULT_ICE_SERVERS = [{ urls: "stun:stun.l.google.com:19302" }];
 
 export function useWebRTC(role: "user" | "model" | null) {
     const [socket, setSocket] = useState<Socket | null>(null);
@@ -18,15 +15,27 @@ export function useWebRTC(role: "user" | "model" | null) {
     const [messages, setMessages] = useState<{ senderId: string; text: string; originalText?: string; timestamp: number }[]>([]);
 
     const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
+    const iceServersRef = useRef<any[]>(DEFAULT_ICE_SERVERS);
 
     useEffect(() => {
-        // Initialize Media Stream
+        // 1. Fetch ICE servers from backend (Twilio)
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/ice-servers`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.iceServers) {
+                    iceServersRef.current = data.iceServers;
+                    console.log('ICE servers updated from Twilio');
+                }
+            })
+            .catch(err => console.error("Error fetching ICE servers:", err));
+
+        // 2. Initialize Media Stream
         navigator.mediaDevices
             .getUserMedia({ video: true, audio: true })
             .then((stream) => setLocalStream(stream))
             .catch((err) => console.error("Error accessing media devices.", err));
 
-        // Initialize Socket
+        // 3. Initialize Socket
         const newSocket = io(process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001");
         setSocket(newSocket);
 
@@ -44,7 +53,8 @@ export function useWebRTC(role: "user" | "model" | null) {
     }, [socket, role]);
 
     const createPeerConnection = () => {
-        const pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
+        console.log('Creating PeerConnection with servers:', iceServersRef.current.length);
+        const pc = new RTCPeerConnection({ iceServers: iceServersRef.current });
         peerConnectionRef.current = pc;
 
         if (localStream) {
