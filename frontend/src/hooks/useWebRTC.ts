@@ -16,6 +16,12 @@ export function useWebRTC(role: "user" | "model" | null) {
 
     const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
     const iceServersRef = useRef<any[]>(DEFAULT_ICE_SERVERS);
+    const localStreamRef = useRef<MediaStream | null>(null);
+
+    // Sync ref with state
+    useEffect(() => {
+        localStreamRef.current = localStream;
+    }, [localStream]);
 
     useEffect(() => {
         // 1. Fetch ICE servers from backend (Twilio)
@@ -57,8 +63,8 @@ export function useWebRTC(role: "user" | "model" | null) {
         const pc = new RTCPeerConnection({ iceServers: iceServersRef.current });
         peerConnectionRef.current = pc;
 
-        if (localStream) {
-            localStream.getTracks().forEach((track) => pc.addTrack(track, localStream));
+        if (localStreamRef.current) {
+            localStreamRef.current.getTracks().forEach((track) => pc.addTrack(track, localStreamRef.current!));
         }
 
         pc.ontrack = (event) => {
@@ -92,6 +98,7 @@ export function useWebRTC(role: "user" | "model" | null) {
         });
 
         socket.on("matched", async ({ initiator }: { initiator: string }) => {
+            console.log('[WebRTC] Matched event received. Initiator:', initiator);
             setIsMatching(false);
             setIsConnected(true);
             setMessages([]);
@@ -106,6 +113,7 @@ export function useWebRTC(role: "user" | "model" | null) {
         });
 
         socket.on("offer", async (offer) => {
+            console.log('[WebRTC] Offer received');
             let pc = peerConnectionRef.current;
             if (!pc || pc.signalingState === "closed") {
                 pc = createPeerConnection();
@@ -117,6 +125,7 @@ export function useWebRTC(role: "user" | "model" | null) {
         });
 
         socket.on("answer", async (answer) => {
+            console.log('[WebRTC] Answer received');
             const pc = peerConnectionRef.current;
             if (pc) {
                 await pc.setRemoteDescription(new RTCSessionDescription(answer));
@@ -131,6 +140,7 @@ export function useWebRTC(role: "user" | "model" | null) {
         });
 
         socket.on("partner_left", () => {
+            console.log('[WebRTC] Partner left');
             setIsConnected(false);
             setRemoteStream(null);
             if (peerConnectionRef.current) {
@@ -154,7 +164,7 @@ export function useWebRTC(role: "user" | "model" | null) {
             socket.off("partner_left");
             socket.off("chat_message");
         };
-    }, [socket, localStream]);
+    }, [socket]); // Only depends on socket
 
     const joinQueue = () => {
         const language = navigator.language || "en";

@@ -75,15 +75,21 @@ async function handleJoinQueue(io, socket) {
     const myQueue = isModel ? QUEUE_MODELS : QUEUE_USERS;
     const targetQueue = isModel ? QUEUE_USERS : QUEUE_MODELS;
 
-    // Atomic queue operations
-    // Pop a partner from the target queue
-    const partnerId = await redis.rpop(targetQueue);
+    console.log(`[Match Attempt] Socket ${socket.id} (${socket.role}) searching in ${targetQueue}...`);
 
-    if (partnerId) {
+    let partnerId = null;
+    let foundPartner = false;
+    let maxRetries = 10;
+
+    while (maxRetries > 0) {
+        partnerId = await redis.rpop(targetQueue);
+        if (!partnerId) break;
+
         const partnerSocket = io.sockets.sockets.get(partnerId);
-
         if (partnerSocket) {
             const roomId = `room_${socket.id}_${partnerId}`;
+            console.log(`[Match SUCCESS] ${socket.id} <-> ${partnerId}. Joining room ${roomId}`);
+
             await socket.join(roomId);
             socket.currentRoom = roomId;
 
@@ -94,13 +100,16 @@ async function handleJoinQueue(io, socket) {
             const modelId = isModel ? socket.id : partnerId;
             await startBilling(roomId, userId, modelId);
 
-            console.log(`[Match SUCCESS] ${socket.id} (${socket.role}) <-> ${partnerId} (${partnerSocket.role})`);
             io.to(roomId).emit('matched', { roomId, initiator: socket.id });
+            foundPartner = true;
+            break;
         } else {
-            console.log(`[Match STALE] Partner ${partnerId} gone, retrying...`);
-            await handleJoinQueue(io, socket);
+            console.log(`[Match STALE] Partner ${partnerId} is offline. Cleaning up and retrying...`);
+            maxRetries--;
         }
-    } else {
+    }
+
+    if (!foundPartner) {
         await redis.lpush(myQueue, socket.id);
         const modelsCount = await redis.llen(QUEUE_MODELS);
         const usersCount = await redis.llen(QUEUE_USERS);
