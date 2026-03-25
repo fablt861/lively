@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Camera, ShieldCheck, Flame, Play } from "lucide-react";
+import { Camera, ShieldCheck, Flame, Play, Video } from "lucide-react";
 import Link from "next/link";
 import { GenderModal } from "../components/GenderModal";
+import { OnlineGauge } from "../components/OnlineGauge";
 
 export default function Home() {
     // Build version: 1.0.2 - Matchmaking fixes
@@ -26,11 +27,8 @@ export default function Home() {
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
-                    <Link href="/login" className="text-sm font-medium text-white/50 hover:text-white transition-colors">
+                    <Link href="/login" className="text-sm font-medium text-white/50 hover:text-white transition-colors px-4 py-2 hover:bg-white/5 rounded-full">
                         Connexion
-                    </Link>
-                    <Link href="/model/signup" className="text-sm font-semibold text-white/90 bg-white/10 hover:bg-white/20 transition-all border border-white/10 rounded-full px-5 py-2.5 hover:border-white/30 truncate">
-                        Devenir Créatrice
                     </Link>
                 </div>
             </nav>
@@ -40,13 +38,7 @@ export default function Home() {
 
                 {/* Left Text / CTA */}
                 <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left space-y-8">
-                    <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md shadow-lg">
-                        <span className="relative flex h-2.5 w-2.5">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-                        </span>
-                        <span className="text-[11px] font-bold text-white/90 tracking-widest uppercase mt-px">+2,400 filles en ligne ce soir</span>
-                    </div>
+                    <OnlineGauge />
 
                     <h1 className="text-5xl sm:text-6xl xl:text-7xl font-extrabold tracking-tight leading-[1.05]">
                         Découvrez qui vous attend de <br className="hidden md:block" />
@@ -78,8 +70,8 @@ export default function Home() {
                             className="group relative w-full sm:w-auto px-8 py-5 rounded-full bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 hover:opacity-90 shadow-[0_0_40px_rgba(99,102,241,0.4)] transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center gap-3 overflow-hidden border border-white/20"
                         >
                             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
-                            <Play size={24} className="text-white fill-white relative z-10" />
-                            <span className="text-white font-bold text-lg tracking-wide relative z-10">Lancer l'appel en direct</span>
+                            <Video size={24} className="text-white fill-white relative z-10" />
+                            <span className="text-white font-bold text-lg tracking-wide relative z-10">Rencontrer des modèles en LIVE</span>
                         </button>
 
                         <div className="flex flex-col items-center sm:items-start opacity-70">
