@@ -1,0 +1,207 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { io, Socket } from "socket.io-client";
+
+const ICE_SERVERS = [
+    { urls: "stun:stun.l.google.com:19302" },
+    // Prepare for Twilio/Metered TURNS
+    // { urls: "turn:global.turn.twilio.com:3478", username: "...", credential: "..." }
+];
+
+export function useWebRTC(role: "user" | "model" | null) {
+    const [socket, setSocket] = useState<Socket | null>(null);
+    const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+    const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
+    const [isMatching, setIsMatching] = useState(false);
+    const [isConnected, setIsConnected] = useState(false);
+    const [messages, setMessages] = useState<{ senderId: string; text: string; originalText?: string; timestamp: number }[]>([]);
+
+    const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
+
+    useEffect(() => {
+        // Initialize Media Stream
+        navigator.mediaDevices
+            .getUserMedia({ video: true, audio: true })
+            .then((stream) => setLocalStream(stream))
+            .catch((err) => console.error("Error accessing media devices.", err));
+
+        // Initialize Socket
+        const newSocket = io(process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001");
+        setSocket(newSocket);
+
+        return () => {
+            newSocket.disconnect();
+        };
+    }, []);
+
+    useEffect(() => {
+        if (socket && role) {
+            const language = navigator.language || "en";
+            socket.emit("join_queue", { role, language });
+            setIsMatching(true);
+        }
+    }, [socket, role]);
+
+    const createPeerConnection = () => {
+        const pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
+        peerConnectionRef.current = pc;
+
+        if (localStream) {
+            localStream.getTracks().forEach((track) => pc.addTrack(track, localStream));
+        }
+
+        pc.ontrack = (event) => {
+            setRemoteStream(event.streams[0]);
+        };
+
+        pc.onicecandidate = (event) => {
+            if (event.candidate && socket) {
+                socket.emit("ice-candidate", event.candidate);
+            }
+        };
+
+        pc.oniceconnectionstatechange = () => {
+            if (pc.iceConnectionState === "disconnected" || pc.iceConnectionState === "failed") {
+                setIsConnected(false);
+                setRemoteStream(null);
+            }
+        };
+
+        return pc;
+    };
+
+    useEffect(() => {
+        if (!socket) return;
+
+        socket.on("waiting", () => {
+            setIsMatching(true);
+            setIsConnected(false);
+            setRemoteStream(null);
+            setMessages([]);
+        });
+
+        socket.on("matched", async ({ initiator }: { initiator: string }) => {
+            setIsMatching(false);
+            setIsConnected(true);
+            setMessages([]);
+
+            const pc = createPeerConnection();
+
+            if (socket.id === initiator) {
+                const offer = await pc.createOffer();
+                await pc.setLocalDescription(offer);
+                socket.emit("offer", offer);
+            }
+        });
+
+        socket.on("offer", async (offer) => {
+            let pc = peerConnectionRef.current;
+            if (!pc || pc.signalingState === "closed") {
+                pc = createPeerConnection();
+            }
+            await pc.setRemoteDescription(new RTCSessionDescription(offer));
+            const answer = await pc.createAnswer();
+            await pc.setLocalDescription(answer);
+            socket.emit("answer", answer);
+        });
+
+        socket.on("answer", async (answer) => {
+            const pc = peerConnectionRef.current;
+            if (pc) {
+                await pc.setRemoteDescription(new RTCSessionDescription(answer));
+            }
+        });
+
+        socket.on("ice-candidate", async (candidate) => {
+            const pc = peerConnectionRef.current;
+            if (pc) {
+                await pc.addIceCandidate(new RTCIceCandidate(candidate));
+            }
+        });
+
+        socket.on("partner_left", () => {
+            setIsConnected(false);
+            setRemoteStream(null);
+            if (peerConnectionRef.current) {
+                peerConnectionRef.current.close();
+                peerConnectionRef.current = null;
+            }
+            // Instantly start matching again
+            socket.emit("next");
+        });
+
+        socket.on("chat_message", (msg) => {
+            setMessages((prev) => [...prev, msg]);
+        });
+
+        return () => {
+            socket.off("waiting");
+            socket.off("matched");
+            socket.off("offer");
+            socket.off("answer");
+            socket.off("ice-candidate");
+            socket.off("partner_left");
+            socket.off("chat_message");
+        };
+    }, [socket, localStream]);
+
+    const joinQueue = () => {
+        const language = navigator.language || "en";
+        socket?.emit("join_queue", { role, language });
+    };
+
+    const handleOutOfCredits = () => {
+        if (peerConnectionRef.current) {
+            peerConnectionRef.current.close();
+            peerConnectionRef.current = null;
+        }
+        setIsConnected(false);
+        setRemoteStream(null);
+        socket?.emit("out_of_credits");
+    };
+
+    const nextPartner = () => {
+        if (peerConnectionRef.current) {
+            peerConnectionRef.current.close();
+            peerConnectionRef.current = null;
+        }
+        setIsConnected(false);
+        setRemoteStream(null);
+        socket?.emit("next");
+    };
+
+    const toggleAudio = () => {
+        if (localStream) {
+            localStream.getAudioTracks().forEach((track) => (track.enabled = !track.enabled));
+        }
+    };
+
+    const toggleVideo = () => {
+        if (localStream) {
+            localStream.getVideoTracks().forEach((track) => (track.enabled = !track.enabled));
+        }
+    };
+
+    const sendMessage = (text: string) => {
+        if (socket && text.trim()) {
+            socket.emit("chat_message", text);
+            setMessages((prev) => [...prev, { senderId: socket.id || "me", text, timestamp: Date.now() }]);
+        }
+    };
+
+    return {
+        localStream,
+        remoteStream,
+        isMatching,
+        isConnected,
+        joinQueue,
+        nextPartner,
+        toggleAudio,
+        toggleVideo,
+        messages,
+        sendMessage,
+        socketId: socket?.id,
+        handleOutOfCredits
+    };
+}

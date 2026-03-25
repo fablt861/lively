@@ -1,0 +1,159 @@
+"use client";
+
+import { useEffect, useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
+import { Wallet, History, ArrowUpRight, DollarSign, Activity, Video } from "lucide-react";
+import Link from "next/link";
+
+interface Stats {
+    balance: number;
+    history: Array<{
+        roomId: string;
+        durationSec: number;
+        modelEarned: number;
+        timestamp: number;
+    }>;
+}
+
+export default function DashboardPage() {
+    const [id, setId] = useState<string | null>(null);
+    const [stats, setStats] = useState<Stats | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setId(localStorage.getItem('lively_email'));
+    }, []);
+
+    useEffect(() => {
+        if (id) {
+            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/model/${id}/stats`)
+                .then((res) => res.json())
+                .then((data) => {
+                    setStats(data);
+                    setLoading(false);
+                })
+                .catch(console.error);
+        }
+    }, [id]);
+
+    const dailyStats = useMemo(() => {
+        if (!stats?.history) return [];
+
+        const groups: Record<string, { date: string; durationSec: number; modelEarned: number; calls: number }> = {};
+
+        stats.history.forEach(h => {
+            const dateStr = new Date(h.timestamp).toLocaleDateString();
+            if (!groups[dateStr]) {
+                groups[dateStr] = { date: dateStr, durationSec: 0, modelEarned: 0, calls: 0 };
+            }
+            groups[dateStr].durationSec += h.durationSec;
+            groups[dateStr].modelEarned += h.modelEarned;
+            groups[dateStr].calls += 1;
+        });
+
+        return Object.values(groups);
+    }, [stats]);
+
+    if (!id) {
+        return (
+            <div className="min-h-screen bg-neutral-950 text-white flex items-center justify-center">
+                No Model ID provided.
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen bg-neutral-950 text-white font-sans p-8 md:p-16">
+            {/* Header */}
+            <header className="flex items-center justify-between mb-16">
+                <div>
+                    <h1 className="text-4xl font-light tracking-tight text-white mb-2">Model Dashboard</h1>
+                    <p className="text-neutral-500">Manage your earnings and session history</p>
+                </div>
+                <Link
+                    href="/live"
+                    className="px-8 py-3 bg-pink-500 hover:bg-pink-400 border border-pink-400/50 shadow-lg shadow-pink-500/20 text-white rounded-full transition-all duration-300 text-sm font-bold flex items-center gap-2"
+                >
+                    <Video size={18} /> Lancer le Live
+                </Link>
+            </header>
+
+            {/* Main Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                {/* Total Balance Card */}
+                <div className="col-span-1 md:col-span-2 relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-900/40 via-purple-900/20 to-neutral-900 border border-indigo-500/20 p-8 shadow-2xl flex items-center">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl" />
+
+                    <div className="flex-1">
+                        <div className="flex items-center gap-3 text-indigo-300 mb-4">
+                            <Wallet size={20} />
+                            <span className="font-medium tracking-wide uppercase text-sm">Total Available Balance</span>
+                        </div>
+                        <div className="text-7xl font-extralight text-white mb-6 font-mono">
+                            ${loading ? "..." : stats?.balance.toFixed(2)}
+                        </div>
+                        <button className="group flex items-center gap-2 bg-indigo-500 hover:bg-indigo-400 text-white px-8 py-4 rounded-full font-medium transition-all duration-300 shadow-lg shadow-indigo-500/25 hover:-translate-y-1">
+                            Request Payout <ArrowUpRight size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                        </button>
+                    </div>
+                </div>
+
+                {/* Mini Stat Card */}
+                <div className="rounded-3xl bg-neutral-900 border border-white/5 p-8 flex flex-col justify-center">
+                    <div className="flex items-center gap-3 text-pink-400 mb-4">
+                        <Activity size={20} />
+                        <span className="font-medium tracking-wide uppercase text-sm">Total Sessions</span>
+                    </div>
+                    <div className="text-5xl font-light text-white">
+                        {loading ? "..." : stats?.history.length || 0}
+                    </div>
+                </div>
+            </div>
+
+            {/* History Table */}
+            <div>
+                <div className="flex items-center gap-3 text-white/80 mb-6">
+                    <History size={24} />
+                    <h2 className="text-2xl font-light">Recent History</h2>
+                </div>
+
+                <div className="bg-neutral-900/50 border border-white/5 rounded-3xl overflow-hidden">
+                    {loading ? (
+                        <div className="p-12 text-center text-neutral-500">Loading history...</div>
+                    ) : dailyStats.length === 0 ? (
+                        <div className="p-12 text-center text-neutral-500">No calls registered yet. Start matching!</div>
+                    ) : (
+                        <table className="w-full text-left">
+                            <thead>
+                                <tr className="border-b border-white/5 bg-white/[0.02]">
+                                    <th className="p-6 text-sm font-medium text-neutral-400 uppercase tracking-wider">Date</th>
+                                    <th className="p-6 text-sm font-medium text-neutral-400 uppercase tracking-wider">Calls</th>
+                                    <th className="p-6 text-sm font-medium text-neutral-400 uppercase tracking-wider">Total Duration</th>
+                                    <th className="p-6 text-sm font-medium text-neutral-400 uppercase tracking-wider text-right">Earned</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/5">
+                                {dailyStats.map((day, i) => (
+                                    <tr key={i} className="hover:bg-white/[0.02] transition-colors">
+                                        <td className="p-6 text-neutral-300 font-medium">
+                                            {day.date}
+                                        </td>
+                                        <td className="p-6 text-neutral-500 font-mono text-sm">
+                                            {day.calls} session(s)
+                                        </td>
+                                        <td className="p-6 text-neutral-300">
+                                            {Math.floor(day.durationSec / 60)}m {day.durationSec % 60}s
+                                        </td>
+                                        <td className="p-6 text-right font-mono text-green-400">
+                                            +${day.modelEarned.toFixed(4)}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
