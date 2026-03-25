@@ -27,7 +27,7 @@ export default function Home() {
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
-                    <Link href="/login" className="text-sm font-medium text-white/50 hover:text-white transition-colors px-4 py-2 hover:bg-white/5 rounded-full">
+                    <Link href="/login" className="text-xs font-bold text-white/90 bg-white/5 hover:bg-white/10 transition-all border border-white/10 rounded-full px-6 py-2.5 hover:border-indigo-500/50 hover:shadow-[0_0_20px_rgba(99,102,241,0.2)] tracking-widest uppercase">
                         Connexion
                     </Link>
                 </div>
@@ -72,7 +72,7 @@ export default function Home() {
                             >
                                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
                                 <Video size={24} className="text-white fill-white relative z-10" />
-                                <span className="text-white font-bold text-lg tracking-wide relative z-10">Rencontrer des modèles en LIVE</span>
+                                <span className="text-white font-bold text-lg tracking-wide relative z-10">Discuter en live cam</span>
                             </button>
                         </div>
                         <p className="text-[11px] text-white/30 uppercase tracking-[0.4em] font-medium italic">

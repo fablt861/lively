@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Users } from "lucide-react";
 
 export function OnlineGauge() {
     const [femaleCount, setFemaleCount] = useState(2438);
@@ -17,50 +16,46 @@ export function OnlineGauge() {
     }, []);
 
     return (
-        <div className="inline-flex flex-col gap-3 px-6 py-4 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-xl shadow-2xl relative overflow-hidden group hover:border-white/20 transition-all duration-500 max-w-[280px]">
+        <div className="inline-flex items-center gap-6 px-6 py-3 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl shadow-2xl relative overflow-hidden group hover:border-white/20 transition-all duration-500 w-full sm:w-auto min-w-[320px] sm:max-w-none">
             {/* Background Glow */}
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500/50 via-indigo-500/50 to-pink-500/50 opacity-30" />
+            <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-pink-500/30 via-indigo-500/30 to-pink-500/30 opacity-30" />
 
-            <div className="flex justify-between items-end mb-1">
+            <div className="flex items-center gap-4 shrink-0">
                 <div className="flex flex-col">
-                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]">En ligne</span>
-                    <span className="text-xl font-black text-white tabular-nums">
+                    <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.2em] leading-none mb-1">En ligne</span>
+                    <span className="text-lg font-black text-white tabular-nums leading-none">
                         {(femaleCount + maleCount).toLocaleString()}
                     </span>
                 </div>
-                <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-green-500/10 border border-green-500/20">
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-500/10 border border-green-500/20">
                     <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                    <span className="text-[9px] font-bold text-green-400 uppercase tracking-wider">Live</span>
+                    <span className="text-[8px] font-black text-green-400 uppercase tracking-widest">Live</span>
                 </div>
             </div>
 
-            {/* Gauge Bar */}
-            <div className="relative h-2 w-full bg-white/5 rounded-full overflow-hidden flex">
-                <div
-                    className="h-full bg-gradient-to-r from-pink-500 to-purple-500 transition-all duration-1000 ease-in-out shadow-[0_0_15px_rgba(236,72,153,0.5)]"
-                    style={{ width: `${ratio}%` }}
-                />
-                <div
-                    className="h-full bg-gradient-to-r from-indigo-500 to-blue-500 transition-all duration-1000 ease-in-out"
-                    style={{ width: `${100 - ratio}%` }}
-                />
-
-                {/* Separator / Marker */}
-                <div
-                    className="absolute top-0 h-full w-0.5 bg-white/80 shadow-[0_0_10px_white] z-10 transition-all duration-1000 ease-in-out"
-                    style={{ left: `${ratio}%` }}
-                />
-            </div>
-
-            {/* Labels */}
-            <div className="flex justify-between text-[10px] font-bold tracking-widest uppercase">
-                <div className="flex flex-col items-start">
-                    <span className="text-pink-400/80 mb-0.5">♀ Femmes</span>
-                    <span className="text-white/40">{ratio}%</span>
+            {/* Gauge with Labels Container */}
+            <div className="flex-1 flex flex-col gap-2 min-w-[140px]">
+                <div className="flex justify-between text-[9px] font-black tracking-widest uppercase">
+                    <span className="text-pink-400/80">♀ {ratio}%</span>
+                    <span className="text-indigo-400/80">{100 - ratio}% ♂</span>
                 </div>
-                <div className="flex flex-col items-end">
-                    <span className="text-indigo-400/80 mb-0.5">Hommes ♂</span>
-                    <span className="text-white/40">{100 - ratio}%</span>
+
+                {/* Gauge Bar */}
+                <div className="relative h-1.5 w-full bg-white/5 rounded-full overflow-hidden flex">
+                    <div
+                        className="h-full bg-gradient-to-r from-pink-500 to-purple-500 transition-all duration-1000 ease-in-out shadow-[0_0_10px_rgba(236,72,153,0.4)]"
+                        style={{ width: `${ratio}%` }}
+                    />
+                    <div
+                        className="h-full bg-gradient-to-r from-indigo-500 to-blue-500 transition-all duration-1000 ease-in-out"
+                        style={{ width: `${100 - ratio}%` }}
+                    />
+
+                    {/* Marker */}
+                    <div
+                        className="absolute top-0 h-full w-0.5 bg-white/60 shadow-[0_0_5px_white] z-10 transition-all duration-1000 ease-in-out"
+                        style={{ left: `${ratio}%` }}
+                    />
                 </div>
             </div>
         </div>
