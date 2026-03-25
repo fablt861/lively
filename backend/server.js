@@ -58,6 +58,10 @@ app.get('/api/ice-servers', async (req, res) => {
   }
 });
 
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', version: '1.0.2', timestamp: Date.now() });
+});
+
 app.get('/api/settings', async (req, res) => {
   const { getSettings } = require('./settings');
   try {

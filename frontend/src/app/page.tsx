@@ -6,6 +6,7 @@ import Link from "next/link";
 import { GenderModal } from "../components/GenderModal";
 
 export default function Home() {
+    // Build version: 1.0.2 - Matchmaking fixes
     const [showGenderModal, setShowGenderModal] = useState(false);
 
     return (
