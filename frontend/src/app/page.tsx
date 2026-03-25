@@ -19,10 +19,9 @@ export default function Home() {
 
             {/* Navbar */}
             <nav className="relative z-20 flex justify-between items-center px-6 py-6 lg:px-12 w-full max-w-7xl mx-auto">
-                <div className="flex items-center gap-3">
-                    <img src="/kinky_logo.png" alt="Kinky Logo" className="w-10 h-10 object-contain rounded-lg shadow-lg" />
-                    <div className="text-3xl font-bold tracking-tighter text-white drop-shadow-md cursor-default flex items-center">
-                        KINKY<span className="text-indigo-500">.</span>LIVE
+                <div className="flex items-center">
+                    <div className="text-3xl font-black tracking-tighter text-white drop-shadow-md cursor-default">
+                        KINKY<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">.</span>
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
