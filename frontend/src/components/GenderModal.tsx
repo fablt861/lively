@@ -12,7 +12,7 @@ export function GenderModal({ onClose }: GenderModalProps) {
     const [step, setStep] = useState<'select' | 'female_info'>('select');
 
     const handleSelectMale = () => {
-        localStorage.setItem('lively_role', 'user');
+        localStorage.setItem('kinky_role', 'user');
         window.location.href = '/live';
     };
 
@@ -27,7 +27,7 @@ export function GenderModal({ onClose }: GenderModalProps) {
 
                 {step === 'select' ? (
                     <div className="p-8 md:p-12 text-center">
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">Bienvenue sur <span className="text-indigo-500">LIVELY.</span></h2>
+                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">Bienvenue sur <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500 font-black">KINKY.</span></h2>
                         <p className="text-neutral-400 mb-10">Veuillez sélectionner votre profil pour continuer</p>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -74,7 +74,7 @@ export function GenderModal({ onClose }: GenderModalProps) {
                         </div>
                         <h2 className="text-3xl font-bold text-white mb-4">Espace Créatrices</h2>
                         <p className="text-neutral-400 leading-relaxed max-w-sm mx-auto mb-10">
-                            Bonjour ! Sur <span className="text-white font-bold">LIVELY</span>, les profils féminins sont réservés à nos créatrices vérifiées.
+                            Bonjour ! Sur <span className="text-white font-bold">KINKY</span>, les profils féminins sont réservés à nos créatrices vérifiées.
                             Inscrivez-vous pour commencer à échanger et générer des revenus.
                         </p>
 
@@ -102,7 +102,7 @@ export function GenderModal({ onClose }: GenderModalProps) {
                             </button>
                             <button
                                 onClick={() => {
-                                    localStorage.setItem('lively_role', 'model');
+                                    localStorage.setItem('kinky_role', 'model');
                                     window.location.href = '/live';
                                 }}
                                 className="text-white/10 hover:text-white/30 text-[10px] uppercase font-bold tracking-widest transition-colors mt-2"

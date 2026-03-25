@@ -22,17 +22,17 @@ export default function LoginPage() {
             const data = await res.json();
 
             if (res.ok && data.success) {
-                localStorage.setItem("lively_token", data.token);
-                localStorage.setItem("lively_role", data.user.role);
-                localStorage.setItem("lively_email", data.user.email);
+                localStorage.setItem("kinky_token", data.token);
+                localStorage.setItem("kinky_role", data.user.role);
+                localStorage.setItem("kinky_email", data.user.email);
 
                 if (data.user.role === 'model') {
                     // Models go directly to Video Room (acting as model) or Dashboard
-                    localStorage.setItem("lively_account_status", 'active_model');
+                    localStorage.setItem("kinky_account_status", 'active_model');
                     window.location.href = '/model/dashboard'; // Or a dedicated launching page
                 } else {
                     // Users
-                    localStorage.setItem("lively_account_status", 'registered');
+                    localStorage.setItem("kinky_account_status", 'registered');
                     window.location.href = '/';
                 }
             } else {
@@ -49,8 +49,8 @@ export default function LoginPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/95 to-[#050505]/80 pointer-events-none"></div>
 
             <nav className="relative z-20 p-6 flex justify-between items-center max-w-7xl mx-auto w-full">
-                <Link href="/" className="text-2xl font-bold tracking-tighter text-white drop-shadow-md cursor-pointer">
-                    LIVELY<span className="text-indigo-500">.</span>
+                <Link href="/" className="text-2xl font-black tracking-tighter text-white drop-shadow-md cursor-pointer">
+                    KINKY<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">.</span>
                 </Link>
             </nav>
 
