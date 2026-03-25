@@ -5,6 +5,7 @@ import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins
 import Link from "next/link";
 import { PaywallModal } from "./PaywallModal";
 import { UnifiedAuthModal } from "./UnifiedAuthModal";
+import { PreMatchModal } from "./PreMatchModal";
 
 function EarningsCounter({ hasVideo }: { hasVideo: boolean }) {
     const counterRef = useRef<HTMLSpanElement>(null);
@@ -48,6 +49,7 @@ interface VideoRoomProps {
     remoteStream: MediaStream | null;
     isMatching: boolean;
     isConnected: boolean;
+    joinQueue: () => void;
     nextPartner: () => void;
     toggleAudio: () => void;
     toggleVideo: () => void;
@@ -63,6 +65,7 @@ export function VideoRoom({
     remoteStream,
     isMatching,
     isConnected,
+    joinQueue,
     nextPartner,
     toggleAudio,
     toggleVideo,
@@ -84,6 +87,7 @@ export function VideoRoom({
     const [userCredits, setUserCredits] = useState<number | null>(null);
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [hasStartedMatch, setHasStartedMatch] = useState(false);
 
     // Load state from localStorage on mount
     useEffect(() => {
@@ -162,8 +166,17 @@ export function VideoRoom({
         }
     };
 
+    const handleStartMatch = () => {
+        setHasStartedMatch(true);
+        joinQueue();
+    };
+
     return (
         <div className="flex flex-col md:flex-row h-[100dvh] w-full bg-neutral-950 text-white font-sans overflow-hidden">
+            {!hasStartedMatch && (
+                <PreMatchModal localStream={localStream} onJoin={handleStartMatch} />
+            )}
+
             <div className="flex-1 relative flex items-center justify-center overflow-hidden">
 
                 {/* LOGO */}

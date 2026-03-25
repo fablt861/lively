@@ -50,14 +50,14 @@ export function useWebRTC(role: "user" | "model" | null) {
         };
     }, []);
 
-    useEffect(() => {
-        if (socket && role) {
-            const language = navigator.language || "en";
-            const email = localStorage.getItem("kinky_user_email") || null;
-            socket.emit("join_queue", { role, language, email });
-            setIsMatching(true);
-        }
-    }, [socket, role]);
+    // Manual join triggered by UI
+    const joinQueue = () => {
+        if (!socket || !role) return;
+        const language = navigator.language || "en";
+        const email = localStorage.getItem("kinky_user_email") || null;
+        socket.emit("join_queue", { role, language, email });
+        setIsMatching(true);
+    };
 
     const createPeerConnection = () => {
         console.log('Creating PeerConnection with servers:', iceServersRef.current.length);
@@ -167,10 +167,6 @@ export function useWebRTC(role: "user" | "model" | null) {
         };
     }, [socket]); // Only depends on socket
 
-    const joinQueue = () => {
-        const language = navigator.language || "en";
-        socket?.emit("join_queue", { role, language });
-    };
 
     const handleOutOfCredits = () => {
         if (peerConnectionRef.current) {
