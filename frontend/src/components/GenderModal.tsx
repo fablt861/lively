@@ -40,8 +40,7 @@ export function GenderModal({ onClose }: GenderModalProps) {
                                     <Mars size={32} />
                                 </div>
                                 <div>
-                                    <span className="block text-xl font-bold text-white">Je suis un Homme</span>
-                                    <span className="text-xs text-indigo-400 font-bold uppercase tracking-widest mt-1 block">Accès Instantané</span>
+                                    <span className="block text-xl font-bold text-white uppercase tracking-tight">Je suis un Homme</span>
                                 </div>
                                 <ArrowRight className="absolute bottom-4 right-4 text-white/20 group-hover:text-white group-hover:translate-x-1 transition-all" />
                             </button>
@@ -55,8 +54,7 @@ export function GenderModal({ onClose }: GenderModalProps) {
                                     <Venus size={32} />
                                 </div>
                                 <div>
-                                    <span className="block text-xl font-bold text-white">Je suis une Femme</span>
-                                    <span className="text-xs text-pink-400 font-bold uppercase tracking-widest mt-1 block">Profil Créatrice</span>
+                                    <span className="block text-xl font-bold text-white uppercase tracking-tight">Je suis une Femme</span>
                                 </div>
                                 <ArrowRight className="absolute bottom-4 right-4 text-white/20 group-hover:text-white group-hover:translate-x-1 transition-all" />
                             </button>
