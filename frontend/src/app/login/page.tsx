@@ -116,7 +116,7 @@ export default function LoginPage() {
                                     type="text"
                                     required
                                     placeholder="Pseudo"
-                                    className="w-full bg-black/50 border border-white/10 rounded-2xl py-4 pl-12 text-white focus:outline-none focus:border-white/30 transition-all placeholder:text-white/10"
+                                    className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40"
                                     value={pseudo}
                                     onChange={e => setPseudo(e.target.value)}
                                 />
@@ -129,7 +129,7 @@ export default function LoginPage() {
                                 type="email"
                                 required
                                 placeholder="Adresse Email"
-                                className="w-full bg-black/50 border border-white/10 rounded-2xl py-4 pl-12 text-white focus:outline-none focus:border-white/30 transition-all placeholder:text-white/10"
+                                className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40"
                                 value={email}
                                 onChange={e => setEmail(e.target.value)}
                             />
@@ -141,7 +141,7 @@ export default function LoginPage() {
                                 type="password"
                                 required
                                 placeholder="Mot de passe"
-                                className="w-full bg-black/50 border border-white/10 rounded-2xl py-4 pl-12 text-white focus:outline-none focus:border-white/30 transition-all placeholder:text-white/10"
+                                className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40"
                                 value={password}
                                 onChange={e => setPassword(e.target.value)}
                             />

@@ -171,7 +171,7 @@ export default function ModelSignupPage() {
                                 <div className="relative group">
                                     <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
                                     <select
-                                        className="w-full bg-black/50 border border-white/10 rounded-2xl py-4.5 pl-12 pr-4 text-white appearance-none focus:outline-none focus:border-white/30 transition-all cursor-pointer"
+                                        className="w-full bg-black/60 border border-white/20 rounded-2xl py-4.5 pl-12 pr-4 text-white/90 appearance-none focus:outline-none focus:border-white/40 transition-all cursor-pointer"
                                         value={country}
                                         onChange={e => setCountry(e.target.value)}
                                     >
@@ -209,7 +209,7 @@ export default function ModelSignupPage() {
                                 </div>
                                 <div className="flex gap-3">
                                     <div className="w-[100px] shrink-0">
-                                        <select className="w-full bg-black/50 border border-white/10 rounded-2xl py-4.5 px-2 text-white appearance-none focus:outline-none focus:border-white/30 text-center font-bold">
+                                        <select className="w-full bg-black/60 border border-white/20 rounded-2xl py-4.5 px-2 text-white/90 appearance-none focus:outline-none focus:border-white/40 text-center font-bold">
                                             <option>+33</option>
                                             <option>+32</option>
                                             <option>+41</option>
@@ -223,7 +223,7 @@ export default function ModelSignupPage() {
                                             value={phone}
                                             onChange={e => setPhone(e.target.value)}
                                             placeholder="Numéro de mobile"
-                                            className="w-full bg-black/50 border border-white/10 rounded-2xl py-4.5 pl-12 pr-4 text-white focus:outline-none focus:border-white/30 transition-all placeholder:text-white/10"
+                                            className="w-full bg-black/60 border border-white/20 rounded-2xl py-4.5 pl-12 pr-4 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40"
                                         />
                                     </div>
                                 </div>
@@ -252,22 +252,22 @@ export default function ModelSignupPage() {
                                 <div className="space-y-3">
                                     <div className="relative group">
                                         <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
-                                        <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Nom (Pièce d'identité)" className="w-full bg-black/50 border border-white/10 rounded-2xl py-4 pl-12 text-white focus:outline-none focus:border-white/30 transition-all placeholder:text-white/10" />
+                                        <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Nom (Pièce d'identité)" className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" />
                                     </div>
                                     <div className="relative group">
                                         <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 text-xs font-bold uppercase tracking-widest">Né(e) le</div>
-                                        <input type="date" value={dob} onChange={e => setDob(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-2xl py-4 pl-24 pr-4 text-white focus:outline-none focus:border-white/30 transition-all [&::-webkit-calendar-picker-indicator]:filter-[invert(0.5)]" />
+                                        <input type="date" value={dob} onChange={e => setDob(e.target.value)} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-24 pr-4 text-white/90 focus:outline-none focus:border-white/40 transition-all [&::-webkit-calendar-picker-indicator]:filter-[invert(0.5)]" />
                                     </div>
 
                                     <div className="h-px bg-white/5 w-full my-4"></div>
 
                                     <div className="relative group">
                                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
-                                        <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email (Identifiant)" className="w-full bg-black/50 border border-white/10 rounded-2xl py-4 pl-12 text-white focus:outline-none focus:border-white/30 transition-all placeholder:text-white/10" />
+                                        <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email (Identifiant)" className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" />
                                     </div>
                                     <div className="relative group">
                                         <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
-                                        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Mot de passe" className="w-full bg-black/50 border border-white/10 rounded-2xl py-4 pl-12 text-white focus:outline-none focus:border-white/30 transition-all placeholder:text-white/10" />
+                                        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Mot de passe" className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" />
                                     </div>
                                 </div>
 
