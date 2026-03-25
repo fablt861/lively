@@ -1,5 +1,5 @@
-const Redis = require('ioredis');
-const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+const { getRedisClient } = require('./redis');
+const redis = getRedisClient();
 
 const SETTINGS_KEY = 'global:settings';
 
@@ -15,9 +15,15 @@ const DEFAULT_SETTINGS = {
 };
 
 async function initSettings() {
-    const exists = await redis.exists(SETTINGS_KEY);
-    if (!exists) {
-        await redis.set(SETTINGS_KEY, JSON.stringify(DEFAULT_SETTINGS));
+    console.log('=> Initializing settings...');
+    try {
+        const exists = await redis.exists(SETTINGS_KEY);
+        if (!exists) {
+            await redis.set(SETTINGS_KEY, JSON.stringify(DEFAULT_SETTINGS));
+        }
+        console.log('=> Settings initialized.');
+    } catch (err) {
+        console.error('=> Failed to initialize settings:', err.message);
     }
 }
 

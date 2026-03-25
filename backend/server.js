@@ -27,10 +27,13 @@ const adminRoutes = require('./admin');
 const authRoutes = require('./auth');
 
 // Initialize settings if empty
+console.log('--- Starting startup sequence ---');
 initSettings();
 
 // Start the billing interval
+console.log('=> Starting billing loop...');
 initBillingLoop();
+console.log('=> Billing loop started.');
 
 app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
