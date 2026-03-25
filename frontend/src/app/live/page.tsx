@@ -8,7 +8,7 @@ export default function LivePage() {
     const [role, setRole] = useState<"user" | "model" | null>(null);
 
     useEffect(() => {
-        const storedRole = localStorage.getItem("lively_role") as "user" | "model" | null;
+        const storedRole = localStorage.getItem("kinky_role") as "user" | "model" | null;
         // Si pas de rôle (accès direct par URL), on le considère comme un "user" (guest 30s)
         setRole(storedRole || "user");
     }, []);

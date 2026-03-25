@@ -88,13 +88,13 @@ export function VideoRoom({
     // Load state from localStorage on mount
     useEffect(() => {
         if (role !== "user") return;
-        const storedStatus = (localStorage.getItem('lively_account_status') as any) || 'guest';
+        const storedStatus = (localStorage.getItem('kinky_account_status') as any) || 'guest';
         setAccountStatus(storedStatus);
 
-        let storedCredits = localStorage.getItem('lively_credits');
+        let storedCredits = localStorage.getItem('kinky_credits');
         if (storedCredits === null) {
             storedCredits = storedStatus === 'premium' ? "50" : "5"; // 5 credits = 30s
-            localStorage.setItem('lively_credits', storedCredits);
+            localStorage.setItem('kinky_credits', storedCredits);
         }
         setUserCredits(Number(storedCredits));
     }, [role]);
@@ -114,7 +114,7 @@ export function VideoRoom({
             setUserCredits((prev) => {
                 if (prev === null) return null;
                 const next = Math.max(0, prev - 1);
-                localStorage.setItem('lively_credits', next.toString());
+                localStorage.setItem('kinky_credits', next.toString());
                 if (next === 0) {
                     if (handleOutOfCredits) handleOutOfCredits();
                     if (accountStatus === 'guest') setShowSignup(true);
@@ -168,13 +168,13 @@ export function VideoRoom({
 
                 {/* LOGO */}
                 <div className="absolute top-6 left-6 z-40 pointer-events-none">
-                    <span className="text-3xl font-bold tracking-tighter text-white drop-shadow-md">LIVELY<span className="text-indigo-500">.</span></span>
+                    <span className="text-3xl font-black tracking-tighter text-white drop-shadow-md">KINKY<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">.</span></span>
                 </div>
 
                 {showSignup && (
                     <SignupModal onSignup={() => {
-                        localStorage.setItem('lively_account_status', 'registered');
-                        localStorage.setItem('lively_credits', '5');
+                        localStorage.setItem('kinky_account_status', 'registered');
+                        localStorage.setItem('kinky_credits', '5');
                         setAccountStatus('registered');
                         setUserCredits(5);
                         setShowSignup(false);
@@ -186,9 +186,9 @@ export function VideoRoom({
                     <PaywallModal
                         onClose={() => setShowPaywall(false)}
                         onPurchase={(credits) => {
-                            localStorage.setItem('lively_account_status', 'premium');
+                            localStorage.setItem('kinky_account_status', 'premium');
                             const newBalance = (userCredits || 0) + credits;
-                            localStorage.setItem('lively_credits', newBalance.toString());
+                            localStorage.setItem('kinky_credits', newBalance.toString());
                             setAccountStatus('premium');
                             setUserCredits(newBalance);
                             setShowPaywall(false);

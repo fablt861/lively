@@ -19,7 +19,9 @@ function setupMatching(io, socket) {
         isProcessing = true;
         try {
             socket.role = role;
-            socket.language = language || 'en'; // Par défaut anglais
+            socket.language = language || 'en';
+
+            console.log(`[Queue] Socket ${socket.id} joined as ${role} (${socket.language})`);
 
             const isNew = await redis.set(`has_joined:${socket.id}`, '1', 'NX', 'EX', 86400);
             if (isNew) {
@@ -81,10 +83,7 @@ async function handleJoinQueue(io, socket) {
         const partnerSocket = io.sockets.sockets.get(partnerId);
 
         if (partnerSocket) {
-            // Create a unique room ID
             const roomId = `room_${socket.id}_${partnerId}`;
-
-            // Both sockets join the room
             socket.join(roomId);
             socket.currentRoom = roomId;
 
@@ -95,16 +94,17 @@ async function handleJoinQueue(io, socket) {
             const modelId = isModel ? socket.id : partnerId;
             await startBilling(roomId, userId, modelId);
 
-            // Notify both parties. One is designated as the initiator to create the RTC Offer.
-            console.log(`Matched ${socket.id} with ${partnerId} in ${roomId}`);
+            console.log(`[Match SUCCESS] ${socket.id} (${socket.role}) <-> ${partnerId} (${partnerSocket.role})`);
             io.to(roomId).emit('matched', { roomId, initiator: socket.id });
         } else {
-            // Stale ID, partner disconnected in the meantime. Try again.
+            console.log(`[Match STALE] Partner ${partnerId} gone, retrying...`);
             await handleJoinQueue(io, socket);
         }
     } else {
-        // No partner in queue, push to own queue and wait
         await redis.lpush(myQueue, socket.id);
+        const modelsCount = await redis.llen(QUEUE_MODELS);
+        const usersCount = await redis.llen(QUEUE_USERS);
+        console.log(`[Queue Status] Models: ${modelsCount}, Users: ${usersCount}. Socket ${socket.id} is waiting.`);
         socket.emit('waiting', { status: 'waiting for partner' });
     }
 }
