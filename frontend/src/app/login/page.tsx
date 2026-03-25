@@ -1,27 +1,42 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, User, Lock, Video, X, Mail, ShieldCheck } from "lucide-react";
+import { ArrowRight, User, Lock, Video, X, Mail, ShieldCheck, CheckSquare, Square } from "lucide-react";
 import Link from "next/link";
 
 export default function LoginPage() {
     const [mode, setMode] = useState<"login" | "signup">("login");
-    const [role, setRole] = useState<"user" | "model">("user");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [pseudo, setPseudo] = useState("");
+    const [acceptCGV, setAcceptCGV] = useState(false);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
     const handleAction = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
+
+        if (mode === 'signup') {
+            if (password !== confirmPassword) {
+                return setError("Les mots de passe ne correspondent pas.");
+            }
+            if (!acceptCGV) {
+                return setError("Vous devez accepter les CGV.");
+            }
+            if (pseudo.length < 3) {
+                return setError("Le pseudo est trop court.");
+            }
+        }
+
         setLoading(true);
 
         try {
             const endpoint = mode === 'login' ? '/api/auth/login' : '/api/auth/register';
             const payload = mode === 'login'
-                ? { email, password, role }
-                : { email, password, role: 'user' }; // Signup is always user (client)
+                ? { email, password }
+                : { email, password, pseudo };
 
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}${endpoint}`, {
                 method: "POST",
@@ -43,10 +58,10 @@ export default function LoginPage() {
                     window.location.href = '/';
                 }
             } else {
-                setError(data.error || "Une erreur est survenue.");
+                setError(data.error || "Identifiants invalides.");
             }
         } catch (err) {
-            setError("Erreur de connexion au serveur.");
+            setError("Erreur de connexion.");
         } finally {
             setLoading(false);
         }
@@ -65,7 +80,6 @@ export default function LoginPage() {
 
             <main className="relative z-10 flex-1 flex flex-col items-center justify-center p-6 w-full max-w-sm mx-auto">
                 <div className="w-full bg-neutral-900 border border-white/10 p-8 rounded-[2.5rem] shadow-2xl relative">
-                    {/* Close Button */}
                     <Link href="/" className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors">
                         <X size={24} />
                     </Link>
@@ -77,7 +91,6 @@ export default function LoginPage() {
                         {mode === 'login' ? 'Connectez-vous à votre compte.' : 'Créez votre compte client.'}
                     </p>
 
-                    {/* Mode Tabs */}
                     <div className="flex bg-black/40 p-1.5 rounded-2xl mb-8">
                         <button
                             onClick={() => setMode("login")}
@@ -93,26 +106,23 @@ export default function LoginPage() {
                         </button>
                     </div>
 
-                    {mode === 'login' && (
-                        <div className="grid grid-cols-2 gap-3 mb-6">
-                            <button
-                                onClick={() => setRole("user")}
-                                className={`py-2 text-[10px] font-bold uppercase tracking-[0.2em] rounded-lg border transition-all ${role === 'user' ? 'bg-indigo-500/10 border-indigo-500/50 text-indigo-400' : 'bg-white/5 border-white/5 text-white/30 hover:bg-white/10'}`}
-                            >
-                                Client
-                            </button>
-                            <button
-                                onClick={() => setRole("model")}
-                                className={`py-2 text-[10px] font-bold uppercase tracking-[0.2em] rounded-lg border transition-all ${role === 'model' ? 'bg-pink-500/10 border-pink-500/50 text-pink-400' : 'bg-white/5 border-white/5 text-white/30 hover:bg-white/10'}`}
-                            >
-                                Créatrice
-                            </button>
-                        </div>
-                    )}
-
-                    {error && <div className="p-3 mb-6 bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-2xl text-center animate-in fade-in zoom-in duration-300 tracking-tight">{error}</div>}
+                    {error && <div className="p-3 mb-6 bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-2xl text-center animate-in fade-in duration-300">{error}</div>}
 
                     <form onSubmit={handleAction} className="space-y-4">
+                        {mode === 'signup' && (
+                            <div className="relative group">
+                                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
+                                <input
+                                    type="text"
+                                    required
+                                    placeholder="Pseudo"
+                                    className="w-full bg-black/50 border border-white/10 rounded-2xl py-4 pl-12 text-white focus:outline-none focus:border-white/30 transition-all placeholder:text-white/10"
+                                    value={pseudo}
+                                    onChange={e => setPseudo(e.target.value)}
+                                />
+                            </div>
+                        )}
+
                         <div className="relative group">
                             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
                             <input
@@ -124,6 +134,7 @@ export default function LoginPage() {
                                 onChange={e => setEmail(e.target.value)}
                             />
                         </div>
+
                         <div className="relative group">
                             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
                             <input
@@ -136,24 +147,39 @@ export default function LoginPage() {
                             />
                         </div>
 
+                        {mode === 'signup' && (
+                            <>
+                                <div className="relative group">
+                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
+                                    <input
+                                        type="password"
+                                        required
+                                        placeholder="Confirmer mot de passe"
+                                        className="w-full bg-black/50 border border-white/10 rounded-2xl py-4 pl-12 text-white focus:outline-none focus:border-white/30 transition-all placeholder:text-white/10"
+                                        value={confirmPassword}
+                                        onChange={e => setConfirmPassword(e.target.value)}
+                                    />
+                                </div>
+                                <div className="pt-2">
+                                    <label className="flex items-center gap-3 cursor-pointer group">
+                                        <div onClick={() => setAcceptCGV(!acceptCGV)} className="text-white/20 group-hover:text-white/40 transition-colors">
+                                            {acceptCGV ? <CheckSquare className="text-pink-500" size={20} /> : <Square size={20} />}
+                                        </div>
+                                        <span className="text-[10px] text-neutral-500 font-medium">J'accepte les Conditions Générales de Vente</span>
+                                    </label>
+                                </div>
+                            </>
+                        )}
+
                         <button
                             type="submit"
                             disabled={loading}
-                            className={`w-full mt-6 text-white font-bold py-5 rounded-full flex items-center justify-center gap-3 transition-all shadow-xl active:scale-95 disabled:opacity-50 ${mode === 'signup' || role === 'model' ? 'bg-gradient-to-r from-pink-500 to-rose-600 shadow-pink-500/20' : 'bg-gradient-to-r from-indigo-500 to-purple-600 shadow-indigo-500/20'}`}
+                            className={`w-full mt-6 text-white font-bold py-5 rounded-full flex items-center justify-center gap-3 transition-all shadow-xl active:scale-95 disabled:opacity-50 ${mode === 'signup' ? 'bg-gradient-to-r from-pink-500 to-rose-600 shadow-pink-500/20' : 'bg-gradient-to-r from-indigo-500 to-purple-600 shadow-indigo-500/20'}`}
                         >
                             {loading ? 'Traitement...' : mode === 'login' ? 'Se connecter' : "S'inscrire"}
                             {!loading && <ArrowRight size={20} />}
                         </button>
                     </form>
-
-                    {mode === 'login' && role === 'model' && (
-                        <div className="mt-8 pt-6 border-t border-white/5 text-center">
-                            <p className="text-xs text-neutral-500 mb-4 uppercase tracking-widest font-bold">Pas encore de compte ?</p>
-                            <Link href="/model/signup" className="text-pink-400 text-sm font-bold flex items-center justify-center gap-1.5 hover:text-pink-300 group">
-                                <Video size={16} className="group-hover:scale-110 transition-transform" /> Soumettre ma candidature
-                            </Link>
-                        </div>
-                    )}
 
                     <div className="mt-8 flex items-center justify-center gap-2 text-white/10 text-[9px] font-black uppercase tracking-[0.3em]">
                         <ShieldCheck size={12} />

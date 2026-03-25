@@ -5,22 +5,69 @@ const crypto = require('crypto');
 const router = express.Router();
 
 router.post('/login', async (req, res) => {
-    const { email, password, role } = req.body;
+    const { email, password } = req.body;
     const redis = getRedisClient();
 
-    if (role === 'model') {
-        const data = await redis.get(`model:active:${email}`);
-        if (data) {
-            const model = JSON.parse(data);
-            if (model.password === password) {
-                return res.json({ success: true, token: `model-token-${email}`, user: { email, role: 'model', name: model.name } });
-            }
+    // 1. Try Model
+    const modelData = await redis.get(`model:active:${email}`);
+    if (modelData) {
+        const model = JSON.parse(modelData);
+        if (model.password === password) {
+            return res.json({
+                success: true,
+                token: `model-token-${email}`,
+                user: { email, role: 'model', name: model.name }
+            });
         }
-        return res.status(401).json({ error: 'Identifiants invalides ou compte en attente de validation.' });
-    } else {
-        // Mock User Login (Just accept it for now as a guest that signed up)
-        return res.json({ success: true, token: `user-token-${email}`, user: { email, role: 'user' } });
     }
+
+    // 2. Try User
+    const userData = await redis.get(`user:active:${email}`);
+    if (userData) {
+        const user = JSON.parse(userData);
+        if (user.password === password) {
+            return res.json({
+                success: true,
+                token: `user-token-${email}`,
+                user: { email, role: 'user', name: user.name || user.pseudo }
+            });
+        }
+    }
+
+    // fallback for old mock logic if needed, but better to be strict
+    return res.status(401).json({ error: 'Identifiants invalides.' });
+});
+
+router.post('/register', async (req, res) => {
+    const { email, password, pseudo } = req.body;
+    const redis = getRedisClient();
+
+    if (!email || !password || !pseudo) {
+        return res.status(400).json({ error: 'Tous les champs sont obligatoires.' });
+    }
+
+    const existingUser = await redis.get(`user:active:${email}`);
+    const existingModel = await redis.get(`model:active:${email}`);
+    if (existingUser || existingModel) {
+        return res.status(400).json({ error: 'Email déjà utilisé.' });
+    }
+
+    const newUser = {
+        id: crypto.randomUUID(),
+        email,
+        password, // In production, hash it
+        pseudo,
+        role: 'user',
+        registeredAt: new Date().toISOString()
+    };
+
+    await redis.set(`user:active:${email}`, JSON.stringify(newUser));
+
+    res.json({
+        success: true,
+        token: `user-token-${email}`,
+        user: { email, role: 'user', name: pseudo }
+    });
 });
 
 router.post('/model/register', async (req, res) => {
@@ -28,7 +75,7 @@ router.post('/model/register', async (req, res) => {
     const { country, phone, name, dob, email, password, photo3Fingers, photo5Fingers } = req.body;
 
     if (!email || !password || !photo3Fingers) {
-        return res.status(400).json({ error: 'Missing required fields' });
+        return res.status(400).json({ error: 'Champs obligatoires manquants.' });
     }
 
     const existing = await redis.get(`model:active:${email}`);
@@ -38,13 +85,13 @@ router.post('/model/register', async (req, res) => {
 
     const existingPending = await redis.get(`model:pending:${email}`);
     if (existingPending) {
-        return res.status(400).json({ error: 'Une demande est déjà en attente pour cet email.' });
+        return res.status(400).json({ error: 'Une demande est déjà en attente.' });
     }
 
     const payload = {
         id: crypto.randomUUID(),
         email,
-        password, // In production, must be hashed
+        password,
         name,
         dob,
         country,
