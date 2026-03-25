@@ -4,19 +4,34 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 require('dotenv').config();
 
+const allowedOrigins = [
+  'https://livelyapp.vercel.app',
+  'https://www.kinky.live',
+  'https://kinky.live',
+  'http://localhost:3000'
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.warn(`[CORS] Rejected origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST'],
+  credentials: true
+};
+
 const app = express();
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*'
-}));
+app.use(cors(corsOptions));
 app.use(express.json());
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
-  cors: {
-    origin: process.env.CORS_ORIGIN || '*',
-    methods: ['GET', 'POST']
-  }
+  cors: corsOptions
 });
 
 const { setupMatching } = require('./matching');
