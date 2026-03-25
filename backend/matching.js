@@ -84,10 +84,10 @@ async function handleJoinQueue(io, socket) {
 
         if (partnerSocket) {
             const roomId = `room_${socket.id}_${partnerId}`;
-            socket.join(roomId);
+            await socket.join(roomId);
             socket.currentRoom = roomId;
 
-            partnerSocket.join(roomId);
+            await partnerSocket.join(roomId);
             partnerSocket.currentRoom = roomId;
 
             const userId = isModel ? partnerId : socket.id;

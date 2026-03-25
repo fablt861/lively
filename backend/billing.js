@@ -76,7 +76,7 @@ function initBillingLoop() {
                 const rateModelUsdPerSec = settings.modelPayoutPerMinute / 60.0;
 
                 // Atomically deduct user credits
-                await redis.decrbyfloat(`user:${session.userId}:credits`, rateUserCreditsPerSec);
+                await redis.incrbyfloat(`user:${session.userId}:credits`, -rateUserCreditsPerSec);
 
                 // Anti-fraud: Model earns only after antiFraudDelaySec seconds
                 if (durationSec > settings.antiFraudDelaySec) {
