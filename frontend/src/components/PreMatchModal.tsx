@@ -44,7 +44,7 @@ export function PreMatchModal({ localStream, onJoin }: PreMatchModalProps) {
 
                 {/* Camera Preview Circular */}
                 <div className="relative mb-12">
-                    <div className="w-56 h-56 md:w-64 md:h-64 rounded-full overflow-hidden border-[3px] border-white/10 shadow-[0_0_80px_rgba(99,102,241,0.2)] bg-neutral-900 group">
+                    <div className="w-56 h-56 md:w-64 md:h-64 rounded-full overflow-hidden border-[3px] border-white/40 shadow-[0_0_80px_rgba(99,102,241,0.2)] bg-neutral-900 group">
                         <video
                             ref={videoRef}
                             autoPlay
@@ -79,12 +79,12 @@ export function PreMatchModal({ localStream, onJoin }: PreMatchModalProps) {
                 </button>
 
                 {/* Small Trust Badges */}
-                <div className="mt-16 flex items-center gap-8 text-white/10">
-                    <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest">
-                        <Shield size={14} /> Anonyme
+                <div className="mt-16 flex items-center gap-8 text-white/40 font-bold uppercase tracking-widest text-[10px]">
+                    <div className="flex items-center gap-2">
+                        <Shield size={14} className="text-white/20" /> Anonyme
                     </div>
-                    <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest">
-                        <Zap size={14} /> Instantané
+                    <div className="flex items-center gap-2">
+                        <Zap size={14} className="text-white/20" /> Instantané
                     </div>
                 </div>
             </div>

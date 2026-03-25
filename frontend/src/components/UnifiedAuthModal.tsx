@@ -60,7 +60,7 @@ export function UnifiedAuthModal({ onSuccess }: UnifiedAuthModalProps) {
                     <h2 className="text-3xl font-bold text-white mb-2">
                         {mode === 'login' ? 'Bon retour' : 'Rejoindre Live'}
                     </h2>
-                    <p className="text-neutral-400 text-sm">
+                    <p className="text-white/60 text-sm">
                         {mode === 'login' ? 'Connectez-vous pour continuer.' : 'Créez un compte pour 30s gratuites !'}
                     </p>
                 </div>
@@ -109,7 +109,7 @@ export function UnifiedAuthModal({ onSuccess }: UnifiedAuthModalProps) {
                                     <div onClick={() => setAcceptCGV(!acceptCGV)} className="text-white/20 group-hover:text-white/40 transition-colors">
                                         {acceptCGV ? <CheckSquare className="text-pink-500" size={20} /> : <Square size={20} />}
                                     </div>
-                                    <span className="text-[10px] text-neutral-500 font-medium">J'accepte les CGV & Plus de 18 ans</span>
+                                    <span className="text-[10px] text-white/50 font-medium">J'accepte les CGV & Plus de 18 ans</span>
                                 </label>
                             </div>
                         </>

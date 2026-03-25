@@ -341,7 +341,7 @@ export function VideoRoom({
                         <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                         <h3 className="text-xl font-bold tracking-tight text-white/90">Live Chat</h3>
                     </div>
-                    <p className="text-xs text-white/40 uppercase tracking-widest font-bold">Sécurisé & Anonyme</p>
+                    <p className="text-[10px] text-white/60 uppercase tracking-widest font-black">Sécurisé & Anonyme</p>
                 </div>
 
                 <div className="flex-1 overflow-y-auto px-4 pr-24 md:p-4 pb-2 space-y-4 pointer-events-auto [mask-image:linear-gradient(to_bottom,transparent,black_20%)] md:[mask-image:none]">
