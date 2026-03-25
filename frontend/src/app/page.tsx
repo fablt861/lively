@@ -74,65 +74,63 @@ export default function Home() {
                             <span className="text-white font-bold text-lg tracking-wide relative z-10">Rencontrer des modèles en LIVE</span>
                         </button>
 
-                        <div className="flex flex-col items-center sm:items-start opacity-70">
-                            <p className="text-xs text-white font-bold tracking-wide flex items-center gap-1.5 uppercase">
-                                <ShieldCheck size={16} className="text-green-400" />
-                                30 secondes offertes
-                            </p>
-                            <p className="text-[10px] text-white/50 tracking-wider">Aucune carte requise</p>
-                        </div>
                     </div>
+                    <p className="mt-4 text-[11px] text-white/30 uppercase tracking-[0.4em] font-medium italic">
+                        #1 sur la rencontre vidéo
+                    </p>
                 </div>
-
-                {/* Right Visual Floating Elements */}
-                <div className="flex-1 w-full relative hidden lg:flex items-center justify-center h-[550px] perspective-1000">
-                    {/* Center App Mockup */}
-                    <div className="relative w-[320px] h-[550px] rounded-[2.5rem] border border-white/20 bg-neutral-900/50 backdrop-blur-xl shadow-2xl flex flex-col items-center justify-between overflow-hidden group transform rotate-y-[-10deg] rotate-x-[5deg] hover:rotate-y-0 hover:rotate-x-0 transition-transform duration-700 ease-out">
-                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&h=800&fit=crop&crop=faces" alt="Model" className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-80" />
-
-                        {/* Mockup UI Top */}
-                        <div className="relative z-10 w-full flex justify-between items-center p-5">
-                            <div className="px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/10 flex items-center gap-2 shadow-lg">
-                                <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                                <span className="text-white text-[10px] font-bold tracking-widest mt-px">LIVE</span>
-                            </div>
-                        </div>
-
-                        {/* Mockup UI Bottom */}
-                        <div className="relative z-10 w-full pb-8 text-center flex flex-col items-center">
-                            <h3 className="text-3xl font-bold text-white drop-shadow-2xl mb-1">Match #4892</h3>
-                            <p className="text-sm text-white/90 drop-shadow-md font-medium">Recherche d'un partenaire...</p>
-                            <div className="mt-6 w-16 h-16 rounded-full bg-indigo-500/20 backdrop-blur-md border border-indigo-400/50 flex items-center justify-center animate-bounce shadow-[0_0_30px_rgba(99,102,241,0.5)]">
-                                <Camera className="text-white" size={24} />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Floating element 1 */}
-                    <div className="absolute top-12 right-6 w-24 h-24 rounded-[1.5rem] bg-white/5 border border-white/10 backdrop-blur-xl p-2 shadow-2xl transform hover:-translate-y-4 hover:rotate-6 transition-all duration-500 cursor-default">
-                        <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100&h=100&fit=crop&crop=faces" className="w-full h-full rounded-xl object-cover" alt="Floating avatar" />
-                    </div>
-
-                    {/* Floating element 2 */}
-                    <div className="absolute bottom-24 -left-4 w-32 h-32 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-xl p-2 shadow-2xl transform hover:-translate-y-4 hover:-rotate-6 transition-all duration-500 cursor-default z-20">
-                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop&crop=faces" className="w-full h-full rounded-[1.5rem] object-cover" alt="Floating avatar" />
-                    </div>
-
-                    {/* Floating Badge */}
-                    <div className="absolute top-1/2 -right-12 px-5 py-3 rounded-2xl bg-black/80 border border-white/10 backdrop-blur-xl shadow-2xl flex items-center gap-3 transform -translate-y-1/2 hover:scale-110 transition-all duration-300 z-20">
-                        <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center">
-                            <Flame className="text-orange-500" size={20} />
-                        </div>
-                        <div>
-                            <p className="text-white text-sm font-extrabold">+15k appels</p>
-                            <p className="text-white/50 text-[10px] font-bold uppercase tracking-wider">Aujourd'hui</p>
-                        </div>
-                    </div>
-                </div>
-            </main>
-
-            {showGenderModal && <GenderModal onClose={() => setShowGenderModal(false)} />}
         </div>
+
+                {/* Right Visual Floating Elements */ }
+    <div className="flex-1 w-full relative hidden lg:flex items-center justify-center h-[550px] perspective-1000">
+        {/* Center App Mockup */}
+        <div className="relative w-[320px] h-[550px] rounded-[2.5rem] border border-white/20 bg-neutral-900/50 backdrop-blur-xl shadow-2xl flex flex-col items-center justify-between overflow-hidden group transform rotate-y-[-10deg] rotate-x-[5deg] hover:rotate-y-0 hover:rotate-x-0 transition-transform duration-700 ease-out">
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&h=800&fit=crop&crop=faces" alt="Model" className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-80" />
+
+            {/* Mockup UI Top */}
+            <div className="relative z-10 w-full flex justify-between items-center p-5">
+                <div className="px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/10 flex items-center gap-2 shadow-lg">
+                    <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                    <span className="text-white text-[10px] font-bold tracking-widest mt-px">LIVE</span>
+                </div>
+            </div>
+
+            {/* Mockup UI Bottom */}
+            <div className="relative z-10 w-full pb-8 text-center flex flex-col items-center">
+                <h3 className="text-3xl font-bold text-white drop-shadow-2xl mb-1">Match #4892</h3>
+                <p className="text-sm text-white/90 drop-shadow-md font-medium">Recherche d'un partenaire...</p>
+                <div className="mt-6 w-16 h-16 rounded-full bg-indigo-500/20 backdrop-blur-md border border-indigo-400/50 flex items-center justify-center animate-bounce shadow-[0_0_30px_rgba(99,102,241,0.5)]">
+                    <Camera className="text-white" size={24} />
+                </div>
+            </div>
+        </div>
+
+        {/* Floating element 1 */}
+        <div className="absolute top-12 right-6 w-24 h-24 rounded-[1.5rem] bg-white/5 border border-white/10 backdrop-blur-xl p-2 shadow-2xl transform hover:-translate-y-4 hover:rotate-6 transition-all duration-500 cursor-default">
+            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100&h=100&fit=crop&crop=faces" className="w-full h-full rounded-xl object-cover" alt="Floating avatar" />
+        </div>
+
+        {/* Floating element 2 */}
+        <div className="absolute bottom-24 -left-4 w-32 h-32 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-xl p-2 shadow-2xl transform hover:-translate-y-4 hover:-rotate-6 transition-all duration-500 cursor-default z-20">
+            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop&crop=faces" className="w-full h-full rounded-[1.5rem] object-cover" alt="Floating avatar" />
+        </div>
+
+        {/* Floating Badge */}
+        <div className="absolute top-1/2 -right-12 px-5 py-3 rounded-2xl bg-black/80 border border-white/10 backdrop-blur-xl shadow-2xl flex items-center gap-3 transform -translate-y-1/2 hover:scale-110 transition-all duration-300 z-20">
+            <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center">
+                <Flame className="text-orange-500" size={20} />
+            </div>
+            <div>
+                <p className="text-white text-sm font-extrabold">+15k appels</p>
+                <p className="text-white/50 text-[10px] font-bold uppercase tracking-wider">Aujourd'hui</p>
+            </div>
+        </div>
+    </div>
+            </main >
+
+        { showGenderModal && <GenderModal onClose={() => setShowGenderModal(false)} />
+}
+        </div >
     );
 }
