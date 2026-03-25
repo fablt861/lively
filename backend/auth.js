@@ -62,6 +62,8 @@ router.post('/register', async (req, res) => {
     };
 
     await redis.set(`user:active:${email}`, JSON.stringify(newUser));
+    // Grant 5 free credits (30 seconds) for new accounts
+    await redis.set(`user:${email}:credits`, "5");
 
     res.json({
         success: true,

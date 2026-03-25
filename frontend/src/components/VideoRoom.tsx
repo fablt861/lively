@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff } from "lucide-react";
 import Link from "next/link";
 import { PaywallModal } from "./PaywallModal";
-import { SignupModal } from "./SignupModal";
+import { UnifiedAuthModal } from "./UnifiedAuthModal";
 
 function EarningsCounter({ hasVideo }: { hasVideo: boolean }) {
     const counterRef = useRef<HTMLSpanElement>(null);
@@ -83,7 +83,7 @@ export function VideoRoom({
     const [accountStatus, setAccountStatus] = useState<'guest' | 'registered' | 'premium'>('guest');
     const [userCredits, setUserCredits] = useState<number | null>(null);
     const [showPaywall, setShowPaywall] = useState(false);
-    const [showSignup, setShowSignup] = useState(false);
+    const [showAuthModal, setShowAuthModal] = useState(false);
 
     // Load state from localStorage on mount
     useEffect(() => {
@@ -93,7 +93,8 @@ export function VideoRoom({
 
         let storedCredits = localStorage.getItem('kinky_credits');
         if (storedCredits === null) {
-            storedCredits = storedStatus === 'premium' ? "50" : "5"; // 5 credits = 30s
+            // New guest starts with 5 credits (30s)
+            storedCredits = "5";
             localStorage.setItem('kinky_credits', storedCredits);
         }
         setUserCredits(Number(storedCredits));
@@ -105,7 +106,7 @@ export function VideoRoom({
 
         if (userCredits <= 0) {
             if (handleOutOfCredits) handleOutOfCredits();
-            if (accountStatus === 'guest') setShowSignup(true);
+            if (accountStatus === 'guest') setShowAuthModal(true);
             else setShowPaywall(true);
             return;
         }
@@ -117,12 +118,12 @@ export function VideoRoom({
                 localStorage.setItem('kinky_credits', next.toString());
                 if (next === 0) {
                     if (handleOutOfCredits) handleOutOfCredits();
-                    if (accountStatus === 'guest') setShowSignup(true);
+                    if (accountStatus === 'guest') setShowAuthModal(true);
                     else setShowPaywall(true);
                 }
                 return next;
             });
-        }, 6000); // Decrement 1 credit every 6 seconds
+        }, 6000); // Decrement 1 credit every 6 seconds (10 credits/min)
 
         return () => clearInterval(interval);
     }, [role, isConnected, userCredits, accountStatus, handleOutOfCredits]);
@@ -163,7 +164,6 @@ export function VideoRoom({
 
     return (
         <div className="flex flex-col md:flex-row h-[100dvh] w-full bg-neutral-950 text-white font-sans overflow-hidden">
-            {/* Main Video Area */}
             <div className="flex-1 relative flex items-center justify-center overflow-hidden">
 
                 {/* LOGO */}
@@ -171,14 +171,14 @@ export function VideoRoom({
                     <span className="text-3xl font-black tracking-tighter text-white drop-shadow-md">KINKY<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">.</span></span>
                 </div>
 
-                {showSignup && (
-                    <SignupModal onSignup={(email) => {
+                {showAuthModal && (
+                    <UnifiedAuthModal onSuccess={(email, userRole) => {
                         localStorage.setItem('kinky_account_status', 'registered');
-                        localStorage.setItem('kinky_credits', '5');
                         localStorage.setItem('kinky_user_email', email);
+                        localStorage.setItem('kinky_credits', '5'); // Grant 30s more
                         setAccountStatus('registered');
                         setUserCredits(5);
-                        setShowSignup(false);
+                        setShowAuthModal(false);
                         nextPartner();
                     }} />
                 )}
@@ -199,7 +199,7 @@ export function VideoRoom({
                 )}
 
                 {/* User Credit Counter (Moved to top-right) */}
-                {role === "user" && isConnected && !showPaywall && !showSignup && userCredits !== null && (
+                {role === "user" && isConnected && !showPaywall && !showAuthModal && userCredits !== null && (
                     <div className={`absolute top-6 right-6 z-30 flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 shadow-lg transition-all duration-700 overflow-hidden ${userCredits <= 2 ? 'max-w-[400px] sm:max-w-2xl border-red-500/50 shadow-red-500/20' : 'max-w-[150px] sm:max-w-[200px]'}`}>
                         <span className="text-white/80 text-xs font-semibold tracking-wider uppercase whitespace-nowrap hidden sm:block">Balance</span>
                         <span className={`font-mono text-base sm:text-lg font-bold whitespace-nowrap flex items-center gap-1.5 ${userCredits <= 2 ? 'text-red-400 animate-pulse' : 'text-white'}`}>
