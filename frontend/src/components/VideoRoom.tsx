@@ -329,8 +329,8 @@ export function VideoRoom({
 
             {/* Chat Area */}
             <div className="absolute bottom-0 left-0 w-full md:relative md:w-96 md:h-full z-40 flex flex-col justify-end">
-                <div className="flex flex-col bg-transparent md:bg-neutral-900/50 md:backdrop-blur-3xl md:border-l md:border-white/5 h-full max-h-[30dvh] md:max-h-full">
-                    <div className="flex-1 overflow-y-auto px-4 md:p-6 space-y-3 [mask-image:linear-gradient(to_bottom,transparent,black_20%)] md:[mask-image:none]">
+                <div className="flex flex-col bg-transparent md:bg-neutral-900/50 md:backdrop-blur-3xl md:border-l md:border-white/5 h-full max-h-[40dvh] md:max-h-full">
+                    <div className="flex-1 overflow-y-auto px-4 pr-24 md:pr-6 md:p-6 space-y-3 [mask-image:linear-gradient(to_bottom,transparent,black_20%)] md:[mask-image:none]">
                         {messages.length === 0 && (
                             <div className="flex items-center justify-center h-full text-white/30 text-sm hidden md:flex">
                                 It's quiet here. Send a message!
@@ -339,8 +339,8 @@ export function VideoRoom({
                         {messages.map((msg, i) => {
                             const isMe = msg.senderId === socketId;
                             return (
-                                <div key={i} className="flex flex-col items-start translate-y-0 opacity-100 transition-all duration-300">
-                                    <div className={`max-w-[85%] px-4 py-2 rounded-2xl text-[13px] ${isMe ? "bg-indigo-600/80 text-white border border-white/10" : "bg-neutral-800/80 text-white border border-white/10"}`}>
+                                <div key={i} className="flex flex-row justify-start w-full">
+                                    <div className={`max-w-[80%] px-4 py-2 rounded-2xl text-[13px] text-left break-words ${isMe ? "bg-indigo-600/80 text-white border border-white/10" : "bg-neutral-800/80 text-white border border-white/10"}`}>
                                         {msg.text}
                                     </div>
                                 </div>
