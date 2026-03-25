@@ -339,7 +339,7 @@ export function VideoRoom({
                         {messages.map((msg, i) => {
                             const isMe = msg.senderId === socketId;
                             return (
-                                <div key={i} className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>
+                                <div key={i} className="flex flex-col items-start translate-y-0 opacity-100 transition-all duration-300">
                                     <div className={`max-w-[85%] px-4 py-2 rounded-2xl text-[13px] ${isMe ? "bg-indigo-600/80 text-white border border-white/10" : "bg-neutral-800/80 text-white border border-white/10"}`}>
                                         {msg.text}
                                     </div>
@@ -356,7 +356,7 @@ export function VideoRoom({
                                 value={chatInput}
                                 onChange={(e) => setChatInput(e.target.value)}
                                 placeholder="Écrire un message..."
-                                className="w-full bg-white/10 border border-white/10 rounded-2xl px-5 py-4 text-sm text-white focus:outline-none focus:border-indigo-500 transition-all pr-12 backdrop-blur-md"
+                                className="w-full bg-white/10 border border-white/10 rounded-2xl px-5 py-4 text-base text-white focus:outline-none focus:border-indigo-500 transition-all pr-12 backdrop-blur-md"
                             />
                             <button
                                 type="submit"
