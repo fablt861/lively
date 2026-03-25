@@ -86,23 +86,23 @@ export function UnifiedAuthModal({ onSuccess }: UnifiedAuthModalProps) {
                     {mode === 'signup' && (
                         <div className="relative group">
                             <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={18} />
-                            <input type="text" required placeholder="Pseudo" className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-sm text-white focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" value={pseudo} onChange={e => setPseudo(e.target.value)} />
+                            <input type="text" required placeholder="Pseudo" className="w-full bg-neutral-800 border border-white/30 rounded-2xl py-4 pl-12 text-sm text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all placeholder:text-white/60" value={pseudo} onChange={e => setPseudo(e.target.value)} />
                         </div>
                     )}
                     <div className="relative group">
-                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={18} />
-                        <input type="email" required placeholder="Email" className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-sm text-white focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" value={email} onChange={e => setEmail(e.target.value)} />
+                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white/80 transition-colors" size={18} />
+                        <input type="email" required placeholder="Email" className="w-full bg-neutral-800 border border-white/30 rounded-2xl py-4 pl-12 text-sm text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all placeholder:text-white/60" value={email} onChange={e => setEmail(e.target.value)} />
                     </div>
                     <div className="relative group">
-                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={18} />
-                        <input type="password" required placeholder="Mot de passe" className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-sm text-white focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" value={password} onChange={e => setPassword(e.target.value)} />
+                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white/80 transition-colors" size={18} />
+                        <input type="password" required placeholder="Mot de passe" className="w-full bg-neutral-800 border border-white/30 rounded-2xl py-4 pl-12 text-sm text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all placeholder:text-white/60" value={password} onChange={e => setPassword(e.target.value)} />
                     </div>
 
                     {mode === 'signup' && (
                         <>
                             <div className="relative group">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={18} />
-                                <input type="password" required placeholder="Confirmer mot de passe" className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-sm text-white focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white/80 transition-colors" size={18} />
+                                <input type="password" required placeholder="Confirmer mot de passe" className="w-full bg-neutral-800 border border-white/30 rounded-2xl py-4 pl-12 text-sm text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all placeholder:text-white/60" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
                             </div>
                             <div className="pt-2">
                                 <label className="flex items-center gap-3 cursor-pointer group">
