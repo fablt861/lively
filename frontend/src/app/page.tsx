@@ -9,6 +9,22 @@ import { OnlineGauge } from "../components/OnlineGauge";
 export default function Home() {
     // Build version: 1.0.2 - Matchmaking fixes
     const [showGenderModal, setShowGenderModal] = useState(false);
+    const [userPseudo, setUserPseudo] = useState<string | null>(null);
+
+    useEffect(() => {
+        const storedPseudo = localStorage.getItem('kinky_user_pseudo');
+        if (storedPseudo) {
+            setUserPseudo(storedPseudo);
+        }
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem('kinky_token');
+        localStorage.removeItem('kinky_user_pseudo');
+        localStorage.removeItem('kinky_account_status');
+        localStorage.removeItem('kinky_role');
+        setUserPseudo(null);
+    };
 
     return (
         <div className="min-h-[100dvh] bg-[#050505] text-white flex flex-col relative overflow-x-hidden font-sans">
@@ -27,9 +43,23 @@ export default function Home() {
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
-                    <Link href="/login" className="text-xs font-bold text-white/90 bg-white/5 hover:bg-white/10 transition-all border border-white/10 rounded-full px-6 py-2.5 hover:border-indigo-500/50 hover:shadow-[0_0_20px_rgba(99,102,241,0.2)] tracking-widest uppercase">
-                        Connexion
-                    </Link>
+                    {userPseudo ? (
+                        <div className="flex items-center gap-4">
+                            <span className="text-xs font-bold text-white/60 tracking-widest uppercase">
+                                Salut, <span className="text-white">{userPseudo}</span>
+                            </span>
+                            <button
+                                onClick={handleLogout}
+                                className="text-[10px] font-black text-red-500 hover:text-red-400 transition-all uppercase tracking-[0.2em]"
+                            >
+                                Déconnexion
+                            </button>
+                        </div>
+                    ) : (
+                        <Link href="/login" className="text-xs font-bold text-white/90 bg-white/5 hover:bg-white/10 transition-all border border-white/10 rounded-full px-6 py-2.5 hover:border-indigo-500/50 hover:shadow-[0_0_20px_rgba(99,102,241,0.2)] tracking-widest uppercase">
+                            Connexion
+                        </Link>
+                    )}
                 </div>
             </nav>
 

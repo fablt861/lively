@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ArrowRight, User, Lock, Mail, ShieldCheck, X, CheckSquare, Square } from "lucide-react";
 
 interface UnifiedAuthModalProps {
-    onSuccess: (email: string, role: string) => void;
+    onSuccess: (email: string, role: string, pseudo: string) => void;
 }
 
 export function UnifiedAuthModal({ onSuccess }: UnifiedAuthModalProps) {
@@ -40,7 +40,7 @@ export function UnifiedAuthModal({ onSuccess }: UnifiedAuthModalProps) {
             const data = await res.json();
 
             if (res.ok && data.success) {
-                onSuccess(data.user.email, data.user.role);
+                onSuccess(data.user.email, data.user.role, data.user.name);
             } else {
                 setError(data.error || "Identifiants invalides.");
             }
