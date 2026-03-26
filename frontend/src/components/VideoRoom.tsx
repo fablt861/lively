@@ -376,6 +376,14 @@ export function VideoRoom({
 function ChatMessage({ message, isMe }: { message: any; isMe: boolean }) {
     const hasTranslation = !isMe && message.originalText && message.text !== message.originalText;
 
+    // Browser-native decoder as a safeguard
+    const decodeHTML = (html: string) => {
+        if (!html || typeof window === 'undefined') return html;
+        const txt = document.createElement("textarea");
+        txt.innerHTML = html;
+        return txt.value;
+    };
+
     return (
         <div className="flex flex-row justify-start w-full animate-chat-bubble">
             <div className="flex flex-col gap-1.5 max-w-[85%]">
@@ -385,12 +393,12 @@ function ChatMessage({ message, isMe }: { message: any; isMe: boolean }) {
                         : "bg-neutral-800/80 text-white border border-white/10 backdrop-blur-sm"
                         }`}
                 >
-                    {message.text}
+                    {decodeHTML(message.text)}
                 </div>
                 {hasTranslation && (
                     <div className="px-2 space-y-0.5">
                         <p className="text-[11px] text-white/40 italic leading-tight">
-                            {message.originalText}
+                            {decodeHTML(message.originalText)}
                         </p>
                     </div>
                 )}

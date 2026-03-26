@@ -54,15 +54,23 @@ function getMockTranslation(text, targetLang) {
 }
 
 function decodeHTMLEntities(text) {
+    if (!text) return text;
     const entities = {
         '&amp;': '&',
         '&lt;': '<',
         '&gt;': '>',
         '&quot;': '"',
-        '&#39;': "'",
-        '&apos;': "'"
+        '&apos;': "'",
+        '&#39;': "'"
     };
-    return text.replace(/&amp;|&lt;|&gt;|&quot;|&#39;|&apos;/g, m => entities[m]);
+    // 1. Decode named entities
+    let decoded = text.replace(/&amp;|&lt;|&gt;|&quot;|&apos;|&#39;/g, m => entities[m]);
+    // 2. Decode numeric entities (like &#124;)
+    decoded = decoded.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
+    // 3. Decode hex entities (like &#x27;)
+    decoded = decoded.replace(/&#x([0-9a-fA-F]+);/g, (match, hex) => String.fromCharCode(parseInt(hex, 16)));
+
+    return decoded;
 }
 
 module.exports = { translateText };
