@@ -340,11 +340,11 @@ export function VideoRoom({
                         {messages.map((msg, i) => {
                             const isMe = msg.senderId === socketId;
                             return (
-                                <div key={i} className="flex flex-row justify-start w-full">
-                                    <div className={`max-w-[80%] px-4 py-2 rounded-2xl text-[13px] text-left break-words ${isMe ? "bg-indigo-600/80 text-white border border-white/10" : "bg-neutral-800/80 text-white border border-white/10"}`}>
-                                        {msg.text}
-                                    </div>
-                                </div>
+                                <ChatMessage
+                                    key={i}
+                                    message={msg}
+                                    isMe={isMe}
+                                />
                             );
                         })}
                         <div ref={messagesEndRef} />
@@ -368,6 +368,32 @@ export function VideoRoom({
                         </div>
                     </form>
                 </div>
+            </div>
+        </div>
+    );
+}
+
+function ChatMessage({ message, isMe }: { message: any; isMe: boolean }) {
+    const [showOriginal, setShowOriginal] = useState(false);
+    const hasTranslation = !isMe && message.originalText && message.text !== message.originalText;
+
+    return (
+        <div className={`flex flex-row ${isMe ? "justify-end" : "justify-start"} w-full animate-chat-bubble`}>
+            <div className="flex flex-col gap-1 max-w-[85%]">
+                <div
+                    onClick={() => hasTranslation && setShowOriginal(!showOriginal)}
+                    className={`px-4 py-2 rounded-2xl text-[13px] text-left break-words cursor-pointer transition-all active:scale-[0.98] ${isMe
+                            ? "bg-indigo-600/80 text-white border border-white/10 shadow-lg"
+                            : "bg-neutral-800/80 text-white border border-white/10 backdrop-blur-sm"
+                        }`}
+                >
+                    {showOriginal ? message.originalText : message.text}
+                </div>
+                {hasTranslation && (
+                    <span className="text-[9px] text-white/30 font-bold uppercase tracking-wider pl-2">
+                        {showOriginal ? "Voir traduction" : "Voir original"}
+                    </span>
+                )}
             </div>
         </div>
     );
