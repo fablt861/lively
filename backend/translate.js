@@ -32,7 +32,7 @@ async function translateText(text, targetLang) {
             }
         );
 
-        const translatedText = response.data.data.translations[0].translatedText;
+        const translatedText = decodeHTMLEntities(response.data.data.translations[0].translatedText);
 
         // Cache management: basic limit of 1000 entries
         if (translationCache.size > 1000) translationCache.clear();
@@ -51,6 +51,18 @@ function getMockTranslation(text, targetLang) {
     if (targetLang.startsWith('es')) return `[ES] ${text}`;
     if (targetLang.startsWith('pt')) return `[PT] ${text}`;
     return `[${targetLang.toUpperCase()}] ${text}`;
+}
+
+function decodeHTMLEntities(text) {
+    const entities = {
+        '&amp;': '&',
+        '&lt;': '<',
+        '&gt;': '>',
+        '&quot;': '"',
+        '&#39;': "'",
+        '&apos;': "'"
+    };
+    return text.replace(/&amp;|&lt;|&gt;|&quot;|&#39;|&apos;/g, m => entities[m]);
 }
 
 module.exports = { translateText };

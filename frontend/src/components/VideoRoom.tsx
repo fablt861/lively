@@ -374,25 +374,25 @@ export function VideoRoom({
 }
 
 function ChatMessage({ message, isMe }: { message: any; isMe: boolean }) {
-    const [showOriginal, setShowOriginal] = useState(false);
     const hasTranslation = !isMe && message.originalText && message.text !== message.originalText;
 
     return (
         <div className="flex flex-row justify-start w-full animate-chat-bubble">
-            <div className="flex flex-col gap-1 max-w-[85%]">
+            <div className="flex flex-col gap-1.5 max-w-[85%]">
                 <div
-                    onClick={() => hasTranslation && setShowOriginal(!showOriginal)}
-                    className={`px-4 py-2 rounded-2xl text-[13px] text-left break-words cursor-pointer transition-all active:scale-[0.98] ${isMe
+                    className={`px-4 py-2 rounded-2xl text-[13px] text-left break-words ${isMe
                         ? "bg-indigo-600/80 text-white border border-white/10 shadow-lg"
                         : "bg-neutral-800/80 text-white border border-white/10 backdrop-blur-sm"
                         }`}
                 >
-                    {showOriginal ? message.originalText : message.text}
+                    {message.text}
                 </div>
                 {hasTranslation && (
-                    <span className="text-[9px] text-white/30 font-bold uppercase tracking-wider pl-2">
-                        {showOriginal ? "Voir traduction" : "Voir original"}
-                    </span>
+                    <div className="px-2 space-y-0.5">
+                        <p className="text-[11px] text-white/40 italic leading-tight">
+                            {message.originalText}
+                        </p>
+                    </div>
                 )}
             </div>
         </div>
