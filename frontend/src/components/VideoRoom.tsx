@@ -34,7 +34,7 @@ function EarningsCounter({ hasVideo }: { hasVideo: boolean }) {
     }, []);
 
     return (
-        <div className="absolute top-6 right-6 z-30 flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 shadow-2xl transition-all">
+        <div className="absolute top-[160px] right-4 md:top-6 md:right-6 z-30 flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 shadow-2xl transition-all">
             <span className="text-white/80 text-xs font-semibold tracking-wider uppercase hidden sm:block">Current Call</span>
             <span ref={counterRef} className="text-green-400 font-mono text-base sm:text-lg font-bold">
                 $0.0000
