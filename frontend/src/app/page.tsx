@@ -98,14 +98,13 @@ export default function Home() {
                                         setShowGenderModal(true);
                                     }
                                 }}
-                                className="group relative w-full sm:w-auto px-8 py-5 rounded-full bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 hover:opacity-90 shadow-[0_0_40px_rgba(99,102,241,0.4)] transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center gap-3 overflow-hidden border border-white/20"
+                                className="group relative w-full sm:w-auto px-10 py-5 rounded-full bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 hover:opacity-90 shadow-[0_0_50px_rgba(99,102,241,0.5)] transition-all duration-300 hover:scale-[1.03] active:scale-95 flex items-center justify-center gap-3 border border-white/20"
                             >
-                                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
                                 <Video size={24} className="text-white fill-white relative z-10" />
-                                <span className="text-white font-bold text-lg tracking-wide relative z-10">Discuter en live cam</span>
+                                <span className="text-white font-black text-lg tracking-wide relative z-10">Discuter en live cam</span>
                             </button>
                         </div>
-                        <p className="text-[11px] text-white/30 uppercase tracking-[0.4em] font-medium italic">
+                        <p className="text-[13px] text-white/80 uppercase tracking-[0.4em] font-bold italic">
                             #1 sur la rencontre vidéo
                         </p>
                     </div>
@@ -128,10 +127,10 @@ export default function Home() {
 
                         {/* Mockup UI Bottom */}
                         <div className="relative z-10 w-full pb-8 text-center flex flex-col items-center">
-                            <h3 className="text-3xl font-bold text-white drop-shadow-2xl mb-1">Match #4892</h3>
-                            <p className="text-sm text-white/90 drop-shadow-md font-medium">Recherche d'un partenaire...</p>
+                            <h3 className="text-3xl font-black text-white drop-shadow-2xl mb-1 uppercase tracking-tighter">PRIVATE SESSION</h3>
+                            <p className="text-sm text-white/90 drop-shadow-md font-bold">Connexion live...</p>
                             <div className="mt-6 w-16 h-16 rounded-full bg-indigo-500/20 backdrop-blur-md border border-indigo-400/50 flex items-center justify-center animate-bounce shadow-[0_0_30px_rgba(99,102,241,0.5)]">
-                                <Camera className="text-white" size={24} />
+                                <Video className="text-white" size={24} />
                             </div>
                         </div>
                     </div>
