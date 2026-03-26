@@ -13,6 +13,8 @@ router.post('/login', async (req, res) => {
     if (modelData) {
         const model = JSON.parse(modelData);
         if (model.password === password) {
+            // Update last login
+            await redis.set(`user:${email}:last_login`, new Date().toISOString());
             return res.json({
                 success: true,
                 token: `model-token-${email}`,
@@ -26,6 +28,8 @@ router.post('/login', async (req, res) => {
     if (userData) {
         const user = JSON.parse(userData);
         if (user.password === password) {
+            // Update last login
+            await redis.set(`user:${email}:last_login`, new Date().toISOString());
             return res.json({
                 success: true,
                 token: `user-token-${email}`,

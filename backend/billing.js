@@ -41,6 +41,10 @@ async function stopBilling(roomId) {
         await logRevenue(userSpentUsd);
         await logModelPayout(parseFloat(modelEarned));
 
+        // Increment total spent/gains counters
+        await redis.incrbyfloat(`user:${session.userId}:total_spent`, userSpentUsd);
+        await redis.incrbyfloat(`model:${session.modelId}:total_gains`, parseFloat(modelEarned));
+
         // Save to history
         const historyEntry = {
             roomId,
@@ -91,6 +95,8 @@ function initBillingLoop() {
                 // Anti-fraud: Model earns only after antiFraudDelaySec seconds
                 if (durationSec > settings.antiFraudDelaySec) {
                     await redis.incrbyfloat(`model:${session.modelId}:balance`, rateModelUsdPerSec);
+                    // Also track real-time total gains
+                    await redis.incrbyfloat(`model:${session.modelId}:total_gains`, rateModelUsdPerSec);
                 }
             }
         } catch (err) {

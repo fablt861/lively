@@ -13,6 +13,9 @@ export default function AdminPage() {
     const [stats, setStats] = useState<any>(null);
     const [settings, setSettings] = useState<any>(null);
     const [pendingModels, setPendingModels] = useState<any[]>([]);
+    const [users, setUsers] = useState<any[]>([]);
+    const [models, setModels] = useState<any[]>([]);
+    const [userFilter, setUserFilter] = useState<'all' | 'buyers'>('all');
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -24,6 +27,7 @@ export default function AdminPage() {
             });
             if (res.ok) {
                 const data = await res.json();
+                localStorage.setItem("kinky_admin_token", data.token);
                 setToken(data.token);
                 setIsLogged(true);
             } else {
@@ -34,21 +38,49 @@ export default function AdminPage() {
         }
     };
 
+    const fetchStats = () => {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/stats`, { headers: { Authorization: `Bearer ${token}` } })
+            .then(res => res.json())
+            .then(setStats);
+    };
+
+    const fetchUsers = () => {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/users`, { headers: { Authorization: `Bearer ${token}` } })
+            .then(res => res.json())
+            .then(setUsers);
+    };
+
+    const fetchModels = () => {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/models`, { headers: { Authorization: `Bearer ${token}` } })
+            .then(res => res.json())
+            .then(setModels);
+    };
+
+    useEffect(() => {
+        const savedToken = localStorage.getItem("kinky_admin_token");
+        if (savedToken) {
+            setToken(savedToken);
+            setIsLogged(true);
+        }
+    }, []);
+
     useEffect(() => {
         if (isLogged && token) {
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/stats`, { headers: { Authorization: `Bearer ${token}` } })
-                .then(res => res.json())
-                .then(setStats);
+            if (activeTab === 'stats') fetchStats();
+            if (activeTab === 'users') fetchUsers();
+            if (activeTab === 'models') fetchModels();
 
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/settings`, { headers: { Authorization: `Bearer ${token}` } })
-                .then(res => res.json())
-                .then(setSettings);
+            if (activeTab === 'settings') {
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/settings`, { headers: { Authorization: `Bearer ${token}` } })
+                    .then(res => res.json())
+                    .then(setSettings);
+            }
 
             fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/models/pending`, { headers: { Authorization: `Bearer ${token}` } })
                 .then(res => res.json())
                 .then(setPendingModels);
         }
-    }, [isLogged, token, activeTab]); // re-fetch when tab changes
+    }, [isLogged, token, activeTab]);
 
     const saveSettings = async () => {
         try {
@@ -83,17 +115,37 @@ export default function AdminPage() {
         <div className="min-h-screen bg-neutral-950 text-white font-sans flex">
             {/* Sidebar */}
             <aside className="w-64 bg-neutral-900 border-r border-white/5 flex flex-col z-10">
-                <div className="p-6 text-2xl font-light tracking-widest text-indigo-400 border-b border-white/5">LIVELY ADMIN</div>
+                <div className="p-6 text-2xl font-black tracking-tighter text-white border-b border-white/5">
+                    KI<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">+</span>NKY <span className="text-xs font-light tracking-widest text-neutral-500 ml-1">ADMIN</span>
+                </div>
                 <nav className="flex-1 p-4 space-y-2">
                     <button onClick={() => setActiveTab('stats')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'stats' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <Activity size={20} /> Dashboard
                     </button>
-                    <button onClick={() => setActiveTab('settings')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'settings' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
-                        <Settings size={20} /> Settings
+                    <button onClick={() => setActiveTab('users')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'users' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                        <Users size={20} /> Users
                     </button>
-                    <button onClick={() => setActiveTab('validations')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'validations' ? 'bg-pink-500/20 text-pink-300' : 'hover:bg-white/5 text-neutral-400'}`}>
-                        <Clock size={20} /> Validations {pendingModels.length > 0 && <span className="ml-auto bg-pink-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{pendingModels.length}</span>}
+                    <button onClick={() => setActiveTab('models')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'models' ? 'bg-pink-500/20 text-pink-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                        <Video size={20} /> Models
                     </button>
+                    <button onClick={() => setActiveTab('validations')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'validations' ? 'bg-amber-500/20 text-amber-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                        <Clock size={20} /> Pending {pendingModels.length > 0 && <span className="ml-auto bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{pendingModels.length}</span>}
+                    </button>
+                    <div className="pt-4 mt-4 border-t border-white/5 space-y-2">
+                        <button onClick={() => setActiveTab('settings')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'settings' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                            <Settings size={20} /> Settings
+                        </button>
+                        <button
+                            onClick={() => {
+                                localStorage.removeItem("kinky_admin_token");
+                                setToken("");
+                                setIsLogged(false);
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-red-500 hover:bg-red-500/10"
+                        >
+                            <Lock size={20} /> Logout
+                        </button>
+                    </div>
                 </nav>
             </aside>
 
@@ -276,6 +328,105 @@ export default function AdminPage() {
                                 ))}
                             </div>
                         )}
+                    </div>
+                )}
+
+                {activeTab === 'users' && (
+                    <div className="space-y-8 animate-in fade-in duration-500">
+                        <div className="flex items-center justify-between">
+                            <h2 className="text-3xl font-light">User Management</h2>
+                            <div className="flex bg-neutral-900 border border-white/5 rounded-xl p-1">
+                                <button onClick={() => setUserFilter('all')} className={`px-4 py-2 rounded-lg text-sm transition-all ${userFilter === 'all' ? 'bg-indigo-500 text-white' : 'text-neutral-500 hover:text-white'}`}>All Users ({users.length})</button>
+                                <button onClick={() => setUserFilter('buyers')} className={`px-4 py-2 rounded-lg text-sm transition-all ${userFilter === 'buyers' ? 'bg-indigo-500 text-white' : 'text-neutral-500 hover:text-white'}`}>Buyers ({users.filter(u => u.isBuyer).length})</button>
+                            </div>
+                        </div>
+
+                        <div className="bg-neutral-900 border border-white/5 rounded-3xl overflow-hidden">
+                            <table className="w-full text-left">
+                                <thead className="bg-white/[0.02] border-b border-white/5">
+                                    <tr>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">User / Pseudo</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Registration</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Last Login</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Total Spent</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase text-right">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-white/5">
+                                    {users.filter(u => userFilter === 'all' || u.isBuyer).map((u, i) => (
+                                        <tr key={i} className="hover:bg-white/[0.01] transition-colors">
+                                            <td className="p-5">
+                                                <div className="font-medium text-white">{u.pseudo}</div>
+                                                <div className="text-xs text-neutral-500 font-mono italic">{u.email}</div>
+                                            </td>
+                                            <td className="p-5 text-neutral-400 text-sm">{new Date(u.registeredAt).toLocaleDateString()}</td>
+                                            <td className="p-5 text-neutral-400 text-sm">{new Date(u.lastLogin).toLocaleString()}</td>
+                                            <td className="p-5 font-mono text-indigo-400 font-bold">${u.totalSpent.toFixed(2)}</td>
+                                            <td className="p-5 text-right">
+                                                {u.isBuyer ?
+                                                    <span className="bg-green-500/10 text-green-400 text-[10px] font-black uppercase px-2 py-1 rounded-md border border-green-500/20">Buyer</span>
+                                                    : <span className="bg-neutral-500/10 text-neutral-500 text-[10px] font-black uppercase px-2 py-1 rounded-md">Free</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'models' && (
+                    <div className="space-y-8 animate-in fade-in duration-500">
+                        <h2 className="text-3xl font-light">Model Fleet</h2>
+
+                        <div className="bg-neutral-900 border border-white/5 rounded-3xl overflow-hidden">
+                            <table className="w-full text-left">
+                                <thead className="bg-white/[0.02] border-b border-white/5">
+                                    <tr>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Model Name</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Contact</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Total Earnings</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Paid Out</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Unpaid Balance</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-white/5">
+                                    {models.map((m, i) => (
+                                        <tr key={i} className="hover:bg-white/[0.01] transition-colors">
+                                            <td className="p-5 font-medium text-pink-400">{m.pseudo}</td>
+                                            <td className="p-5">
+                                                <div className="text-sm text-white font-mono italic">{m.email}</div>
+                                                <div className="text-xs text-neutral-500">{m.phone}</div>
+                                            </td>
+                                            <td className="p-5 font-mono text-white">${m.totalGains.toFixed(2)}</td>
+                                            <td className="p-5 font-mono text-neutral-400">-${m.totalPayouts.toFixed(2)}</td>
+                                            <td className="p-5 font-mono text-green-400 font-bold">${m.balance.toFixed(2)}</td>
+                                            <td className="p-5 text-right">
+                                                <button
+                                                    onClick={async () => {
+                                                        const amount = prompt(`Montant à payer pour ${m.pseudo} (Max: $${m.balance.toFixed(2)})`);
+                                                        if (amount && parseFloat(amount) > 0) {
+                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/models/${encodeURIComponent(m.email)}/payout`, {
+                                                                method: "POST",
+                                                                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                                                                body: JSON.stringify({ amount: parseFloat(amount) })
+                                                            });
+                                                            if (res.ok) fetchModels();
+                                                            else alert("Error processing payout");
+                                                        }
+                                                    }}
+                                                    className="bg-indigo-500 hover:bg-indigo-400 text-white text-xs font-bold px-3 py-2 rounded-lg transition-colors"
+                                                >
+                                                    Payout
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 )}
             </main>
