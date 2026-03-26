@@ -34,8 +34,7 @@ function EarningsCounter({ hasVideo }: { hasVideo: boolean }) {
     }, []);
 
     return (
-        <div className="absolute top-6 right-6 z-30 flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3 bg-black/60 backdrop-blur-xl rounded-full border border-green-500/30 shadow-2xl shadow-green-500/20 transition-all">
-            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_2px_rgba(34,197,94,0.5)]" />
+        <div className="absolute top-6 right-6 z-30 flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 shadow-2xl transition-all">
             <span className="text-white/80 text-xs font-semibold tracking-wider uppercase hidden sm:block">Current Call</span>
             <span ref={counterRef} className="text-green-400 font-mono text-base sm:text-lg font-bold">
                 $0.0000
@@ -235,15 +234,6 @@ export function VideoRoom({
                 {/* Model Earning Counter */}
                 {role === "model" && isConnected && <EarningsCounter hasVideo={!!remoteStream} />}
 
-                {/* Model Dashboard Button */}
-                {role === "model" && (
-                    <Link
-                        href={`/model/dashboard?id=${socketId}`}
-                        className="absolute top-24 right-6 z-30 flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-neutral-900/80 hover:bg-neutral-800 backdrop-blur-xl rounded-full border border-white/10 text-white/80 transition-all text-xs sm:text-sm font-medium"
-                    >
-                        <LayoutDashboard size={14} className="sm:w-4 sm:h-4" /> Dashboard
-                    </Link>
-                )}
 
                 {/* Remote Video (Full Screen) */}
                 <div className="absolute inset-0 z-0 h-[100dvh]">
@@ -393,15 +383,15 @@ function ChatMessage({ message, isMe }: { message: any; isMe: boolean }) {
                         : "bg-neutral-800/80 text-white border border-white/10 backdrop-blur-sm"
                         }`}
                 >
-                    {decodeHTML(message.text)}
-                </div>
-                {hasTranslation && (
-                    <div className="px-2 space-y-0.5">
-                        <p className="text-[11px] text-white/40 italic leading-tight">
-                            {decodeHTML(message.originalText)}
-                        </p>
+                    <div className="flex flex-col gap-1">
+                        <span>{decodeHTML(message.text)}</span>
+                        {hasTranslation && (
+                            <span className="text-[11px] text-white/40 italic leading-tight border-t border-white/5 pt-1 mt-1">
+                                {decodeHTML(message.originalText)}
+                            </span>
+                        )}
                     </div>
-                )}
+                </div>
             </div>
         </div>
     );
