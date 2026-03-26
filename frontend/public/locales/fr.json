@@ -274,5 +274,19 @@
   "admin.models.fetch_error": "Impossible de charger les modèles.",
   "admin.models.payout_prompt": "Montant à payer pour {{name}} (Max: ${{balance}})",
   "admin.models.payout_error": "Erreur lors du reversement",
-  "admin.models.payout_cta": "Payer"
+  "admin.models.payout_cta": "Payer",
+  "auth.error.invalid_credentials": "Identifiants invalides.",
+  "auth.error.missing_fields": "Tous les champs sont obligatoires.",
+  "auth.error.email_in_use": "Email déjà utilisé.",
+  "auth.error.email_already_registered": "Email déjà enregistré.",
+  "auth.error.request_pending": "Une demande est déjà en attente.",
+  "auth.success.registration_submitted": "Inscription soumise pour révision.",
+  "admin.error.unauthorized": "Accès non autorisé.",
+  "admin.error.invalid_credentials": "Identifiants admin invalides.",
+  "admin.error.invalid_amount": "Montant invalide.",
+  "admin.error.insufficient_balance": "Solde insuffisant.",
+  "admin.error.db_reset_failed": "Échec de la réinitialisation de la base de données.",
+  "admin.success.db_reset": "Base de données effacée et réinitialisée.",
+  "api.error.internal_server_error": "Erreur Interne du Serveur.",
+  "api.error.not_found": "Ressource non trouvée."
 }

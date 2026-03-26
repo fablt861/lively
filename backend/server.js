@@ -88,7 +88,7 @@ app.get('/api/settings', async (req, res) => {
   try {
     res.json(await getSettings());
   } catch (err) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: 'api.error.internal_server_error' });
   }
 });
 
@@ -98,7 +98,7 @@ app.post('/api/stats/client', async (req, res) => {
     await logNewClient();
     res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: 'api.error.internal_server_error' });
   }
 });
 

@@ -40,7 +40,7 @@ router.post('/login', async (req, res) => {
     }
 
     // fallback for old mock logic if needed, but better to be strict
-    return res.status(401).json({ error: 'Identifiants invalides.' });
+    return res.status(401).json({ error: 'auth.error.invalid_credentials' });
 });
 
 router.post('/register', async (req, res) => {
@@ -48,13 +48,13 @@ router.post('/register', async (req, res) => {
     const redis = getRedisClient();
 
     if (!email || !password || !pseudo) {
-        return res.status(400).json({ error: 'Tous les champs sont obligatoires.' });
+        return res.status(400).json({ error: 'auth.error.missing_fields' });
     }
 
     const existingUser = await redis.get(`user:active:${email}`);
     const existingModel = await redis.get(`model:active:${email}`);
     if (existingUser || existingModel) {
-        return res.status(400).json({ error: 'Email déjà utilisé.' });
+        return res.status(400).json({ error: 'auth.error.email_in_use' });
     }
 
     const newUser = {
@@ -83,17 +83,17 @@ router.post('/model/register', async (req, res) => {
     const { country, phone, name, dob, email, password, photo3Fingers, photo5Fingers } = req.body;
 
     if (!email || !password || !photo3Fingers) {
-        return res.status(400).json({ error: 'Champs obligatoires manquants.' });
+        return res.status(400).json({ error: 'auth.error.missing_fields' });
     }
 
     const existing = await redis.get(`model:active:${email}`);
     if (existing) {
-        return res.status(400).json({ error: 'Email déjà enregistré.' });
+        return res.status(400).json({ error: 'auth.error.email_already_registered' });
     }
 
     const existingPending = await redis.get(`model:pending:${email}`);
     if (existingPending) {
-        return res.status(400).json({ error: 'Une demande est déjà en attente.' });
+        return res.status(400).json({ error: 'auth.error.request_pending' });
     }
 
     const payload = {
@@ -110,7 +110,7 @@ router.post('/model/register', async (req, res) => {
     };
 
     await redis.set(`model:pending:${email}`, JSON.stringify(payload));
-    res.json({ success: true, message: 'Inscription soumise pour révision.' });
+    res.json({ success: true, message: 'auth.success.registration_submitted' });
 });
 
 module.exports = router;

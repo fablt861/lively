@@ -36,7 +36,8 @@ export default function AdminPage() {
                 setToken(data.token);
                 setIsLogged(true);
             } else {
-                alert(t('admin.login.error_invalid'));
+                const data = await res.json().catch(() => ({}));
+                alert(t(data.error) || t('admin.login.error_invalid'));
             }
         } catch (err) {
             alert(t('admin.login.error_connect'));

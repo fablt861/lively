@@ -274,5 +274,19 @@
   "admin.models.fetch_error": "Unable to load models.",
   "admin.models.payout_prompt": "Payout amount for {{name}} (Max: ${{balance}})",
   "admin.models.payout_error": "Error processing payout",
-  "admin.models.payout_cta": "Payout"
+  "admin.models.payout_cta": "Payout",
+  "auth.error.invalid_credentials": "Invalid credentials.",
+  "auth.error.missing_fields": "All fields are required.",
+  "auth.error.email_in_use": "Email already in use.",
+  "auth.error.email_already_registered": "Email already registered.",
+  "auth.error.request_pending": "A request is already pending.",
+  "auth.success.registration_submitted": "Registration submitted for review.",
+  "admin.error.unauthorized": "Unauthorized access.",
+  "admin.error.invalid_credentials": "Invalid admin credentials.",
+  "admin.error.invalid_amount": "Invalid amount.",
+  "admin.error.insufficient_balance": "Insufficient balance.",
+  "admin.error.db_reset_failed": "Failed to reset database.",
+  "admin.success.db_reset": "Database wiped and re-initialized.",
+  "api.error.internal_server_error": "Internal Server Error.",
+  "api.error.not_found": "Resource not found."
 }

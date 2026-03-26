@@ -100,7 +100,7 @@ export default function ModelSignupPage() {
             if (data.success) {
                 setStep(5); // Confirmation Step
             } else {
-                setApiError(data.error || t('model.signup.api_error'));
+                setApiError(t(data.error) || t('model.signup.api_error'));
             }
         } catch (err) {
             setApiError(t('model.signup.connection_error'));

@@ -19,7 +19,7 @@ const requireAuth = (req, res, next) => {
     if (authHeader === `Bearer ${MOCK_TOKEN}`) {
         next();
     } else {
-        res.status(401).json({ error: 'Unauthorized' });
+        res.status(401).json({ error: 'admin.error.unauthorized' });
     }
 };
 
@@ -28,7 +28,7 @@ router.post('/login', async (req, res) => {
     if (username === ADMIN_USER && password === ADMIN_PASS) {
         res.json({ token: MOCK_TOKEN });
     } else {
-        res.status(401).json({ error: 'Invalid credentials' });
+        res.status(401).json({ error: 'admin.error.invalid_credentials' });
     }
 });
 
@@ -40,7 +40,7 @@ router.get('/stats', requireAuth, async (req, res) => {
         res.json({ global, daily });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });
 
@@ -50,7 +50,7 @@ router.get('/settings', requireAuth, async (req, res) => {
         const settings = await getSettings();
         res.json(settings);
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });
 
@@ -59,7 +59,7 @@ router.post('/settings', requireAuth, async (req, res) => {
         const updated = await updateSettings(req.body);
         res.json(updated);
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });
 
@@ -77,7 +77,7 @@ router.get('/models/pending', requireAuth, async (req, res) => {
         res.json(models);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });
 
@@ -110,7 +110,7 @@ router.get('/users', requireAuth, async (req, res) => {
         }
         res.json(users);
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });
 
@@ -146,7 +146,7 @@ router.get('/models', requireAuth, async (req, res) => {
         }
         res.json(models);
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });
 
@@ -157,17 +157,17 @@ router.post('/models/:email/payout', requireAuth, async (req, res) => {
         const email = req.params.email;
         const { amount } = req.body;
 
-        if (!amount || amount <= 0) return res.status(400).json({ error: 'Montant invalide' });
+        if (!amount || amount <= 0) return res.status(400).json({ error: 'admin.error.invalid_amount' });
 
         const balance = parseFloat(await redis.get(`model:${email}:balance`) || '0');
-        if (amount > balance) return res.status(400).json({ error: 'Solde insuffisant' });
+        if (amount > balance) return res.status(400).json({ error: 'admin.error.insufficient_balance' });
 
         await redis.incrbyfloat(`model:${email}:balance`, -amount);
         await redis.incrbyfloat(`model:${email}:total_payouts`, amount);
 
         res.json({ success: true });
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });
 
@@ -177,7 +177,7 @@ router.post('/models/:email/validate', requireAuth, async (req, res) => {
         const redis = getRedisClient();
         const email = req.params.email;
         const data = await redis.get(`model:pending:${email}`);
-        if (!data) return res.status(404).json({ error: 'Not found' });
+        if (!data) return res.status(404).json({ error: 'api.error.not_found' });
 
         const model = JSON.parse(data);
         model.validatedAt = new Date().toISOString();
@@ -190,7 +190,7 @@ router.post('/models/:email/validate', requireAuth, async (req, res) => {
 
         res.json({ success: true });
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });
 
@@ -202,7 +202,7 @@ router.post('/models/:email/reject', requireAuth, async (req, res) => {
         await redis.del(`model:pending:${email}`);
         res.json({ success: true });
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });
 
@@ -223,10 +223,10 @@ router.post('/maintenance/reset', requireAuth, async (req, res) => {
         await redis.set('global:total_models', '0');
         await redis.set('global:total_clients', '0');
 
-        res.json({ success: true, message: 'Database wiped and re-initialized.' });
+        res.json({ success: true, message: 'admin.success.db_reset' });
     } catch (err) {
         console.error('[Maintenance Error]', err);
-        res.status(500).json({ error: 'Failed to reset database' });
+        res.status(500).json({ error: 'admin.error.db_reset_failed' });
     }
 });
 

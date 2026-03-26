@@ -44,7 +44,7 @@ export function UnifiedAuthModal({ onSuccess }: UnifiedAuthModalProps) {
             if (res.ok && data.success) {
                 onSuccess(data.user.email, data.user.role, data.user.name);
             } else {
-                setError(data.error || t('auth.error.invalid'));
+                setError(t(data.error) || t('auth.error.invalid'));
             }
         } catch (err) {
             setError(t('auth.error.network'));
