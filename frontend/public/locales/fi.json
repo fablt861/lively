@@ -189,7 +189,7 @@
   "prematch.anonymous": "Anonyymi pääsy",
   "prematch.instant": "Välitön match",
   "paywall.title": "Riittämätön saldo",
-  "paywall.desc": "Lataa saldoasi jatkaaksesi yksityistä keskustelua.",
+  "paywall.desc": "Valitse sinulle sopiva paketti ja nauti etuoikeutetusta hetkestä ilman rajoituksia.",
   "paywall.best_value": "PARAS TARJOUS",
   "paywall.minutes": "Minuuttia",
   "paywall.cents_per_min": "CA",
@@ -290,5 +290,17 @@
   "api.error.internal_server_error": "Sisäinen palvelinvirhe.",
   "api.error.not_found": "Resurssia ei löytynyt.",
   "nav.menu.balance": "Saldo: {{amount}} krediittiä",
-  "nav.menu.buy": "Osta krediittejä"
+  "nav.menu.buy": "Osta krediittejä",
+  "paywall.members": "724 Jäsentä verkossa",
+  "paywall.discretion_title": "TÄYSI DISKREETTIYS",
+  "paywall.discretion_desc": "Anonyymi maksu. Ei mainintaa 'Lively' tai 'Chat' tiliotteessasi.",
+  "paywall.speed_title": "VÄLITÖN PÄÄSY",
+  "paywall.speed_desc": "Luotot lisätään välittömästi. Ei odotusta, ei kitkaa.",
+  "paywall.title_line1": "Tehosta",
+  "paywall.title_line2": "Kokemustasi.",
+  "paywall.pack_essential": "PERUS",
+  "paywall.pack_popular": "SUOSITTU",
+  "paywall.pack_elite": "ELIITTI",
+  "paywall.cta": "Jatka maksuun",
+  "paywall.footer": "TURVALLINEN MAKSU AES-256-SALAUKSEN KAUTTA"
 }

@@ -189,7 +189,7 @@
   "prematch.anonymous": "Acces Anonim",
   "prematch.instant": "Match Instant",
   "paywall.title": "Credite Insufficiente",
-  "paywall.desc": "Reîncărcă-ți creditele pentru a continua conversația privată.",
+  "paywall.desc": "Alege pachetul care ți se potrivește și bucură-te de un moment privilegiat fără limite.",
   "paywall.best_value": "CEL MAI BUN PREȚ",
   "paywall.minutes": "Minute",
   "paywall.cents_per_min": "CA",
@@ -290,5 +290,17 @@
   "api.error.internal_server_error": "Eroare Internă Server.",
   "api.error.not_found": "Resursa nu a fost găsită.",
   "nav.menu.balance": "Sold: {{amount}} credite",
-  "nav.menu.buy": "Cumpără credite"
+  "nav.menu.buy": "Cumpără credite",
+  "paywall.members": "724 Membri online",
+  "paywall.discretion_title": "DISCREȚIE TOTALĂ",
+  "paywall.discretion_desc": "Plată anonimă. Nicio mențiune despre 'Lively' sau 'Chat' pe extrasul de cont.",
+  "paywall.speed_title": "ACCES INSTANTANEU",
+  "paywall.speed_desc": "Credite adăugate imediat. Fără așteptare, fără fricțiune.",
+  "paywall.title_line1": "Îmbunătățește-ți",
+  "paywall.title_line2": "Experiența.",
+  "paywall.pack_essential": "ESENȚIAL",
+  "paywall.pack_popular": "POPULAR",
+  "paywall.pack_elite": "ELITE",
+  "paywall.cta": "Continuă spre plată",
+  "paywall.footer": "PLATĂ SECURIZATĂ PRIN CRIPTARE AES-256"
 }

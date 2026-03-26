@@ -189,7 +189,7 @@
   "prematch.anonymous": "Анонімний доступ",
   "prematch.instant": "Миттєвий матч",
   "paywall.title": "Недостатньо кредитів",
-  "paywall.desc": "Поповніть баланс, щоб продовжити приватну розмову.",
+  "paywall.desc": "Виберіть пакет, який вам підходить, і насолоджуйтеся привілейованим моментом без обмежень.",
   "paywall.best_value": "НАЙКРАЩА ПРОПОЗИЦІЯ",
   "paywall.minutes": "Хвилин",
   "paywall.cents_per_min": "CA",
@@ -290,5 +290,17 @@
   "api.error.internal_server_error": "Внутрішня помилка сервера.",
   "api.error.not_found": "Ресурс не знайдено.",
   "nav.menu.balance": "Баланс: {{amount}} кредитів",
-  "nav.menu.buy": "Купити кредити"
+  "nav.menu.buy": "Купити кредити",
+  "paywall.members": "724 Учасників онлайн",
+  "paywall.discretion_title": "ПОВНА АНОНІМНІСТЬ",
+  "paywall.discretion_desc": "Анонімний платіж. Жодних згадок про 'Lively' або 'Chat' у вашій банківській виписці.",
+  "paywall.speed_title": "МИТТЄВИЙ ДОСТУП",
+  "paywall.speed_desc": "Кредити додаються негайно. Жодного очікування та труднощів.",
+  "paywall.title_line1": "Покращте свій",
+  "paywall.title_line2": "Досвід.",
+  "paywall.pack_essential": "БАЗОВЙ",
+  "paywall.pack_popular": "ПОПУЛЯРНИЙ",
+  "paywall.pack_elite": "ЕЛІТНИЙ",
+  "paywall.cta": "Перейти до оплати",
+  "paywall.footer": "БЕЗПЕЧНА ОПЛАТА З ШИФРУВАННЯМ AES-256"
 }

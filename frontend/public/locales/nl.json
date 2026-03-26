@@ -189,7 +189,7 @@
   "prematch.anonymous": "Anonieme toegang",
   "prematch.instant": "Directe Match",
   "paywall.title": "Onvoldoende credits",
-  "paywall.desc": "Waardeer je credits op om je privégesprek voort te zetten.",
+  "paywall.desc": "Kies het pakket dat bij je past en geniet van een bevoorrecht moment zonder grenzen.",
   "paywall.best_value": "BESTE DEAL",
   "paywall.minutes": "Minuten",
   "paywall.cents_per_min": "CA",
@@ -290,5 +290,17 @@
   "api.error.internal_server_error": "Interne serverfout.",
   "api.error.not_found": "Bron niet gevonden.",
   "nav.menu.balance": "Saldo: {{amount}} credits",
-  "nav.menu.buy": "Credits kopen"
+  "nav.menu.buy": "Credits kopen",
+  "paywall.members": "724 Leden online",
+  "paywall.discretion_title": "VOLLEDIGE DISCRETIE",
+  "paywall.discretion_desc": "Anonieme betaling. Geen vermelding van 'Lively' of 'Chat' op uw bankafschrift.",
+  "paywall.speed_title": "DIRECTE TOEGANG",
+  "paywall.speed_desc": "Credits worden direct toegevoegd. Geen wachttijd, geen frictie.",
+  "paywall.title_line1": "Boost je",
+  "paywall.title_line2": "Ervaring.",
+  "paywall.pack_essential": "ESSENTIEEL",
+  "paywall.pack_popular": "POPULAIR",
+  "paywall.pack_elite": "ELITE",
+  "paywall.cta": "Doorgaan naar betaling",
+  "paywall.footer": "VEILIGE BETALING VIA AES-256 ENCRYPTIE"
 }

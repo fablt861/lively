@@ -189,7 +189,7 @@
   "prematch.anonymous": "Anonymous Access",
   "prematch.instant": "Instant Match",
   "paywall.title": "Insufficient Credits",
-  "paywall.desc": "Recharge your credits to continue your private conversation.",
+  "paywall.desc": "Choose the pack that suits you and enjoy a privileged moment without any limits.",
   "paywall.best_value": "BEST VALUE",
   "paywall.minutes": "Minutes",
   "paywall.cents_per_min": "CA",
@@ -290,5 +290,17 @@
   "api.error.internal_server_error": "Internal Server Error.",
   "api.error.not_found": "Resource not found.",
   "nav.menu.balance": "Balance: {{amount}} credits",
-  "nav.menu.buy": "Buy Credits"
+  "nav.menu.buy": "Buy Credits",
+  "paywall.members": "724 Members online",
+  "paywall.discretion_title": "TOTAL DISCRETION",
+  "paywall.discretion_desc": "Anonymous payment. No mention of 'Lively' or 'Chat' on your bank statement.",
+  "paywall.speed_title": "INSTANT ACCESS",
+  "paywall.speed_desc": "Credits added immediately. No waiting, no friction.",
+  "paywall.title_line1": "Boost your",
+  "paywall.title_line2": "Experience.",
+  "paywall.pack_essential": "ESSENTIAL",
+  "paywall.pack_popular": "POPULAR",
+  "paywall.pack_elite": "ELITE",
+  "paywall.cta": "Continue to payment",
+  "paywall.footer": "SECURE PAYMENT VIA AES-256 ENCRYPTION"
 }

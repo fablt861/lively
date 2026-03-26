@@ -189,7 +189,7 @@
   "prematch.anonymous": "Анонимный доступ",
   "prematch.instant": "Мгновенный матч",
   "paywall.title": "Недостаточно кредитов",
-  "paywall.desc": "Пополните баланс, чтобы продолжить приватную беседу.",
+  "paywall.desc": "Выберите подходящий пакет и наслаждайтесь привилегированным моментом без ограничений.",
   "paywall.best_value": "ЛУЧШЕЕ ПРЕДЛОЖЕНИЕ",
   "paywall.minutes": "Минут",
   "paywall.cents_per_min": "CA",
@@ -290,5 +290,17 @@
   "api.error.internal_server_error": "Внутренняя ошибка сервера.",
   "api.error.not_found": "Ресурс не найден.",
   "nav.menu.balance": "Баланс: {{amount}} кредитов",
-  "nav.menu.buy": "Купить кредиты"
+  "nav.menu.buy": "Купить кредиты",
+  "paywall.members": "724 Участников онлайн",
+  "paywall.discretion_title": "ПОЛНАЯ АНОНИМНОСТЬ",
+  "paywall.discretion_desc": "Анонимный платеж. Никаких упоминаний 'Lively' или 'Chat' в вашей банковской выписке.",
+  "paywall.speed_title": "МГНОВЕННЫЙ ДОСТУП",
+  "paywall.speed_desc": "Кредиты добавляются немедленно. Никакого ожидания и сложностей.",
+  "paywall.title_line1": "Улучшите свой",
+  "paywall.title_line2": "Опыт.",
+  "paywall.pack_essential": "БАЗОВЫЙ",
+  "paywall.pack_popular": "ПОПУЛЯРНЫЙ",
+  "paywall.pack_elite": "ЭЛИТНЫЙ",
+  "paywall.cta": "Перейти к оплате",
+  "paywall.footer": "БЕЗОПАСНАЯ ОПЛАТА С ШИФРОВАНИЕМ AES-256"
 }

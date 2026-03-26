@@ -189,7 +189,7 @@
   "prematch.anonymous": "Anonym åtkomst",
   "prematch.instant": "Omedelbar match",
   "paywall.title": "Otillräckligt saldo",
-  "paywall.desc": "Ladda på ditt saldo för att fortsätta ditt privata samtal.",
+  "paywall.desc": "Välj paketet som passar dig och njut av en privilegierad stund utan gränser.",
   "paywall.best_value": "BÄSTA ERBJUDANDET",
   "paywall.minutes": "Minuter",
   "paywall.cents_per_min": "CA",
@@ -290,5 +290,17 @@
   "api.error.internal_server_error": "Internt serverfel.",
   "api.error.not_found": "Resursen hittades inte.",
   "nav.menu.balance": "Saldo: {{amount}} krediter",
-  "nav.menu.buy": "Köp krediter"
+  "nav.menu.buy": "Köp krediter",
+  "paywall.members": "724 Medlemmar online",
+  "paywall.discretion_title": "TOTAL DISKRETION",
+  "paywall.discretion_desc": "Anonym betalning. Inget omnämnande av 'Lively' eller 'Chat' på ditt kontoutdrag.",
+  "paywall.speed_title": "INSTANT TILLGÅNG",
+  "paywall.speed_desc": "Krediter läggs till omedelbart. Inga väntetider, ingen friktion.",
+  "paywall.title_line1": "Förstärk din",
+  "paywall.title_line2": "Upplevelse.",
+  "paywall.pack_essential": "BAS",
+  "paywall.pack_popular": "POPULÄR",
+  "paywall.pack_elite": "ELITE",
+  "paywall.cta": "Fortsätt till betalning",
+  "paywall.footer": "SÄKER BETALNING VIA AES-256 KRYPTERING"
 }
