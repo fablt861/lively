@@ -288,5 +288,7 @@
   "admin.error.db_reset_failed": "Datenbank-Reset fehlgeschlagen.",
   "admin.success.db_reset": "Datenbank gelöscht und neu initialisiert.",
   "api.error.internal_server_error": "Interner Serverfehler.",
-  "api.error.not_found": "Ressource nicht gefunden."
+  "api.error.not_found": "Ressource nicht gefunden.",
+  "nav.menu.balance": "Guthaben: {{amount}} Credits",
+  "nav.menu.buy": "Credits kaufen"
 }

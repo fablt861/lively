@@ -288,5 +288,7 @@
   "admin.error.db_reset_failed": "Resetten van database mislukt.",
   "admin.success.db_reset": "Database gewist en opnieuw geïnitialiseerd.",
   "api.error.internal_server_error": "Interne serverfout.",
-  "api.error.not_found": "Bron niet gevonden."
+  "api.error.not_found": "Bron niet gevonden.",
+  "nav.menu.balance": "Saldo: {{amount}} credits",
+  "nav.menu.buy": "Credits kopen"
 }

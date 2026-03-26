@@ -288,5 +288,7 @@
   "admin.error.db_reset_failed": "Tietokannan nollaaminen epäonnistui.",
   "admin.success.db_reset": "Tietokanta tyhjennetty ja alustettu uudelleen.",
   "api.error.internal_server_error": "Sisäinen palvelinvirhe.",
-  "api.error.not_found": "Resurssia ei löytynyt."
+  "api.error.not_found": "Resurssia ei löytynyt.",
+  "nav.menu.balance": "Saldo: {{amount}} krediittiä",
+  "nav.menu.buy": "Osta krediittejä"
 }

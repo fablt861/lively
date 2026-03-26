@@ -288,5 +288,7 @@
   "admin.error.db_reset_failed": "Kunne ikke tilbakestille databasen.",
   "admin.success.db_reset": "Databasen er slettet og reinitialisert.",
   "api.error.internal_server_error": "Intern serverfeil.",
-  "api.error.not_found": "Ressursen ble ikke funnet."
+  "api.error.not_found": "Ressursen ble ikke funnet.",
+  "nav.menu.balance": "Saldo: {{amount}} kreditter",
+  "nav.menu.buy": "Kjøp kreditter"
 }

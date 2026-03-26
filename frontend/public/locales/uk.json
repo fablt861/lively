@@ -288,5 +288,7 @@
   "admin.error.db_reset_failed": "Не вдалося скинути базу даних.",
   "admin.success.db_reset": "Базу даних очищено та ініціалізовано заново.",
   "api.error.internal_server_error": "Внутрішня помилка сервера.",
-  "api.error.not_found": "Ресурс не знайдено."
+  "api.error.not_found": "Ресурс не знайдено.",
+  "nav.menu.balance": "Баланс: {{amount}} кредитів",
+  "nav.menu.buy": "Купити кредити"
 }

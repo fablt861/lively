@@ -288,5 +288,7 @@
   "admin.error.db_reset_failed": "Resetarea bazei de date a eșuat.",
   "admin.success.db_reset": "Baza de date ștearsă și reinițializată.",
   "api.error.internal_server_error": "Eroare Internă Server.",
-  "api.error.not_found": "Resursa nu a fost găsită."
+  "api.error.not_found": "Resursa nu a fost găsită.",
+  "nav.menu.balance": "Sold: {{amount}} credite",
+  "nav.menu.buy": "Cumpără credite"
 }

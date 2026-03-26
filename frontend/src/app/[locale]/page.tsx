@@ -1,25 +1,33 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Camera, ShieldCheck, Flame, Play, Video } from "lucide-react";
+import { Camera, ShieldCheck, Flame, Play, Video, ChevronDown, CreditCard, Wallet } from "lucide-react";
 import Link from "next/link";
 import { GenderModal } from "@/components/GenderModal";
 import { OnlineGauge } from "@/components/OnlineGauge";
 import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { PaywallModal } from "@/components/PaywallModal";
 
 export default function Home() {
     // Build version: 1.0.2 - Matchmaking fixes
     const { t, language } = useTranslation();
     const [showGenderModal, setShowGenderModal] = useState(false);
     const [userPseudo, setUserPseudo] = useState<string | null>(null);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [showPaywall, setShowPaywall] = useState(false);
+    const [userCredits, setUserCredits] = useState(0);
 
     useEffect(() => {
         const storedPseudo = localStorage.getItem('kinky_user_pseudo');
         if (storedPseudo) {
             setUserPseudo(storedPseudo);
         }
-    }, []);
+        const storedCredits = localStorage.getItem('kinky_credits');
+        if (storedCredits) {
+            setUserCredits(parseFloat(storedCredits));
+        }
+    }, [showPaywall]);
 
     const handleLogout = () => {
         localStorage.removeItem('kinky_token');
@@ -52,16 +60,59 @@ export default function Home() {
                 <div className="flex items-center gap-6">
                     <LanguageSelector />
                     {userPseudo ? (
-                        <div className="flex items-center gap-4">
-                            <span className="text-xs font-bold text-white/60 tracking-widest uppercase">
-                                {t('nav.welcome')} <span className="text-white">{userPseudo}</span>
-                            </span>
+                        <div className="relative">
                             <button
-                                onClick={handleLogout}
-                                className="text-[10px] font-black text-red-500 hover:text-red-400 transition-all uppercase tracking-[0.2em]"
+                                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                className="flex items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full px-4 py-2 transition-all group"
                             >
-                                {t('nav.logout')}
+                                <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-[10px] font-black">
+                                    {userPseudo.substring(0, 1).toUpperCase()}
+                                </div>
+                                <span className="text-xs font-bold text-white tracking-widest uppercase">
+                                    {userPseudo}
+                                </span>
+                                <ChevronDown size={14} className={`text-white/40 group-hover:text-white transition-transform ${isMenuOpen ? 'rotate-180' : ''}`} />
                             </button>
+
+                            {isMenuOpen && (
+                                <>
+                                    <div className="fixed inset-0 z-30" onClick={() => setIsMenuOpen(false)} />
+                                    <div className="absolute right-0 mt-2 w-56 bg-[#0f0f0f] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-40 animate-in fade-in zoom-in duration-200">
+                                        <div className="px-5 py-4 border-b border-white/5">
+                                            <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mb-1.5">{t('nav.menu.balance', { amount: 0 }).split(':')[0]}</p>
+                                            <div className="flex items-center gap-2">
+                                                <Wallet size={16} className="text-indigo-400" />
+                                                <span className="text-sm font-black text-white tracking-tight">
+                                                    {userCredits.toFixed(0)} <span className="text-[10px] text-white/60">CREDITS</span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="p-2">
+                                            <button
+                                                onClick={() => {
+                                                    setShowPaywall(true);
+                                                    setIsMenuOpen(false);
+                                                }}
+                                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-white transition-colors group"
+                                            >
+                                                <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all">
+                                                    <CreditCard size={16} />
+                                                </div>
+                                                <span className="text-xs font-bold uppercase tracking-wider">{t('nav.menu.buy')}</span>
+                                            </button>
+                                            <button
+                                                onClick={handleLogout}
+                                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/5 text-red-500 transition-colors mt-1"
+                                            >
+                                                <div className="p-2 bg-red-500/10 rounded-lg">
+                                                    <Play size={16} className="rotate-180" />
+                                                </div>
+                                                <span className="text-xs font-bold uppercase tracking-wider">{t('nav.logout')}</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     ) : (
                         <Link href={`/${language}/login`} className="text-xs font-bold text-white/90 bg-white/5 hover:bg-white/10 transition-all border border-white/10 rounded-full px-6 py-2.5 hover:border-indigo-500/50 hover:shadow-[0_0_20px_rgba(99,102,241,0.2)] tracking-widest uppercase">
@@ -167,6 +218,18 @@ export default function Home() {
             </main>
 
             {showGenderModal && <GenderModal onClose={() => setShowGenderModal(false)} />}
+            {showPaywall && (
+                <PaywallModal
+                    onClose={() => setShowPaywall(false)}
+                    onPurchase={(credits) => {
+                        const current = parseFloat(localStorage.getItem('kinky_credits') || "0");
+                        localStorage.setItem('kinky_credits', (current + credits).toString());
+                        setUserCredits(current + credits);
+                        setShowPaywall(false);
+                        alert(`Successfully added ${credits} credits!`);
+                    }}
+                />
+            )}
         </div>
     );
 }

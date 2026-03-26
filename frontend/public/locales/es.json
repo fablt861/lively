@@ -288,5 +288,7 @@
   "admin.error.db_reset_failed": "Error al reiniciar la base de datos.",
   "admin.success.db_reset": "Base de datos borrada e inicializada.",
   "api.error.internal_server_error": "Error interno del servidor.",
-  "api.error.not_found": "Recurso no encontrado."
+  "api.error.not_found": "Recurso no encontrado.",
+  "nav.menu.balance": "Saldo: {{amount}} créditos",
+  "nav.menu.buy": "Comprar créditos"
 }

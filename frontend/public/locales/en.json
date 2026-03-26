@@ -288,5 +288,7 @@
   "admin.error.db_reset_failed": "Failed to reset database.",
   "admin.success.db_reset": "Database wiped and re-initialized.",
   "api.error.internal_server_error": "Internal Server Error.",
-  "api.error.not_found": "Resource not found."
+  "api.error.not_found": "Resource not found.",
+  "nav.menu.balance": "Balance: {{amount}} credits",
+  "nav.menu.buy": "Buy Credits"
 }

@@ -288,5 +288,7 @@
   "admin.error.db_reset_failed": "Reposição da base de dados falhou.",
   "admin.success.db_reset": "Base de dados apagada e reinicializzata.",
   "api.error.internal_server_error": "Erro Interno do Servidor.",
-  "api.error.not_found": "Recurso não encontrado."
+  "api.error.not_found": "Recurso não encontrado.",
+  "nav.menu.balance": "Saldo: {{amount}} créditos",
+  "nav.menu.buy": "Comprar créditos"
 }

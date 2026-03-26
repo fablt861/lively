@@ -288,5 +288,7 @@
   "admin.error.db_reset_failed": "Reset del database fallito.",
   "admin.success.db_reset": "Database svuotato e reinizializzato.",
   "api.error.internal_server_error": "Errore Interno del Server.",
-  "api.error.not_found": "Risorsa non trovata."
+  "api.error.not_found": "Risorsa non trovata.",
+  "nav.menu.balance": "Saldo: {{amount}} crediti",
+  "nav.menu.buy": "Acquista crediti"
 }
