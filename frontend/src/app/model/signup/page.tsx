@@ -34,9 +34,57 @@ export default function ModelSignupPage() {
     const [photo5Fingers, setPhoto5Fingers] = useState<string | null>(null);
     const [apiError, setApiError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [compressing, setCompressing] = useState<number | null>(null);
 
     const handleNext = () => setStep(s => s + 1);
     const handlePrev = () => setStep(s => Math.max(1, s - 1));
+
+    const compressImage = (file: File): Promise<string> => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (e) => {
+                const img = new Image();
+                img.src = e.target?.result as string;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 800;
+                    const MAX_HEIGHT = 800;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx?.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.6));
+                };
+            };
+        });
+    };
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 3 | 5) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setCompressing(type);
+        const compressed = await compressImage(file);
+        if (type === 3) setPhoto3Fingers(compressed);
+        if (type === 5) setPhoto5Fingers(compressed);
+        setCompressing(null);
+    };
 
     const handleSubmit = async () => {
         setLoading(true);
@@ -57,14 +105,6 @@ export default function ModelSignupPage() {
         } finally {
             setLoading(false);
         }
-    };
-
-    // Fake Camera Capture
-    const mockCapture = (type: 3 | 5) => {
-        setTimeout(() => {
-            if (type === 3) setPhoto3Fingers("captured");
-            if (type === 5) setPhoto5Fingers("captured");
-        }, 800);
     };
 
     const steps = [
@@ -303,15 +343,32 @@ export default function ModelSignupPage() {
                                                 {p.photo && <CheckCircle2 className="text-green-500" size={18} />}
                                             </div>
                                             <p className="text-sm font-medium mb-4 text-white/90">{p.label}</p>
-                                            {!p.photo ? (
-                                                <button onClick={() => mockCapture(p.id as 3 | 5)} className="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all active:scale-98">
-                                                    <Camera size={18} /> Ouvrir Caméra
-                                                </button>
-                                            ) : (
-                                                <div className="w-full py-3 text-green-400 text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2">
-                                                    Validé
-                                                </div>
-                                            )}
+
+                                            <div className="relative group/photo overflow-hidden rounded-2xl bg-black/60 aspect-video flex items-center justify-center border border-white/5">
+                                                {p.photo ? (
+                                                    <img src={p.photo} alt="Verification" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <Camera className="text-white/10" size={40} />
+                                                )}
+
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    capture="user"
+                                                    id={`upload-${p.id}`}
+                                                    className="hidden"
+                                                    onChange={(e) => handleFileChange(e, p.id as 3 | 5)}
+                                                />
+                                                <label
+                                                    htmlFor={`upload-${p.id}`}
+                                                    className={`absolute inset-0 flex items-center justify-center cursor-pointer transition-all ${p.photo ? 'bg-black/60 opacity-0 hover:opacity-100' : 'bg-transparent'}`}
+                                                >
+                                                    <div className="bg-white text-black font-black text-[10px] uppercase tracking-widest px-6 py-3 rounded-full shadow-2xl flex items-center gap-2">
+                                                        <Camera size={14} />
+                                                        {compressing === p.id ? 'Traitement...' : p.photo ? 'Modifier' : 'Prendre Photo'}
+                                                    </div>
+                                                </label>
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
