@@ -7,7 +7,7 @@ import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
 
 export default function LoginPage() {
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
     const [mode, setMode] = useState<"login" | "signup">("login");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -56,10 +56,10 @@ export default function LoginPage() {
 
                 if (data.user.role === 'model') {
                     localStorage.setItem("kinky_account_status", 'active_model');
-                    window.location.href = '/model/dashboard';
+                    window.location.href = `/${language}/model/dashboard`;
                 } else {
                     localStorage.setItem("kinky_account_status", 'registered');
-                    window.location.href = '/';
+                    window.location.href = `/${language}`;
                 }
             } else {
                 setError(data.error || t('login.error_invalid'));
@@ -77,7 +77,7 @@ export default function LoginPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/95 to-[#050505]/80 pointer-events-none"></div>
 
             <nav className="relative z-20 p-6 flex justify-between items-center max-w-7xl mx-auto w-full">
-                <Link href="/" className="text-2xl font-black tracking-tighter text-white drop-shadow-md cursor-pointer">
+                <Link href={`/${language}`} className="text-2xl font-black tracking-tighter text-white drop-shadow-md cursor-pointer">
                     KINKY<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">.</span>
                 </Link>
                 <div className="flex gap-4 items-center">
@@ -87,7 +87,7 @@ export default function LoginPage() {
 
             <main className="relative z-10 flex-1 flex flex-col items-center justify-center p-6 w-full max-w-sm mx-auto">
                 <div className="w-full bg-neutral-900 border border-white/10 p-8 rounded-[2.5rem] shadow-2xl relative">
-                    <Link href="/" className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors">
+                    <Link href={`/${language}`} className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors">
                         <X size={24} />
                     </Link>
 

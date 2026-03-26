@@ -3,14 +3,14 @@
 import { useState, useEffect } from "react";
 import { Camera, ShieldCheck, Flame, Play, Video } from "lucide-react";
 import Link from "next/link";
-import { GenderModal } from "../components/GenderModal";
-import { OnlineGauge } from "../components/OnlineGauge";
+import { GenderModal } from "@/components/GenderModal";
+import { OnlineGauge } from "@/components/OnlineGauge";
 import { useTranslation } from "@/context/LanguageContext";
-import { LanguageSelector } from "../components/LanguageSelector";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 export default function Home() {
     // Build version: 1.0.2 - Matchmaking fixes
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
     const [showGenderModal, setShowGenderModal] = useState(false);
     const [userPseudo, setUserPseudo] = useState<string | null>(null);
 
@@ -64,7 +64,7 @@ export default function Home() {
                             </button>
                         </div>
                     ) : (
-                        <Link href="/login" className="text-xs font-bold text-white/90 bg-white/5 hover:bg-white/10 transition-all border border-white/10 rounded-full px-6 py-2.5 hover:border-indigo-500/50 hover:shadow-[0_0_20px_rgba(99,102,241,0.2)] tracking-widest uppercase">
+                        <Link href={`/${language}/login`} className="text-xs font-bold text-white/90 bg-white/5 hover:bg-white/10 transition-all border border-white/10 rounded-full px-6 py-2.5 hover:border-indigo-500/50 hover:shadow-[0_0_20px_rgba(99,102,241,0.2)] tracking-widest uppercase">
                             {t('nav.login')}
                         </Link>
                     )}
@@ -98,9 +98,9 @@ export default function Home() {
 
                                     if (token) {
                                         if (role === 'model') {
-                                            window.location.href = '/model/dashboard';
+                                            window.location.href = `/${language}/model/dashboard`;
                                         } else {
-                                            window.location.href = '/live';
+                                            window.location.href = `/${language}/live`;
                                         }
                                     } else {
                                         setShowGenderModal(true);

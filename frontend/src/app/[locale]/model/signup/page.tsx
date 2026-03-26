@@ -22,7 +22,7 @@ import Link from "next/link";
 import { useTranslation } from "@/context/LanguageContext";
 
 export default function ModelSignupPage() {
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
     const [step, setStep] = useState(1);
 
     // Form State
@@ -124,10 +124,10 @@ export default function ModelSignupPage() {
 
             {/* Navbar */}
             <nav className="relative z-30 flex justify-between items-center px-6 lg:px-12 py-6 border-b border-white/5 backdrop-blur-md bg-black/20">
-                <Link href="/" className="text-2xl font-black tracking-tighter text-white drop-shadow-md">
+                <Link href={`/${language}`} className="text-2xl font-black tracking-tighter text-white drop-shadow-md">
                     KINKY<span className="text-pink-500">.</span> <span className="text-xs font-bold text-white/40 ml-2 tracking-widest uppercase align-middle">{t('model.signup.navbar_models')}</span>
                 </Link>
-                <Link href="/login" className="text-xs font-bold text-white/50 hover:text-white transition-colors uppercase tracking-widest">
+                <Link href={`/${language}/login`} className="text-xs font-bold text-white/50 hover:text-white transition-colors uppercase tracking-widest">
                     {t('model.signup.navbar_login')}
                 </Link>
             </nav>
@@ -404,7 +404,7 @@ export default function ModelSignupPage() {
                                 </div>
 
                                 <button
-                                    onClick={() => window.location.href = '/'}
+                                    onClick={() => window.location.href = `/${language}`}
                                     className="w-full py-5 rounded-full bg-white/10 hover:bg-white/20 text-white font-black text-xs uppercase tracking-[0.3em] transition-all block active:scale-95"
                                 >
                                     {t('model.signup.success_btn')}

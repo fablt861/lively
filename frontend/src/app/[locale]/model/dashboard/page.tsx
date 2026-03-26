@@ -18,7 +18,7 @@ interface Stats {
 }
 
 export default function DashboardPage() {
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
     const [id, setId] = useState<string | null>(null);
     const [stats, setStats] = useState<Stats | null>(null);
     const [loading, setLoading] = useState(true);
@@ -76,7 +76,7 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-6">
                     <LanguageSelector />
                     <Link
-                        href="/live"
+                        href={`/${language}/live`}
                         className="px-8 py-3 bg-pink-500 hover:bg-pink-400 border border-pink-400/50 shadow-lg shadow-pink-500/20 text-white rounded-full transition-all duration-300 text-sm font-bold flex items-center gap-2"
                     >
                         <Video size={18} /> {t('dashboard.launch_live')}

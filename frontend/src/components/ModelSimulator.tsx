@@ -3,7 +3,7 @@ import { DollarSign, TrendingUp, Calendar, Clock } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 
 export function ModelSimulator() {
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
     const [hours, setHours] = useState(4);
     const [monthlyEarnings, setMonthlyEarnings] = useState(0);
 
@@ -76,7 +76,7 @@ export function ModelSimulator() {
                     </div>
 
                     <button
-                        onClick={() => window.location.href = '/model/signup'}
+                        onClick={() => window.location.href = `/${language}/model/signup`}
                         className="w-full py-6 rounded-full bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-500 text-white font-black text-lg shadow-[0_20px_40px_rgba(236,72,153,0.3)] hover:shadow-[0_25px_50px_rgba(236,72,153,0.5)] transition-all duration-500 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 group/btn"
                     >
                         {t('simulator.cta')}

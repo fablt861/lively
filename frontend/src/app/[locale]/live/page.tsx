@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { VideoRoom } from "../../components/VideoRoom";
-import { useWebRTC } from "../../hooks/useWebRTC";
+import { VideoRoom } from "@/components/VideoRoom";
+import { useWebRTC } from "@/hooks/useWebRTC";
 
 export default function LivePage() {
     const [role, setRole] = useState<"user" | "model" | null>(null);

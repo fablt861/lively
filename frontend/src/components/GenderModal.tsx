@@ -10,12 +10,12 @@ interface GenderModalProps {
 }
 
 export function GenderModal({ onClose }: GenderModalProps) {
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
     const [step, setStep] = useState<'select' | 'female_info'>('select');
 
     const handleSelectMale = () => {
         localStorage.setItem('kinky_user_role', 'user');
-        window.location.href = '/live';
+        window.location.href = `/${language}/live`;
     };
 
     return (
@@ -75,13 +75,13 @@ export function GenderModal({ onClose }: GenderModalProps) {
 
                         <div className="flex flex-col gap-3 md:gap-4 max-w-xs mx-auto">
                             <Link
-                                href="/model/signup"
+                                href={`/${language}/model/signup`}
                                 className="w-full py-4 md:py-5 rounded-xl md:rounded-2xl bg-gradient-to-r from-pink-500 to-indigo-600 text-white font-bold text-base md:text-lg hover:opacity-90 transition-all shadow-lg"
                             >
                                 {t('gender.model_cta')}
                             </Link>
                             <Link
-                                href="/login"
+                                href={`/${language}/login`}
                                 className="w-full py-4 md:py-5 rounded-xl md:rounded-2xl bg-white/5 border border-white/10 text-white font-bold text-base md:text-lg hover:bg-white/10 transition-all"
                             >
                                 {t('gender.login')}
@@ -98,7 +98,7 @@ export function GenderModal({ onClose }: GenderModalProps) {
                             <button
                                 onClick={() => {
                                     localStorage.setItem('kinky_user_role', 'model');
-                                    window.location.href = '/live';
+                                    window.location.href = `/${language}/live`;
                                 }}
                                 className="text-white/20 hover:text-white/40 text-[10px] uppercase font-bold tracking-widest transition-colors mt-2"
                             >

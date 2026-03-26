@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 
 type Language = 'fr' | 'en' | 'de' | 'es' | 'nl' | 'it' | 'ro' | 'uk' | 'pt' | 'ru' | 'sv' | 'no' | 'fi';
 
@@ -19,21 +20,35 @@ const languageMap: Record<string, Language> = {
 };
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-    const [language, setLanguageState] = useState<Language>('fr');
+    const params = useParams();
+    const pathname = usePathname();
+    const router = useRouter();
+    const urlLocale = params?.locale as Language;
+
+    const [language, setLanguageState] = useState<Language>(urlLocale || 'en');
     const [translations, setTranslations] = useState<Record<string, string>>({});
 
     useEffect(() => {
-        // 1. Detect language
+        // Sync state if URL locale changes
+        if (urlLocale && urlLocale !== language && languageMap[urlLocale]) {
+            setLanguageState(urlLocale);
+            localStorage.setItem('preferred_language', urlLocale);
+        }
+    }, [urlLocale]);
+
+    useEffect(() => {
         const savedLang = localStorage.getItem('preferred_language') as Language;
-        if (savedLang && languageMap[savedLang]) {
-            setLanguageState(savedLang);
-        } else {
-            const browserLang = navigator.language.split('-')[0];
-            if (languageMap[browserLang]) {
-                setLanguageState(languageMap[browserLang]);
+        if (!urlLocale) {
+            if (savedLang && languageMap[savedLang]) {
+                setLanguageState(savedLang);
+            } else {
+                const browserLang = navigator.language.split('-')[0];
+                if (languageMap[browserLang]) {
+                    setLanguageState(languageMap[browserLang]);
+                }
             }
         }
-    }, []);
+    }, [urlLocale]);
 
     useEffect(() => {
         // 2. Load translations
@@ -53,6 +68,17 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     const setLanguage = (lang: Language) => {
         setLanguageState(lang);
         localStorage.setItem('preferred_language', lang);
+
+        // Navigate to the new localized route
+        const segments = pathname.split('/');
+        // If segments[1] is a locale, replace it.
+        if (languageMap[segments[1]]) {
+            segments[1] = lang;
+        } else {
+            // This shouldn't happen with middleware, but handle just in case
+            segments.splice(1, 0, lang);
+        }
+        router.push(segments.join('/'));
     };
 
     const t = (key: string, params?: Record<string, any>) => {
