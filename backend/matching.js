@@ -1,7 +1,6 @@
 const Redis = require('ioredis');
 const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
 const { startBilling, stopBilling } = require('./billing');
-const { logNewUser, logNewModel } = require('./stats');
 
 redis.on('error', (err) => {
     console.error('[Redis Error] Could not connect. Is Redis running?', err.message);
@@ -38,10 +37,6 @@ function setupMatching(io, socket) {
             }
 
             const isNew = await redis.set(`has_joined:${socket.id}`, '1', 'NX', 'EX', 86400);
-            if (isNew) {
-                if (role === 'user') await logNewUser();
-                if (role === 'model') await logNewModel();
-            }
             await redis.lrem(role === 'model' ? QUEUE_MODELS : QUEUE_USERS, 0, socket.id);
             await disconnectFromRoom(socket);
             await handleJoinQueue(io, socket);

@@ -1,6 +1,6 @@
 const express = require('express');
 const { getSettings, updateSettings } = require('./settings');
-const { getGlobalStats, getDailyStats } = require('./stats');
+const { getGlobalStats, getDailyStats, logNewModel } = require('./stats');
 
 const router = express.Router();
 
@@ -179,6 +179,7 @@ router.post('/models/:email/validate', requireAuth, async (req, res) => {
 
         await redis.set(`model:active:${email}`, JSON.stringify(model));
         await redis.del(`model:pending:${email}`);
+        await logNewModel();
 
         console.log(`\n[EMAIL MOCK] 📧 -> To: ${email} | Subject: Votre compte est validé ! | Body: Bonjour ${model.name}, vous pouvez désormais vous connecter et commencer vos appels.\n`);
 
