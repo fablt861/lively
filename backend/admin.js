@@ -206,4 +206,28 @@ router.post('/models/:email/reject', requireAuth, async (req, res) => {
     }
 });
 
+// Admin Maintenance: Reset Database
+router.post('/maintenance/reset', requireAuth, async (req, res) => {
+    try {
+        const { getRedisClient } = require('./redis');
+        const { initSettings } = require('./settings');
+        const redis = getRedisClient();
+
+        console.log('[Maintenance] Full database reset requested via Admin.');
+
+        await redis.flushall();
+        await initSettings();
+
+        // Reset basic counters
+        await redis.set('global:total_users', '0');
+        await redis.set('global:total_models', '0');
+        await redis.set('global:total_clients', '0');
+
+        res.json({ success: true, message: 'Database wiped and re-initialized.' });
+    } catch (err) {
+        console.error('[Maintenance Error]', err);
+        res.status(500).json({ error: 'Failed to reset database' });
+    }
+});
+
 module.exports = router;

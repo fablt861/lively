@@ -304,6 +304,38 @@ export default function AdminPage() {
                         <button onClick={saveSettings} className="bg-indigo-500 hover:bg-indigo-400 text-white px-8 py-5 rounded-2xl font-semibold transition-all w-full shadow-lg shadow-indigo-500/25 active:scale-[0.98]">
                             Save All Settings
                         </button>
+
+                        <div className="pt-8 mt-8 border-t border-white/5 space-y-4">
+                            <h3 className="text-sm font-bold text-red-500 uppercase tracking-widest">Zone de Danger</h3>
+                            <p className="text-xs text-neutral-500 leading-relaxed">
+                                La réinitialisation de la base de données effacera TOUS les utilisateurs, modèles, historiques de transactions et statistiques.
+                                Les paramètres de la plateforme seront remis à zéro. Cette action est irréversible.
+                            </p>
+                            <button
+                                onClick={async () => {
+                                    if (confirm("⚠️ Êtes-vous ABSOLUMENT sûr de vouloir réinitialiser TOUTE la base de données ?") &&
+                                        confirm("Dernière chance : Toutes les données seront DEFINITIVEMENT perdues.")) {
+                                        try {
+                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/maintenance/reset`, {
+                                                method: "POST",
+                                                headers: { Authorization: `Bearer ${token}` }
+                                            });
+                                            if (res.ok) {
+                                                alert("Base de données réinitialisée avec succès !");
+                                                window.location.reload();
+                                            } else {
+                                                alert("Échec de la réinitialisation.");
+                                            }
+                                        } catch (err) {
+                                            alert("Erreur réseau lors de la réinitialisation.");
+                                        }
+                                    }
+                                }}
+                                className="bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 px-6 py-3 rounded-xl text-xs font-bold transition-all"
+                            >
+                                Reset Entire Database
+                            </button>
+                        </div>
                     </div>
                 )}
 
