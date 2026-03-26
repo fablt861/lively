@@ -21,8 +21,12 @@ export default function Home() {
     const handleLogout = () => {
         localStorage.removeItem('kinky_token');
         localStorage.removeItem('kinky_user_pseudo');
+        localStorage.removeItem('kinky_user_email');
+        localStorage.removeItem('kinky_user_role');
         localStorage.removeItem('kinky_account_status');
-        localStorage.removeItem('kinky_role');
+        localStorage.removeItem('kinky_credits');
+        localStorage.removeItem('kinky_role'); // Legacy cleanup
+        localStorage.removeItem('kinky_email'); // Legacy cleanup
         setUserPseudo(null);
     };
 

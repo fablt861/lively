@@ -47,8 +47,9 @@ export default function LoginPage() {
 
             if (res.ok && data.success) {
                 localStorage.setItem("kinky_token", data.token);
-                localStorage.setItem("kinky_role", data.user.role);
-                localStorage.setItem("kinky_email", data.user.email);
+                localStorage.setItem("kinky_user_role", data.user.role);
+                localStorage.setItem("kinky_user_email", data.user.email);
+                localStorage.setItem("kinky_user_pseudo", data.user.name);
 
                 if (data.user.role === 'model') {
                     localStorage.setItem("kinky_account_status", 'active_model');

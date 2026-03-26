@@ -188,6 +188,7 @@ export function VideoRoom({
                         localStorage.setItem('kinky_account_status', 'registered');
                         localStorage.setItem('kinky_user_email', email);
                         localStorage.setItem('kinky_user_pseudo', name);
+                        localStorage.setItem('kinky_user_role', userRole);
                         localStorage.setItem('kinky_credits', '5');
                         setAccountStatus('registered');
                         setUserCredits(5);

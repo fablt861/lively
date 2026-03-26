@@ -12,7 +12,7 @@ export function GenderModal({ onClose }: GenderModalProps) {
     const [step, setStep] = useState<'select' | 'female_info'>('select');
 
     const handleSelectMale = () => {
-        localStorage.setItem('kinky_role', 'user');
+        localStorage.setItem('kinky_user_role', 'user');
         window.location.href = '/live';
     };
 
@@ -95,7 +95,7 @@ export function GenderModal({ onClose }: GenderModalProps) {
                             </button>
                             <button
                                 onClick={() => {
-                                    localStorage.setItem('kinky_role', 'model');
+                                    localStorage.setItem('kinky_user_role', 'model');
                                     window.location.href = '/live';
                                 }}
                                 className="text-white/20 hover:text-white/40 text-[10px] uppercase font-bold tracking-widest transition-colors mt-2"
@@ -106,6 +106,6 @@ export function GenderModal({ onClose }: GenderModalProps) {
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     );
 }
