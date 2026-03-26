@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Kinky.live | Premium Video Chat & High-End Networking",
   description: "Experience the ultimate luxury video chat platform. Connect with high-end models and users in a sophisticated, secure, and private environment. Kinky.live - Redefining premium online interactions.",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export const viewport = {
