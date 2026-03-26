@@ -125,8 +125,8 @@ export function UnifiedAuthModal({ onSuccess }: UnifiedAuthModalProps) {
                     </button>
                 </form>
 
-                <div className="mt-8 text-white/10 text-[9px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-2">
-                    <ShieldCheck size={12} />
+                <div className="mt-8 text-white/40 text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-2">
+                    <ShieldCheck size={14} />
                     Accès 100% sécurisé
                 </div>
             </div>

@@ -181,8 +181,8 @@ export default function LoginPage() {
                         </button>
                     </form>
 
-                    <div className="mt-8 flex items-center justify-center gap-2 text-white/10 text-[9px] font-black uppercase tracking-[0.3em]">
-                        <ShieldCheck size={12} />
+                    <div className="mt-8 flex items-center justify-center gap-2 text-white/40 text-[10px] font-black uppercase tracking-[0.3em]">
+                        <ShieldCheck size={14} />
                         Accès 100% sécurisé
                     </div>
                 </div>
