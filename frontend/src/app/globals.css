@@ -30,6 +30,7 @@ body {
     opacity: 0;
     transform: translateY(10px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -56,4 +57,56 @@ body {
   background: rgba(99, 102, 241, 0.1);
   backdrop-filter: blur(15px);
   border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+/* Entry Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation-duration: 700ms;
+  animation-fill-mode: forwards;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fade-in {
+  animation-name: fadeIn;
+}
+
+.slide-in-from-bottom-4 {
+  animation-name: slideInFromBottom;
+}
+
+.slide-in-from-bottom-6 {
+  animation-name: slideInFromBottom;
+  animation-duration: 1000ms;
+}
+
+.slide-in-from-bottom-8 {
+  animation-name: slideInFromBottom;
+  animation-duration: 1200ms;
+}
+
+.slide-in-from-bottom-10 {
+  animation-name: slideInFromBottom;
+  animation-duration: 1400ms;
 }
