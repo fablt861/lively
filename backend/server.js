@@ -28,6 +28,12 @@ const app = express();
 app.use(cors(corsOptions));
 app.use(express.json());
 
+// Diagnostic Logger for Production 404s
+app.use((req, res, next) => {
+  console.log(`[API REQUEST] ${req.method} ${req.url}`);
+  next();
+});
+
 const server = http.createServer(app);
 
 const io = new Server(server, {
@@ -74,7 +80,7 @@ app.get('/api/ice-servers', async (req, res) => {
 });
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', version: '1.0.2', timestamp: Date.now() });
+  res.json({ status: 'ok', version: '1.0.3', timestamp: Date.now() });
 });
 
 app.get('/api/settings', async (req, res) => {
