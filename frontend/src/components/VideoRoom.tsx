@@ -311,11 +311,11 @@ export function VideoRoom({
                 <div className="absolute bottom-[100px] right-4 md:bottom-8 md:right-auto md:left-1/2 md:-translate-x-1/2 z-40 flex flex-col items-center gap-3">
                     <button
                         onClick={nextPartner}
-                        className="group relative flex items-center justify-center px-8 py-4 md:px-12 md:py-5 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 hover:opacity-90 shadow-[0_0_30px_rgba(99,102,241,0.4)] transition-all duration-300 hover:scale-105 active:scale-95"
+                        className="group relative flex items-center justify-center px-6 py-3 md:px-12 md:py-5 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 hover:opacity-90 shadow-[0_0_30px_rgba(99,102,241,0.4)] transition-all duration-300 hover:scale-105 active:scale-95"
                     >
                         <div className="flex items-center gap-2 relative z-10">
-                            <SkipForward size={24} className="text-white fill-white" />
-                            <span className="text-white font-black tracking-widest uppercase text-sm md:text-lg leading-none">Next</span>
+                            <SkipForward className="w-5 h-5 md:w-6 md:h-6 text-white fill-white" />
+                            <span className="text-white font-black tracking-widest uppercase text-[12px] md:text-lg leading-none">Next</span>
                         </div>
                     </button>
                 </div>
@@ -331,7 +331,7 @@ export function VideoRoom({
             {/* Chat Area */}
             <div className="absolute bottom-0 left-0 w-full md:relative md:w-96 md:h-full z-40 flex flex-col justify-end">
                 <div className="flex flex-col bg-transparent md:bg-neutral-900/50 md:backdrop-blur-3xl md:border-l md:border-white/5 h-full max-h-[40dvh] md:max-h-full">
-                    <div className="flex-1 overflow-y-auto px-4 pr-24 md:pr-6 md:p-6 space-y-3 [mask-image:linear-gradient(to_bottom,transparent,black_20%)] md:[mask-image:none]">
+                    <div className="flex-1 overflow-y-auto px-4 pr-32 md:pr-6 md:p-6 space-y-3 [mask-image:linear-gradient(to_bottom,transparent,black_20%)] md:[mask-image:none]">
                         {messages.length === 0 && (
                             <div className="flex items-center justify-center h-full text-white/30 text-sm hidden md:flex">
                                 It's quiet here. Send a message!
