@@ -9,6 +9,11 @@ const ADMIN_USER = 'admin';
 const ADMIN_PASS = 'admin123';
 const MOCK_TOKEN = 'secret-admin-token-xyz';
 
+// Admin Ping (Connectivity Check)
+router.get('/ping', (req, res) => {
+    res.json({ success: true, timestamp: Date.now() });
+});
+
 const requireAuth = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (authHeader === `Bearer ${MOCK_TOKEN}`) {
@@ -18,7 +23,7 @@ const requireAuth = (req, res, next) => {
     }
 };
 
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
     const { username, password } = req.body;
     if (username === ADMIN_USER && password === ADMIN_PASS) {
         res.json({ token: MOCK_TOKEN });

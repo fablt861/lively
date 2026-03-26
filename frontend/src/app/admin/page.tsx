@@ -16,6 +16,8 @@ export default function AdminPage() {
     const [users, setUsers] = useState<any[]>([]);
     const [models, setModels] = useState<any[]>([]);
     const [userFilter, setUserFilter] = useState<'all' | 'buyers'>('all');
+    const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking');
+    const [fetchError, setFetchError] = useState<string | null>(null);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -44,17 +46,55 @@ export default function AdminPage() {
             .then(setStats);
     };
 
-    const fetchUsers = () => {
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/users`, { headers: { Authorization: `Bearer ${token}` } })
-            .then(res => res.json())
-            .then(setUsers);
+    const fetchUsers = async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/users`, { headers: { Authorization: `Bearer ${token}` } });
+            if (!res.ok) throw new Error(`Server returned ${res.status}`);
+            const data = await res.json();
+            if (Array.isArray(data)) {
+                setUsers(data);
+                setFetchError(null);
+            } else {
+                throw new Error("Invalid data format received.");
+            }
+        } catch (err: any) {
+            console.error("Fetch Users Error:", err);
+            setFetchError("Impossible de charger les utilisateurs. Vérifiez la console.");
+        }
     };
 
-    const fetchModels = () => {
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/models`, { headers: { Authorization: `Bearer ${token}` } })
-            .then(res => res.json())
-            .then(setModels);
+    const fetchModels = async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/models`, { headers: { Authorization: `Bearer ${token}` } });
+            if (!res.ok) throw new Error(`Server returned ${res.status}`);
+            const data = await res.json();
+            if (Array.isArray(data)) {
+                setModels(data);
+                setFetchError(null);
+            } else {
+                throw new Error("Invalid data format received.");
+            }
+        } catch (err: any) {
+            console.error("Fetch Models Error:", err);
+            setFetchError("Impossible de charger les modèles.");
+        }
     };
+
+    const checkConnectivity = async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/ping`);
+            if (res.ok) setBackendStatus('online');
+            else setBackendStatus('offline');
+        } catch {
+            setBackendStatus('offline');
+        }
+    };
+
+    useEffect(() => {
+        const interval = setInterval(checkConnectivity, 10000);
+        checkConnectivity();
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         const savedToken = localStorage.getItem("kinky_admin_token");
@@ -334,12 +374,24 @@ export default function AdminPage() {
                 {activeTab === 'users' && (
                     <div className="space-y-8 animate-in fade-in duration-500">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-3xl font-light">User Management</h2>
+                            <div className="flex items-center gap-4">
+                                <h2 className="text-3xl font-light">User Management</h2>
+                                {backendStatus === 'offline' && <span className="bg-red-500/20 text-red-400 text-[10px] font-bold px-2 py-1 rounded-md border border-red-500/20 animate-pulse">BACKEND OFFLINE</span>}
+                                {backendStatus === 'online' && <span className="bg-green-500/20 text-green-400 text-[10px] font-bold px-2 py-1 rounded-md border border-green-500/20">BACKEND ONLINE</span>}
+                            </div>
                             <div className="flex bg-neutral-900 border border-white/5 rounded-xl p-1">
                                 <button onClick={() => setUserFilter('all')} className={`px-4 py-2 rounded-lg text-sm transition-all ${userFilter === 'all' ? 'bg-indigo-500 text-white' : 'text-neutral-500 hover:text-white'}`}>All Users ({users.length})</button>
                                 <button onClick={() => setUserFilter('buyers')} className={`px-4 py-2 rounded-lg text-sm transition-all ${userFilter === 'buyers' ? 'bg-indigo-500 text-white' : 'text-neutral-500 hover:text-white'}`}>Buyers ({users.filter(u => u.isBuyer).length})</button>
                             </div>
                         </div>
+
+                        {fetchError && (
+                            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm flex items-center gap-3">
+                                <XCircle size={20} />
+                                {fetchError}
+                                <button onClick={fetchUsers} className="ml-auto underline font-bold">Réessayer</button>
+                            </div>
+                        )}
 
                         <div className="bg-neutral-900 border border-white/5 rounded-3xl overflow-hidden">
                             <table className="w-full text-left">
