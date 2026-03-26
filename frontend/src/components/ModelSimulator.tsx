@@ -7,11 +7,12 @@ export function ModelSimulator() {
     const [hours, setHours] = useState(4);
     const [monthlyEarnings, setMonthlyEarnings] = useState(0);
 
-    const HOURLY_RATE = 45; // Base average rate for 1v1 + gifts
+    const MINUTE_RATE = 0.50;
+    const HOURLY_RATE = MINUTE_RATE * 60; // 30€
     const DAYS_PER_MONTH = 22; // Standard active month
 
     useEffect(() => {
-        setMonthlyEarnings(hours * HOURLY_RATE * DAYS_PER_MONTH);
+        setMonthlyEarnings(Math.round(hours * HOURLY_RATE * DAYS_PER_MONTH));
     }, [hours]);
 
     return (
