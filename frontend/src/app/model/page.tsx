@@ -14,8 +14,11 @@ import {
     ArrowRight
 } from "lucide-react";
 import { ModelSimulator } from "../../components/ModelSimulator";
+import { useTranslation } from "@/context/LanguageContext";
+import { LanguageSelector } from "../../components/LanguageSelector";
 
 export default function ModelLandingPage() {
+    const { t } = useTranslation();
     return (
         <div className="min-h-screen bg-[#08080a] text-white flex flex-col font-sans relative selection:bg-pink-500/30">
             {/* Mesh Gradient Background Layer */}
@@ -32,14 +35,15 @@ export default function ModelLandingPage() {
             <nav className="relative z-50 flex justify-between items-center px-6 lg:px-12 py-10 max-w-7xl mx-auto w-full">
                 <Link href="/" className="text-3xl font-black tracking-tighter text-white group">
                     KINKY<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500 group-hover:from-indigo-500 transition-all duration-500">.</span>
-                    <span className="text-[10px] font-black text-white/40 ml-2 uppercase tracking-[0.4em] align-middle">Elite Suite</span>
+                    <span className="text-[10px] font-black text-white/40 ml-2 uppercase tracking-[0.4em] align-middle">{t('model.landing.navbar_suite')}</span>
                 </Link>
                 <div className="hidden md:flex items-center gap-10">
-                    <a href="#simulator" className="text-[11px] font-black text-white/50 hover:text-white transition-colors uppercase tracking-[0.2em]">Simulateur</a>
-                    <a href="#benefits" className="text-[11px] font-black text-white/50 hover:text-white transition-colors uppercase tracking-[0.2em]">Avantages</a>
+                    <a href="#simulator" className="text-[11px] font-black text-white/50 hover:text-white transition-colors uppercase tracking-[0.2em]">{t('model.landing.nav_simulator')}</a>
+                    <a href="#benefits" className="text-[11px] font-black text-white/50 hover:text-white transition-colors uppercase tracking-[0.2em]">{t('model.landing.nav_benefits')}</a>
                     <Link href="/model/signup" className="px-8 py-3 rounded-full bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-[0.2em] hover:bg-white/10 transition-all shadow-xl">
-                        Rejoindre
+                        {t('model.landing.nav_join')}
                     </Link>
+                    <LanguageSelector />
                 </div>
             </nav>
 
@@ -47,24 +51,24 @@ export default function ModelLandingPage() {
             <header className="relative z-10 min-h-[80vh] flex flex-col items-center justify-center px-6 pt-12 pb-24 text-center max-w-5xl mx-auto">
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-[10px] font-black uppercase tracking-[0.2em] mb-12 animate-in fade-in slide-in-from-bottom-4">
                     <Star size={14} className="fill-indigo-400" />
-                    Le réseau #1 des créatrices VIP
+                    {t('model.landing.hero_badge')}
                 </div>
 
                 <h1 className="text-6xl md:text-8xl font-black mb-10 leading-[0.95] tracking-tighter animate-in fade-in slide-in-from-bottom-6">
-                    Votre beauté est <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-400">votre empire.</span>
+                    {t('model.landing.hero_title_line1')} <br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-400">{t('model.landing.hero_title_line2')}</span>
                 </h1>
 
                 <p className="text-xl md:text-2xl text-white/40 font-light max-w-2xl leading-relaxed mb-16 animate-in fade-in slide-in-from-bottom-8">
-                    Kinky.live offre aux modèles d'exception un environnement ultra-premium, anonyme et hautement rémunérateur.
+                    {t('model.landing.hero_desc')}
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-center gap-6 animate-in fade-in slide-in-from-bottom-10">
                     <Link href="/model/signup" className="px-10 py-6 rounded-full bg-white text-black font-black text-lg shadow-[0_20px_40px_rgba(255,255,255,0.2)] hover:scale-105 active:scale-95 transition-all">
-                        Postuler maintenant
+                        {t('model.landing.hero_cta_apply')}
                     </Link>
                     <a href="#simulator" className="px-10 py-6 rounded-full bg-white/5 border border-white/10 text-white font-black text-lg hover:bg-white/10 transition-all">
-                        Voir mes revenus
+                        {t('model.landing.hero_cta_earnings')}
                     </a>
                 </div>
             </header>
@@ -74,19 +78,19 @@ export default function ModelLandingPage() {
                 <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
                     <div>
                         <div className="text-3xl font-black text-white/90 mb-1">60€ - 200€</div>
-                        <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">Par Heure</div>
+                        <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">{t('model.stat.per_hour')}</div>
                     </div>
                     <div>
-                        <div className="text-3xl font-black text-white/90 mb-1">Hebdo</div>
-                        <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">Virement Rapide</div>
+                        <div className="text-3xl font-black text-white/90 mb-1">{t('model.stat.fast_payout_val')}</div>
+                        <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">{t('model.stat.fast_payout')}</div>
                     </div>
                     <div>
                         <div className="text-3xl font-black text-white/90 mb-1">100%</div>
-                        <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">Discrétion VIP</div>
+                        <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">{t('model.stat.discretion')}</div>
                     </div>
                     <div>
-                        <div className="text-3xl font-black text-white/90 mb-1">Privé</div>
-                        <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">Accès Sécurisé</div>
+                        <div className="text-3xl font-black text-white/90 mb-1">{t('model.stat.secure_access_val')}</div>
+                        <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">{t('model.stat.secure_access')}</div>
                     </div>
                 </div>
             </div>
@@ -94,8 +98,8 @@ export default function ModelLandingPage() {
             {/* Income Simulator Section */}
             <section id="simulator" className="relative z-10 py-48 px-6 flex flex-col items-center max-w-7xl mx-auto w-full gap-24">
                 <div className="text-center space-y-4 max-w-2xl">
-                    <h2 className="text-4xl md:text-6xl font-black tracking-tight leading-tight">Projetez votre succès.</h2>
-                    <p className="text-white/40 text-lg md:text-xl font-light">L'outil de calcul pour les créatrices qui exigent le meilleur.</p>
+                    <h2 className="text-4xl md:text-6xl font-black tracking-tight leading-tight">{t('model.landing.sim_title')}</h2>
+                    <p className="text-white/40 text-lg md:text-xl font-light">{t('model.landing.sim_desc')}</p>
                 </div>
 
                 <div className="w-full flex justify-center">
@@ -111,11 +115,11 @@ export default function ModelLandingPage() {
                             <Lock size={28} />
                         </div>
                         <div className="space-y-4">
-                            <h3 className="text-2xl font-bold tracking-tight">Anonymat Garanti</h3>
-                            <p className="text-white/40 leading-relaxed font-light text-lg">Contrôle total sur votre image. Floutage et blocage géographique avancés.</p>
+                            <h3 className="text-2xl font-bold tracking-tight">{t('model.benefit.anon_title')}</h3>
+                            <p className="text-white/40 leading-relaxed font-light text-lg">{t('model.benefit.anon_desc')}</p>
                         </div>
                         <ul className="space-y-4 pt-4 border-t border-white/5">
-                            {["Floutage facial IA", "Zones interdites", "No Recording Tech"].map((item) => (
+                            {[t('model.benefit.anon_item1'), t('model.benefit.anon_item2'), t('model.benefit.anon_item3')].map((item) => (
                                 <li key={item} className="flex items-center gap-3 text-sm font-bold text-white/50">
                                     <CheckCircle2 size={16} className="text-green-500" /> {item}
                                 </li>
@@ -128,11 +132,11 @@ export default function ModelLandingPage() {
                             <DollarSign size={28} />
                         </div>
                         <div className="space-y-4">
-                            <h3 className="text-2xl font-bold tracking-tight">Reversement Élite</h3>
-                            <p className="text-white/40 leading-relaxed font-light text-lg">Gagnez plus sur chaque interaction. Pas de frais cachés, pas de surprises.</p>
+                            <h3 className="text-2xl font-bold tracking-tight">{t('model.benefit.payout_title')}</h3>
+                            <p className="text-white/40 leading-relaxed font-light text-lg">{t('model.benefit.payout_desc')}</p>
                         </div>
                         <ul className="space-y-4 pt-4 border-t border-white/5">
-                            {["Taux fixe élevé", "Tips illimités", "Cashout hebdo"].map((item) => (
+                            {[t('model.benefit.payout_item1'), t('model.benefit.payout_item2'), t('model.benefit.payout_item3')].map((item) => (
                                 <li key={item} className="flex items-center gap-3 text-sm font-bold text-white/50">
                                     <CheckCircle2 size={16} className="text-green-500" /> {item}
                                 </li>
@@ -145,11 +149,11 @@ export default function ModelLandingPage() {
                             <Zap size={28} />
                         </div>
                         <div className="space-y-4">
-                            <h3 className="text-2xl font-bold tracking-tight">Flexibilité Totale</h3>
-                            <p className="text-white/40 leading-relaxed font-light text-lg">Aucun quota, aucune pression. Votre vie, votre planning, vos règles.</p>
+                            <h3 className="text-2xl font-bold tracking-tight">{t('model.benefit.flex_title')}</h3>
+                            <p className="text-white/40 leading-relaxed font-light text-lg">{t('model.benefit.flex_desc')}</p>
                         </div>
                         <ul className="space-y-4 pt-4 border-t border-white/5">
-                            {["Sans exclusivité", "Zéro frais fixes", "Dashboard temps réel"].map((item) => (
+                            {[t('model.benefit.flex_item1'), t('model.benefit.flex_item2'), t('model.benefit.flex_item3')].map((item) => (
                                 <li key={item} className="flex items-center gap-3 text-sm font-bold text-white/50">
                                     <CheckCircle2 size={16} className="text-green-500" /> {item}
                                 </li>
@@ -163,13 +167,13 @@ export default function ModelLandingPage() {
             <footer className="relative z-10 py-48 border-t border-white/5 bg-white/[0.01]">
                 <div className="max-w-4xl mx-auto px-6 text-center space-y-16">
                     <div className="space-y-6">
-                        <h2 className="text-5xl md:text-7xl font-black tracking-tight leading-[0.9]">Rejoignez <br /> l'exclusivité.</h2>
-                        <p className="text-xl text-white/40 max-w-xl mx-auto font-light leading-relaxed">Devenez une égérie Kinky et transformez votre charisme en liberté financière.</p>
+                        <h2 className="text-5xl md:text-7xl font-black tracking-tight leading-[0.9]">{t('model.landing.footer_title_line1')} <br /> {t('model.landing.footer_title_line2')}</h2>
+                        <p className="text-xl text-white/40 max-w-xl mx-auto font-light leading-relaxed">{t('model.landing.footer_desc')}</p>
                     </div>
 
                     <div className="pt-8">
                         <Link href="/model/signup" className="group relative inline-flex items-center justify-center gap-4 px-12 py-8 rounded-full bg-white text-black font-black text-xl shadow-[0_30px_60px_rgba(255,255,255,0.1)] transition-all duration-500 hover:scale-[1.05] active:scale-95 overflow-hidden">
-                            <span className="relative z-10">Créer mon compte modèle</span>
+                            <span className="relative z-10">{t('model.landing.footer_cta')}</span>
                             <ArrowRight size={24} className="relative z-10 group-hover:translate-x-2 transition-transform duration-500" />
                         </Link>
                     </div>

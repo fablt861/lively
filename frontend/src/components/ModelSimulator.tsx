@@ -1,9 +1,9 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { DollarSign, TrendingUp, Calendar, Clock } from "lucide-react";
+import { useTranslation } from "@/context/LanguageContext";
 
 export function ModelSimulator() {
+    const { t } = useTranslation();
     const [hours, setHours] = useState(4);
     const [monthlyEarnings, setMonthlyEarnings] = useState(0);
 
@@ -24,9 +24,9 @@ export function ModelSimulator() {
                 <div className="space-y-2">
                     <h3 className="text-2xl font-black text-white flex items-center gap-3">
                         <TrendingUp className="text-pink-500" />
-                        Simulateur de revenus
+                        {t('simulator.title')}
                     </h3>
-                    <p className="text-white/40 text-sm font-medium uppercase tracking-[0.2em]">Estimez vos gains mensuels</p>
+                    <p className="text-white/40 text-sm font-medium uppercase tracking-[0.2em]">{t('simulator.subtitle')}</p>
                 </div>
 
                 <div className="space-y-8">
@@ -34,10 +34,10 @@ export function ModelSimulator() {
                         <div className="flex justify-between items-end">
                             <span className="text-sm font-bold text-white/60 flex items-center gap-2">
                                 <Clock size={16} className="text-indigo-400" />
-                                Présence par jour
+                                {t('simulator.presence')}
                             </span>
                             <span className="text-4xl font-black text-white tabular-nums">
-                                {hours}<span className="text-lg text-white/40 ml-1">h</span>
+                                {hours}<span className="text-lg text-white/40 ml-1">{t('simulator.hours_unit')}</span>
                             </span>
                         </div>
 
@@ -51,8 +51,8 @@ export function ModelSimulator() {
                         />
 
                         <div className="flex justify-between text-[10px] font-black text-white/20 uppercase tracking-widest">
-                            <span>1h / jour</span>
-                            <span>12h / jour</span>
+                            <span>{t('simulator.range_low')}</span>
+                            <span>{t('simulator.range_high')}</span>
                         </div>
                     </div>
 
@@ -62,7 +62,7 @@ export function ModelSimulator() {
                         </div>
 
                         <div className="relative z-10 space-y-1">
-                            <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-2">Revenu mensuel estimé</p>
+                            <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-2">{t('simulator.estimated_income')}</p>
                             <div className="flex items-baseline gap-2">
                                 <span className="text-5xl md:text-6xl font-black text-white drop-shadow-2xl">
                                     {monthlyEarnings.toLocaleString()}
@@ -70,7 +70,7 @@ export function ModelSimulator() {
                                 <span className="text-2xl font-bold text-white/40">€</span>
                             </div>
                             <p className="text-[11px] text-white/30 italic pt-4 flex items-center gap-2">
-                                <Calendar size={12} /> Basé sur {DAYS_PER_MONTH} jours d'activité par mois
+                                <Calendar size={12} /> {t('simulator.basis_text', { days: DAYS_PER_MONTH })}
                             </p>
                         </div>
                     </div>
@@ -79,7 +79,7 @@ export function ModelSimulator() {
                         onClick={() => window.location.href = '/model/signup'}
                         className="w-full py-6 rounded-full bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-500 text-white font-black text-lg shadow-[0_20px_40px_rgba(236,72,153,0.3)] hover:shadow-[0_25px_50px_rgba(236,72,153,0.5)] transition-all duration-500 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 group/btn"
                     >
-                        Commencer à gagner
+                        {t('simulator.cta')}
                         <TrendingUp size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                     </button>
                 </div>

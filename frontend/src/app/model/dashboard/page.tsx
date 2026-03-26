@@ -4,6 +4,8 @@ import { useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { Wallet, History, ArrowUpRight, DollarSign, Activity, Video } from "lucide-react";
 import Link from "next/link";
+import { useTranslation } from "@/context/LanguageContext";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 interface Stats {
     balance: number;
@@ -16,6 +18,7 @@ interface Stats {
 }
 
 export default function DashboardPage() {
+    const { t } = useTranslation();
     const [id, setId] = useState<string | null>(null);
     const [stats, setStats] = useState<Stats | null>(null);
     const [loading, setLoading] = useState(true);
@@ -57,7 +60,7 @@ export default function DashboardPage() {
     if (!id) {
         return (
             <div className="min-h-screen bg-neutral-950 text-white flex items-center justify-center">
-                No Model ID provided.
+                {t('dashboard.no_id')}
             </div>
         );
     }
@@ -67,15 +70,18 @@ export default function DashboardPage() {
             {/* Header */}
             <header className="flex items-center justify-between mb-16">
                 <div>
-                    <h1 className="text-4xl font-light tracking-tight text-white mb-2">Model Dashboard</h1>
-                    <p className="text-neutral-500">Manage your earnings and session history</p>
+                    <h1 className="text-4xl font-light tracking-tight text-white mb-2">{t('dashboard.title')}</h1>
+                    <p className="text-neutral-500">{t('dashboard.subtitle')}</p>
                 </div>
-                <Link
-                    href="/live"
-                    className="px-8 py-3 bg-pink-500 hover:bg-pink-400 border border-pink-400/50 shadow-lg shadow-pink-500/20 text-white rounded-full transition-all duration-300 text-sm font-bold flex items-center gap-2"
-                >
-                    <Video size={18} /> Lancer le Live
-                </Link>
+                <div className="flex items-center gap-6">
+                    <LanguageSelector />
+                    <Link
+                        href="/live"
+                        className="px-8 py-3 bg-pink-500 hover:bg-pink-400 border border-pink-400/50 shadow-lg shadow-pink-500/20 text-white rounded-full transition-all duration-300 text-sm font-bold flex items-center gap-2"
+                    >
+                        <Video size={18} /> {t('dashboard.launch_live')}
+                    </Link>
+                </div>
             </header>
 
             {/* Main Stats Grid */}
@@ -87,13 +93,13 @@ export default function DashboardPage() {
                     <div className="flex-1">
                         <div className="flex items-center gap-3 text-indigo-300 mb-4">
                             <Wallet size={20} />
-                            <span className="font-medium tracking-wide uppercase text-sm">Total Available Balance</span>
+                            <span className="font-medium tracking-wide uppercase text-sm">{t('dashboard.balance_title')}</span>
                         </div>
                         <div className="text-7xl font-extralight text-white mb-6 font-mono">
                             ${loading ? "..." : stats?.balance.toFixed(2)}
                         </div>
                         <button className="group flex items-center gap-2 bg-indigo-500 hover:bg-indigo-400 text-white px-8 py-4 rounded-full font-medium transition-all duration-300 shadow-lg shadow-indigo-500/25 hover:-translate-y-1">
-                            Request Payout <ArrowUpRight size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                            {t('dashboard.payout_cta')} <ArrowUpRight size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                         </button>
                     </div>
                 </div>
@@ -102,7 +108,7 @@ export default function DashboardPage() {
                 <div className="rounded-3xl bg-neutral-900 border border-white/5 p-8 flex flex-col justify-center">
                     <div className="flex items-center gap-3 text-pink-400 mb-4">
                         <Activity size={20} />
-                        <span className="font-medium tracking-wide uppercase text-sm">Total Sessions</span>
+                        <span className="font-medium tracking-wide uppercase text-sm">{t('dashboard.sessions_title')}</span>
                     </div>
                     <div className="text-5xl font-light text-white">
                         {loading ? "..." : stats?.history.length || 0}
@@ -114,22 +120,22 @@ export default function DashboardPage() {
             <div>
                 <div className="flex items-center gap-3 text-white/80 mb-6">
                     <History size={24} />
-                    <h2 className="text-2xl font-light">Recent History</h2>
+                    <h2 className="text-2xl font-light">{t('dashboard.history_title')}</h2>
                 </div>
 
                 <div className="bg-neutral-900/50 border border-white/5 rounded-3xl overflow-hidden">
                     {loading ? (
-                        <div className="p-12 text-center text-neutral-500">Loading history...</div>
+                        <div className="p-12 text-center text-neutral-500">{t('dashboard.history_loading')}</div>
                     ) : dailyStats.length === 0 ? (
-                        <div className="p-12 text-center text-neutral-500">No calls registered yet. Start matching!</div>
+                        <div className="p-12 text-center text-neutral-500">{t('dashboard.history_empty')}</div>
                     ) : (
                         <table className="w-full text-left">
                             <thead>
                                 <tr className="border-b border-white/5 bg-white/[0.02]">
-                                    <th className="p-6 text-sm font-medium text-neutral-400 uppercase tracking-wider">Date</th>
-                                    <th className="p-6 text-sm font-medium text-neutral-400 uppercase tracking-wider">Calls</th>
-                                    <th className="p-6 text-sm font-medium text-neutral-400 uppercase tracking-wider">Total Duration</th>
-                                    <th className="p-6 text-sm font-medium text-neutral-400 uppercase tracking-wider text-right">Earned</th>
+                                    <th className="p-6 text-sm font-medium text-neutral-400 uppercase tracking-wider">{t('dashboard.table_date')}</th>
+                                    <th className="p-6 text-sm font-medium text-neutral-400 uppercase tracking-wider">{t('dashboard.table_calls')}</th>
+                                    <th className="p-6 text-sm font-medium text-neutral-400 uppercase tracking-wider">{t('dashboard.table_duration')}</th>
+                                    <th className="p-6 text-sm font-medium text-neutral-400 uppercase tracking-wider text-right">{t('dashboard.table_earned')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">
@@ -139,7 +145,7 @@ export default function DashboardPage() {
                                             {day.date}
                                         </td>
                                         <td className="p-6 text-neutral-500 font-mono text-sm">
-                                            {day.calls} session(s)
+                                            {t('dashboard.sessions_count', { count: day.calls })}
                                         </td>
                                         <td className="p-6 text-neutral-300">
                                             {Math.floor(day.durationSec / 60)}m {day.durationSec % 60}s

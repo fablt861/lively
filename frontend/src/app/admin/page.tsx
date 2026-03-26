@@ -1,9 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, Video, DollarSign, Activity, Settings, Lock, CheckCircle, XCircle, Clock } from "lucide-react";
+import { Users, Video, DollarSign, Activity, Settings, Lock, CheckCircle, XCircle, Clock, Globe } from "lucide-react";
+import { useTranslation } from "@/context/LanguageContext";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 export default function AdminPage() {
+    const { t } = useTranslation();
     const [token, setToken] = useState("");
     const [isLogged, setIsLogged] = useState(false);
     const [username, setUsername] = useState("");
@@ -33,10 +36,10 @@ export default function AdminPage() {
                 setToken(data.token);
                 setIsLogged(true);
             } else {
-                alert("Invalid login");
+                alert(t('admin.login.error_invalid'));
             }
         } catch (err) {
-            alert("Error connecting to backend");
+            alert(t('admin.login.error_connect'));
         }
     };
 
@@ -59,7 +62,7 @@ export default function AdminPage() {
             }
         } catch (err: any) {
             console.error("Fetch Users Error:", err);
-            setFetchError("Impossible de charger les utilisateurs. Vérifiez la console.");
+            setFetchError(t('admin.users.fetch_error'));
         }
     };
 
@@ -76,7 +79,7 @@ export default function AdminPage() {
             }
         } catch (err: any) {
             console.error("Fetch Models Error:", err);
-            setFetchError("Impossible de charger les modèles.");
+            setFetchError(t('admin.models.fetch_error'));
         }
     };
 
@@ -130,10 +133,10 @@ export default function AdminPage() {
                 body: JSON.stringify(settings)
             });
             if (res.ok) {
-                alert("Settings successfully updated!");
+                alert(t('admin.settings.save_success'));
             }
         } catch (err) {
-            alert("Failed to save settings");
+            alert(t('admin.settings.save_error'));
         }
     };
 
@@ -141,11 +144,14 @@ export default function AdminPage() {
         return (
             <div className="min-h-screen bg-neutral-950 flex items-center justify-center font-sans text-white">
                 <form onSubmit={handleLogin} className="bg-neutral-900 border border-white/5 p-8 rounded-3xl w-full max-w-sm space-y-6 shadow-2xl">
-                    <div className="flex justify-center mb-4"><Lock size={48} className="text-indigo-500" /></div>
-                    <h1 className="text-2xl font-light text-center tracking-wide">Admin Access</h1>
-                    <input type="text" placeholder="Username (admin)" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:outline-none focus:border-indigo-500 transition-colors" value={username} onChange={e => setUsername(e.target.value)} />
-                    <input type="password" placeholder="Password (admin123)" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:outline-none focus:border-indigo-500 transition-colors" value={password} onChange={e => setPassword(e.target.value)} />
-                    <button type="submit" className="w-full bg-indigo-500 hover:bg-indigo-400 text-white rounded-xl p-3 font-medium transition-colors shadow-lg shadow-indigo-500/20">Login</button>
+                    <div className="flex justify-center mb-4 text-indigo-500 flex-col items-center gap-4">
+                        <Lock size={48} />
+                        <LanguageSelector />
+                    </div>
+                    <h1 className="text-2xl font-light text-center tracking-wide">{t('admin.login.title')}</h1>
+                    <input type="text" placeholder={t('admin.login.user_placeholder')} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:outline-none focus:border-indigo-500 transition-colors" value={username} onChange={e => setUsername(e.target.value)} />
+                    <input type="password" placeholder={t('admin.login.pass_placeholder')} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:outline-none focus:border-indigo-500 transition-colors" value={password} onChange={e => setPassword(e.target.value)} />
+                    <button type="submit" className="w-full bg-indigo-500 hover:bg-indigo-400 text-white rounded-xl p-3 font-medium transition-colors shadow-lg shadow-indigo-500/20">{t('admin.login.cta')}</button>
                 </form>
             </div>
         );
@@ -160,20 +166,20 @@ export default function AdminPage() {
                 </div>
                 <nav className="flex-1 p-4 space-y-2">
                     <button onClick={() => setActiveTab('stats')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'stats' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
-                        <Activity size={20} /> Dashboard
+                        <Activity size={20} /> {t('admin.nav.dashboard')}
                     </button>
                     <button onClick={() => setActiveTab('users')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'users' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
-                        <Users size={20} /> Users
+                        <Users size={20} /> {t('admin.nav.users')}
                     </button>
                     <button onClick={() => setActiveTab('models')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'models' ? 'bg-pink-500/20 text-pink-300' : 'hover:bg-white/5 text-neutral-400'}`}>
-                        <Video size={20} /> Models
+                        <Video size={20} /> {t('admin.nav.models')}
                     </button>
                     <button onClick={() => setActiveTab('validations')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'validations' ? 'bg-amber-500/20 text-amber-300' : 'hover:bg-white/5 text-neutral-400'}`}>
-                        <Clock size={20} /> Pending {pendingModels.length > 0 && <span className="ml-auto bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{pendingModels.length}</span>}
+                        <Clock size={20} /> {t('admin.nav.pending')} {pendingModels.length > 0 && <span className="ml-auto bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{pendingModels.length}</span>}
                     </button>
                     <div className="pt-4 mt-4 border-t border-white/5 space-y-2">
                         <button onClick={() => setActiveTab('settings')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'settings' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
-                            <Settings size={20} /> Settings
+                            <Settings size={20} /> {t('admin.nav.settings')}
                         </button>
                         <button
                             onClick={() => {
@@ -183,8 +189,11 @@ export default function AdminPage() {
                             }}
                             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-red-500 hover:bg-red-500/10"
                         >
-                            <Lock size={20} /> Logout
+                            <Lock size={20} /> {t('admin.nav.logout')}
                         </button>
+                        <div className="px-4 py-3 mt-auto">
+                            <LanguageSelector />
+                        </div>
                     </div>
                 </nav>
             </aside>
@@ -193,41 +202,41 @@ export default function AdminPage() {
             <main className="flex-1 p-10 overflow-y-auto">
                 {activeTab === 'stats' && stats && (
                     <div className="space-y-8 animate-in fade-in duration-500">
-                        <h2 className="text-3xl font-light">Global Overview</h2>
+                        <h2 className="text-3xl font-light">{t('admin.stats.title')}</h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="bg-neutral-900 border border-white/5 p-6 rounded-2xl flex flex-col justify-between hover:border-indigo-500/30 transition-colors">
-                                <div className="flex items-center gap-2 text-indigo-400 mb-2"><Users size={18} /> Users Registered</div>
+                                <div className="flex items-center gap-2 text-indigo-400 mb-2"><Users size={18} /> {t('admin.stats.users_registered')}</div>
                                 <div className="text-4xl font-light">{stats.global.totalUsers}</div>
                             </div>
                             <div className="bg-neutral-900 border border-white/5 p-6 rounded-2xl flex flex-col justify-between hover:border-pink-500/30 transition-colors">
-                                <div className="flex items-center gap-2 text-pink-400 mb-2"><Video size={18} /> Models Registered</div>
+                                <div className="flex items-center gap-2 text-pink-400 mb-2"><Video size={18} /> {t('admin.stats.models_registered')}</div>
                                 <div className="text-4xl font-light">{stats.global.totalModels}</div>
                             </div>
                             <div className="bg-neutral-900 border border-white/5 p-6 rounded-2xl flex flex-col justify-between hover:border-green-500/30 transition-colors">
-                                <div className="flex items-center gap-2 text-green-400 mb-2"><DollarSign size={18} /> Total Clients</div>
+                                <div className="flex items-center gap-2 text-green-400 mb-2"><DollarSign size={18} /> {t('admin.stats.total_clients')}</div>
                                 <div className="text-4xl font-light text-green-400">{stats.global.totalClients}</div>
                             </div>
                         </div>
 
                         <div className="flex items-center justify-between mt-12 mb-6">
-                            <h2 className="text-2xl font-light">Daily Performance (Last 30 Days)</h2>
+                            <h2 className="text-2xl font-light">{t('admin.stats.daily_performance')}</h2>
                         </div>
 
                         <div className="bg-neutral-900 border border-white/5 rounded-3xl overflow-hidden shadow-2xl">
                             <table className="w-full text-left">
                                 <thead className="bg-white/[0.02] border-b border-white/5">
                                     <tr>
-                                        <th className="p-5 text-neutral-400 font-medium tracking-wider text-sm uppercase">Date</th>
-                                        <th className="p-5 text-neutral-400 font-medium tracking-wider text-sm uppercase">New Visitors</th>
-                                        <th className="p-5 text-neutral-400 font-medium tracking-wider text-sm uppercase">Paid Clients</th>
-                                        <th className="p-5 text-neutral-400 font-medium tracking-wider text-sm uppercase">Revenue (CA)</th>
-                                        <th className="p-5 text-neutral-400 font-medium tracking-wider text-sm uppercase">Model Payouts</th>
-                                        <th className="p-5 text-neutral-400 font-medium tracking-wider text-sm uppercase text-right">Profit</th>
+                                        <th className="p-5 text-neutral-400 font-medium tracking-wider text-sm uppercase">{t('admin.table.date')}</th>
+                                        <th className="p-5 text-neutral-400 font-medium tracking-wider text-sm uppercase">{t('admin.table.visitors')}</th>
+                                        <th className="p-5 text-neutral-400 font-medium tracking-wider text-sm uppercase">{t('admin.table.clients')}</th>
+                                        <th className="p-5 text-neutral-400 font-medium tracking-wider text-sm uppercase">{t('admin.table.revenue')}</th>
+                                        <th className="p-5 text-neutral-400 font-medium tracking-wider text-sm uppercase">{t('admin.table.payouts')}</th>
+                                        <th className="p-5 text-neutral-400 font-medium tracking-wider text-sm uppercase text-right">{t('admin.table.profit')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
                                     {stats.daily.length === 0 && (
-                                        <tr><td colSpan={6} className="p-8 text-center text-neutral-500">No activity recorded yet in the last 30 days.</td></tr>
+                                        <tr><td colSpan={6} className="p-8 text-center text-neutral-500">{t('admin.table.no_activity')}</td></tr>
                                     )}
                                     {stats.daily.map((d: any, i: number) => (
                                         <tr key={i} className="hover:bg-white/[0.02] transition-colors">
@@ -247,34 +256,34 @@ export default function AdminPage() {
 
                 {activeTab === 'settings' && settings && (
                     <div className="space-y-8 max-w-3xl animate-in fade-in duration-500 pb-20">
-                        <h2 className="text-3xl font-light mb-8">Platform Parameters</h2>
+                        <h2 className="text-3xl font-light mb-8">{t('admin.settings.title')}</h2>
 
                         <div className="bg-neutral-900 border border-white/5 p-8 rounded-3xl space-y-6 shadow-2xl">
-                            <h3 className="text-xl font-medium text-indigo-400 border-b border-white/5 pb-4">Billing Rates</h3>
+                            <h3 className="text-xl font-medium text-indigo-400 border-b border-white/5 pb-4">{t('admin.settings.rates_title')}</h3>
                             <div className="grid grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-sm text-neutral-400 mb-2">Price Per Minute (User $)</label>
+                                    <label className="block text-sm text-neutral-400 mb-2">{t('admin.settings.price_per_min')}</label>
                                     <input type="number" step="0.01" value={settings.pricePerMinute} onChange={e => setSettings({ ...settings, pricePerMinute: parseFloat(e.target.value) })} className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 transition-colors" />
                                 </div>
                                 <div>
-                                    <label className="block text-sm text-neutral-400 mb-2">Model Payout / Min ($)</label>
+                                    <label className="block text-sm text-neutral-400 mb-2">{t('admin.settings.model_payout_per_min')}</label>
                                     <input type="number" step="0.01" value={settings.modelPayoutPerMinute} onChange={e => setSettings({ ...settings, modelPayoutPerMinute: parseFloat(e.target.value) })} className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 transition-colors" />
                                 </div>
                                 <div className="col-span-2">
-                                    <label className="block text-sm text-neutral-400 mb-2">Anti-Fraud Delay (Seconds)</label>
+                                    <label className="block text-sm text-neutral-400 mb-2">{t('admin.settings.anti_fraud_delay')}</label>
                                     <input type="number" value={settings.antiFraudDelaySec} onChange={e => setSettings({ ...settings, antiFraudDelaySec: parseInt(e.target.value) })} className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 transition-colors" />
-                                    <p className="text-xs text-neutral-500 mt-2">Models will not earn anything during these first seconds of a call.</p>
+                                    <p className="text-xs text-neutral-500 mt-2">{t('admin.settings.anti_fraud_desc')}</p>
                                 </div>
                             </div>
                         </div>
 
                         <div className="bg-neutral-900 border border-white/5 p-8 rounded-3xl space-y-6 shadow-2xl">
-                            <h3 className="text-xl font-medium text-indigo-400 border-b border-white/5 pb-4">Paywall Packages</h3>
-                            <p className="text-sm text-neutral-400 mb-4">Edit the 3 packages displayed to users when they run out of credits.</p>
+                            <h3 className="text-xl font-medium text-indigo-400 border-b border-white/5 pb-4">{t('admin.settings.packs_title')}</h3>
+                            <p className="text-sm text-neutral-400 mb-4">{t('admin.settings.packs_desc')}</p>
                             {settings.packs.map((pack: any, i: number) => (
                                 <div key={i} className="flex items-center gap-4 bg-black/20 p-5 rounded-2xl border border-white/5 hover:border-white/10 transition-colors">
                                     <div className="flex-1">
-                                        <label className="block text-xs text-neutral-500 mb-1">Name</label>
+                                        <label className="block text-xs text-neutral-500 mb-1">{t('admin.pack.name')}</label>
                                         <input type="text" value={pack.name} onChange={e => {
                                             const newPacks = [...settings.packs];
                                             newPacks[i].name = e.target.value;
@@ -282,7 +291,7 @@ export default function AdminPage() {
                                         }} className="w-full bg-transparent border-b border-white/20 focus:border-indigo-500 p-1 text-white outline-none transition-colors" />
                                     </div>
                                     <div className="w-24">
-                                        <label className="block text-xs text-neutral-500 mb-1">Credits</label>
+                                        <label className="block text-xs text-neutral-500 mb-1">{t('admin.pack.credits')}</label>
                                         <input type="number" value={pack.credits} onChange={e => {
                                             const newPacks = [...settings.packs];
                                             newPacks[i].credits = parseInt(e.target.value);
@@ -290,7 +299,7 @@ export default function AdminPage() {
                                         }} className="w-full bg-transparent border-b border-white/20 focus:border-indigo-500 p-1 text-white outline-none transition-colors text-right" />
                                     </div>
                                     <div className="w-24">
-                                        <label className="block text-xs text-neutral-500 mb-1">Price ($)</label>
+                                        <label className="block text-xs text-neutral-500 mb-1">{t('admin.pack.price')}</label>
                                         <input type="number" step="0.01" value={pack.priceUsd} onChange={e => {
                                             const newPacks = [...settings.packs];
                                             newPacks[i].priceUsd = parseFloat(e.target.value);
@@ -302,38 +311,37 @@ export default function AdminPage() {
                         </div>
 
                         <button onClick={saveSettings} className="bg-indigo-500 hover:bg-indigo-400 text-white px-8 py-5 rounded-2xl font-semibold transition-all w-full shadow-lg shadow-indigo-500/25 active:scale-[0.98]">
-                            Save All Settings
+                            {t('admin.settings.save_cta')}
                         </button>
 
                         <div className="pt-8 mt-8 border-t border-white/5 space-y-4">
-                            <h3 className="text-sm font-bold text-red-500 uppercase tracking-widest">Zone de Danger</h3>
+                            <h3 className="text-sm font-bold text-red-500 uppercase tracking-widest">{t('admin.danger.title')}</h3>
                             <p className="text-xs text-neutral-500 leading-relaxed">
-                                La réinitialisation de la base de données effacera TOUS les utilisateurs, modèles, historiques de transactions et statistiques.
-                                Les paramètres de la plateforme seront remis à zéro. Cette action est irréversible.
+                                {t('admin.danger.desc')}
                             </p>
                             <button
                                 onClick={async () => {
-                                    if (confirm("⚠️ Êtes-vous ABSOLUMENT sûr de vouloir réinitialiser TOUTE la base de données ?") &&
-                                        confirm("Dernière chance : Toutes les données seront DEFINITIVEMENT perdues.")) {
+                                    if (confirm(t('admin.danger.confirm1')) &&
+                                        confirm(t('admin.danger.confirm2'))) {
                                         try {
                                             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/maintenance/reset`, {
                                                 method: "POST",
                                                 headers: { Authorization: `Bearer ${token}` }
                                             });
                                             if (res.ok) {
-                                                alert("Base de données réinitialisée avec succès !");
+                                                alert(t('admin.danger.reset_success'));
                                                 window.location.reload();
                                             } else {
-                                                alert("Échec de la réinitialisation.");
+                                                alert(t('admin.danger.reset_error'));
                                             }
                                         } catch (err) {
-                                            alert("Erreur réseau lors de la réinitialisation.");
+                                            alert(t('admin.danger.network_error'));
                                         }
                                     }
                                 }}
                                 className="bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 px-6 py-3 rounded-xl text-xs font-bold transition-all"
                             >
-                                Reset Entire Database
+                                {t('admin.danger.cta')}
                             </button>
                         </div>
                     </div>
@@ -342,12 +350,12 @@ export default function AdminPage() {
                 {activeTab === 'validations' && (
                     <div className="space-y-8 animate-in fade-in duration-500 pb-20">
                         <div className="flex items-center justify-between mb-8">
-                            <h2 className="text-3xl font-light">Validations Créatrices en Attente</h2>
+                            <h2 className="text-3xl font-light">{t('admin.validations.title')}</h2>
                         </div>
 
                         {pendingModels.length === 0 ? (
                             <div className="bg-neutral-900 border border-white/5 rounded-3xl p-12 text-center text-neutral-500">
-                                Aucune demande en attente.
+                                {t('admin.validations.empty')}
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
@@ -359,19 +367,19 @@ export default function AdminPage() {
                                                 <p className="text-pink-400 font-mono text-sm">{model.email}</p>
                                             </div>
                                             <div className="text-right">
-                                                <div className="text-neutral-400 text-sm">Pays : <span className="text-white font-bold">{model.country}</span></div>
-                                                <div className="text-neutral-400 text-sm">Tél : <span className="text-white font-bold">{model.phone}</span></div>
-                                                <div className="text-neutral-400 text-sm">Né(e) le : <span className="text-white font-bold">{model.dob}</span></div>
+                                                <div className="text-neutral-400 text-sm">{t('admin.model.country')} : <span className="text-white font-bold">{model.country}</span></div>
+                                                <div className="text-neutral-400 text-sm">{t('admin.model.phone')} : <span className="text-white font-bold">{model.phone}</span></div>
+                                                <div className="text-neutral-400 text-sm">{t('admin.model.dob')} : <span className="text-white font-bold">{model.dob}</span></div>
                                             </div>
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="bg-black/50 rounded-2xl p-4 border border-white/5">
-                                                <p className="text-xs text-neutral-500 text-center mb-3">Photo 3 Doigts</p>
+                                                <p className="text-xs text-neutral-500 text-center mb-3">{t('admin.model.photo_3_fingers')}</p>
                                                 <img src={model.photo3Fingers || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=faces"} alt="3 Fingers" className="w-full aspect-square object-cover rounded-xl" />
                                             </div>
                                             <div className="bg-black/50 rounded-2xl p-4 border border-white/5">
-                                                <p className="text-xs text-neutral-500 text-center mb-3">Photo 5 Doigts</p>
+                                                <p className="text-xs text-neutral-500 text-center mb-3">{t('admin.model.photo_5_fingers')}</p>
                                                 <img src={model.photo5Fingers || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=faces"} alt="5 Fingers" className="w-full aspect-square object-cover rounded-xl" />
                                             </div>
                                         </div>
@@ -384,7 +392,7 @@ export default function AdminPage() {
                                                 }}
                                                 className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 rounded-xl py-4 font-bold transition-all flex items-center justify-center gap-2"
                                             >
-                                                <XCircle size={18} /> Refuser
+                                                <XCircle size={18} /> {t('admin.validations.reject')}
                                             </button>
                                             <button
                                                 onClick={async () => {
@@ -393,7 +401,7 @@ export default function AdminPage() {
                                                 }}
                                                 className="flex-1 bg-green-500 hover:bg-green-400 text-white shadow-lg shadow-green-500/20 rounded-xl py-4 font-bold transition-all flex items-center justify-center gap-2"
                                             >
-                                                <CheckCircle size={18} /> Valider le compte
+                                                <CheckCircle size={18} /> {t('admin.validations.validate')}
                                             </button>
                                         </div>
                                     </div>
@@ -407,13 +415,13 @@ export default function AdminPage() {
                     <div className="space-y-8 animate-in fade-in duration-500">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4">
-                                <h2 className="text-3xl font-light">User Management</h2>
-                                {backendStatus === 'offline' && <span className="bg-red-500/20 text-red-400 text-[10px] font-bold px-2 py-1 rounded-md border border-red-500/20 animate-pulse">BACKEND OFFLINE</span>}
-                                {backendStatus === 'online' && <span className="bg-green-500/20 text-green-400 text-[10px] font-bold px-2 py-1 rounded-md border border-green-500/20">BACKEND ONLINE</span>}
+                                <h2 className="text-3xl font-light">{t('admin.users.title')}</h2>
+                                {backendStatus === 'offline' && <span className="bg-red-500/20 text-red-400 text-[10px] font-bold px-2 py-1 rounded-md border border-red-500/20 animate-pulse">{t('admin.status.offline')}</span>}
+                                {backendStatus === 'online' && <span className="bg-green-500/20 text-green-400 text-[10px] font-bold px-2 py-1 rounded-md border border-green-500/20">{t('admin.status.online')}</span>}
                             </div>
                             <div className="flex bg-neutral-900 border border-white/5 rounded-xl p-1">
-                                <button onClick={() => setUserFilter('all')} className={`px-4 py-2 rounded-lg text-sm transition-all ${userFilter === 'all' ? 'bg-indigo-500 text-white' : 'text-neutral-500 hover:text-white'}`}>All Users ({users.length})</button>
-                                <button onClick={() => setUserFilter('buyers')} className={`px-4 py-2 rounded-lg text-sm transition-all ${userFilter === 'buyers' ? 'bg-indigo-500 text-white' : 'text-neutral-500 hover:text-white'}`}>Buyers ({users.filter(u => u.isBuyer).length})</button>
+                                <button onClick={() => setUserFilter('all')} className={`px-4 py-2 rounded-lg text-sm transition-all ${userFilter === 'all' ? 'bg-indigo-500 text-white' : 'text-neutral-500 hover:text-white'}`}>{t('admin.users.filter_all')} ({users.length})</button>
+                                <button onClick={() => setUserFilter('buyers')} className={`px-4 py-2 rounded-lg text-sm transition-all ${userFilter === 'buyers' ? 'bg-indigo-500 text-white' : 'text-neutral-500 hover:text-white'}`}>{t('admin.users.filter_buyers')} ({users.filter(u => u.isBuyer).length})</button>
                             </div>
                         </div>
 
@@ -429,11 +437,11 @@ export default function AdminPage() {
                             <table className="w-full text-left">
                                 <thead className="bg-white/[0.02] border-b border-white/5">
                                     <tr>
-                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">User / Pseudo</th>
-                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Registration</th>
-                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Last Login</th>
-                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Total Spent</th>
-                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase text-right">Status</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.user_pseudo')}</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.registration')}</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.last_login')}</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.total_spent')}</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase text-right">{t('admin.table.status')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
@@ -448,8 +456,8 @@ export default function AdminPage() {
                                             <td className="p-5 font-mono text-indigo-400 font-bold">${u.totalSpent.toFixed(2)}</td>
                                             <td className="p-5 text-right">
                                                 {u.isBuyer ?
-                                                    <span className="bg-green-500/10 text-green-400 text-[10px] font-black uppercase px-2 py-1 rounded-md border border-green-500/20">Buyer</span>
-                                                    : <span className="bg-neutral-500/10 text-neutral-500 text-[10px] font-black uppercase px-2 py-1 rounded-md">Free</span>
+                                                    <span className="bg-green-500/10 text-green-400 text-[10px] font-black uppercase px-2 py-1 rounded-md border border-green-500/20">{t('admin.status.buyer')}</span>
+                                                    : <span className="bg-neutral-500/10 text-neutral-500 text-[10px] font-black uppercase px-2 py-1 rounded-md text-white">{t('admin.status.free')}</span>
                                                 }
                                             </td>
                                         </tr>
@@ -462,18 +470,18 @@ export default function AdminPage() {
 
                 {activeTab === 'models' && (
                     <div className="space-y-8 animate-in fade-in duration-500">
-                        <h2 className="text-3xl font-light">Model Fleet</h2>
+                        <h2 className="text-3xl font-light">{t('admin.models.title')}</h2>
 
                         <div className="bg-neutral-900 border border-white/5 rounded-3xl overflow-hidden">
                             <table className="w-full text-left">
                                 <thead className="bg-white/[0.02] border-b border-white/5">
                                     <tr>
-                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Model Name</th>
-                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Contact</th>
-                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Total Earnings</th>
-                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Paid Out</th>
-                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Unpaid Balance</th>
-                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase text-right">Action</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.model_name')}</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.contact')}</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.total_earnings')}</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.paid_out')}</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.unpaid_balance')}</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase text-right">{t('admin.table.action')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
@@ -490,7 +498,7 @@ export default function AdminPage() {
                                             <td className="p-5 text-right">
                                                 <button
                                                     onClick={async () => {
-                                                        const amount = prompt(`Montant à payer pour ${m.pseudo} (Max: $${m.balance.toFixed(2)})`);
+                                                        const amount = prompt(t('admin.models.payout_prompt', { name: m.pseudo, balance: m.balance.toFixed(2) }));
                                                         if (amount && parseFloat(amount) > 0) {
                                                             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/models/${encodeURIComponent(m.email)}/payout`, {
                                                                 method: "POST",
@@ -498,12 +506,12 @@ export default function AdminPage() {
                                                                 body: JSON.stringify({ amount: parseFloat(amount) })
                                                             });
                                                             if (res.ok) fetchModels();
-                                                            else alert("Error processing payout");
+                                                            else alert(t('admin.models.payout_error'));
                                                         }
                                                     }}
                                                     className="bg-indigo-500 hover:bg-indigo-400 text-white text-xs font-bold px-3 py-2 rounded-lg transition-colors"
                                                 >
-                                                    Payout
+                                                    {t('admin.models.payout_cta')}
                                                 </button>
                                             </td>
                                         </tr>

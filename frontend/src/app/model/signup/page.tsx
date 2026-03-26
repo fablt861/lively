@@ -19,8 +19,10 @@ import {
     HeartPulse
 } from "lucide-react";
 import Link from "next/link";
+import { useTranslation } from "@/context/LanguageContext";
 
 export default function ModelSignupPage() {
+    const { t } = useTranslation();
     const [step, setStep] = useState(1);
 
     // Form State
@@ -98,10 +100,10 @@ export default function ModelSignupPage() {
             if (data.success) {
                 setStep(5); // Confirmation Step
             } else {
-                setApiError(data.error || "Une erreur s'est produite.");
+                setApiError(data.error || t('model.signup.api_error'));
             }
         } catch (err) {
-            setApiError("Erreur de connexion au serveur.");
+            setApiError(t('model.signup.connection_error'));
         } finally {
             setLoading(false);
         }
@@ -123,10 +125,10 @@ export default function ModelSignupPage() {
             {/* Navbar */}
             <nav className="relative z-30 flex justify-between items-center px-6 lg:px-12 py-6 border-b border-white/5 backdrop-blur-md bg-black/20">
                 <Link href="/" className="text-2xl font-black tracking-tighter text-white drop-shadow-md">
-                    KINKY<span className="text-pink-500">.</span> <span className="text-xs font-bold text-white/40 ml-2 tracking-widest uppercase align-middle">Modèles</span>
+                    KINKY<span className="text-pink-500">.</span> <span className="text-xs font-bold text-white/40 ml-2 tracking-widest uppercase align-middle">{t('model.signup.navbar_models')}</span>
                 </Link>
                 <Link href="/login" className="text-xs font-bold text-white/50 hover:text-white transition-colors uppercase tracking-widest">
-                    Déjà membre ? Connexion
+                    {t('model.signup.navbar_login')}
                 </Link>
             </nav>
 
@@ -138,20 +140,20 @@ export default function ModelSignupPage() {
                     <div className="max-w-md space-y-12">
                         <div className="space-y-4">
                             <h1 className="text-4xl xl:text-5xl font-black leading-tight">
-                                Transformez votre <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-500">potentiel en revenus.</span>
+                                {t('model.signup.hero_title_line1')} <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-500">{t('model.signup.hero_title_line2')}</span>
                             </h1>
                             <p className="text-lg text-white/40 font-light">
-                                Rejoignez le réseau #1 des créatrices VIP. Un environnement sécurisé pour des revenus exceptionnels.
+                                {t('model.signup.hero_desc')}
                             </p>
                         </div>
 
                         <div className="space-y-8">
                             {[
-                                { icon: DollarSign, title: "Gagnez jusqu'à 200€ / Heure", desc: "Le meilleur reversement du marché, payé chaque semaine sans délai.", color: "text-green-400" },
-                                { icon: EyeOff, title: "100% Anonyme & Sécurisé", desc: "Contrôlez votre visibilité. Pas de replay, pas de screenshots techniques.", color: "text-indigo-400" },
-                                { icon: Clock, title: "Liberté totale", desc: "Aucun contrat, aucune obligation. Connectez-vous quand vous le souhaitez.", color: "text-pink-400" },
-                                { icon: HeartPulse, title: "Support Premium 24/7", desc: "Une équipe dédiée pour vous accompagner dans votre succès.", color: "text-rose-400" },
+                                { icon: DollarSign, title: t('model.signup.benefit1_title'), desc: t('model.signup.benefit1_desc'), color: "text-green-400" },
+                                { icon: EyeOff, title: t('model.signup.benefit2_title'), desc: t('model.signup.benefit2_desc'), color: "text-indigo-400" },
+                                { icon: Clock, title: t('model.signup.benefit3_title'), desc: t('model.signup.benefit3_desc'), color: "text-pink-400" },
+                                { icon: HeartPulse, title: t('model.signup.benefit4_title'), desc: t('model.signup.benefit4_desc'), color: "text-rose-400" },
                             ].map((item, i) => (
                                 <div key={i} className="flex gap-5 group items-center">
                                     <div className={`w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center ${item.color} group-hover:scale-110 transition-transform shadow-xl`}>
@@ -175,9 +177,9 @@ export default function ModelSignupPage() {
                         <div className="w-full max-w-md mb-8">
                             <div className="flex justify-between items-center mb-4">
                                 <button onClick={handlePrev} className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest hover:text-white transition-colors ${step === 1 ? 'invisible' : 'text-neutral-500'}`}>
-                                    <ArrowLeft size={14} /> Précédent
+                                    <ArrowLeft size={14} /> {t('model.signup.step_prev')}
                                 </button>
-                                <div className="text-[10px] font-black tracking-[0.3em] text-pink-500 uppercase">Étape {step} / 4</div>
+                                <div className="text-[10px] font-black tracking-[0.3em] text-pink-500 uppercase">{t('model.signup.step_indicator', { step, total: 4 })}</div>
                             </div>
                             <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden flex gap-1">
                                 {steps.map(s => (
@@ -205,8 +207,8 @@ export default function ModelSignupPage() {
                                     <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mx-auto mb-6 shadow-2xl">
                                         <MapPin size={32} />
                                     </div>
-                                    <h2 className="text-2xl font-bold mb-3">Votre Pays</h2>
-                                    <p className="text-neutral-400 text-sm leading-relaxed px-4">Cette information est uniquement utilisée pour la validation et ne sera jamais visible par les utilisateurs.</p>
+                                    <h2 className="text-2xl font-bold mb-3">{t('model.signup.step1_title')}</h2>
+                                    <p className="text-neutral-400 text-sm leading-relaxed px-4">{t('model.signup.step1_desc')}</p>
                                 </div>
                                 <div className="relative group">
                                     <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
@@ -215,7 +217,7 @@ export default function ModelSignupPage() {
                                         value={country}
                                         onChange={e => setCountry(e.target.value)}
                                     >
-                                        <option value="" disabled>Où vivez-vous ?</option>
+                                        <option value="" disabled>{t('model.signup.step1_placeholder')}</option>
                                         <option value="FR">France</option>
                                         <option value="BE">Belgique</option>
                                         <option value="CH">Suisse</option>
@@ -232,7 +234,7 @@ export default function ModelSignupPage() {
                                     disabled={!country}
                                     className="w-full mt-8 bg-gradient-to-r from-indigo-500 to-purple-600 hover:opacity-90 text-white font-bold py-5 rounded-full flex items-center justify-center gap-3 transition-all disabled:opacity-30 shadow-xl shadow-indigo-500/10 active:scale-95"
                                 >
-                                    Continuer <ArrowRight size={20} />
+                                    {t('model.signup.step1_btn')} <ArrowRight size={20} />
                                 </button>
                             </div>
                         )}
@@ -244,8 +246,8 @@ export default function ModelSignupPage() {
                                     <div className="w-16 h-16 rounded-2xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 mx-auto mb-6 shadow-2xl">
                                         <Phone size={32} />
                                     </div>
-                                    <h2 className="text-2xl font-bold mb-3">Contact Direct</h2>
-                                    <p className="text-neutral-400 text-sm leading-relaxed px-4">Recevez une notification SMS dès que votre compte est approuvé par notre équipe.</p>
+                                    <h2 className="text-2xl font-bold mb-3">{t('model.signup.step2_title')}</h2>
+                                    <p className="text-neutral-400 text-sm leading-relaxed px-4">{t('model.signup.step2_desc')}</p>
                                 </div>
                                 <div className="flex gap-3">
                                     <div className="w-[100px] shrink-0">
@@ -262,18 +264,18 @@ export default function ModelSignupPage() {
                                             type="tel"
                                             value={phone}
                                             onChange={e => setPhone(e.target.value)}
-                                            placeholder="Numéro de mobile"
+                                            placeholder={t('model.signup.step2_placeholder')}
                                             className="w-full bg-black/60 border border-white/20 rounded-2xl py-4.5 pl-12 pr-4 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40"
                                         />
                                     </div>
                                 </div>
-                                <p className="text-[10px] text-white/20 text-center uppercase tracking-[0.2em] font-bold pt-4">Aucune publicité, 100% privé</p>
+                                <p className="text-[10px] text-white/20 text-center uppercase tracking-[0.2em] font-bold pt-4">{t('model.signup.step2_footer')}</p>
                                 <button
                                     onClick={handleNext}
                                     disabled={phone.length < 8}
                                     className="w-full mt-4 bg-gradient-to-r from-pink-500 to-rose-600 hover:opacity-90 text-white font-bold py-5 rounded-full flex items-center justify-center gap-3 transition-all disabled:opacity-30 shadow-xl shadow-pink-500/10 active:scale-95"
                                 >
-                                    Suivant <ArrowRight size={20} />
+                                    {t('model.signup.step2_btn')} <ArrowRight size={20} />
                                 </button>
                             </div>
                         )}
@@ -285,17 +287,17 @@ export default function ModelSignupPage() {
                                     <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mx-auto mb-6 shadow-2xl">
                                         <User size={32} />
                                     </div>
-                                    <h2 className="text-2xl font-bold mb-2">Identification</h2>
-                                    <p className="text-neutral-400 text-sm leading-relaxed">Assurons-nous que vous êtes une personne réelle et majeure.</p>
+                                    <h2 className="text-2xl font-bold mb-2">{t('model.signup.step3_title')}</h2>
+                                    <p className="text-neutral-400 text-sm leading-relaxed">{t('model.signup.step3_desc')}</p>
                                 </div>
 
                                 <div className="space-y-3">
                                     <div className="relative group">
                                         <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
-                                        <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Nom (Pièce d'identité)" className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" />
+                                        <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder={t('model.signup.step3_name')} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" />
                                     </div>
                                     <div className="relative group">
-                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 text-xs font-bold uppercase tracking-widest">Né(e) le</div>
+                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 text-xs font-bold uppercase tracking-widest">{t('model.signup.step3_dob')}</div>
                                         <input type="date" value={dob} onChange={e => setDob(e.target.value)} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-24 pr-4 text-white/90 focus:outline-none focus:border-white/40 transition-all [&::-webkit-calendar-picker-indicator]:filter-[invert(0.5)]" />
                                     </div>
 
@@ -303,11 +305,11 @@ export default function ModelSignupPage() {
 
                                     <div className="relative group">
                                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
-                                        <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email (Identifiant)" className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" />
+                                        <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder={t('model.signup.step3_email')} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" />
                                     </div>
                                     <div className="relative group">
                                         <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
-                                        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Mot de passe" className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" />
+                                        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder={t('model.signup.step3_password')} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" />
                                     </div>
                                 </div>
 
@@ -316,7 +318,7 @@ export default function ModelSignupPage() {
                                     disabled={!name || !dob || !email || !password}
                                     className="w-full mt-6 bg-gradient-to-r from-indigo-500 to-purple-600 hover:opacity-90 text-white font-bold py-5 rounded-full flex items-center justify-center gap-3 transition-all disabled:opacity-30 shadow-xl active:scale-95"
                                 >
-                                    Suivant <ArrowRight size={20} />
+                                    {t('model.signup.step3_btn')} <ArrowRight size={20} />
                                 </button>
                             </div>
                         )}
@@ -328,18 +330,18 @@ export default function ModelSignupPage() {
                                     <div className="w-16 h-16 rounded-2xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 mx-auto mb-6 shadow-2xl">
                                         <Camera size={28} />
                                     </div>
-                                    <h2 className="text-2xl font-bold mb-2">Vérification</h2>
-                                    <p className="text-neutral-400 text-sm leading-relaxed px-4">Photos simples pour valider votre dossier (usage interne uniquement).</p>
+                                    <h2 className="text-2xl font-bold mb-2">{t('model.signup.step4_title')}</h2>
+                                    <p className="text-neutral-400 text-sm leading-relaxed px-4">{t('model.signup.step4_desc')}</p>
                                 </div>
 
                                 <div className="space-y-4">
                                     {[
-                                        { id: 3, label: "3 doigts à côté du visage", photo: photo3Fingers },
-                                        { id: 5, label: "5 doigts à côté du visage", photo: photo5Fingers }
+                                        { id: 3, label: t('model.signup.step4_instruction1'), photo: photo3Fingers },
+                                        { id: 5, label: t('model.signup.step4_instruction2'), photo: photo5Fingers }
                                     ].map((p, idx) => (
                                         <div key={idx} className={`p-5 rounded-3xl border transition-all duration-300 ${p.photo ? 'bg-green-500/10 border-green-500/40' : 'bg-black/40 border-white/5 group hover:border-white/20'}`}>
                                             <div className="flex items-center justify-between mb-4">
-                                                <p className="font-bold text-xs uppercase tracking-widest text-white/50">{idx + 1}. Consigne</p>
+                                                <p className="font-bold text-xs uppercase tracking-widest text-white/50">{idx + 1}. {t('model.signup.step4_consigne')}</p>
                                                 {p.photo && <CheckCircle2 className="text-green-500" size={18} />}
                                             </div>
                                             <p className="text-sm font-medium mb-4 text-white/90">{p.label}</p>
@@ -365,7 +367,7 @@ export default function ModelSignupPage() {
                                                 >
                                                     <div className="bg-white text-black font-black text-[10px] uppercase tracking-widest px-6 py-3 rounded-full shadow-2xl flex items-center gap-2">
                                                         <Camera size={14} />
-                                                        {compressing === p.id ? 'Traitement...' : p.photo ? 'Modifier' : 'Prendre Photo'}
+                                                        {compressing === p.id ? t('model.signup.step4_compressing') : p.photo ? t('model.signup.step4_change') : t('model.signup.step4_upload')}
                                                     </div>
                                                 </label>
                                             </div>
@@ -378,7 +380,7 @@ export default function ModelSignupPage() {
                                     disabled={!photo3Fingers || !photo5Fingers || loading}
                                     className="w-full mt-6 bg-gradient-to-r from-pink-500 to-rose-600 hover:opacity-90 text-white font-bold py-5 rounded-full flex items-center justify-center gap-3 transition-all disabled:opacity-30 shadow-xl active:scale-95"
                                 >
-                                    {loading ? 'Soumission...' : 'Soumettre mon dossier'}
+                                    {loading ? t('model.signup.step4_submitting') : t('model.signup.step4_btn')}
                                     {!loading && <Check size={20} />}
                                 </button>
                             </div>
@@ -394,10 +396,10 @@ export default function ModelSignupPage() {
                                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-24 bg-green-400/30 rounded-full blur-2xl animate-pulse" />
                                 </div>
                                 <div className="space-y-4">
-                                    <h1 className="text-3xl font-black">Bienvenue chez KINKY !</h1>
+                                    <h1 className="text-3xl font-black">{t('model.signup.success_title')}</h1>
                                     <p className="text-neutral-400 text-sm leading-relaxed max-w-sm mx-auto">
-                                        Votre candidature est entre de bonnes mains. Notre équipe vérifie les dossiers sous <span className="text-white font-bold text-base">24 heures</span> en moyenne.<br /><br />
-                                        Gardez un oeil sur votre téléphone et vos emails !
+                                        {t('model.signup.success_desc_line1')} <span className="text-white font-bold text-base">{t('model.signup.success_desc_line2')}</span> {t('model.signup.success_desc_line3')}<br /><br />
+                                        {t('model.signup.success_desc_line4')}
                                     </p>
                                 </div>
 
@@ -405,7 +407,7 @@ export default function ModelSignupPage() {
                                     onClick={() => window.location.href = '/'}
                                     className="w-full py-5 rounded-full bg-white/10 hover:bg-white/20 text-white font-black text-xs uppercase tracking-[0.3em] transition-all block active:scale-95"
                                 >
-                                    J'ai compris, merci !
+                                    {t('model.signup.success_btn')}
                                 </button>
                             </div>
                         )}
@@ -413,7 +415,7 @@ export default function ModelSignupPage() {
 
                     <div className="mt-8 text-white/20 text-[10px] flex items-center gap-2 uppercase tracking-[0.2em] font-bold">
                         <ShieldCheck size={14} className="text-white/40" />
-                        Données confidentielles & Sécurisées
+                        {t('model.signup.footer_secure')}
                     </div>
                 </div>
             </div>

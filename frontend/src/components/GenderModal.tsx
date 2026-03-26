@@ -3,12 +3,14 @@
 import { X, User, Venus, Mars, ArrowRight, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface GenderModalProps {
     onClose: () => void;
 }
 
 export function GenderModal({ onClose }: GenderModalProps) {
+    const { t } = useTranslation();
     const [step, setStep] = useState<'select' | 'female_info'>('select');
 
     const handleSelectMale = () => {
@@ -27,8 +29,8 @@ export function GenderModal({ onClose }: GenderModalProps) {
 
                 {step === 'select' ? (
                     <div className="p-6 md:p-12 text-center overflow-y-auto">
-                        <h2 className="text-2xl md:text-4xl font-bold text-white mb-1 md:mb-2 leading-tight">Bienvenue sur <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500 font-black">KINKY.</span></h2>
-                        <p className="text-white/60 mb-6 md:mb-10 text-sm">Veuillez sélectionner votre profil</p>
+                        <h2 className="text-2xl md:text-4xl font-bold text-white mb-1 md:mb-2 leading-tight">{t('gender.welcome')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500 font-black">KINKY.</span></h2>
+                        <p className="text-white/60 mb-6 md:mb-10 text-sm">{t('gender.select_profile')}</p>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                             {/* Option Homme */}
@@ -39,7 +41,7 @@ export function GenderModal({ onClose }: GenderModalProps) {
                                 <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
                                     <Mars size={24} className="md:w-8 md:h-8" />
                                 </div>
-                                <span className="block text-lg md:text-xl font-bold text-white uppercase tracking-tight">Homme</span>
+                                <span className="block text-lg md:text-xl font-bold text-white uppercase tracking-tight">{t('gender.male')}</span>
                                 <ArrowRight className="absolute bottom-3 right-3 text-white/20 group-hover:text-white group-hover:translate-x-1 transition-all" size={16} />
                             </button>
 
@@ -51,14 +53,14 @@ export function GenderModal({ onClose }: GenderModalProps) {
                                 <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-pink-500/20 flex items-center justify-center text-pink-400 group-hover:scale-110 transition-transform">
                                     <Venus size={24} className="md:w-8 md:h-8" />
                                 </div>
-                                <span className="block text-lg md:text-xl font-bold text-white uppercase tracking-tight">Femme</span>
+                                <span className="block text-lg md:text-xl font-bold text-white uppercase tracking-tight">{t('gender.female')}</span>
                                 <ArrowRight className="absolute bottom-3 right-3 text-white/20 group-hover:text-white group-hover:translate-x-1 transition-all" size={16} />
                             </button>
                         </div>
 
                         <div className="mt-6 md:mt-10 flex items-center justify-center gap-2 text-white/40 text-[9px] font-bold uppercase tracking-widest">
                             <ShieldCheck size={12} className="text-green-500/80" />
-                            Accès 100% sécurisé & privé
+                            {t('gender.secure')}
                         </div>
                     </div>
                 ) : (
@@ -66,9 +68,9 @@ export function GenderModal({ onClose }: GenderModalProps) {
                         <div className="w-12 h-12 md:w-20 md:h-20 rounded-full bg-pink-500/20 flex items-center justify-center text-pink-400 mx-auto mb-4 md:mb-8">
                             <Venus size={24} className="md:w-10 md:h-10" />
                         </div>
-                        <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 md:mb-4">Espace Créatrices</h2>
+                        <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 md:mb-4">{t('gender.model_title')}</h2>
                         <p className="text-white/60 text-sm leading-relaxed max-w-sm mx-auto mb-6 md:mb-10 px-4 md:px-0">
-                            Sur <span className="text-white font-bold">KINKY</span>, les profils féminins sont réservés à nos créatrices vérifiées.
+                            {t('gender.model_desc')}
                         </p>
 
                         <div className="flex flex-col gap-3 md:gap-4 max-w-xs mx-auto">
@@ -76,13 +78,13 @@ export function GenderModal({ onClose }: GenderModalProps) {
                                 href="/model/signup"
                                 className="w-full py-4 md:py-5 rounded-xl md:rounded-2xl bg-gradient-to-r from-pink-500 to-indigo-600 text-white font-bold text-base md:text-lg hover:opacity-90 transition-all shadow-lg"
                             >
-                                Créer mon compte gratuite
+                                {t('gender.model_cta')}
                             </Link>
                             <Link
                                 href="/login"
                                 className="w-full py-4 md:py-5 rounded-xl md:rounded-2xl bg-white/5 border border-white/10 text-white font-bold text-base md:text-lg hover:bg-white/10 transition-all"
                             >
-                                Se connecter
+                                {t('gender.login')}
                             </Link>
                         </div>
 
@@ -91,7 +93,7 @@ export function GenderModal({ onClose }: GenderModalProps) {
                                 onClick={() => setStep('select')}
                                 className="text-white/40 hover:text-white text-sm font-medium transition-colors"
                             >
-                                Retour à la sélection
+                                {t('gender.back')}
                             </button>
                             <button
                                 onClick={() => {
@@ -100,7 +102,7 @@ export function GenderModal({ onClose }: GenderModalProps) {
                                 }}
                                 className="text-white/20 hover:text-white/40 text-[10px] uppercase font-bold tracking-widest transition-colors mt-2"
                             >
-                                [ Accès Test : Bypass Login ]
+                                {t('gender.test_bypass')}
                             </button>
                         </div>
                     </div>

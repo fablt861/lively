@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { Play, Camera, Shield, Zap } from "lucide-react";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface PreMatchModalProps {
     localStream: MediaStream | null;
@@ -9,6 +10,7 @@ interface PreMatchModalProps {
 }
 
 export function PreMatchModal({ localStream, onJoin }: PreMatchModalProps) {
+    const { t } = useTranslation();
     const videoRef = useRef<HTMLVideoElement>(null);
 
     useEffect(() => {
@@ -38,7 +40,7 @@ export function PreMatchModal({ localStream, onJoin }: PreMatchModalProps) {
                         KINKY<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">.</span>
                     </span>
                     <div className="mt-1 md:mt-2 text-indigo-400/60 text-[8px] md:text-[10px] uppercase font-black tracking-[0.4em] animate-pulse">
-                        Ready to connect?
+                        {t('prematch.ready')}
                     </div>
                 </div>
 
@@ -56,9 +58,9 @@ export function PreMatchModal({ localStream, onJoin }: PreMatchModalProps) {
                 </div>
 
                 <div className="text-center mb-6 md:mb-10 px-4">
-                    <h2 className="text-2xl md:text-4xl font-bold text-white mb-2 md:mb-4 tracking-tight">C'est le moment ?</h2>
+                    <h2 className="text-2xl md:text-4xl font-bold text-white mb-2 md:mb-4 tracking-tight">{t('prematch.title')}</h2>
                     <p className="text-white/40 text-xs md:text-sm max-w-xs mx-auto leading-relaxed">
-                        Vérifiez votre cadrage. Une fois prêt, cliquez ci-dessous pour lancer.
+                        {t('prematch.desc')}
                     </p>
                 </div>
 
@@ -68,16 +70,16 @@ export function PreMatchModal({ localStream, onJoin }: PreMatchModalProps) {
                 >
                     <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
                     <Play className="fill-white md:w-6 md:h-6" size={20} />
-                    Lancer le Live
+                    {t('prematch.btn')}
                 </button>
 
                 {/* Small Trust Badges */}
                 <div className="mt-6 md:mt-16 flex items-center gap-6 md:gap-8 text-white/40 font-bold uppercase tracking-widest text-[8px] md:text-[10px]">
                     <div className="flex items-center gap-1.5 md:gap-2">
-                        <Shield size={12} className="text-white/20 md:w-3.5 md:h-3.5" /> Anonyme
+                        <Shield size={12} className="text-white/20 md:w-3.5 md:h-3.5" /> {t('prematch.anonymous')}
                     </div>
                     <div className="flex items-center gap-1.5 md:gap-2">
-                        <Zap size={12} className="text-white/20 md:w-3.5 md:h-3.5" /> Instantané
+                        <Zap size={12} className="text-white/20 md:w-3.5 md:h-3.5" /> {t('prematch.instant')}
                     </div>
                 </div>
             </div>

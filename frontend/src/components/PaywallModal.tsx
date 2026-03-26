@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { CreditCard, X, Coins, Check, ShieldCheck, Zap, Heart } from "lucide-react";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface PaywallModalProps {
     onClose: () => void;
@@ -16,6 +17,7 @@ const PROFILES = [
 ];
 
 export function PaywallModal({ onClose, onPurchase }: PaywallModalProps) {
+    const { t } = useTranslation();
     const [selectedPack, setSelectedPack] = useState(300);
     const [packs, setPacks] = useState<any[]>([]);
 
@@ -48,7 +50,7 @@ export function PaywallModal({ onClose, onPurchase }: PaywallModalProps) {
 
                     <div className="z-10 h-full flex flex-col">
                         <h3 className="text-sm md:text-lg font-bold text-white mb-4 md:mb-6 flex items-center gap-2">
-                            <Heart size={16} className="text-pink-500 fill-pink-500" /> Les membres
+                            <Heart size={16} className="text-pink-500 fill-pink-500" /> {t('paywall.members')}
                         </h3>
 
                         {/* Profiles List (Horizontal on mobile, Grid on desktop) */}
@@ -70,8 +72,8 @@ export function PaywallModal({ onClose, onPurchase }: PaywallModalProps) {
                                     <ShieldCheck size={18} />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-black text-white uppercase tracking-wider mb-0.5">Discrétion</p>
-                                    <p className="text-[9px] text-white/40">Aucun "Kinky" sur vos relevés.</p>
+                                    <p className="text-[10px] font-black text-white uppercase tracking-wider mb-0.5">{t('paywall.discretion_title')}</p>
+                                    <p className="text-[9px] text-white/40">{t('paywall.discretion_desc')}</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-3">
@@ -79,8 +81,8 @@ export function PaywallModal({ onClose, onPurchase }: PaywallModalProps) {
                                     <Zap size={18} />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-black text-white uppercase tracking-wider mb-0.5">Vitesse</p>
-                                    <p className="text-[9px] text-white/40">Accès instantané et à vie.</p>
+                                    <p className="text-[10px] font-black text-white uppercase tracking-wider mb-0.5">{t('paywall.speed_title')}</p>
+                                    <p className="text-[9px] text-white/40">{t('paywall.speed_desc')}</p>
                                 </div>
                             </div>
                         </div>
@@ -96,10 +98,10 @@ export function PaywallModal({ onClose, onPurchase }: PaywallModalProps) {
 
                     <div className="mb-6 md:mb-10">
                         <h2 className="text-2xl md:text-4xl font-black text-white mb-2 tracking-tighter leading-tight pr-10">
-                            Passez au <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">Premium.</span>
+                            {t('paywall.title_line1')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">{t('paywall.title_line2')}</span>
                         </h2>
                         <p className="text-white/40 text-xs md:text-sm max-w-md">
-                            Rencontrez les membres de la communauté sans limites. Pas d'abonnement.
+                            {t('paywall.desc')}
                         </p>
                     </div>
 
@@ -122,7 +124,7 @@ export function PaywallModal({ onClose, onPurchase }: PaywallModalProps) {
                                     )}
                                     <div className="flex flex-col items-center gap-1 text-center">
                                         <span className={`text-[8px] md:text-[10px] font-black uppercase tracking-widest mb-2 ${isPremium ? 'text-indigo-400' : isPrivilege ? 'text-pink-400' : 'text-white/40'}`}>
-                                            {idx === 0 ? 'Essentiel' : idx === 1 ? 'Populaire' : 'Elite'}
+                                            {idx === 0 ? t('paywall.pack_essential') : idx === 1 ? t('paywall.pack_popular') : t('paywall.pack_elite')}
                                         </span>
                                         <div className="flex items-center gap-1.5 md:gap-2 mb-1">
                                             <span className="text-2xl md:text-3xl font-black text-white">{pack.credits}</span>
@@ -141,11 +143,11 @@ export function PaywallModal({ onClose, onPurchase }: PaywallModalProps) {
                             onClick={() => onPurchase(selectedPack)}
                             className="w-full py-4 md:py-5 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 text-white font-black text-lg hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_30px_rgba(99,102,241,0.4)] flex items-center justify-center group"
                         >
-                            Choisir ce pack
+                            {t('paywall.cta')}
                         </button>
 
                         <p className="text-[8px] md:text-[9px] text-center text-white/20 font-bold uppercase tracking-widest mt-4">
-                            Paiement 100% sécurisé • Sans engagement
+                            {t('paywall.footer')}
                         </p>
                     </div>
                 </div>

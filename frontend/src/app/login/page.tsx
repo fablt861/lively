@@ -3,8 +3,11 @@
 import { useState } from "react";
 import { ArrowRight, User, Lock, Video, X, Mail, ShieldCheck, CheckSquare, Square } from "lucide-react";
 import Link from "next/link";
+import { useTranslation } from "@/context/LanguageContext";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 export default function LoginPage() {
+    const { t } = useTranslation();
     const [mode, setMode] = useState<"login" | "signup">("login");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -20,13 +23,13 @@ export default function LoginPage() {
 
         if (mode === 'signup') {
             if (password !== confirmPassword) {
-                return setError("Les mots de passe ne correspondent pas.");
+                return setError(t('login.error_password_match'));
             }
             if (!acceptCGV) {
-                return setError("Vous devez accepter les CGV.");
+                return setError(t('login.error_cgv'));
             }
             if (pseudo.length < 3) {
-                return setError("Le pseudo est trop court.");
+                return setError(t('login.error_pseudo_short'));
             }
         }
 
@@ -59,10 +62,10 @@ export default function LoginPage() {
                     window.location.href = '/';
                 }
             } else {
-                setError(data.error || "Identifiants invalides.");
+                setError(data.error || t('login.error_invalid'));
             }
         } catch (err) {
-            setError("Erreur de connexion.");
+            setError(t('login.error_connect'));
         } finally {
             setLoading(false);
         }
@@ -77,6 +80,9 @@ export default function LoginPage() {
                 <Link href="/" className="text-2xl font-black tracking-tighter text-white drop-shadow-md cursor-pointer">
                     KINKY<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">.</span>
                 </Link>
+                <div className="flex gap-4 items-center">
+                    <LanguageSelector />
+                </div>
             </nav>
 
             <main className="relative z-10 flex-1 flex flex-col items-center justify-center p-6 w-full max-w-sm mx-auto">
@@ -86,10 +92,10 @@ export default function LoginPage() {
                     </Link>
 
                     <h1 className="text-3xl font-bold mb-2">
-                        {mode === 'login' ? 'Bon retour.' : 'Bienvenue.'}
+                        {mode === 'login' ? t('login.welcome_back') : t('login.welcome')}
                     </h1>
                     <p className="text-sm text-neutral-400 mb-8">
-                        {mode === 'login' ? 'Connectez-vous à votre compte.' : 'Créez votre compte client.'}
+                        {mode === 'login' ? t('login.desc_login') : t('login.desc_signup')}
                     </p>
 
                     <div className="flex bg-black/40 p-1.5 rounded-2xl mb-8">
@@ -97,13 +103,13 @@ export default function LoginPage() {
                             onClick={() => setMode("login")}
                             className={`flex-1 py-3 text-xs font-bold uppercase tracking-widest rounded-xl transition-all ${mode === 'login' ? 'bg-white/10 text-white shadow-lg' : 'text-neutral-500 hover:text-white'}`}
                         >
-                            Connexion
+                            {t('login.tab_login')}
                         </button>
                         <button
                             onClick={() => setMode("signup")}
                             className={`flex-1 py-3 text-xs font-bold uppercase tracking-widest rounded-xl transition-all ${mode === 'signup' ? 'bg-white/10 text-white shadow-lg' : 'text-neutral-500 hover:text-white'}`}
                         >
-                            Inscription
+                            {t('login.tab_signup')}
                         </button>
                     </div>
 
@@ -116,8 +122,8 @@ export default function LoginPage() {
                                 <input
                                     type="text"
                                     required
-                                    placeholder="Pseudo"
-                                    className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40"
+                                    placeholder={t('login.pseudo_placeholder')}
+                                    className="w-full bg-black/60 border border-white/20 rounded-2xl py-4.5 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40"
                                     value={pseudo}
                                     onChange={e => setPseudo(e.target.value)}
                                 />
@@ -129,8 +135,8 @@ export default function LoginPage() {
                             <input
                                 type="email"
                                 required
-                                placeholder="Adresse Email"
-                                className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40"
+                                placeholder={t('login.email_placeholder')}
+                                className="w-full bg-black/60 border border-white/20 rounded-2xl py-4.5 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40"
                                 value={email}
                                 onChange={e => setEmail(e.target.value)}
                             />
@@ -141,8 +147,8 @@ export default function LoginPage() {
                             <input
                                 type="password"
                                 required
-                                placeholder="Mot de passe"
-                                className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40"
+                                placeholder={t('login.password_placeholder')}
+                                className="w-full bg-black/60 border border-white/20 rounded-2xl py-4.5 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40"
                                 value={password}
                                 onChange={e => setPassword(e.target.value)}
                             />
@@ -155,8 +161,8 @@ export default function LoginPage() {
                                     <input
                                         type="password"
                                         required
-                                        placeholder="Confirmer mot de passe"
-                                        className="w-full bg-black/50 border border-white/10 rounded-2xl py-4 pl-12 text-white focus:outline-none focus:border-white/30 transition-all placeholder:text-white/10"
+                                        placeholder={t('login.confirm_password_placeholder')}
+                                        className="w-full bg-black/50 border border-white/10 rounded-2xl py-4.5 pl-12 text-white focus:outline-none focus:border-white/30 transition-all placeholder:text-white/10"
                                         value={confirmPassword}
                                         onChange={e => setConfirmPassword(e.target.value)}
                                     />
@@ -166,7 +172,7 @@ export default function LoginPage() {
                                         <div onClick={() => setAcceptCGV(!acceptCGV)} className="text-white/20 group-hover:text-white/40 transition-colors">
                                             {acceptCGV ? <CheckSquare className="text-pink-500" size={20} /> : <Square size={20} />}
                                         </div>
-                                        <span className="text-[10px] text-neutral-500 font-medium">J'accepte les Conditions Générales de Vente</span>
+                                        <span className="text-[10px] text-neutral-500 font-medium">{t('login.accept_cgv')}</span>
                                     </label>
                                 </div>
                             </>
@@ -177,14 +183,14 @@ export default function LoginPage() {
                             disabled={loading}
                             className={`w-full mt-6 text-white font-bold py-5 rounded-full flex items-center justify-center gap-3 transition-all shadow-xl active:scale-95 disabled:opacity-50 ${mode === 'signup' ? 'bg-gradient-to-r from-pink-500 to-rose-600 shadow-pink-500/20' : 'bg-gradient-to-r from-indigo-500 to-purple-600 shadow-indigo-500/20'}`}
                         >
-                            {loading ? 'Traitement...' : mode === 'login' ? 'Se connecter' : "S'inscrire"}
+                            {loading ? t('login.cta_loading') : mode === 'login' ? t('login.cta_login') : t('login.cta_signup')}
                             {!loading && <ArrowRight size={20} />}
                         </button>
                     </form>
 
                     <div className="mt-8 flex items-center justify-center gap-2 text-white/40 text-[10px] font-black uppercase tracking-[0.3em]">
                         <ShieldCheck size={14} />
-                        Accès 100% sécurisé
+                        {t('login.secure_access')}
                     </div>
                 </div>
             </main>

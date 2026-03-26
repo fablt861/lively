@@ -5,9 +5,12 @@ import { Camera, ShieldCheck, Flame, Play, Video } from "lucide-react";
 import Link from "next/link";
 import { GenderModal } from "../components/GenderModal";
 import { OnlineGauge } from "../components/OnlineGauge";
+import { useTranslation } from "@/context/LanguageContext";
+import { LanguageSelector } from "../components/LanguageSelector";
 
 export default function Home() {
     // Build version: 1.0.2 - Matchmaking fixes
+    const { t } = useTranslation();
     const [showGenderModal, setShowGenderModal] = useState(false);
     const [userPseudo, setUserPseudo] = useState<string | null>(null);
 
@@ -41,27 +44,28 @@ export default function Home() {
 
             {/* Navbar */}
             <nav className="relative z-20 flex justify-between items-center px-6 py-6 lg:px-12 w-full max-w-7xl mx-auto">
-                <div className="flex items-center">
-                    <div className="text-3xl font-black tracking-tighter text-white drop-shadow-md cursor-default">
+                <div className="flex items-center gap-6">
+                    <div className="text-3xl font-black tracking-tighter text-white drop-shadow-md cursor-default mr-4">
                         KINKY<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">.</span>
                     </div>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-6">
+                    <LanguageSelector />
                     {userPseudo ? (
                         <div className="flex items-center gap-4">
                             <span className="text-xs font-bold text-white/60 tracking-widest uppercase">
-                                Salut, <span className="text-white">{userPseudo}</span>
+                                {t('nav.welcome')} <span className="text-white">{userPseudo}</span>
                             </span>
                             <button
                                 onClick={handleLogout}
                                 className="text-[10px] font-black text-red-500 hover:text-red-400 transition-all uppercase tracking-[0.2em]"
                             >
-                                Déconnexion
+                                {t('nav.logout')}
                             </button>
                         </div>
                     ) : (
                         <Link href="/login" className="text-xs font-bold text-white/90 bg-white/5 hover:bg-white/10 transition-all border border-white/10 rounded-full px-6 py-2.5 hover:border-indigo-500/50 hover:shadow-[0_0_20px_rgba(99,102,241,0.2)] tracking-widest uppercase">
-                            Connexion
+                            {t('nav.login')}
                         </Link>
                     )}
                 </div>
@@ -75,14 +79,14 @@ export default function Home() {
                     <OnlineGauge />
 
                     <h1 className="text-5xl sm:text-6xl xl:text-7xl font-extrabold tracking-tight leading-[1.05]">
-                        Découvrez qui vous attend de <br className="hidden md:block" />
+                        {t('hero.title.part1')} <br className="hidden md:block" />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
-                            l'autre côté.
+                            {t('hero.title.part2')}
                         </span>
                     </h1>
 
                     <p className="text-lg sm:text-xl text-neutral-400 font-light max-w-xl leading-relaxed">
-                        Le chat roulette VIP de nouvelle génération. Connexion vidéo instantanée, 100% anonyme, avec les modèles les plus exclusives du moment sur Kinky.live.
+                        {t('hero.description')}
                     </p>
 
                     <div className="flex flex-col items-center lg:items-start gap-4">
@@ -105,11 +109,11 @@ export default function Home() {
                                 className="group relative w-full sm:w-auto px-10 py-5 rounded-full bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 hover:opacity-90 shadow-[0_0_50px_rgba(99,102,241,0.5)] transition-all duration-300 hover:scale-[1.03] active:scale-95 flex items-center justify-center gap-3 border border-white/20"
                             >
                                 <Video size={24} className="text-white fill-white relative z-10" />
-                                <span className="text-white font-black text-lg tracking-wide relative z-10">Discuter en live cam</span>
+                                <span className="text-white font-black text-lg tracking-wide relative z-10">{t('hero.cta')}</span>
                             </button>
                         </div>
                         <p className="text-[13px] text-white/80 uppercase tracking-[0.4em] font-bold italic">
-                            #1 sur la rencontre vidéo
+                            {t('hero.badge')}
                         </p>
                     </div>
                 </div>
@@ -125,14 +129,14 @@ export default function Home() {
                         <div className="relative z-10 w-full flex justify-between items-center p-5">
                             <div className="px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/10 flex items-center gap-2 shadow-lg">
                                 <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                                <span className="text-white text-[10px] font-bold tracking-widest mt-px">LIVE</span>
+                                <span className="text-white text-[10px] font-bold tracking-widest mt-px">{t('mockup.live')}</span>
                             </div>
                         </div>
 
                         {/* Mockup UI Bottom */}
                         <div className="relative z-10 w-full pb-8 text-center flex flex-col items-center">
-                            <h3 className="text-3xl font-black text-white drop-shadow-2xl mb-1 uppercase tracking-tighter">PRIVATE SESSION</h3>
-                            <p className="text-sm text-white/90 drop-shadow-md font-bold">Connexion live...</p>
+                            <h3 className="text-3xl font-black text-white drop-shadow-2xl mb-1 uppercase tracking-tighter">{t('mockup.private')}</h3>
+                            <p className="text-sm text-white/90 drop-shadow-md font-bold">{t('mockup.connecting')}</p>
                             <div className="mt-6 w-16 h-16 rounded-full bg-indigo-500/20 backdrop-blur-md border border-indigo-400/50 flex items-center justify-center animate-bounce shadow-[0_0_30px_rgba(99,102,241,0.5)]">
                                 <Video className="text-white" size={24} />
                             </div>
@@ -155,8 +159,8 @@ export default function Home() {
                             <Flame className="text-orange-500" size={20} />
                         </div>
                         <div>
-                            <p className="text-white text-sm font-extrabold">+15k appels</p>
-                            <p className="text-white/50 text-[10px] font-bold uppercase tracking-wider">Aujourd'hui</p>
+                            <p className="text-white text-sm font-extrabold">{t('hero.stats.calls')}</p>
+                            <p className="text-white/50 text-[10px] font-bold uppercase tracking-wider">{t('hero.stats.today')}</p>
                         </div>
                     </div>
                 </div>

@@ -1,8 +1,8 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "@/context/LanguageContext";
 
 export function OnlineGauge() {
+    const { t } = useTranslation();
     const [femaleCount, setFemaleCount] = useState(2438);
     const [maleCount, setMaleCount] = useState(4127);
     const [ratio, setRatio] = useState(38); // 38% female
@@ -22,14 +22,14 @@ export function OnlineGauge() {
 
             <div className="flex items-center gap-4 shrink-0">
                 <div className="flex flex-col">
-                    <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.2em] leading-none mb-1">En ligne</span>
+                    <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.2em] leading-none mb-1">{t('gauge.online')}</span>
                     <span className="text-lg font-black text-white tabular-nums leading-none">
                         {(femaleCount + maleCount).toLocaleString()}
                     </span>
                 </div>
                 <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-500/10 border border-green-500/20">
                     <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                    <span className="text-[8px] font-black text-green-400 uppercase tracking-widest">Live</span>
+                    <span className="text-[8px] font-black text-green-400 uppercase tracking-widest">{t('gauge.live')}</span>
                 </div>
             </div>
 

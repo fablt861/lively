@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal } from "lucide-react";
+import { useTranslation } from "@/context/LanguageContext";
 import Link from "next/link";
 import { PaywallModal } from "./PaywallModal";
 import { UnifiedAuthModal } from "./UnifiedAuthModal";
 import { PreMatchModal } from "./PreMatchModal";
 
 function EarningsCounter({ hasVideo }: { hasVideo: boolean }) {
+    const { t } = useTranslation();
     const counterRef = useRef<HTMLSpanElement>(null);
     const hasVideoRef = useRef(hasVideo);
 
@@ -35,7 +37,7 @@ function EarningsCounter({ hasVideo }: { hasVideo: boolean }) {
 
     return (
         <div className="absolute top-[160px] right-4 md:top-6 md:right-6 z-30 flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 shadow-2xl transition-all">
-            <span className="text-white/80 text-xs font-semibold tracking-wider uppercase hidden sm:block">Current Call</span>
+            <span className="text-white/80 text-xs font-semibold tracking-wider uppercase hidden sm:block">{t('room.earnings_call')}</span>
             <span ref={counterRef} className="text-green-400 font-mono text-base sm:text-lg font-bold">
                 $0.0000
             </span>
@@ -74,6 +76,7 @@ export function VideoRoom({
     role,
     handleOutOfCredits,
 }: VideoRoomProps) {
+    const { t } = useTranslation();
     const localVideoRef = useRef<HTMLVideoElement>(null);
     const remoteVideoRef = useRef<HTMLVideoElement>(null);
 
@@ -215,7 +218,7 @@ export function VideoRoom({
                 {/* User Credit Counter */}
                 {role === "user" && isConnected && !showPaywall && !showAuthModal && userCredits !== null && (
                     <div className={`absolute top-16 left-6 md:top-6 md:right-6 md:left-auto z-30 flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3 bg-black/40 backdrop-blur-xl rounded-full border border-white/10 shadow-lg transition-all duration-700 overflow-hidden ${userCredits <= 2 ? 'max-w-[calc(100vw-3rem)] md:max-w-2xl border-red-500/50 shadow-red-500/20' : 'max-w-fit'}`}>
-                        <span className="text-white/80 text-[10px] md:text-xs font-bold tracking-wider uppercase whitespace-nowrap hidden sm:block">Balance</span>
+                        <span className="text-white/80 text-[10px] md:text-xs font-bold tracking-wider uppercase whitespace-nowrap hidden sm:block">{t('room.balance')}</span>
                         <span className={`font-mono text-xs md:text-lg font-bold whitespace-nowrap flex items-center gap-1.5 ${userCredits <= 2 ? 'text-red-400 animate-pulse' : 'text-white'}`}>
                             {userCredits} <Coins size={12} className="md:w-[18px] text-yellow-400 fill-yellow-500/30" />
                         </span>
@@ -226,7 +229,7 @@ export function VideoRoom({
                                     onClick={() => setShowPaywall(true)}
                                     className="px-3 py-1 bg-red-500 hover:bg-red-400 text-white rounded-full text-[10px] sm:text-sm font-black transition-all active:scale-95 whitespace-nowrap shadow-lg shadow-red-500/20"
                                 >
-                                    Top Up
+                                    {t('room.topup')}
                                 </button>
                             </div>
                         )}
@@ -254,7 +257,7 @@ export function VideoRoom({
                             <div className="w-20 h-20 md:w-28 md:h-28 border-[3px] border-white/5 border-t-indigo-500 rounded-full animate-spin mb-8 shadow-[0_0_30px_rgba(99,102,241,0.5)] relative z-10"></div>
 
                             <h2 className="text-2xl md:text-4xl font-extralight tracking-tight text-white/90 animate-pulse relative z-10">
-                                {isMatching ? "Recherche..." : "Connexion..."}
+                                {isMatching ? t('room.searching') : t('room.connecting')}
                             </h2>
                         </div>
                     )}
@@ -306,7 +309,7 @@ export function VideoRoom({
                     >
                         <div className="flex items-center gap-2 relative z-10">
                             <SkipForward className="w-5 h-5 md:w-6 md:h-6 text-white fill-white" />
-                            <span className="text-white font-black tracking-widest uppercase text-[12px] md:text-lg leading-none">Next</span>
+                            <span className="text-white font-black tracking-widest uppercase text-[12px] md:text-lg leading-none">{t('room.next')}</span>
                         </div>
                     </button>
                 </div>
@@ -325,7 +328,7 @@ export function VideoRoom({
                     <div className="flex-1 overflow-y-auto px-4 pr-32 md:pr-6 md:p-6 space-y-3 [mask-image:linear-gradient(to_bottom,transparent,black_20%)] md:[mask-image:none]">
                         {messages.length === 0 && (
                             <div className="flex items-center justify-center h-full text-white/30 text-sm hidden md:flex">
-                                It's quiet here. Send a message!
+                                {t('room.chat_quiet')}
                             </div>
                         )}
                         {messages.map((msg, i) => {
@@ -347,7 +350,7 @@ export function VideoRoom({
                                 type="text"
                                 value={chatInput}
                                 onChange={(e) => setChatInput(e.target.value)}
-                                placeholder="Écrire un message..."
+                                placeholder={t('room.chat_placeholder')}
                                 className="w-full bg-white/10 border border-white/10 rounded-2xl px-5 py-4 text-base text-white focus:outline-none focus:border-indigo-500 transition-all pr-12 backdrop-blur-md"
                             />
                             <button
