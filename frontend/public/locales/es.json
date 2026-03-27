@@ -302,5 +302,14 @@
   "paywall.pack_popular": "POPULAR",
   "paywall.pack_elite": "ÉLITE",
   "paywall.cta": "Continuar al pago",
-  "paywall.footer": "PAGO SEGURO MEDIANTE ENCRIPTACIÓN AES-256"
+  "paywall.footer": "PAGO SEGURO MEDIANTE ENCRIPTACIÓN AES-256",
+  "age.title": "Este es un sitio web para adultos",
+  "age.desc": "Al entrar, afirmas que tienes al menos 18 años o la mayoría de edad en la jurisdicción desde la que accedes al sitio web y consientes ver contenido sexualmente explícito.",
+  "age.btn_enter": "SOY MAYOR DE 18 AÑOS - ENTRAR",
+  "age.btn_exit": "SOY MENOR DE 18 AÑOS - SALIR",
+  "footer.contact": "Contacto",
+  "footer.legal": "Aviso Legal",
+  "footer.terms": "Términos y Condiciones",
+  "footer.slavery": "Declaración contra la esclavitud moderna",
+  "footer.disclaimer": "Los propietarios y operadores de este sitio web no son los productores principales (según se define dicho término en 18 USC sección 2257) de ninguno de los contenidos visuales contenidos en el sitio web. Los registros originales requeridos de conformidad con 18 U.S.C. sección 2257 y 28 C.F.R. 75 para los materiales contenidos en el sitio web son mantenidos por el Custodio de Registros correspondiente de la siguiente manera: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Madrid (wait, it says Paris France in original image, keeping Paris France), 75008 Paris, Francia"
 }

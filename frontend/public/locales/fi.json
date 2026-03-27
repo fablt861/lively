@@ -302,5 +302,14 @@
   "paywall.pack_popular": "SUOSITTU",
   "paywall.pack_elite": "ELIITTI",
   "paywall.cta": "Jatka maksuun",
-  "paywall.footer": "TURVALLINEN MAKSU AES-256-SALAUKSEN KAUTTA"
+  "paywall.footer": "TURVALLINEN MAKSU AES-256-SALAUKSEN KAUTTA",
+  "age.title": "Tämä on aikuisten verkkosivusto",
+  "age.desc": "Siirtymällä sivustolle vahvistat, että olet vähintään 18-vuotias tai täysi-ikäinen siinä maassa, josta käytät verkkosivustoa, ja suostut näkemään seksuaalisesti eksplisiittistä sisältöä.",
+  "age.btn_enter": "OLEN 18-VUOTIAS TAI VANHEMPI - SISÄÄN",
+  "age.btn_exit": "OLEN ALLE 18-VUOTIAS - POISTU",
+  "footer.contact": "Ota yhteyttä",
+  "footer.legal": "Oikeudellinen ilmoitus",
+  "footer.terms": "Käyttöehdot",
+  "footer.slavery": "Nykyaikaisen orjuuden vastainen julistus",
+  "footer.disclaimer": "Tämän verkkosivuston omistajat ja ylläpitäjät eivät ole tämän verkkosivuston sisältämän visuaalisen sisällön ensisijaisia tuottajia (kuten kyseinen termi on määritelty 18 USC:n pykälässä 2257). Alkuperäiset asiakirjat, joita vaaditaan 18 U.S.C:n pykälän 2257 ja 28 C.F.R. 75:n mukaisesti verkkosivuston sisältämää materiaalia varten, säilyttää asianmukainen Custodian of Records seuraavasti: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Pariisi, Ranska"
 }

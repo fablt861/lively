@@ -8,6 +8,7 @@ import { OnlineGauge } from "@/components/OnlineGauge";
 import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { PaywallModal } from "@/components/PaywallModal";
+import { AgeVerificationModal } from "@/components/AgeVerificationModal";
 
 export default function Home() {
     // Build version: 1.0.2 - Matchmaking fixes
@@ -17,6 +18,8 @@ export default function Home() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showPaywall, setShowPaywall] = useState(false);
     const [userCredits, setUserCredits] = useState(0);
+    const [showAgeModal, setShowAgeModal] = useState(false);
+    const [isAgeVerified, setIsAgeVerified] = useState(false);
 
     useEffect(() => {
         const storedPseudo = localStorage.getItem('kinky_user_pseudo');
@@ -26,6 +29,10 @@ export default function Home() {
         const storedCredits = localStorage.getItem('kinky_credits');
         if (storedCredits) {
             setUserCredits(parseFloat(storedCredits));
+        }
+        const ageVerified = localStorage.getItem('kinky_age_verified');
+        if (ageVerified === 'true') {
+            setIsAgeVerified(true);
         }
     }, [showPaywall]);
 
@@ -147,6 +154,11 @@ export default function Home() {
                                     const token = localStorage.getItem('kinky_token');
                                     const role = localStorage.getItem('kinky_role');
 
+                                    if (!isAgeVerified) {
+                                        setShowAgeModal(true);
+                                        return;
+                                    }
+
                                     if (token) {
                                         if (role === 'model') {
                                             window.location.href = `/${language}/model/dashboard`;
@@ -218,6 +230,24 @@ export default function Home() {
             </main>
 
             {showGenderModal && <GenderModal onClose={() => setShowGenderModal(false)} />}
+            {showAgeModal && (
+                <AgeVerificationModal
+                    onConfirm={() => {
+                        localStorage.setItem('kinky_age_verified', 'true');
+                        setIsAgeVerified(true);
+                        setShowAgeModal(false);
+
+                        // After age verification, trigger the next logical step
+                        const token = localStorage.getItem('kinky_token');
+                        if (!token) {
+                            setShowGenderModal(true);
+                        } else {
+                            const role = localStorage.getItem('kinky_role');
+                            window.location.href = role === 'model' ? `/${language}/model/dashboard` : `/${language}/live`;
+                        }
+                    }}
+                />
+            )}
             {showPaywall && (
                 <PaywallModal
                     onClose={() => setShowPaywall(false)}

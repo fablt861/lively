@@ -302,5 +302,14 @@
   "paywall.pack_popular": "POPULAIR",
   "paywall.pack_elite": "ELITE",
   "paywall.cta": "Doorgaan naar betaling",
-  "paywall.footer": "VEILIGE BETALING VIA AES-256 ENCRYPTIE"
+  "paywall.footer": "VEILIGE BETALING VIA AES-256 ENCRYPTIE",
+  "age.title": "Dit is een website voor volwassenen",
+  "age.desc": "Door binnen te gaan, bevestigt u dat u minstens 18 jaar oud bent of de meerderjarige leeftijd heeft in de jurisdictie van waaruit u de website bezoekt en stemt u in met het bekijken van seksueel expliciete inhoud.",
+  "age.btn_enter": "IK BEN 18 JAAR OF OUDER - NAAR BINNEN",
+  "age.btn_exit": "IK BEN JONGER DAN 18 - VERLATEN",
+  "footer.contact": "Contact",
+  "footer.legal": "Juridische Kennisgeving",
+  "footer.terms": "Algemene Voorwaarden",
+  "footer.slavery": "Verklaring tegen moderne slavernij",
+  "footer.disclaimer": "De eigenaren en exploitanten van deze website zijn niet de primaire producent (zoals die term is gedefinieerd in 18 USC sectie 2257) van de visuele inhoud op de website. De originele gegevens die zijn vereist op grond van 18 U.S.C. sectie 2257 en 28 C.F.R. 75 voor materialen op de website worden bewaard door de juiste Custodian of Records als volgt: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Parijs, Frankrijk"
 }

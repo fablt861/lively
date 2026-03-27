@@ -302,5 +302,14 @@
   "paywall.pack_popular": "BELIEBT",
   "paywall.pack_elite": "ELITE",
   "paywall.cta": "Weiter zur Zahlung",
-  "paywall.footer": "SICHERE ZAHLUNG ÜBER AES-256 VERSCHLÜSSELUNG"
+  "paywall.footer": "SICHERE ZAHLUNG ÜBER AES-256 VERSCHLÜSSELUNG",
+  "age.title": "Dies ist eine Website für Erwachsene",
+  "age.desc": "Mit dem Betreten bestätigen Sie, dass Sie mindestens 18 Jahre alt oder volljährig in der Gerichtsbarkeit sind, von der aus Sie auf die Website zugreifen, und dass Sie der Anzeige sexuell expliziter Inhalte zustimmen.",
+  "age.btn_enter": "ICH BIN 18 JAHRE ODER ÄLTER - BETRETEN",
+  "age.btn_exit": "ICH BIN UNTER 18 JAHRE - VERLASSEN",
+  "footer.contact": "Kontakt",
+  "footer.legal": "Impressum",
+  "footer.terms": "Allgemeine Geschäftsbedingungen",
+  "footer.slavery": "Erklärung gegen moderne Sklaverei",
+  "footer.disclaimer": "Die Eigentümer und Betreiber dieser Website sind nicht die Primärproduzenten (wie dieser Begriff in 18 USC Abschnitt 2257 definiert ist) jeglicher visueller Inhalte auf der Website. Die gemäß 18 U.S.C. Abschnitt 2257 und 28 C.F.R. 75 erforderlichen Originalunterlagen für auf der Website enthaltene Materialien werden vom zuständigen Verwahrer der Unterlagen wie folgt aufbewahrt: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Paris, Frankreich"
 }

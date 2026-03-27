@@ -302,5 +302,14 @@
   "paywall.pack_popular": "POPULÆR",
   "paywall.pack_elite": "ELITE",
   "paywall.cta": "Fortsett til betaling",
-  "paywall.footer": "SIKKER BETALING VIA AES-256 KRYPTERING"
+  "paywall.footer": "SIKKER BETALING VIA AES-256 KRYPTERING",
+  "age.title": "Dette er et nettsted for voksne",
+  "age.desc": "Ved å gå inn bekrefter du at du er minst 18 år gammel eller i myndighetsalder i jurisdiksjonen du besøker nettstedet fra, og du samtykker i å se seksuelt eksplisitt innhold.",
+  "age.btn_enter": "JEG ER 18 ÅR ELLER ELDRE - GÅ INN",
+  "age.btn_exit": "JEG ER UNDER 18 ÅR - FORLAT",
+  "footer.contact": "Kontakt",
+  "footer.legal": "Juridisk Informasjon",
+  "footer.terms": "Vilkår og Betingelser",
+  "footer.slavery": "Erklæring mot moderne slaveri",
+  "footer.disclaimer": "Eierne og operatørene av dette nettstedet er ikke den primære produsenten (slik begrepet er definert i 18 USC seksjon 2257) av noe av det visuelle innholdet på nettstedet. Originale dokumenter som kreves i henhold til 18 U.S.C. seksjon 2257 og 28 C.F.R. 75 for materiale på nettstedet oppbevares av den aktuelle Custodian of Records som følger: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Paris, Frankrike"
 }

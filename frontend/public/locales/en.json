@@ -302,5 +302,14 @@
   "paywall.pack_popular": "POPULAR",
   "paywall.pack_elite": "ELITE",
   "paywall.cta": "Continue to payment",
-  "paywall.footer": "SECURE PAYMENT VIA AES-256 ENCRYPTION"
+  "paywall.footer": "SECURE PAYMENT VIA AES-256 ENCRYPTION",
+  "age.title": "This is an adult website",
+  "age.desc": "By entering, you affirm that you are at least 18 years of age or the age of majority in the jurisdiction you are accessing the website from and you consent to viewing sexually explicit content.",
+  "age.btn_enter": "I AM 18 OR OLDER - ENTER",
+  "age.btn_exit": "I AM UNDER 18 - EXIT",
+  "footer.contact": "Contact",
+  "footer.legal": "Legal Notice",
+  "footer.terms": "Terms & Conditions",
+  "footer.slavery": "Anti modern slavery declaration",
+  "footer.disclaimer": "The owners and operators of this Website are not the primary producer (as that term is defined in 18 USC section 2257) of any of the visual content contained in the Website. The original records required pursuant to 18 U.S.C. section 2257 and 28 C.F.R. 75 for materials contained in the website are kept by the appropriate Custodian of Records as follows: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Paris, France"
 }

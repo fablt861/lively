@@ -302,5 +302,14 @@
   "paywall.pack_popular": "POPULAR",
   "paywall.pack_elite": "ELITE",
   "paywall.cta": "Continuă spre plată",
-  "paywall.footer": "PLATĂ SECURIZATĂ PRIN CRIPTARE AES-256"
+  "paywall.footer": "PLATĂ SECURIZATĂ PRIN CRIPTARE AES-256",
+  "age.title": "Acesta este un site pentru adulți",
+  "age.desc": "Prin intrare, confirmați că aveți cel puțin 18 ani sau vârsta majoratului în jurisdicția din care accesați site-ul web și consimțiți la vizualizarea conținutului explicit sexual.",
+  "age.btn_enter": "AM 18 ANI SAU MAI MULT - INTRĂ",
+  "age.btn_exit": "AM SUB 18 ANI - IEȘI",
+  "footer.contact": "Contact",
+  "footer.legal": "Notificare Legală",
+  "footer.terms": "Termeni și Condiții",
+  "footer.slavery": "Declarație împotriva sclaviei moderne",
+  "footer.disclaimer": "Proprietarii și operatorii acestui site web nu sunt producătorii primari (așa cum este definit acest termen în 18 USC secțiunea 2257) a oricărui conținut vizual conținut în site-ul web. Înregistrările originale solicitate în conformitate cu 18 U.S.C. secțiunea 2257 și 28 C.F.R. 75 pentru materialele conținute în site-ul web sunt păstrate de Custodele de Înregistrări corespunzător după cum urmează: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Paris, Franța"
 }

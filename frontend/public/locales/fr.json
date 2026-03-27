@@ -302,5 +302,14 @@
   "paywall.pack_popular": "POPULAIRE",
   "paywall.pack_elite": "ÉLITE",
   "paywall.cta": "Continuer vers le paiement",
-  "paywall.footer": "PAIEMENT SÉCURISÉ PAR CHIFFREMENT AES-256"
+  "paywall.footer": "PAIEMENT SÉCURISÉ PAR CHIFFREMENT AES-256",
+  "age.title": "Ceci est un site pour adultes",
+  "age.desc": "En entrant, vous affirmez avoir au moins 18 ans ou l'âge de la majorité dans la juridiction d'où vous accédez au site et vous consentez à visionner du contenu sexuellement explicite.",
+  "age.btn_enter": "J'AI 18 ANS OU PLUS - ENTRER",
+  "age.btn_exit": "J'AI MOINS DE 18 ANS - SORTIR",
+  "footer.contact": "Contact",
+  "footer.legal": "Mentions Légales",
+  "footer.terms": "Conditions Générales",
+  "footer.slavery": "Déclaration contre l'esclavage moderne",
+  "footer.disclaimer": "Les propriétaires et exploitants de ce site Web ne sont pas le producteur principal (tel que ce terme est défini dans le 18 USC section 2257) de tout contenu visuel contenu dans le site Web. Les documents originaux requis conformément au 18 U.S.C. section 2257 et 28 C.F.R. 75 pour les documents contenus dans le site Web sont conservés par le dépositaire approprié des dossiers comme suit : MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Paris, France"
 }
