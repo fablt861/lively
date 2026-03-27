@@ -8,17 +8,21 @@ export default function TermsPage() {
     const { t, language } = useTranslation();
 
     const sections = [
-        { title: t('terms.purpose_title'), content: t('terms.purpose_content') },
-        { title: t('terms.manager_title'), content: t('terms.manager_content') },
-        { title: t('terms.access_title'), content: t('terms.access_content') },
-        { title: t('terms.acceptance_title'), content: t('terms.acceptance_content') },
-        { title: t('terms.payments_title'), content: t('terms.payments_content') },
-        { title: t('terms.services_title'), content: t('terms.services_content') },
-        { title: t('terms.financials_title'), content: t('terms.financials_content') },
-        { title: t('terms.obligations_title'), content: t('terms.obligations_content') },
-        { title: t('terms.moderation_title'), content: t('terms.moderation_content') },
-        { title: t('terms.withdrawal_title'), content: t('terms.withdrawal_content') },
-        { title: t('terms.jurisdiction_title'), content: t('terms.jurisdiction_content') },
+        { content: t('terms.purpose_section') },
+        { content: t('terms.manager_section') },
+        { content: t('terms.access_section') },
+        { content: t('terms.acceptance_section') },
+        { content: t('terms.payments_section') },
+        { content: t('terms.registration_section') },
+        { content: t('terms.services_section') },
+        { content: t('terms.financials_section') },
+        { content: t('terms.withdrawal_section') },
+        { content: t('terms.obligations_section') },
+        { content: t('terms.behavior_section') },
+        { content: t('terms.sanctions_section') },
+        { content: t('terms.liability_section') },
+        { content: t('terms.ip_section') },
+        { content: t('terms.jurisdiction_section') },
     ];
 
     return (
@@ -55,24 +59,14 @@ export default function TermsPage() {
                 </div>
 
                 {/* Document Body */}
-                <div className="space-y-12">
+                <div className="space-y-16">
                     {sections.map((section, idx) => (
                         <section key={idx} className="group transition-all duration-500">
-                            <div className="flex items-start gap-6">
-                                <div className="hidden md:flex shrink-0 w-8 h-8 rounded-lg bg-white/5 border border-white/10 items-center justify-center text-[10px] font-bold text-white/20 group-hover:text-indigo-400 group-hover:border-indigo-500/30 transition-colors">
-                                    {idx + 1}
-                                </div>
-                                <div className="space-y-4">
-                                    <h2 className="text-xl md:text-2xl font-extrabold tracking-tight text-white group-hover:text-indigo-300 transition-colors">
-                                        {section.title}
-                                    </h2>
-                                    <div className="text-white/50 leading-relaxed whitespace-pre-wrap font-medium">
-                                        {section.content}
-                                    </div>
-                                </div>
+                            <div className="text-white/50 leading-relaxed whitespace-pre-wrap font-medium text-lg">
+                                {section.content}
                             </div>
                             {idx !== sections.length - 1 && (
-                                <div className="mt-12 h-px w-full bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+                                <div className="mt-16 h-px w-full bg-gradient-to-r from-transparent via-white/5 to-transparent" />
                             )}
                         </section>
                     ))}
