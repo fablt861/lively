@@ -14,6 +14,7 @@ export default function LegalPage() {
         { title: t('legal.rights_eu_title'), content: t('legal.rights_eu_content') },
         { title: t('legal.rights_us_title'), content: t('legal.rights_us_content') },
         { title: t('legal.rights_br_title'), content: t('legal.rights_br_content') },
+        { title: t('legal.definitions_title'), content: t('legal.definitions_content') },
     ];
 
     return (
