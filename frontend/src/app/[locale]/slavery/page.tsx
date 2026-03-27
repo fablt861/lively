@@ -48,8 +48,8 @@ export default function SlaveryPage() {
 
                 {/* Legal Badge */}
                 <div className="mt-16 text-center">
-                    <p className="text-[10px] text-white/20 font-bold uppercase tracking-[0.5em]">
-                        Ethics • Integrity • Compliance
+                    <p className="text-[10px] text-white/40 font-bold uppercase tracking-[0.4em]">
+                        © 2024 MV CAPITAL • ALL RIGHTS RESERVED
                     </p>
                 </div>
 

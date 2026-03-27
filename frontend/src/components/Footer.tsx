@@ -69,7 +69,7 @@ export function Footer() {
                         <div className="text-xl font-black tracking-tighter text-white opacity-20 select-none">
                             KINKY<span className="text-pink-500">.</span>
                         </div>
-                        <p className="text-[9px] text-white/10 font-bold uppercase tracking-[0.4em]">
+                        <p className="text-[9px] text-white/40 font-bold uppercase tracking-[0.4em]">
                             © 2024 MV CAPITAL • ALL RIGHTS RESERVED
                         </p>
                     </div>
