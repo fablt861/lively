@@ -314,7 +314,7 @@
   "footer.disclaimer": "I proprietari e gli operatori di questo sito web non sono i produttori primari (secondo la definizione del termine contenuta in 18 USC sezione 2257) di alcuno dei contenuti visuali contenuti nel sito web. I documenti originali richiesti ai sensi di 18 U.S.C. sezione 2257 e 28 C.F.R. 75 per i materiali contenuti nel sito web sono conservati dal Custode dei Registri appropriato come segue: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Parigi, Francia",
   "slavery.title": "Dichiarazione contro la schiavitù moderna",
   "slavery.content": "Kinky si oppone a tutte le forme di schiavitù moderna e di tratta di esseri umani, tratta sessuale o abuso. La schiavitù moderna è un crimine e una violazione dei diritti umani fondamentali. Essa assume varie forme, come la schiavitù, la servitù, il lavoro forzato e obbligatorio e la tratta di esseri umani, che hanno tutte in comune la privatione della libertà di una persona da parte di un'altra allo scopo di sfruttarla per un guadagno personale o commerciale. Ci impegniamo ad agire con integrità e a mitigare il rischio di schiavitù moderna e di tratta di esseri umani nei nostri rapporti commerciali con i nostri creatori e utenti. Ci impegniamo inoltre a trattare tutti i dipendenti, i partner e i fornitori con rispetto e dignità, garantendo condizioni di lavoro sicure e conducendo operazioni eticamente e ambientalmente responsabili.",
-  "nav.back_home": "Torna alla Home",
+  "nav.back_home": "Back to Home",
   "legal.title": "Informativa sulla Privacy",
   "legal.updated": "Ultimo aggiornamento: 27 marzo 2024",
   "legal.intro": "At Kinky, protecting your privacy is our top priority. This Privacy Policy describes the policies and procedures on the collection, use, and disclosure of your information when you use our services. We comply with all relevant protection standards, including GDPR for Europe, CCPA for the United States, and LGPD for Brazil. Our commitment is to provide a premium and safe environment for our users.",
@@ -370,5 +370,8 @@
   "terms.sanctions_section": "14. Sanctions for Breaches\nThe Manager reserves the right to suspend access, delete Accounts, delete Content, or prosecute any User in breach of these terms.",
   "terms.liability_section": "15. Liability and Guarantee\nThe Manager provides Services with diligence but without obligation of result. The Manager is not liable for Content authors (third parties) and only acts as a hosting provider.",
   "terms.ip_section": "16. Intellectual Property\nAll systems, software, and structures are protected by MV CAPITAL's intellectual property rights. Users grant the Manager a free license to use their Content for promotional purposes.",
-  "terms.jurisdiction_section": "25. Law and Jurisdiction\nThese General Terms and Conditions of Use are governed by French law. Any dispute shall be brought before the courts of Paris."
+  "terms.jurisdiction_section": "25. Law and Jurisdiction\nThese General Terms and Conditions of Use are governed by French law. Any dispute shall be brought before the courts of Paris.",
+  "contact.title": "Contact Us",
+  "contact.intro": "Have a question or need assistance? Our dedicated support team is here to help you experience the best of Kinky. Feel free to reach out to us at any time.",
+  "contact.email": "support@kinky.live"
 }
