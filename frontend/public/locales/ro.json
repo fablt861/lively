@@ -314,5 +314,20 @@
   "footer.disclaimer": "Proprietarii și operatorii acestui site web nu sunt producătorii primari (așa cum este definit acest termen în 18 USC secțiunea 2257) a oricărui conținut vizual conținut în site-ul web. Înregistrările originale solicitate în conformitate cu 18 U.S.C. secțiunea 2257 și 28 C.F.R. 75 pentru materialele conținute în site-ul web sunt păstrate de Custodele de Înregistrări corespunzător după cum urmează: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Paris, Franța",
   "slavery.title": "Declarație împotriva sclaviei moderne",
   "slavery.content": "Kinky se opune tuturor formelor de sclavie modernă și trafic de persoane, trafic sexual sau abuz. Sclavia modernă este o infracțiune și o încălcare a drepturilor fundamentale ale omului. Aceasta îmbracă diverse forme, cum ar fi sclavie, servitute, muncă forțată și obligatorie și trafic de persoane, toate având în comun privarea de libertate a unei persoane de către o alta pentru a o exploata în scop personal sau comercial. Ne angajăm să acționăm cu integritate și să atenuăm riscul de sclavie modernă și trafic de persoane în relațiile noastre comerciale cu creatorii și utilizatorii noștri. De asemenea, ne angajăm să tratăm toți angajații, partenerii și furnizorii cu respect și demnitate, asigurând condiții de lucru sigure și desfășurând operațiuni responsabile din punct de vedere ecologic și etice.",
-  "nav.back_home": "Înapoi la Acasă"
+  "nav.back_home": "Înapoi la Acasă",
+  "legal.title": "Politica de Confidențialitate",
+  "legal.updated": "Ultima actualizare: 27 martie 2024",
+  "legal.intro": "La Kinky, protejarea confidențialității dvs. este prioritatea noastră principală. Acest document descrie modul în care colectăm, procesăm și protejăm informațiile dvs. personale în conformitate cu standardele globale de protecție a datelor.",
+  "legal.controller_title": "1. Operatorul de Date",
+  "legal.controller_content": "MV CAPITAL\n50 avenue des champs Elysées\n75008 Paris - Franța\nContact: support@kinky.live",
+  "legal.data_types_title": "2. Date pe care le colectăm",
+  "legal.data_types_content": "Colectăm informații pentru a asigura o experiență sigură și personalizată. Aceasta include:\n- Date Tehnice: Adrese IP, identificatori de dispozitiv și specificații ale browserului.\n- Statistici de Utilizare: Jurnale de interacțiune, durata sesiunilor și căile de navigare.\n- Acces la Hardware: Permisiuni temporare pentru cameră și microfon utilizate exclusiv în timpul meciurilor live.",
+  "legal.processing_title": "3. Modul și Locul Procesării",
+  "legal.processing_content": "Datele dvs. sunt procesate folosind măsuri avansate de criptare. Ne bazăm pe o infrastructură securizată (AWS/MongoDB) și reținem informațiile doar atât timp cât este necesar pentru scopul funcțional prevăzut.",
+  "legal.rights_eu_title": "4. Informații suplimentare pentru utilizatorii din Uniunea Europeană (GDPR)",
+  "legal.rights_eu_content": "Rezidenții UE au dreptul de a accesa, rectifica sau șterge datele lor personale. De asemenea, aveți dreptul de a vă opune anumitor activități de procesare și de a solicita portabilitatea datelor.",
+  "legal.rights_us_title": "5. Informații suplimentare pentru utilizatorii din Statele Unite",
+  "legal.rights_us_content": "Rezidenților din state specifice ale SUA (de exemplu, California, Virginia) li se oferă drepturi distincte în ceea ce privește transparența datelor și posibilitatea de a renunța la partajarea datelor, așa cum este definit de legislația regională.",
+  "legal.rights_br_title": "6. Informații suplimentare pentru utilizatorii din Brazilia (LGPD)",
+  "legal.rights_br_content": "Utilizatorii brazilieni au dreptul de a confirma existența procesării datelor, de a-și accesa datele și de a corecta informațiile incomplete sau inexacte."
 }

@@ -314,5 +314,20 @@
   "footer.disclaimer": "Tämän verkkosivuston omistajat ja ylläpitäjät eivät ole tämän verkkosivuston sisältämän visuaalisen sisällön ensisijaisia tuottajia (kuten kyseinen termi on määritelty 18 USC:n pykälässä 2257). Alkuperäiset asiakirjat, joita vaaditaan 18 U.S.C:n pykälän 2257 ja 28 C.F.R. 75:n mukaisesti verkkosivuston sisältämää materiaalia varten, säilyttää asianmukainen Custodian of Records seuraavasti: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Pariisi, Ranska",
   "slavery.title": "Nykyaikaisen orjuuden vastainen julistus",
   "slavery.content": "Kinky vastustaa kaikenlaista nykyaikaista orjuutta ja ihmiskauppaa, seksikauppaa tai väärinkäytöksiä. Nykyaikainen orjuus on rikos ja perustavanlaatuisten ihmisoikeuksien loukkaus. Se saa erilaisia muotoja, kuten orjuus, pakkotyö ja ihmiskauppa, joille kaikille on yhteistä se, että toinen henkilö riistää toiselta vapauden hyödyntääkseen tätä henkilökohtaisen tai kaupallisen hyödyn saamiseksi. Sitoudumme toimimaan rehellisesti ja vähentämään nykyaikaisen orjuuden ja ihmiskaupan riskiä liikesuhteissamme sisällöntuottajien ja käyttäjien kanssa. Sitoudumme myös kohtelemaan kaikkia työntekijöitä, kumppaneita ja toimittajia kunnioittavasti ja arvokkaasti, varmistamaan turvalliset työolot ja harjoittamaan ympäristövastuullista ja eettistä toimintaa.",
-  "nav.back_home": "Takaisin kotiin"
+  "nav.back_home": "Takaisin kotiin",
+  "legal.title": "Tietosuojakäytäntö",
+  "legal.updated": "Viimeisin päivitys: 27. maaliskuuta 2024",
+  "legal.intro": "Kinkyllä yksityisyytesi suojaaminen on ensisijainen tavoitteemme. Tässä asiakirjassa kerrotaan, miten keräämme, käsittelemme ja suojaamme henkilötietojasi maailmanlaajuisten tietosuojastandardien mukaisesti.",
+  "legal.controller_title": "1. Rekisterinpitäjä",
+  "legal.controller_content": "MV CAPITAL\n50 avenue des champs Elysées\n75008 Pariisi - Ranska\nYhteystiedot: support@kinky.live",
+  "legal.data_types_title": "2. Keräämämme tiedot",
+  "legal.data_types_content": "Keräämme tietoja varmistaaksemaksemme turvallisen ja yksilöllisen kokemuksen. Tämä sisältää:\n- Tekniset tiedot: IP-osoitteet, laitetunnisteet ja selaimen tekniset tiedot.\n- Käyttötilastot: Vuorovaikutuslokit, istuntojen kestot ja navigointireitit.\n- Laitteiston käyttöoikeudet: Tilapäiset kamera- ja mikroniluvat, joita käytetään yksinomaan live-otteluiden aikana.",
+  "legal.processing_title": "3. Käsittelytapa ja -paikka",
+  "legal.processing_content": "Tietosi käsitellään edistyneillä salaustoimenpiteillä. Luotamme turvalliseen infrastruktuuriin (AWS/MongoDB) ja säilytämme tietoja vain niin kauan kuin on tarpeen niiden aiottua toiminnallista tarkoitusta varten.",
+  "legal.rights_eu_title": "4. Lisätietoja Euroopan unionin käyttäjille (GDPR)",
+  "legal.rights_eu_content": "EU:n asukkailla on oikeus päästä käsiksi henkilötietoihinsa, korjata niitä tai poistaa ne. Sinulla on myös oikeus vastustaa tiettyjä käsittelytoimia ja pyytää tietojen siirrettävyyttä.",
+  "legal.rights_us_title": "5. Lisätietoja Yhdysvaltojen käyttäjille",
+  "legal.rights_us_content": "Tiettyjen Yhdysvaltojen osavaltioiden (esim. Kalifornia, Virginia) asukkaille tarjotaan erityisiä oikeuksia, jotka koskevat tietojen läpinäkyvyyttä ja mahdollisuutta kieltäytyä tietojen jakamisesta alueellisen lainsäädännön mukaisesti.",
+  "legal.rights_br_title": "6. Lisätietoja Brasilian käyttäjille (LGPD)",
+  "legal.rights_br_content": "Brasilialaisilla käyttäjillä on oikeus vahvistaa tietojen käsittelyn olemassaolo, päästä käsiksi tietoihinsa ja korjata puutteelliset tai virheelliset tiedot."
 }

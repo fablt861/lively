@@ -314,5 +314,20 @@
   "footer.disclaimer": "Os proprietários e operadores deste website não são os produtores primários (conforme definido em 18 USC secção 2257) de qualquer conteúdo visual contido no website. Os registos originais exigidos nos termos de 18 U.S.C. secção 2257 e 28 C.F.R. 75 para os materiais contidos no website são mantidos pelo Custódio de Registos apropriado como segue: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Paris, França",
   "slavery.title": "Declaração contra a escravatura moderna",
   "slavery.content": "Kinky opõe-se a todas as formas de escravatura moderna e tráfico de seres humanos, tráfico sexual ou abuso. A escravatura moderna é um crime e uma violação dos direitos humanos fundamentais. Assume várias formas, tais como escravatura, servidão, trabalho forçado e obrigatório e tráfico de seres humanos, todos os quais têm em comum a privação da liberdade de uma pessoa por outra, a fim de a explorar para ganho pessoal ou comercial. Estamos empenhados em agir com integridade e em mitigar o risco de escravatura moderna e tráfico de seres humanos nas nossas relações comerciais com os nossos criadores e utilizadores. Também nos empenhamos em tratar todos os funcionários, parceiros e fornecedores com respeito e dignidade, garantindo condições de trabalho seguras e realizando operações ambientalmente responsáveis e éticas.",
-  "nav.back_home": "Voltar para Início"
+  "nav.back_home": "Voltar para Início",
+  "legal.title": "Política de Privacidade",
+  "legal.updated": "Última atualização: 27 de março de 2024",
+  "legal.intro": "Na Kinky, a proteção da sua privacidade é a nossa maior prioridade. Este documento descreve como recolhemos, processamos e salvaguardamos as suas informações pessoais de acordo com os padrões globais de proteção de dados.",
+  "legal.controller_title": "1. Responsável pelo Tratamento",
+  "legal.controller_content": "MV CAPITAL\n50 avenue des champs Elysées\n75008 Paris - França\nContacto: support@kinky.live",
+  "legal.data_types_title": "2. Dados que recolhemos",
+  "legal.data_types_content": "Recolhemos informações para garantir uma experiência segura e personalizada. Isso inclui:\n- Dados Técnicos: Endereços IP, identificadores de dispositivos e especificações do browser.\n- Estatísticas de Utilização: Registos de interação, duração das sessões e caminhos de navegação.\n- Acesso ao Hardware: Permissões temporárias de câmara e microfone utilizadas exclusivamente durante os matches em direto.",
+  "legal.processing_title": "3. Modo e Local de Tratamento",
+  "legal.processing_content": "Os seus dados são processados utilizando medidas de encriptação avançadas. Baseamo-nos em infraestrutura segura (AWS/MongoDB) e retemos as informações apenas durante o tempo necessário para o seu propósito funcional pretendido.",
+  "legal.rights_eu_title": "4. Informações Adicionais para Utilizadores na União Europeia (RGPD)",
+  "legal.rights_eu_content": "Os residentes na UE têm o direito de aceder, retificar ou eliminar os seus dados pessoais. Também tem o direito de se opor a certas atividades de tratamento e de solicitar a portabilidade dos dados.",
+  "legal.rights_us_title": "5. Informações Adicionais para Utilizadores nos Estados Unidos",
+  "legal.rights_us_content": "Aos residentes de estados específicos dos EUA (ex: Califórnia, Virgínia) são fornecidos direitos distintos em relação à transparência de dados e à capacidade de recusar a partilha de dados conforme definido pela legislação regional.",
+  "legal.rights_br_title": "6. Informações Adicionais para Utilizadores no Brasil (LGPD)",
+  "legal.rights_br_content": "Os utilizadores brasileiros têm o direito de confirmar a existência de tratamento de dados, aceder aos seus dados e corrigir informações incompletas ou incorretas."
 }

@@ -314,5 +314,20 @@
   "footer.disclaimer": "Ägarna och operatörerna av denna webbplats är inte den primära producenten (enligt definitionen i 18 USC sektion 2257) av något av det visuella innehållet på webbplatsen. Originalhandlingar som krävs enligt 18 U.S.C. sektion 2257 och 28 C.F.R. 75 för material på webbplatsen förvaras av behörig Custodian of Records enligt följande: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Paris, Frankrike",
   "slavery.title": "Deklaration mot modernt slaveri",
   "slavery.content": "Kinky vänder sig mot alla former av modernt slaveri och människohandel, sexhandel eller missbruk. Modernt slaveri är ett brott och ett brott mot de grundläggande mänskliga rättigheterna. Det tar sig olika uttryck som slaveri, tvångsarbete, obligatoriskt arbete och människohandel, som alla har det gemensamt att en persons frihet berövas av en annan person i syfte att utnyttja dem för personlig eller kommersiell vinning. Vi strävar efter att agera med integritet och minska risken för modernt slaveri och människohandel i våra affärsförbindelser och relationer med våra skapare och användare. Vi strävar också efter att behandla alla anställda, partner och leverantörer med respekt och värdighet, säkerställa säkra arbetsvillkor och bedriva miljömässigt ansvarsfull och etisk verksamhet.",
-  "nav.back_home": "Tillbaka till Start"
+  "nav.back_home": "Tillbaka till Start",
+  "legal.title": "Integritetspolicy",
+  "legal.updated": "Senast uppdaterad: 27 mars 2024",
+  "legal.intro": "Hos Kinky är skyddet av din integritet vår högsta prioritet. Detta dokument beskriver hur vi samlar in, behandlar och skyddar din personliga information i enlighet med globala dataskyddsstandarder.",
+  "legal.controller_title": "1. Personuppgiftsansvarig",
+  "legal.controller_content": "MV CAPITAL\n50 avenue des champs Elysées\n75008 Paris - Frankrike\nKontakt: support@kinky.live",
+  "legal.data_types_title": "2. Data vi samlar in",
+  "legal.data_types_content": "Vi samlar in information för att säkerställa en säker och personlig upplevelse. Detta inkluderar:\n- Tekniska data: IP-adresser, enhetsidentifierare och webbläsarspecifikationer.\n- Användningsstatistik: Interaktionsloggar, sessionslängder och navigeringsvägar.\n- Hårdvaruåtkomst: Tillfälliga kamera- och mikrofonbehörigheter som används uteslutande under live-matcher.",
+  "legal.processing_title": "3. Sätt och plats för behandling",
+  "legal.processing_content": "Dina data behandlas med avancerade krypteringsåtgärder. Vi förlitar oss på säker infrastruktur (AWS/MongoDB) och behåller information endast så länge som är nödvändigt för dess avsedda funktionella syfte.",
+  "legal.rights_eu_title": "4. Ytterligare information för användare i Europeiska unionen (GDPR)",
+  "legal.rights_eu_content": "EU-invånare har rätt att få tillgång till, korrigera eller radera sina personuppgifter. Du har också rätt att invända mot vissa behandlingsaktiviteter och begära dataporterbarhet.",
+  "legal.rights_us_title": "5. Ytterligare information för användare i USA",
+  "legal.rights_us_content": "Invånare i specifika amerikanska delstater (t.ex. Kalifornien, Virginia) ges särskilda rättigheter när det gäller datatransparens och möjligheten att välja bort datadelning enligt regional lagstiftning.",
+  "legal.rights_br_title": "6. Ytterligare information för användare i Brasilien (LGPD)",
+  "legal.rights_br_content": "Brasilianska användare har rätt att få bekräftelse på att databehandling förekommer, få tillgång till sina data och korrigera ofullständig eller felaktig information."
 }

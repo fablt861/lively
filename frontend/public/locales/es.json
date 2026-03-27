@@ -314,5 +314,20 @@
   "footer.disclaimer": "Los propietarios y operadores de este sitio web no son los productores principales (según se define dicho término en 18 USC sección 2257) de ninguno de los contenidos visuales contenidos en el sitio web. Los registros originales requeridos de conformidad con 18 U.S.C. sección 2257 y 28 C.F.R. 75 para los materiales contenidos en el sitio web son mantenidos por el Custodio de Registros correspondiente de la siguiente manera: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Madrid (wait, it says Paris France in original image, keeping Paris France), 75008 Paris, Francia",
   "slavery.title": "Declaración contra la esclavitud moderna",
   "slavery.content": "Kinky se opone a todas las formas de esclavitud moderna y trata de seres humanos, trata sexual o abuso. La esclavitud moderna es un delito y una violación de los derechos humanos fundamentales. Adopta diversas formas, como la esclavitud, la servidumbre, el trabajo forzoso y obligatorio y la trata de seres humanos, todas las cuales tienen en común la privación de la libertad de una persona por otra para explotarla en beneficio personal o comercial. Nos comprometemos a actuar con integridad y a mitigar el riesgo de esclavitud moderna y trata de seres humanos en nuestras relaciones comerciales con nuestros creadores y usuarios. También nos comprometemos a tratar a todos los empleados, socios y proveedores con respeto y dignidad, garantizando condiciones de trabajo seguras y llevando a cabo operaciones éticas y ambientalmente responsables.",
-  "nav.back_home": "Volver al inicio"
+  "nav.back_home": "Volver al inicio",
+  "legal.title": "Política de Privacidad",
+  "legal.updated": "Última actualización: 27 de marzo de 2024",
+  "legal.intro": "En Kinky, la protección de su privacidad es nuestra máxima prioridad. Este documento detalla cómo recopilamos, procesamos y protegemos su información personal de acuerdo con los estándares globales de protección de datos.",
+  "legal.controller_title": "1. Responsable del tratamiento",
+  "legal.controller_content": "MV CAPITAL\n50 avenue des champs Elysées\n75008 París - Francia\nContacto: support@kinky.live",
+  "legal.data_types_title": "2. Datos que recopilamos",
+  "legal.data_types_content": "Recopilamos información para garantizar una experiencia segura y personalizada. Esto incluye:\n- Datos técnicos: Direcciones IP, identificadores de dispositivos y especificaciones del navegador.\n- Estadísticas de uso: Registros de interacción, duración de las sesiones y rutas de navegación.\n- Acceso al hardware: Permisos temporales de cámara y micrófono utilizados exclusivamente durante los partidos en vivo.",
+  "legal.processing_title": "3. Modo y lugar de tratamiento",
+  "legal.processing_content": "Sus datos se procesan con medidas de cifrado avanzadas. Confiamos en una infraestructura segura (AWS/MongoDB) y conservamos la información solo el tiempo necesario para su propósito funcional previsto.",
+  "legal.rights_eu_title": "4. Información adicional para usuarios de la Unión Europea (RGPD)",
+  "legal.rights_eu_content": "Los residentes de la UE tienen derecho a acceder, rectificar o eliminar sus datos personales. También tienen derecho a oponerse a ciertas actividades de tratamiento y solicitar la portabilidad de los datos.",
+  "legal.rights_us_title": "5. Información adicional para usuarios en los Estados Unidos",
+  "legal.rights_us_content": "Los residentes de ciertos estados de EE. UU. (por ejemplo, California, Virginia) cuentan con derechos distintos en cuanto a la transparencia de los datos y la posibilidad de optar por no compartir los mismos, según lo define la legislación regional.",
+  "legal.rights_br_title": "6. Información adicional para usuarios en Brasil (LGPD)",
+  "legal.rights_br_content": "Los usuarios brasileños tienen derecho a confirmar la existencia del tratamiento de datos, acceder a sus datos y corregir información incompleta o inexacta."
 }

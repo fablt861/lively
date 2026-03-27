@@ -314,5 +314,20 @@
   "footer.disclaimer": "De eigenaren en exploitanten van deze website zijn niet de primaire producent (zoals die term is gedefinieerd in 18 USC sectie 2257) van de visuele inhoud op de website. De originele gegevens die zijn vereist op grond van 18 U.S.C. sectie 2257 en 28 C.F.R. 75 voor materialen op de website worden bewaard door de juiste Custodian of Records als volgt: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Parijs, Frankrijk",
   "slavery.title": "Verklaring tegen moderne slavernij",
   "slavery.content": "Kinky verzet zich tegen alle vormen van moderne slavernij en mensensmokkel, sekshandel of misbruik. Moderne slavernij is een misdaad en een schending van fundamentele mensenrechten. Het neemt verschillende vormen aan, zoals slavernij, servituut, gedwongen en verplichte arbeid en mensensmokkel, die allemaal gemeen hebben dat de vrijheid van een persoon door een ander wordt ontnomen om hen uit te buiten voor persoonlijk of commercieel gewin. We zetten ons in om integer te handelen en het risico op moderne slavernij en mensensmokkel in onze zakelijke transacties en relaties met onze makers en gebruikers te beperken. We zetten ons ook in om alle werknemers, partners en leveranciers met respect en waardigheid te behandelen, veilige werkomstandigheden te garanderen en milieuvriendelijke en ethische activiteiten uit te voeren.",
-  "nav.back_home": "Terug naar Home"
+  "nav.back_home": "Terug naar Home",
+  "legal.title": "Privacybeleid",
+  "legal.updated": "Laatste update: 27 maart 2024",
+  "legal.intro": "Bij Kinky is het beschermen van uw privacy onze hoogste prioriteit. In dit document wordt uiteengezet hoe wij uw persoonlijke gegevens verzamelen, verwerken en beschermen in overeenstemming met de wereldwijde normen voor gegevensbescherming.",
+  "legal.controller_title": "1. Gegevensbeheerder",
+  "legal.controller_content": "MV CAPITAL\n50 avenue des champs Elysées\n75008 Parijs - Frankrijk\nContact: support@kinky.live",
+  "legal.data_types_title": "2. Gegevens die we verzamelen",
+  "legal.data_types_content": "We verzamelen informatie om een veilige en gepersonaliseerde ervaring te garanderen. Dit omvat:\n- Technische gegevens: IP-adressen, apparaat-ID's en browserspecificaties.\n- Gebruiksstatistieken: Interactielogs, sessieduur en navigatiepaden.\n- Toegang tot hardware: Tijdelijke camera- en microfoonrechten die uitsluitend worden gebruikt tijdens live matches.",
+  "legal.processing_title": "3. Wijze en plaats van verwerking",
+  "legal.processing_content": "Uw gegevens worden verwerkt met behulp van geavanceerde versleutelingsmaatregelen. We vertrouwen op een veilige infrastructuur (AWS/MongoDB) en bewaren informatie slechts zo lang als nodig is voor het beoogde functionele doel.",
+  "legal.rights_eu_title": "4. Nadere informatie voor gebruikers in de Europese Unie (AVG)",
+  "legal.rights_eu_content": "Inwoners van de EU hebben het recht op toegang, rectificatie of verwijdering van hun persoonsgegevens. U heeft ook het recht om bezwaar te maken tegen bepaalde verwerkingsactiviteiten en om gegevensoverdraagbaarheid te verzoeken.",
+  "legal.rights_us_title": "5. Nadere informatie voor gebruikers in de Verenigde Staten",
+  "legal.rights_us_content": "Inwoners van specifieke Amerikaanse staten (bijv. Californië, Virginia) krijgen specifieke rechten met betrekking tot gegevenstransparantie en de mogelijkheid om af te zien van het delen van gegevens, zoals gedefinieerd door de regionale wetgeving.",
+  "legal.rights_br_title": "6. Nadere informatie voor gebruikers in Brazilië (LGPD)",
+  "legal.rights_br_content": "Braziliaanse gebruikers hebben het recht om de verwerking van hun gegevens te bevestigen, toegang te krijgen tot hun gegevens en onvolledige of onnauwkeurige informatie te corrigeren."
 }

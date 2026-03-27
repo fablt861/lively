@@ -314,5 +314,20 @@
   "footer.disclaimer": "The owners and operators of this Website are not the primary producer (as that term is defined in 18 USC section 2257) of any of the visual content contained in the Website. The original records required pursuant to 18 U.S.C. section 2257 and 28 C.F.R. 75 for materials contained in the website are kept by the appropriate Custodian of Records as follows: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Paris, France",
   "slavery.title": "Anti Modern Slavery Declaration",
   "slavery.content": "Kinky stands against all forms of modern slavery and human trafficking, sex trafficking or abuse. Modern slavery is a crime and a violation of fundamental human rights. It takes various forms such as slavery, servitude, forced and compulsory labour and human trafficking, all of which have in common the deprivation of a person’s liberty by another in order to exploit them for personal or commercial gain. We are committed to acting with integrity and mitigating the risk of modern slavery and human trafficking in our business dealings and relationships with our creators and users. We are also committed to treating all employees, partners and vendors with respect and dignity, ensuring safe working conditions, and conducting environmentally responsible and ethical operations.",
-  "nav.back_home": "Back to Home"
+  "nav.back_home": "Back to Home",
+  "legal.title": "Privacy Policy",
+  "legal.updated": "Latest Update: March 27, 2024",
+  "legal.intro": "At Kinky, protecting your privacy is our top priority. This document outlines how we collect, process, and safeguard your personal information in accordance with global data protection standards.",
+  "legal.controller_title": "1. Data Controller",
+  "legal.controller_content": "MV CAPITAL\n50 avenue des champs Elysées\n75008 Paris - France\nContact: support@kinky.live",
+  "legal.data_types_title": "2. Data We Collect",
+  "legal.data_types_content": "We gather information to ensure a secure and personalized experience. This includes:\n- Technical Data: IP addresses, device identifiers, and browser specifications.\n- Usage Statistics: Interaction logs, session durations, and navigation paths.\n- Hardware Access: Temporary camera and microphone permissions used exclusively during live matches.",
+  "legal.processing_title": "3. Mode and Place of Processing",
+  "legal.processing_content": "Your data is processed using advanced encryption measures. We rely on secure infrastructure (AWS/MongoDB) and retain information only as long as necessary for its intended functional purpose.",
+  "legal.rights_eu_title": "4. Further Information for Users in the European Union (GDPR)",
+  "legal.rights_eu_content": "EU residents have the right to access, rectify, or delete their personal data. You are also entitled to object to certain processing activities and request data portability.",
+  "legal.rights_us_title": "5. Further Information for Users in the United States",
+  "legal.rights_us_content": "Residents of specific US states (e.g., California, Virginia) are provided with distinct rights regarding data transparency and the ability to opt-out of data sharing as defined by regional legislation.",
+  "legal.rights_br_title": "6. Further Information for Users in Brazil (LGPD)",
+  "legal.rights_br_content": "Brazilian users possess the right to confirm the existence of data processing, access their data, and correct incomplete or inaccurate information."
 }
