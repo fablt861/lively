@@ -21,9 +21,9 @@ export function Footer() {
             <div className="max-w-7xl mx-auto flex flex-col items-center text-center space-y-12">
                 
                 {/* 1. Legal Links */}
-                <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-3 text-[11px] md:text-xs font-bold uppercase tracking-[0.2em] text-white/40">
+                <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-3 text-[11px] md:text-xs font-bold uppercase tracking-[0.2em] text-white/70">
                     <Link href={`/${language}/contact`} className="hover:text-indigo-400 transition-colors">{t('footer.contact')}</Link>
-                    <span className="w-px h-3 bg-white/10 hidden sm:block" />
+                    <span className="w-px h-3 bg-white/20 hidden sm:block" />
                     <Link href={`/${language}/legal`} className="hover:text-indigo-400 transition-colors">{t('footer.legal')}</Link>
                     <span className="w-px h-3 bg-white/10 hidden sm:block" />
                     <Link href={`/${language}/terms`} className="hover:text-indigo-400 transition-colors">{t('footer.terms')}</Link>
@@ -32,7 +32,7 @@ export function Footer() {
                 </div>
 
                 {/* 2. Payment & Security Logos */}
-                <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 opacity-60 hover:opacity-100 transition-opacity duration-500">
+                <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 opacity-80 hover:opacity-100 transition-opacity duration-500">
                     
                     {/* Mastercard ID Check */}
                     <div className="flex items-center gap-3">
@@ -61,7 +61,7 @@ export function Footer() {
 
                 {/* 3. 2257 Disclaimer */}
                 <div className="max-w-4xl space-y-4">
-                    <p className="text-[10px] md:text-[11px] leading-relaxed text-white/30 font-medium">
+                    <p className="text-[10px] md:text-[11px] leading-relaxed text-white/60 font-medium">
                         {t('footer.disclaimer')}
                     </p>
                     
