@@ -389,14 +389,18 @@ export default function AdminPage() {
                                             </div>
                                         </div>
 
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="bg-black/50 rounded-2xl p-4 border border-white/5">
-                                                <p className="text-xs text-neutral-500 text-center mb-3">{t('admin.model.photo_3_fingers')}</p>
-                                                <img src={model.photo3Fingers || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=faces"} alt="3 Fingers" className="w-full aspect-square object-cover rounded-xl" />
+                                        <div className="grid grid-cols-3 gap-3">
+                                            <div className="bg-black/50 rounded-2xl p-3 border border-white/5">
+                                                <p className="text-[10px] text-neutral-500 text-center mb-2 uppercase tracking-tighter">Profile</p>
+                                                <img src={model.photoProfile || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=faces"} alt="Profile" className="w-full aspect-square object-cover rounded-xl border border-white/10" />
                                             </div>
-                                            <div className="bg-black/50 rounded-2xl p-4 border border-white/5">
-                                                <p className="text-xs text-neutral-500 text-center mb-3">{t('admin.model.photo_5_fingers')}</p>
-                                                <img src={model.photo5Fingers || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=faces"} alt="5 Fingers" className="w-full aspect-square object-cover rounded-xl" />
+                                            <div className="bg-black/50 rounded-2xl p-3 border border-white/5">
+                                                <p className="text-[10px] text-neutral-500 text-center mb-2 uppercase tracking-tighter">ID Document</p>
+                                                <img src={model.photoId || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=faces"} alt="ID" className="w-full aspect-square object-cover rounded-xl border border-white/10" />
+                                            </div>
+                                            <div className="bg-black/50 rounded-2xl p-3 border border-white/5">
+                                                <p className="text-[10px] text-neutral-500 text-center mb-2 uppercase tracking-tighter">Selfie + ID</p>
+                                                <img src={model.photoIdSelfie || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=faces"} alt="Selfie ID" className="w-full aspect-square object-cover rounded-xl border border-white/10" />
                                             </div>
                                         </div>
 

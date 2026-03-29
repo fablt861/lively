@@ -32,8 +32,9 @@ export default function ModelSignupPage() {
     const [dob, setDob] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [photo3Fingers, setPhoto3Fingers] = useState<string | null>(null);
-    const [photo5Fingers, setPhoto5Fingers] = useState<string | null>(null);
+    const [photoProfile, setPhotoProfile] = useState<string | null>(null);
+    const [photoId, setPhotoId] = useState<string | null>(null);
+    const [photoIdSelfie, setPhotoIdSelfie] = useState<string | null>(null);
     const [apiError, setApiError] = useState("");
     const [loading, setLoading] = useState(false);
     const [compressing, setCompressing] = useState<number | null>(null);
@@ -77,14 +78,15 @@ export default function ModelSignupPage() {
         });
     };
 
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 3 | 5) => {
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'profile' | 'id' | 'selfie') => {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        setCompressing(type);
+        setCompressing(1); // Small hack to show loading
         const compressed = await compressImage(file);
-        if (type === 3) setPhoto3Fingers(compressed);
-        if (type === 5) setPhoto5Fingers(compressed);
+        if (type === 'profile') setPhotoProfile(compressed);
+        if (type === 'id') setPhotoId(compressed);
+        if (type === 'selfie') setPhotoIdSelfie(compressed);
         setCompressing(null);
     };
 
@@ -94,7 +96,7 @@ export default function ModelSignupPage() {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/auth/model/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ country, phone, name, dob, email, password, photo3Fingers, photo5Fingers })
+                body: JSON.stringify({ country, phone, name, dob, email, password, photoProfile, photoId, photoIdSelfie })
             });
             const data = await res.json();
             if (data.success) {
@@ -336,38 +338,38 @@ export default function ModelSignupPage() {
 
                                 <div className="space-y-4">
                                     {[
-                                        { id: 3, label: t('model.signup.step4_instruction1'), photo: photo3Fingers },
-                                        { id: 5, label: t('model.signup.step4_instruction2'), photo: photo5Fingers }
+                                        { id: 'profile', label: t('model.signup.step4_instruction1'), photo: photoProfile },
+                                        { id: 'id', label: t('model.signup.step4_instruction2'), photo: photoId },
+                                        { id: 'selfie', label: t('model.signup.step4_instruction3'), photo: photoIdSelfie }
                                     ].map((p, idx) => (
-                                        <div key={idx} className={`p-5 rounded-3xl border transition-all duration-300 ${p.photo ? 'bg-green-500/10 border-green-500/40' : 'bg-black/40 border-white/5 group hover:border-white/20'}`}>
-                                            <div className="flex items-center justify-between mb-4">
-                                                <p className="font-bold text-xs uppercase tracking-widest text-white/50">{idx + 1}. {t('model.signup.step4_consigne')}</p>
-                                                {p.photo && <CheckCircle2 className="text-green-500" size={18} />}
+                                        <div key={idx} className={`p-4 rounded-3xl border transition-all duration-300 ${p.photo ? 'bg-green-500/10 border-green-500/40' : 'bg-black/40 border-white/5 group hover:border-white/20'}`}>
+                                            <div className="flex items-center justify-between mb-2">
+                                                <p className="font-bold text-[10px] uppercase tracking-widest text-white/50">{idx + 1}. {t('model.signup.step4_consigne')}</p>
+                                                {p.photo && <CheckCircle2 className="text-green-500" size={16} />}
                                             </div>
-                                            <p className="text-sm font-medium mb-4 text-white/90">{p.label}</p>
+                                            <p className="text-xs font-medium mb-3 text-white/90">{p.label}</p>
 
                                             <div className="relative group/photo overflow-hidden rounded-2xl bg-black/60 aspect-video flex items-center justify-center border border-white/5">
                                                 {p.photo ? (
                                                     <img src={p.photo} alt="Verification" className="w-full h-full object-cover" />
                                                 ) : (
-                                                    <Camera className="text-white/10" size={40} />
+                                                    <Camera className="text-white/10" size={32} />
                                                 )}
 
                                                 <input
                                                     type="file"
                                                     accept="image/*"
-                                                    capture="user"
                                                     id={`upload-${p.id}`}
                                                     className="hidden"
-                                                    onChange={(e) => handleFileChange(e, p.id as 3 | 5)}
+                                                    onChange={(e) => handleFileChange(e, p.id as any)}
                                                 />
                                                 <label
                                                     htmlFor={`upload-${p.id}`}
                                                     className={`absolute inset-0 flex items-center justify-center cursor-pointer transition-all ${p.photo ? 'bg-black/60 opacity-0 hover:opacity-100' : 'bg-transparent'}`}
                                                 >
-                                                    <div className="bg-white text-black font-black text-[10px] uppercase tracking-widest px-6 py-3 rounded-full shadow-2xl flex items-center gap-2">
-                                                        <Camera size={14} />
-                                                        {compressing === p.id ? t('model.signup.step4_compressing') : p.photo ? t('model.signup.step4_change') : t('model.signup.step4_upload')}
+                                                    <div className="bg-white text-black font-black text-[9px] uppercase tracking-widest px-4 py-2 rounded-full shadow-2xl flex items-center gap-2">
+                                                        <Camera size={12} />
+                                                        {compressing ? t('model.signup.step4_compressing') : p.photo ? t('model.signup.step4_change') : t('model.signup.step4_upload')}
                                                     </div>
                                                 </label>
                                             </div>
@@ -377,7 +379,7 @@ export default function ModelSignupPage() {
 
                                 <button
                                     onClick={handleSubmit}
-                                    disabled={!photo3Fingers || !photo5Fingers || loading}
+                                    disabled={!photoProfile || !photoId || !photoIdSelfie || loading}
                                     className="w-full mt-6 bg-gradient-to-r from-pink-500 to-rose-600 hover:opacity-90 text-white font-bold py-5 rounded-full flex items-center justify-center gap-3 transition-all disabled:opacity-30 shadow-xl active:scale-95"
                                 >
                                     {loading ? t('model.signup.step4_submitting') : t('model.signup.step4_btn')}
