@@ -49,7 +49,7 @@ export default function Home() {
     };
 
     return (
-        <div className="flex-1 bg-[#050505] text-white flex flex-col relative font-sans">
+        <div className="flex-1 bg-[#050505] text-white flex flex-col relative font-sans overflow-x-hidden">
             {/* Background Effects */}
             <div className="absolute inset-0 lg:hidden bg-[url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&h=1200&fit=crop&crop=faces')] bg-cover bg-center opacity-30 pointer-events-none mix-blend-luminosity"></div>
             <div className="absolute inset-0 lg:hidden bg-gradient-to-t from-[#050505] via-[#050505]/80 to-[#050505]/30 pointer-events-none"></div>

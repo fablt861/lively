@@ -256,7 +256,7 @@ export function VideoRoom({
 
                             <div className="w-20 h-20 md:w-28 md:h-28 border-[3px] border-white/5 border-t-indigo-500 rounded-full animate-spin mb-8 shadow-[0_0_30px_rgba(99,102,241,0.5)] relative z-10"></div>
 
-                            <h2 className="text-2xl md:text-4xl font-extralight tracking-tight text-white/90 animate-pulse relative z-10">
+                            <h2 className="text-sm sm:text-lg md:text-3xl font-extralight tracking-[0.2em] text-white/90 animate-pulse relative z-10 text-center px-12 uppercase leading-relaxed">
                                 {isMatching ? t('room.searching') : t('room.connecting')}
                             </h2>
                         </div>
