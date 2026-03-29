@@ -40,6 +40,7 @@ function setupMatching(io, socket) {
             await redis.lrem(role === 'model' ? QUEUE_MODELS : QUEUE_USERS, 0, socket.id);
             await disconnectFromRoom(socket);
             await handleJoinQueue(io, socket);
+            await updateQueuePositions(io, role);
         } finally {
             isProcessing = false;
         }
@@ -49,6 +50,7 @@ function setupMatching(io, socket) {
         console.log(`Socket ${socket.id} ran out of credits`);
         await redis.lrem(QUEUE_USERS, 0, socket.id);
         await disconnectFromRoom(socket);
+        await updateQueuePositions(io, 'user');
     });
 
     socket.on('next', async () => {
@@ -63,6 +65,7 @@ function setupMatching(io, socket) {
             }
             await disconnectFromRoom(socket);
             await handleJoinQueue(io, socket);
+            await updateQueuePositions(io, socket.role);
         } finally {
             isProcessing = false;
         }
@@ -76,7 +79,22 @@ function setupMatching(io, socket) {
             await redis.lrem(QUEUE_USERS, 0, socket.id);
         }
         await disconnectFromRoom(socket);
+        await updateQueuePositions(io, socket.role);
     });
+}
+
+async function updateQueuePositions(io, role) {
+    if (!role) return;
+    const queueKey = role === 'model' ? QUEUE_MODELS : QUEUE_USERS;
+    const socketIds = await redis.lrange(queueKey, 0, -1);
+    // Redis list [head ... tail]. Tail (last) is position 1.
+    for (let i = 0; i < socketIds.length; i++) {
+        const sId = socketIds[i];
+        const s = io.sockets.sockets.get(sId);
+        if (s) {
+            s.emit('queue_update', { position: socketIds.length - i });
+        }
+    }
 }
 
 async function handleJoinQueue(io, socket) {
@@ -114,6 +132,8 @@ async function handleJoinQueue(io, socket) {
 
             io.to(roomId).emit('matched', { roomId, initiator: socket.id });
             foundPartner = true;
+            // Update positions for the rest of the target queue
+            await updateQueuePositions(io, isModel ? 'user' : 'model');
             break;
         } else {
             console.log(`[Match STALE] Partner ${partnerId} is offline. Cleaning up and retrying...`);
@@ -126,7 +146,7 @@ async function handleJoinQueue(io, socket) {
         const modelsCount = await redis.llen(QUEUE_MODELS);
         const usersCount = await redis.llen(QUEUE_USERS);
         console.log(`[Queue Status] Models: ${modelsCount}, Users: ${usersCount}. Socket ${socket.id} is waiting.`);
-        socket.emit('waiting', { status: 'waiting for partner' });
+        socket.emit('waiting', { status: 'waiting for partner', position: modelsCount || usersCount }); // Approximate
     }
 }
 
