@@ -80,9 +80,9 @@ router.post('/register', async (req, res) => {
 
 router.post('/model/register', async (req, res) => {
     const redis = getRedisClient();
-    const { country, phone, name, dob, email, password, photoProfile, photoId, photoIdSelfie } = req.body;
+    const { country, phone, firstName, lastName, dob, email, password, photoProfile, photoId, photoIdSelfie } = req.body;
 
-    if (!email || !password || !photoProfile || !photoId || !photoIdSelfie) {
+    if (!email || !password || !firstName || !lastName || !photoProfile || !photoId || !photoIdSelfie) {
         return res.status(400).json({ error: 'auth.error.missing_fields' });
     }
 
@@ -100,7 +100,8 @@ router.post('/model/register', async (req, res) => {
         id: crypto.randomUUID(),
         email,
         password,
-        name,
+        firstName,
+        lastName,
         dob,
         country,
         phone,
