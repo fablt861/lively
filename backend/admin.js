@@ -206,6 +206,67 @@ router.post('/models/:email/reject', requireAuth, async (req, res) => {
     }
 });
 
+// Admin Payouts List
+router.get('/payouts/pending', requireAuth, async (req, res) => {
+    try {
+        const { getRedisClient } = require('./redis');
+        const redis = getRedisClient();
+        const payouts = await redis.hgetall('payouts:pending');
+        const list = Object.values(payouts).map(p => JSON.parse(p));
+        res.json(list);
+    } catch (err) {
+        res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+
+// Admin Payout Approve (Mark as Paid)
+router.post('/payouts/:id/approve', requireAuth, async (req, res) => {
+    try {
+        const { getRedisClient } = require('./redis');
+        const redis = getRedisClient();
+        const id = req.params.id;
+        const data = await redis.hget('payouts:pending', id);
+        if (!data) return res.status(404).json({ error: 'api.error.not_found' });
+
+        const payout = JSON.parse(data);
+        payout.status = 'paid';
+        payout.processedAt = Date.now();
+
+        await redis.hdel('payouts:pending', id);
+        await redis.set(`payout:history:${id}`, JSON.stringify(payout));
+        await redis.incrbyfloat(`model:${payout.modelEmail}:total_payouts`, payout.amount);
+
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+
+// Admin Payout Reject (Refund to Balance)
+router.post('/payouts/:id/reject', requireAuth, async (req, res) => {
+    try {
+        const { getRedisClient } = require('./redis');
+        const redis = getRedisClient();
+        const id = req.params.id;
+        const data = await redis.hget('payouts:pending', id);
+        if (!data) return res.status(404).json({ error: 'api.error.not_found' });
+
+        const payout = JSON.parse(data);
+        payout.status = 'rejected';
+        payout.processedAt = Date.now();
+
+        await redis.hdel('payouts:pending', id);
+        await redis.set(`payout:history:${id}`, JSON.stringify(payout));
+        
+        // Refund to model balance
+        await redis.incrbyfloat(`model:${payout.modelEmail}:balance`, payout.amount);
+
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+
 // Admin Maintenance: Reset Database
 router.post('/maintenance/reset', requireAuth, async (req, res) => {
     try {
