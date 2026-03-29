@@ -179,6 +179,7 @@
   "room.chat_placeholder": "Private message...",
   "room.next": "NEXT",
   "room.balance": "YOUR BALANCE",
+  "room.queue_position": "Position in queue: {{position}}",
   "room.earnings_call": "CALL EARNINGS",
   "room.topup": "TOP UP",
   "room.seconds_remaining_free": "END OF TRIAL IN {{seconds}}S",

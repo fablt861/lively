@@ -59,6 +59,7 @@ interface VideoRoomProps {
     socketId: string | undefined;
     role: "user" | "model" | null;
     handleOutOfCredits?: () => void;
+    queuePosition?: number | null;
 }
 
 export function VideoRoom({
@@ -75,6 +76,7 @@ export function VideoRoom({
     socketId,
     role,
     handleOutOfCredits,
+    queuePosition,
 }: VideoRoomProps) {
     const { t, language } = useTranslation();
     const localVideoRef = useRef<HTMLVideoElement>(null);
@@ -258,6 +260,11 @@ export function VideoRoom({
 
                             <h2 className="text-sm sm:text-lg md:text-3xl font-extralight tracking-[0.2em] text-white/90 animate-pulse relative z-10 text-center px-12 uppercase leading-relaxed">
                                 {isMatching ? t('room.searching') : t('room.connecting')}
+                                {isMatching && queuePosition !== null && (
+                                    <div className="mt-4 text-xs md:text-sm font-bold text-pink-500/80 tracking-widest uppercase animate-pulse">
+                                        {t('room.queue_position', { position: queuePosition })}
+                                    </div>
+                                )}
                             </h2>
                         </div>
                     )}

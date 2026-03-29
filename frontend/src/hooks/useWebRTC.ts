@@ -13,6 +13,7 @@ export function useWebRTC(role: "user" | "model" | null) {
     const [isMatching, setIsMatching] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     const [messages, setMessages] = useState<{ senderId: string; text: string; originalText?: string; timestamp: number }[]>([]);
+    const [queuePosition, setQueuePosition] = useState<number | null>(null);
 
     const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
     const iceServersRef = useRef<any[]>(DEFAULT_ICE_SERVERS);
@@ -91,11 +92,16 @@ export function useWebRTC(role: "user" | "model" | null) {
     useEffect(() => {
         if (!socket) return;
 
-        socket.on("waiting", () => {
+        socket.on("waiting", ({ position }) => {
             setIsMatching(true);
             setIsConnected(false);
             setRemoteStream(null);
             setMessages([]);
+            if (position) setQueuePosition(position);
+        });
+
+        socket.on("queue_update", ({ position }) => {
+            setQueuePosition(position);
         });
 
         socket.on("matched", async ({ initiator }: { initiator: string }) => {
@@ -158,6 +164,7 @@ export function useWebRTC(role: "user" | "model" | null) {
 
         return () => {
             socket.off("waiting");
+            socket.off("queue_update");
             socket.off("matched");
             socket.off("offer");
             socket.off("answer");
@@ -219,6 +226,7 @@ export function useWebRTC(role: "user" | "model" | null) {
         messages,
         sendMessage,
         socketId: socket?.id,
-        handleOutOfCredits
+        handleOutOfCredits,
+        queuePosition
     };
 }

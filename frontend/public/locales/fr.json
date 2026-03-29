@@ -179,6 +179,7 @@
   "room.chat_placeholder": "Message privé...",
   "room.next": "SUIVANT",
   "room.balance": "VOTRE SOLDE",
+  "room.queue_position": "Position dans la file : {{position}}",
   "room.earnings_call": "GAINS APPEL",
   "room.topup": "RECHARGER",
   "room.seconds_remaining_free": "FIN DE L'ESSAI DANS {{seconds}}S",
