@@ -9,12 +9,13 @@ export function Footer() {
     const pathname = usePathname();
 
     // Do not show footer in the video chat interface
-    if (pathname.includes("/live")) {
+    const isRoom = pathname.includes("/live") || pathname.includes("/model/dashboard");
+    if (isRoom) {
         return null;
     }
 
     return (
-        <footer className="relative bg-[#050505] border-t border-white/5 py-12 md:py-20 px-6 overflow-hidden">
+        <footer className="relative z-30 bg-[#050505] border-t border-white/5 py-12 md:py-20 px-6 overflow-hidden w-full mt-auto">
             {/* Background Decor */}
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent" />
             
