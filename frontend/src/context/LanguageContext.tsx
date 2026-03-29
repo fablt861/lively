@@ -27,12 +27,15 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 
     const [language, setLanguageState] = useState<Language>(urlLocale || 'en');
     const [translations, setTranslations] = useState<Record<string, string>>({});
+    const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
         // Sync state if URL locale changes
         if (urlLocale && urlLocale !== language && languageMap[urlLocale]) {
             setLanguageState(urlLocale);
             localStorage.setItem('preferred_language', urlLocale);
+            // Reset loading state for new language
+            setIsLoaded(false);
         }
     }, [urlLocale]);
 
@@ -57,15 +60,18 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
                 const res = await fetch(`/locales/${language}.json`);
                 const data = await res.json();
                 setTranslations(data);
+                setIsLoaded(true);
                 document.documentElement.lang = language;
             } catch (err) {
                 console.error(`Failed to load ${language} translations:`, err);
+                setIsLoaded(true); // Don't block UI forever if fetch fails
             }
         };
         loadTranslations();
     }, [language]);
 
     const setLanguage = (lang: Language) => {
+        setIsLoaded(false); // Reset while switching
         setLanguageState(lang);
         localStorage.setItem('preferred_language', lang);
 
@@ -82,6 +88,9 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const t = (key: string, params?: Record<string, any>) => {
+        // While loading, return empty to avoid flash of keys
+        if (!isLoaded) return "";
+        
         let text = translations[key] || key;
         if (params) {
             Object.entries(params).forEach(([k, v]) => {
@@ -93,7 +102,12 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 
     return (
         <LanguageContext.Provider value={{ language, setLanguage, t }}>
-            {children}
+            {!isLoaded ? (
+                /* Simple loading shell to match the Luxury background */
+                <div className="fixed inset-0 bg-[#050505] z-[9999]" />
+            ) : (
+                children
+            )}
         </LanguageContext.Provider>
     );
 };
