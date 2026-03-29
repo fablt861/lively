@@ -6,6 +6,8 @@ import { Wallet, History, ArrowUpRight, DollarSign, Activity, Video } from "luci
 import Link from "next/link";
 import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { ModelBillingModal } from "@/components/ModelBillingModal";
+import { Settings } from "lucide-react";
 
 interface Stats {
     balance: number;
@@ -22,22 +24,64 @@ export default function DashboardPage() {
     const [id, setId] = useState<string | null>(null);
     const [stats, setStats] = useState<Stats | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isBillingOpen, setIsBillingOpen] = useState(false);
+    const [payoutLoading, setPayoutLoading] = useState(false);
+    const [payoutMessage, setPayoutMessage] = useState<{ text: string, type: 'error' | 'success' } | null>(null);
+
+    const fetchStats = () => {
+        if (!id) return;
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/model/${id}/stats`)
+            .then((res) => res.json())
+            .then((data) => {
+                setStats(data);
+                setLoading(false);
+            })
+            .catch(console.error);
+    };
 
     useEffect(() => {
         setId(localStorage.getItem('lively_email'));
     }, []);
 
     useEffect(() => {
-        if (id) {
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/model/${id}/stats`)
-                .then((res) => res.json())
-                .then((data) => {
-                    setStats(data);
-                    setLoading(false);
-                })
-                .catch(console.error);
-        }
+        fetchStats();
     }, [id]);
+
+    const handlePayoutRequest = async () => {
+        if (!stats || stats.balance < 100) {
+            setPayoutMessage({ text: t('dashboard.payout_error_min'), type: 'error' });
+            return;
+        }
+
+        setPayoutLoading(true);
+        setPayoutMessage(null);
+
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/model/${id}/payout-request`, {
+                method: 'POST',
+                headers: { 
+                    'Authorization': `Bearer model-token-${id}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                setPayoutMessage({ text: t('dashboard.payout_request_success'), type: 'success' });
+                fetchStats(); // Refresh balance (should be 0)
+            } else {
+                if (data.error === 'payout.error.missing_billing_info') {
+                    setPayoutMessage({ text: t('dashboard.payout_error_billing'), type: 'error' });
+                } else {
+                    setPayoutMessage({ text: data.error || "Error", type: 'error' });
+                }
+            }
+        } catch (err) {
+            setPayoutMessage({ text: "Network error", type: 'error' });
+        } finally {
+            setPayoutLoading(false);
+        }
+    };
 
     const dailyStats = useMemo(() => {
         if (!stats?.history) return [];
@@ -98,9 +142,26 @@ export default function DashboardPage() {
                         <div className="text-7xl font-extralight text-white mb-6 font-mono">
                             ${loading ? "..." : stats?.balance.toFixed(2)}
                         </div>
-                        <button className="group flex items-center gap-2 bg-indigo-500 hover:bg-indigo-400 text-white px-8 py-4 rounded-full font-medium transition-all duration-300 shadow-lg shadow-indigo-500/25 hover:-translate-y-1">
-                            {t('dashboard.payout_cta')} <ArrowUpRight size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                        </button>
+                        <div className="flex flex-wrap gap-4 items-center">
+                            <button 
+                                onClick={handlePayoutRequest}
+                                disabled={payoutLoading || (stats?.balance || 0) < 100}
+                                className="group flex items-center gap-2 bg-indigo-500 hover:bg-indigo-400 disabled:opacity-50 disabled:translate-y-0 text-white px-8 py-4 rounded-full font-medium transition-all duration-300 shadow-lg shadow-indigo-500/25 hover:-translate-y-1"
+                            >
+                                {payoutLoading ? t('auth.loading') : t('dashboard.payout_cta')} <ArrowUpRight size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                            </button>
+                            <button 
+                                onClick={() => setIsBillingOpen(true)}
+                                className="group flex items-center gap-2 bg-white/5 hover:bg-white/10 text-white px-8 py-4 rounded-full font-medium transition-all duration-300 border border-white/10"
+                            >
+                                <Settings size={18} /> {t('dashboard.billing_cta')}
+                            </button>
+                        </div>
+                        {payoutMessage && (
+                            <p className={`mt-4 text-xs font-bold ${payoutMessage.type === 'error' ? 'text-red-400' : 'text-green-400'}`}>
+                                {payoutMessage.text}
+                            </p>
+                        )}
                     </div>
                 </div>
 
@@ -160,6 +221,12 @@ export default function DashboardPage() {
                     )}
                 </div>
             </div>
+
+            <ModelBillingModal 
+                isOpen={isBillingOpen} 
+                onClose={() => setIsBillingOpen(false)} 
+                modelEmail={id} 
+            />
         </div>
     );
 }

@@ -18,6 +18,7 @@ export default function AdminPage() {
     const [pendingModels, setPendingModels] = useState<any[]>([]);
     const [users, setUsers] = useState<any[]>([]);
     const [models, setModels] = useState<any[]>([]);
+    const [payoutRequests, setPayoutRequests] = useState<any[]>([]);
     const [userFilter, setUserFilter] = useState<'all' | 'buyers'>('all');
     const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking');
     const [fetchError, setFetchError] = useState<string | null>(null);
@@ -84,6 +85,16 @@ export default function AdminPage() {
         }
     };
 
+    const fetchPayoutRequests = async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/payouts/pending`, { headers: { Authorization: `Bearer ${token}` } });
+            const data = await res.json();
+            if (Array.isArray(data)) setPayoutRequests(data);
+        } catch (err) {
+            console.error("Fetch Payouts Error:", err);
+        }
+    };
+
     const checkConnectivity = async () => {
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/ping`);
@@ -113,6 +124,7 @@ export default function AdminPage() {
             if (activeTab === 'stats') fetchStats();
             if (activeTab === 'users') fetchUsers();
             if (activeTab === 'models') fetchModels();
+            if (activeTab === 'payouts') fetchPayoutRequests();
 
             if (activeTab === 'settings') {
                 fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/settings`, { headers: { Authorization: `Bearer ${token}` } })
@@ -177,6 +189,9 @@ export default function AdminPage() {
                     </button>
                     <button onClick={() => setActiveTab('validations')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'validations' ? 'bg-amber-500/20 text-amber-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <Clock size={20} /> {t('admin.nav.pending')} {pendingModels.length > 0 && <span className="ml-auto bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{pendingModels.length}</span>}
+                    </button>
+                    <button onClick={() => setActiveTab('payouts')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'payouts' ? 'bg-green-500/20 text-green-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                        <DollarSign size={20} /> {t('admin.nav.payouts')} {payoutRequests.length > 0 && <span className="ml-auto bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{payoutRequests.length}</span>}
                     </button>
                     <div className="pt-4 mt-4 border-t border-white/5 space-y-2">
                         <button onClick={() => setActiveTab('settings')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'settings' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
@@ -520,6 +535,91 @@ export default function AdminPage() {
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                )}
+
+                {activeTab === 'payouts' && (
+                    <div className="space-y-8 animate-in fade-in duration-500">
+                        <h2 className="text-3xl font-light">{t('admin.payouts.title')}</h2>
+
+                        {payoutRequests.length === 0 ? (
+                            <div className="bg-neutral-900 border border-white/5 rounded-3xl p-12 text-center text-neutral-500">
+                                {t('admin.payouts.empty')}
+                            </div>
+                        ) : (
+                            <div className="bg-neutral-900 border border-white/5 rounded-3xl overflow-hidden shadow-2xl">
+                                <table className="w-full text-left">
+                                    <thead className="bg-white/[0.02] border-b border-white/5">
+                                        <tr>
+                                            <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.payouts.table_model')}</th>
+                                            <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.payouts.table_amount')}</th>
+                                            <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.payouts.table_method')}</th>
+                                            <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.payouts.table_details')}</th>
+                                            <th className="p-5 text-neutral-400 font-medium text-xs uppercase text-right">{t('admin.table.action')}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-white/5">
+                                        {payoutRequests.map((p, i) => (
+                                            <tr key={i} className="hover:bg-white/[0.01] transition-colors">
+                                                <td className="p-5">
+                                                    <div className="font-bold text-white">{p.billingInfo.name}</div>
+                                                    <div className="text-xs text-neutral-500 font-mono">{p.modelEmail}</div>
+                                                </td>
+                                                <td className="p-5 font-mono text-green-400 font-bold text-lg">${p.amount.toFixed(2)}</td>
+                                                <td className="p-5">
+                                                    <span className="bg-white/5 text-neutral-300 text-[10px] font-black uppercase px-2 py-1 rounded-md border border-white/10 italic">
+                                                        {t(`billing.method_${p.billingInfo.method}`)}
+                                                    </span>
+                                                </td>
+                                                <td className="p-5">
+                                                    <div className="text-xs text-neutral-400 space-y-1">
+                                                        {p.billingInfo.method === 'bank' && (
+                                                            <>
+                                                                <div>IBAN: <span className="text-white font-mono">{p.billingInfo.bankIban}</span></div>
+                                                                <div>SWIFT: <span className="text-white font-mono">{p.billingInfo.bankSwift}</span></div>
+                                                            </>
+                                                        )}
+                                                        {p.billingInfo.method === 'paypal' && (
+                                                            <div>Email: <span className="text-white font-mono">{p.billingInfo.paypalEmail}</span></div>
+                                                        )}
+                                                        {p.billingInfo.method === 'crypto' && (
+                                                            <div>Wallet: <span className="text-white font-mono truncate max-w-[200px] block">{p.billingInfo.cryptoAddress}</span></div>
+                                                        )}
+                                                        <div className="pt-1 mt-1 border-t border-white/5 text-[10px] italic">
+                                                            {p.billingInfo.address}, {p.billingInfo.country}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="p-5 text-right space-x-2">
+                                                    <button
+                                                        onClick={async () => {
+                                                            if (confirm("Reject this payout and refund the balance?")) {
+                                                                await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/payouts/${p.id}/reject`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+                                                                fetchPayoutRequests();
+                                                            }
+                                                        }}
+                                                        className="bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[10px] font-bold px-3 py-2 rounded-lg border border-red-500/20 transition-all"
+                                                    >
+                                                        {t('admin.payouts.reject')}
+                                                    </button>
+                                                    <button
+                                                        onClick={async () => {
+                                                            if (confirm("Confirm that this payout has been processed and paid?")) {
+                                                                await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/payouts/${p.id}/approve`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+                                                                fetchPayoutRequests();
+                                                            }
+                                                        }}
+                                                        className="bg-green-500 hover:bg-green-400 text-white text-[10px] font-bold px-3 py-2 rounded-lg transition-all shadow-lg shadow-green-500/20"
+                                                    >
+                                                        {t('admin.payouts.approve')}
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
                     </div>
                 )}
             </main>
