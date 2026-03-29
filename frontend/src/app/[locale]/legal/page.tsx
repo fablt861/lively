@@ -87,8 +87,8 @@ export default function LegalPage() {
                         <ShieldCheck size={18} />
                         <span className="text-[10px] font-black uppercase tracking-[0.2em]">{t('gender.secure')}</span>
                     </div>
-                    <p className="text-[10px] text-white/10 font-bold uppercase tracking-[0.4em]">
-                        © 2024 MV CAPITAL • ALL RIGHTS RESERVED
+                    <p className="text-[10px] text-white/40 font-bold uppercase tracking-[0.4em]">
+                        © 2026 KINKY.LIVE • ALL RIGHTS RESERVED
                     </p>
                 </div>
 

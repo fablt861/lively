@@ -71,7 +71,7 @@ export function Footer() {
                             KINKY<span className="text-pink-500">.</span>
                         </div>
                         <p className="text-[9px] text-white/40 font-bold uppercase tracking-[0.4em]">
-                            © 2024 MV CAPITAL • ALL RIGHTS RESERVED
+                            © 2026 KINKY.LIVE • ALL RIGHTS RESERVED
                         </p>
                     </div>
                 </div>
