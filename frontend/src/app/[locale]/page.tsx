@@ -130,7 +130,7 @@ export default function Home() {
             </nav>
 
             {/* Main Hero */}
-            <main className="relative z-10 flex-1 flex flex-col lg:flex-row items-center justify-center px-6 lg:px-12 w-full max-w-7xl mx-auto gap-16 pt-8 pb-24">
+            <main className="relative z-10 flex-1 flex flex-col lg:flex-row items-center justify-center px-6 lg:px-12 w-full max-w-7xl mx-auto gap-16 pt-4 pb-12 lg:min-h-[calc(100vh-120px)]">
 
                 {/* Left Text / CTA */}
                 <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left space-y-8">
