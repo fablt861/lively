@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, Video, DollarSign, Activity, Settings, Lock, CheckCircle, XCircle, Clock, Globe } from "lucide-react";
+import { Users, Video, DollarSign, Activity, Settings, Lock, CheckCircle, XCircle, Clock, Globe, Mail } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
 
@@ -377,15 +377,33 @@ export default function AdminPage() {
                             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                                 {pendingModels.map((model: any) => (
                                     <div key={model.email} className="bg-neutral-900 border border-white/5 rounded-3xl p-8 shadow-2xl flex flex-col gap-6">
-                                        <div className="flex justify-between items-start">
-                                            <div>
-                                                <h3 className="text-2xl font-bold text-white">{model.name}</h3>
-                                                <p className="text-pink-400 font-mono text-sm">{model.email}</p>
+                                        <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+                                            <div className="space-y-1">
+                                                <h3 className="text-2xl font-black text-white leading-tight">
+                                                    {model.firstName} <span className="text-pink-500">{model.lastName}</span>
+                                                </h3>
+                                                <div className="flex items-center gap-2 text-neutral-400 text-sm">
+                                                    <Mail size={14} className="text-pink-500/50" />
+                                                    <span className="font-mono">{model.email}</span>
+                                                </div>
                                             </div>
-                                            <div className="text-right">
-                                                <div className="text-neutral-400 text-sm">{t('admin.model.country')} : <span className="text-white font-bold">{model.country}</span></div>
-                                                <div className="text-neutral-400 text-sm">{t('admin.model.phone')} : <span className="text-white font-bold">{model.phone}</span></div>
-                                                <div className="text-neutral-400 text-sm">{t('admin.model.dob')} : <span className="text-white font-bold">{model.dob}</span></div>
+                                            <div className="grid grid-cols-2 gap-x-8 gap-y-2 bg-white/5 p-4 rounded-2xl border border-white/5 w-full md:w-auto">
+                                                <div className="space-y-0.5">
+                                                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">{t('admin.model.country')}</p>
+                                                    <p className="text-sm font-bold text-white uppercase">{model.country}</p>
+                                                </div>
+                                                <div className="space-y-0.5">
+                                                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">{t('admin.model.phone')}</p>
+                                                    <p className="text-sm font-bold text-white">{model.phone}</p>
+                                                </div>
+                                                <div className="space-y-0.5">
+                                                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">{t('admin.model.dob')}</p>
+                                                    <p className="text-sm font-bold text-white">{model.dob}</p>
+                                                </div>
+                                                <div className="space-y-0.5">
+                                                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Email</p>
+                                                    <p className="text-[10px] font-bold text-pink-400 truncate max-w-[120px]">{model.email}</p>
+                                                </div>
                                             </div>
                                         </div>
 
