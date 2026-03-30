@@ -51,7 +51,7 @@ export default function Home() {
     return (
         <div className="bg-[#050505] text-white relative font-sans overflow-x-hidden">
             {/* Background Effects */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none max-w-full">
                 <div className="absolute inset-0 lg:hidden bg-[url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&h=1200&fit=crop&crop=faces')] bg-cover bg-center opacity-30 mix-blend-luminosity"></div>
                 <div className="absolute inset-0 lg:hidden bg-gradient-to-t from-[#050505] via-[#050505]/80 to-[#050505]/30"></div>
 
