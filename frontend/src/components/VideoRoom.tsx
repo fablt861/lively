@@ -28,7 +28,7 @@ function EarningsCounter({ hasVideo }: { hasVideo: boolean }) {
             if (secondsPassed > 5) {
                 earned += RATE_PER_SEC;
                 if (counterRef.current) {
-                    counterRef.current.innerText = `$${earned.toFixed(4)}`;
+                    counterRef.current.innerText = `$${earned.toFixed(2)}`;
                 }
             }
         }, 1000);
@@ -39,7 +39,7 @@ function EarningsCounter({ hasVideo }: { hasVideo: boolean }) {
         <div className="absolute top-[160px] right-4 md:top-6 md:right-6 z-30 flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 shadow-2xl transition-all">
             <span className="text-white/80 text-xs font-semibold tracking-wider uppercase hidden sm:block">{t('room.earnings_call')}</span>
             <span ref={counterRef} className="text-green-400 font-mono text-base sm:text-lg font-bold">
-                $0.0000
+                $0.00
             </span>
         </div>
     );
@@ -171,6 +171,11 @@ export function VideoRoom({
     };
 
     const handleStartMatch = () => {
+        if (role === "user" && (userCredits === null || userCredits <= 0)) {
+            if (accountStatus === 'guest') setShowAuthModal(true);
+            else setShowPaywall(true);
+            return;
+        }
         setHasStartedMatch(true);
         joinQueue();
     };
@@ -311,7 +316,14 @@ export function VideoRoom({
                 {/* NEXT Button (Above Input on mobile, Bottom Center on desktop) */}
                 <div className="absolute bottom-[100px] right-4 md:bottom-8 md:right-auto md:left-1/2 md:-translate-x-1/2 z-40 flex flex-col items-center gap-3">
                     <button
-                        onClick={nextPartner}
+                        onClick={() => {
+                            if (role === "user" && (userCredits === null || userCredits <= 0)) {
+                                if (accountStatus === 'guest') setShowAuthModal(true);
+                                else setShowPaywall(true);
+                                return;
+                            }
+                            nextPartner();
+                        }}
                         className="group relative flex items-center justify-center px-6 py-3 md:px-12 md:py-5 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 hover:opacity-90 shadow-[0_0_30px_rgba(99,102,241,0.4)] transition-all duration-300 hover:scale-105 active:scale-95"
                     >
                         <div className="flex items-center gap-2 relative z-10">

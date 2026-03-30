@@ -27,12 +27,21 @@ function setupMatching(io, socket) {
 
             console.log(`[Queue] Socket ${socket.id} joined as ${role}. IP: ${userIp}, Email: ${email}`);
 
-            // If Guest: check free limit
+            // If Guest: check free limit (60s)
             if (role === 'user' && !email) {
                 const freeUsed = await redis.get(`free_secs:${userIp}`) || 0;
-                if (parseInt(freeUsed) >= 30) {
-                    console.log(`[Limit] IP ${userIp} reached free guest limit.`);
+                if (parseInt(freeUsed) >= 60) {
+                    console.log(`[Limit] IP ${userIp} reached free guest limit (60s).`);
                     return socket.emit('out_of_credits', { reason: 'guest_limit_reached' });
+                }
+            }
+
+            // If Registered User: check credits
+            if (role === 'user' && email) {
+                const credits = await redis.get(`user:${email}:credits`) || 0;
+                if (parseFloat(credits) <= 0) {
+                    console.log(`[Limit] User ${email} has no credits.`);
+                    return socket.emit('out_of_credits', { reason: 'no_credits' });
                 }
             }
 
