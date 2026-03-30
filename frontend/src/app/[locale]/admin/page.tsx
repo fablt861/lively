@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, Video, DollarSign, Activity, Settings, Lock, CheckCircle, XCircle, Clock, Globe, Mail, Zap, UserCheck, ShieldCheck } from "lucide-react";
+import { Users, Video, DollarSign, Activity, Settings, Lock, CheckCircle, XCircle, Clock, Globe, Mail, Zap, UserCheck, ShieldCheck, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
 
@@ -11,7 +11,14 @@ export default function AdminPage() {
     const [isLogged, setIsLogged] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [activeTab, setActiveTab] = useState("stats");
+    const [activeTab, setActiveTabState] = useState("stats");
+
+    const setActiveTab = (tab: string) => {
+        setActiveTabState(tab);
+        if (typeof window !== "undefined") {
+            localStorage.setItem("kinky_admin_last_tab", tab);
+        }
+    };
 
     const [stats, setStats] = useState<any>(null);
     const [settings, setSettings] = useState<any>(null);
@@ -23,7 +30,7 @@ export default function AdminPage() {
     const [userFilter, setUserFilter] = useState<'all' | 'buyers'>('all');
     const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking');
     const [fetchError, setFetchError] = useState<string | null>(null);
-    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [selectedImage, setSelectedImage] = useState<{ images: string[], index: number } | null>(null);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -136,6 +143,10 @@ export default function AdminPage() {
         if (savedToken) {
             setToken(savedToken);
             setIsLogged(true);
+            
+            // Tab Persistence
+            const lastTab = localStorage.getItem("kinky_admin_last_tab");
+            if (lastTab) setActiveTabState(lastTab);
         }
     }, []);
 
@@ -586,33 +597,24 @@ export default function AdminPage() {
                                         </div>
 
                                         <div className="grid grid-cols-3 gap-3">
-                                            <div className="bg-black/50 rounded-2xl p-3 border border-white/5">
-                                                <p className="text-[10px] text-neutral-500 text-center mb-2 uppercase tracking-tighter">Profile</p>
-                                                <img 
-                                                    src={model.photoProfile || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=faces"} 
-                                                    alt="Profile" 
-                                                    className="w-full aspect-square object-cover rounded-xl border border-white/10 cursor-zoom-in hover:brightness-110 transition-all" 
-                                                    onClick={() => setSelectedImage(model.photoProfile)}
-                                                />
-                                            </div>
-                                            <div className="bg-black/50 rounded-2xl p-3 border border-white/5">
-                                                <p className="text-[10px] text-neutral-500 text-center mb-2 uppercase tracking-tighter">ID Document</p>
-                                                <img 
-                                                    src={model.photoId || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=faces"} 
-                                                    alt="ID" 
-                                                    className="w-full aspect-square object-cover rounded-xl border border-white/10 cursor-zoom-in hover:brightness-110 transition-all" 
-                                                    onClick={() => setSelectedImage(model.photoId)}
-                                                />
-                                            </div>
-                                            <div className="bg-black/50 rounded-2xl p-3 border border-white/5">
-                                                <p className="text-[10px] text-neutral-500 text-center mb-2 uppercase tracking-tighter">Selfie + ID</p>
-                                                <img 
-                                                    src={model.photoIdSelfie || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=faces"} 
-                                                    alt="Selfie ID" 
-                                                    className="w-full aspect-square object-cover rounded-xl border border-white/10 cursor-zoom-in hover:brightness-110 transition-all" 
-                                                    onClick={() => setSelectedImage(model.photoIdSelfie)}
-                                                />
-                                            </div>
+                                            {[
+                                                { id: 'profile', label: 'Profile', url: model.photoProfile },
+                                                { id: 'id', label: 'ID Document', url: model.photoId },
+                                                { id: 'selfie', label: 'Selfie + ID', url: model.photoIdSelfie }
+                                            ].map((img, idx, arr) => (
+                                                <div key={img.id} className="bg-black/50 rounded-2xl p-3 border border-white/5">
+                                                    <p className="text-[10px] text-neutral-500 text-center mb-2 uppercase tracking-tighter">{img.label}</p>
+                                                    <img 
+                                                        src={img.url || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=faces"} 
+                                                        alt={img.label} 
+                                                        className="w-full aspect-square object-cover rounded-xl border border-white/10 cursor-zoom-in hover:brightness-110 transition-all" 
+                                                        onClick={() => setSelectedImage({ 
+                                                            images: arr.map(a => a.url || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&h=800&fit=crop&crop=faces"), 
+                                                            index: idx 
+                                                        })}
+                                                    />
+                                                </div>
+                                            ))}
                                         </div>
 
                                         <div className="flex gap-4 mt-2">
@@ -845,19 +847,58 @@ export default function AdminPage() {
                     className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 md:p-10 animate-in fade-in duration-300 pointer-events-auto"
                     onClick={() => setSelectedImage(null)}
                 >
-                    <div className="relative max-w-5xl w-full h-full flex items-center justify-center animate-in zoom-in-95 duration-300">
+                    <div className="relative max-w-5xl w-full h-full flex items-center justify-center animate-in zoom-in-95 duration-300 group/lb">
+                        {/* Navigation Arrows */}
+                        <button 
+                            className="absolute left-0 md:-left-20 top-1/2 -translate-y-1/2 p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-white transition-all hover:scale-110 active:scale-95 z-50 group"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedImage({
+                                    ...selectedImage,
+                                    index: (selectedImage.index - 1 + selectedImage.images.length) % selectedImage.images.length
+                                });
+                            }}
+                        >
+                            <ChevronLeft size={32} className="group-hover:-translate-x-0.5 transition-transform" />
+                        </button>
+
+                        <button 
+                            className="absolute right-0 md:-right-20 top-1/2 -translate-y-1/2 p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-white transition-all hover:scale-110 active:scale-95 z-50 group"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedImage({
+                                    ...selectedImage,
+                                    index: (selectedImage.index + 1) % selectedImage.images.length
+                                });
+                            }}
+                        >
+                            <ChevronRight size={32} className="group-hover:translate-x-0.5 transition-transform" />
+                        </button>
+
                         <img 
-                            src={selectedImage} 
+                            src={selectedImage.images[selectedImage.index]} 
                             alt="Enlarged view" 
                             className="max-w-full max-h-full object-contain shadow-2xl rounded-3xl border border-white/10"
                             onClick={(e) => e.stopPropagation()} 
                         />
+                        
+                        {/* Info / Close */}
                         <button 
                             onClick={() => setSelectedImage(null)}
-                            className="absolute top-0 right-0 -mt-12 md:-mt-8 md:-mr-8 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors text-white"
+                            className="absolute top-0 right-0 -mt-14 md:-mt-8 md:-mr-8 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors text-white border border-white/10"
                         >
                             <XCircle size={32} />
                         </button>
+
+                        {/* Pagination indicator */}
+                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-12 flex gap-2">
+                            {selectedImage.images.map((_, i) => (
+                                <div 
+                                    key={i} 
+                                    className={`w-2 h-2 rounded-full transition-all duration-300 ${i === selectedImage.index ? 'bg-pink-500 w-8 shadow-[0_0_10px_rgba(236,72,153,0.5)]' : 'bg-white/20'}`} 
+                                />
+                            ))}
+                        </div>
                     </div>
                 </div>
             )}
