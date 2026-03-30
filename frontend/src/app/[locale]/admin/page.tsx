@@ -307,7 +307,7 @@ export default function AdminPage() {
 
                 {activeTab === 'realtime' && (
                     <div className="space-y-8 animate-in fade-in duration-700">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
                             <div className="bg-neutral-900 border border-white/5 p-6 rounded-[2rem] shadow-xl relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-indigo-500/20 transition-colors" />
                                 <div className="flex items-center gap-4 mb-4">
@@ -333,6 +333,20 @@ export default function AdminPage() {
                                 <div className="flex items-baseline gap-2">
                                     <h4 className="text-5xl font-black text-white">{realtimeStats?.online?.totalUsers || 0}</h4>
                                     <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+                                </div>
+                            </div>
+
+                            <div className="bg-neutral-900 border border-white/5 p-6 rounded-[2rem] shadow-xl relative overflow-hidden group border-indigo-500/20">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-green-500/20 transition-colors" />
+                                <div className="flex items-center gap-4 mb-4">
+                                    <div className="p-3 bg-green-500/20 rounded-2xl text-green-400">
+                                        <Zap size={24} className="animate-pulse" />
+                                    </div>
+                                    <p className="text-neutral-400 text-sm font-bold uppercase tracking-widest">{t('admin.realtime.active_calls')}</p>
+                                </div>
+                                <div className="flex items-baseline gap-2">
+                                    <h4 className="text-5xl font-black text-white">{realtimeStats?.online?.activeCalls || 0}</h4>
+                                    <div className="w-3 h-3 bg-indigo-500 rounded-full animate-pulse" />
                                 </div>
                             </div>
 

@@ -215,6 +215,7 @@
   "admin.realtime.title": "Real-time Monitoring",
   "admin.realtime.online_models": "Models Online",
   "admin.realtime.online_users": "Users Online",
+  "admin.realtime.active_calls": "Ongoing Calls",
   "admin.realtime.queue_status": "Queue Status",
   "admin.realtime.waiting_models": "Waiting Models",
   "admin.realtime.waiting_users": "Waiting Users",

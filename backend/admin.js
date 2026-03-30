@@ -304,6 +304,7 @@ router.get('/realtime', requireAuth, async (req, res) => {
         // 1. Basic Stats
         const modelsOnline = sockets.filter(s => s.role === 'model').length;
         const usersOnline = sockets.filter(s => s.role === 'user').length;
+        const activeCalls = await redis.hlen('billing:active_rooms');
 
         // 2. Queue Status (IDs from Redis)
         const waitingModelsIds = await redis.lrange(QUEUE_MODELS, 0, -1);
@@ -341,7 +342,8 @@ router.get('/realtime', requireAuth, async (req, res) => {
         res.json({
             online: {
                 totalModels: modelsOnline,
-                totalUsers: usersOnline
+                totalUsers: usersOnline,
+                activeCalls: activeCalls
             },
             queue: {
                 modelsCount: waitingModelsIds.length,

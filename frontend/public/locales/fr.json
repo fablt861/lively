@@ -215,6 +215,7 @@
   "admin.realtime.title": "Surveillance en Temps Réel",
   "admin.realtime.online_models": "Modèles en Ligne",
   "admin.realtime.online_users": "Utilisateurs en Ligne",
+  "admin.realtime.active_calls": "Appels en Cours",
   "admin.realtime.queue_status": "État de la File d'Attente",
   "admin.realtime.waiting_models": "Modèles en attente",
   "admin.realtime.waiting_users": "Utilisateurs en attente",
