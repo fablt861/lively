@@ -23,6 +23,7 @@ export default function AdminPage() {
     const [userFilter, setUserFilter] = useState<'all' | 'buyers'>('all');
     const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking');
     const [fetchError, setFetchError] = useState<string | null>(null);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -587,15 +588,30 @@ export default function AdminPage() {
                                         <div className="grid grid-cols-3 gap-3">
                                             <div className="bg-black/50 rounded-2xl p-3 border border-white/5">
                                                 <p className="text-[10px] text-neutral-500 text-center mb-2 uppercase tracking-tighter">Profile</p>
-                                                <img src={model.photoProfile || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=faces"} alt="Profile" className="w-full aspect-square object-cover rounded-xl border border-white/10" />
+                                                <img 
+                                                    src={model.photoProfile || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=faces"} 
+                                                    alt="Profile" 
+                                                    className="w-full aspect-square object-cover rounded-xl border border-white/10 cursor-zoom-in hover:brightness-110 transition-all" 
+                                                    onClick={() => setSelectedImage(model.photoProfile)}
+                                                />
                                             </div>
                                             <div className="bg-black/50 rounded-2xl p-3 border border-white/5">
                                                 <p className="text-[10px] text-neutral-500 text-center mb-2 uppercase tracking-tighter">ID Document</p>
-                                                <img src={model.photoId || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=faces"} alt="ID" className="w-full aspect-square object-cover rounded-xl border border-white/10" />
+                                                <img 
+                                                    src={model.photoId || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=faces"} 
+                                                    alt="ID" 
+                                                    className="w-full aspect-square object-cover rounded-xl border border-white/10 cursor-zoom-in hover:brightness-110 transition-all" 
+                                                    onClick={() => setSelectedImage(model.photoId)}
+                                                />
                                             </div>
                                             <div className="bg-black/50 rounded-2xl p-3 border border-white/5">
                                                 <p className="text-[10px] text-neutral-500 text-center mb-2 uppercase tracking-tighter">Selfie + ID</p>
-                                                <img src={model.photoIdSelfie || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=faces"} alt="Selfie ID" className="w-full aspect-square object-cover rounded-xl border border-white/10" />
+                                                <img 
+                                                    src={model.photoIdSelfie || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=faces"} 
+                                                    alt="Selfie ID" 
+                                                    className="w-full aspect-square object-cover rounded-xl border border-white/10 cursor-zoom-in hover:brightness-110 transition-all" 
+                                                    onClick={() => setSelectedImage(model.photoIdSelfie)}
+                                                />
                                             </div>
                                         </div>
 
@@ -822,6 +838,29 @@ export default function AdminPage() {
                     </div>
                 )}
             </main>
+            
+            {/* Photo Lightbox */}
+            {selectedImage && (
+                <div 
+                    className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 md:p-10 animate-in fade-in duration-300 pointer-events-auto"
+                    onClick={() => setSelectedImage(null)}
+                >
+                    <div className="relative max-w-5xl w-full h-full flex items-center justify-center animate-in zoom-in-95 duration-300">
+                        <img 
+                            src={selectedImage} 
+                            alt="Enlarged view" 
+                            className="max-w-full max-h-full object-contain shadow-2xl rounded-3xl border border-white/10"
+                            onClick={(e) => e.stopPropagation()} 
+                        />
+                        <button 
+                            onClick={() => setSelectedImage(null)}
+                            className="absolute top-0 right-0 -mt-12 md:-mt-8 md:-mr-8 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors text-white"
+                        >
+                            <XCircle size={32} />
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
