@@ -26,8 +26,16 @@ async function startBilling(roomId, userId, modelId) {
 
 async function stopBilling(roomId) {
     const sessionStr = await redis.hget(ACTIVE_ROOMS_KEY, roomId);
-    if (sessionStr) {
-        const session = JSON.parse(sessionStr);
+    if (!sessionStr) return;
+
+    // Atomically take ownership of this session to prevent double-billing
+    const deletedCount = await redis.hdel(ACTIVE_ROOMS_KEY, roomId);
+    if (deletedCount === 0) {
+        console.log(`[Billing] Room ${roomId} already processed.`);
+        return;
+    }
+
+    const session = JSON.parse(sessionStr);
         const durationSec = Math.floor((Date.now() - session.startTime) / 1000);
 
         // Normalize IDs to be sure
@@ -67,9 +75,7 @@ async function stopBilling(roomId) {
         await redis.lpush(`user:${userId}:history`, JSON.stringify(historyEntry));
         await redis.lpush('debug:billing', JSON.stringify({ event: 'stop', roomId, userId, modelId, durationSec, modelEarned, timestamp: Date.now() }));
 
-        await redis.hdel(ACTIVE_ROOMS_KEY, roomId);
         console.log(`[Billing] Stopped for room ${roomId}. Duration: ${durationSec}s`);
-    }
 }
 
 // Global loop that ticks every second
