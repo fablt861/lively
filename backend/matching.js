@@ -36,15 +36,6 @@ function setupMatching(io, socket) {
                 }
             }
 
-            // If Registered User: check credits
-            if (role === 'user' && email) {
-                const credits = await redis.get(`user:${email}:credits`) || 0;
-                if (parseFloat(credits) <= 0) {
-                    console.log(`[Limit] User ${email} has no credits.`);
-                    return socket.emit('out_of_credits', { reason: 'no_credits' });
-                }
-            }
-
             const isNew = await redis.set(`has_joined:${socket.id}`, '1', 'NX', 'EX', 86400);
             await redis.lrem(role === 'model' ? QUEUE_MODELS : QUEUE_USERS, 0, socket.id);
             await disconnectFromRoom(socket);

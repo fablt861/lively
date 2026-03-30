@@ -108,17 +108,33 @@ export function VideoRoom({
         setUserCredits(Number(storedCredits));
     }, [role]);
 
-    // Timer logic
-    useEffect(() => {
-        if (role !== "user" || !isConnected || userCredits === null) return;
+    // Timer & Teaser logic
+    const teaserTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-        if (userCredits <= 0) {
-            if (handleOutOfCredits) handleOutOfCredits();
-            if (accountStatus === 'guest') setShowAuthModal(true);
-            else setShowPaywall(true);
+    useEffect(() => {
+        if (role !== "user" || !isConnected || userCredits === null) {
+            if (teaserTimerRef.current) {
+                clearTimeout(teaserTimerRef.current);
+                teaserTimerRef.current = null;
+            }
             return;
         }
 
+        // --- CASE 1: 0 CREDITS TEASER ---
+        if (userCredits <= 0) {
+            console.log("[Teaser] Starting 4s teaser countdown");
+            teaserTimerRef.current = setTimeout(() => {
+                console.log("[Teaser] Teaser ended");
+                if (handleOutOfCredits) handleOutOfCredits();
+                if (accountStatus === 'guest') setShowAuthModal(true);
+                else setShowPaywall(true);
+            }, 4000);
+            return () => {
+                if (teaserTimerRef.current) clearTimeout(teaserTimerRef.current);
+            };
+        }
+
+        // --- CASE 2: NORMAL BILLING ---
         const interval = setInterval(() => {
             setUserCredits((prev) => {
                 if (prev === null) return null;
@@ -131,9 +147,12 @@ export function VideoRoom({
                 }
                 return next;
             });
-        }, 6000); // Decrement 1 credit every 6 seconds (10 credits/min)
+        }, 6000);
 
-        return () => clearInterval(interval);
+        return () => {
+            clearInterval(interval);
+            if (teaserTimerRef.current) clearTimeout(teaserTimerRef.current);
+        };
     }, [role, isConnected, userCredits, accountStatus, handleOutOfCredits]);
 
     useEffect(() => {
@@ -171,11 +190,6 @@ export function VideoRoom({
     };
 
     const handleStartMatch = () => {
-        if (role === "user" && (userCredits === null || userCredits <= 0)) {
-            if (accountStatus === 'guest') setShowAuthModal(true);
-            else setShowPaywall(true);
-            return;
-        }
         setHasStartedMatch(true);
         joinQueue();
     };
@@ -316,14 +330,7 @@ export function VideoRoom({
                 {/* NEXT Button (Above Input on mobile, Bottom Center on desktop) */}
                 <div className="absolute bottom-[100px] right-4 md:bottom-8 md:right-auto md:left-1/2 md:-translate-x-1/2 z-40 flex flex-col items-center gap-3">
                     <button
-                        onClick={() => {
-                            if (role === "user" && (userCredits === null || userCredits <= 0)) {
-                                if (accountStatus === 'guest') setShowAuthModal(true);
-                                else setShowPaywall(true);
-                                return;
-                            }
-                            nextPartner();
-                        }}
+                        onClick={nextPartner}
                         className="group relative flex items-center justify-center px-6 py-3 md:px-12 md:py-5 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 hover:opacity-90 shadow-[0_0_30px_rgba(99,102,241,0.4)] transition-all duration-300 hover:scale-105 active:scale-95"
                     >
                         <div className="flex items-center gap-2 relative z-10">
