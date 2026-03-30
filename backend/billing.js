@@ -14,8 +14,13 @@ const ACTIVE_ROOMS_KEY = 'billing:active_rooms';
 let billingInterval = null;
 
 async function startBilling(roomId, userId, modelId) {
-    const sessionData = JSON.stringify({ userId, modelId, startTime: Date.now() });
+    const sessionData = JSON.stringify({ 
+        userId: String(userId).toLowerCase(), 
+        modelId: String(modelId).toLowerCase(), 
+        startTime: Date.now() 
+    });
     await redis.hset(ACTIVE_ROOMS_KEY, roomId, sessionData);
+    await redis.lpush('debug:billing', JSON.stringify({ event: 'start', roomId, userId, modelId, timestamp: Date.now() }));
     console.log(`[Billing] Started for room ${roomId}`);
 }
 
@@ -25,43 +30,42 @@ async function stopBilling(roomId) {
         const session = JSON.parse(sessionStr);
         const durationSec = Math.floor((Date.now() - session.startTime) / 1000);
 
+        // Normalize IDs to be sure
+        const modelId = String(session.modelId).toLowerCase();
+        const userId = String(session.userId).toLowerCase();
+
         // Calculate final earnings/spend
         const settings = await getSettings();
         const rateModelUsdPerSec = settings.modelPayoutPerMinute / 60.0;
-        const rateUserCreditsPerSec = settings.pricePerMinute * 10 / 60.0; // Assuming 1$ = 10c
+        const rateUserCreditsPerSec = settings.pricePerMinute * 10 / 60.0;
 
-        // Anti-fraud: only bill model if duration > delay
         const effectiveModelSecs = Math.max(0, durationSec - settings.antiFraudDelaySec);
         const modelEarned = (effectiveModelSecs * rateModelUsdPerSec).toFixed(4);
         const userSpentCredits = (durationSec * rateUserCreditsPerSec).toFixed(4);
 
-        // Log platform revenue (mock calc: user spend in USD minus model payout)
-        // If 10 credits = 1$, then userSpentUsd = userSpentCredits / 10
         const userSpentUsd = parseFloat(userSpentCredits) / 10.0;
         await logRevenue(userSpentUsd);
         await logModelPayout(parseFloat(modelEarned));
 
-        const effectiveModelId = session.modelId.toLowerCase();
-        const effectiveUserId = session.userId.toLowerCase();
-
-        // Increment total spent/gains counters
-        await redis.incrbyfloat(`user:${effectiveUserId}:total_spent`, userSpentUsd);
-        await redis.incrbyfloat(`model:${effectiveModelId}:total_gains`, parseFloat(modelEarned));
-        await redis.incrbyfloat(`model:${effectiveModelId}:balance`, parseFloat(modelEarned));
+        // Update Balance and Total Gains
+        await redis.incrbyfloat(`user:${userId}:total_spent`, userSpentUsd);
+        await redis.incrbyfloat(`model:${modelId}:total_gains`, parseFloat(modelEarned));
+        await redis.incrbyfloat(`model:${modelId}:balance`, parseFloat(modelEarned));
 
         // Save to history
         const historyEntry = {
             roomId,
-            userId: session.userId,
-            modelId: session.modelId,
+            userId: userId,
+            modelId: modelId,
             durationSec,
             modelEarned: parseFloat(modelEarned),
             userSpentCredits: parseFloat(userSpentCredits),
             timestamp: Date.now()
         };
 
-        await redis.lpush(`model:${session.modelId}:history`, JSON.stringify(historyEntry));
-        await redis.lpush(`user:${session.userId}:history`, JSON.stringify(historyEntry));
+        await redis.lpush(`model:${modelId}:history`, JSON.stringify(historyEntry));
+        await redis.lpush(`user:${userId}:history`, JSON.stringify(historyEntry));
+        await redis.lpush('debug:billing', JSON.stringify({ event: 'stop', roomId, userId, modelId, durationSec, modelEarned, timestamp: Date.now() }));
 
         await redis.hdel(ACTIVE_ROOMS_KEY, roomId);
         console.log(`[Billing] Stopped for room ${roomId}. Duration: ${durationSec}s`);

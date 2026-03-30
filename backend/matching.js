@@ -127,8 +127,9 @@ async function handleJoinQueue(io, socket) {
             const modelId = isModel ? socket.id : partnerId;
 
             // Pass billing ID: Email if registered, IP if guest
-            const userBillingId = isModel ? (partnerSocket.userEmail || partnerSocket.userIp) : (socket.userEmail || socket.userIp);
-            const modelBillingId = isModel ? (socket.userEmail || socket.id) : (partnerSocket.userEmail || partnerId);
+            const userBillingId = (isModel ? (partnerSocket.userEmail || partnerSocket.userIp) : (socket.userEmail || socket.userIp))?.toLowerCase();
+            const modelBillingId = (isModel ? (socket.userEmail || socket.id) : (partnerSocket.userEmail || partnerId))?.toLowerCase();
+            
             await startBilling(roomId, userBillingId, modelBillingId);
 
             io.to(roomId).emit('matched', { roomId, initiator: socket.id });
