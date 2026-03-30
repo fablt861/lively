@@ -100,12 +100,8 @@ function initBillingLoop() {
                     }
                 }
 
-                // Anti-fraud: Model earns only after antiFraudDelaySec seconds
-                // Real-time balance update removed for models to avoid double-billing.
-                // It is now strictly handled at the end of the call in stopBilling.
-                if (durationSec > settings.antiFraudDelaySec) {
-                    await redis.incrbyfloat(`model:${session.modelId.toLowerCase()}:total_gains`, rateModelUsdPerSec);
-                }
+                // Real-time balance and total_gains updates removed for models to avoid double-billing.
+                // All earnings are now handled strictly at the end of the call in stopBilling.
             }
         } catch (err) {
             console.error('[Billing Loop Error]', err.message);

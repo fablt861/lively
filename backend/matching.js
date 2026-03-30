@@ -114,7 +114,7 @@ async function handleJoinQueue(io, socket) {
 
         const partnerSocket = io.sockets.sockets.get(partnerId);
         if (partnerSocket) {
-            const roomId = `room_${socket.id}_${partnerId}`;
+            const roomId = `room_${[socket.id, partnerId].sort().join('_')}`;
             console.log(`[Match SUCCESS] ${socket.id} <-> ${partnerId}. Joining room ${roomId}`);
 
             await socket.join(roomId);
