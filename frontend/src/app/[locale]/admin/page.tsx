@@ -570,6 +570,7 @@ export default function AdminPage() {
                                             <div className="space-y-1">
                                                 <h3 className="text-2xl font-black text-white leading-tight">
                                                     {model.firstName} <span className="text-pink-500">{model.lastName}</span>
+                                                    {model.pseudo && <span className="text-sm font-light text-neutral-500 ml-2">(@{model.pseudo})</span>}
                                                 </h3>
                                                 <div className="flex items-center gap-2 text-neutral-400 text-sm">
                                                     <Mail size={14} className="text-pink-500/50" />
@@ -720,7 +721,10 @@ export default function AdminPage() {
                                 <tbody className="divide-y divide-white/5">
                                     {models.map((m, i) => (
                                         <tr key={i} className="hover:bg-white/[0.01] transition-colors">
-                                            <td className="p-5 font-medium text-pink-400">{m.pseudo}</td>
+                                            <td className="p-5 font-medium">
+                                                <div className="text-pink-400 font-bold">{m.pseudo || 'N/A'}</div>
+                                                <div className="text-[10px] text-neutral-500">{m.firstName} {m.lastName}</div>
+                                            </td>
                                             <td className="p-5">
                                                 <div className="text-sm text-white font-mono italic">{m.email}</div>
                                                 <div className="text-xs text-neutral-500">{m.phone}</div>

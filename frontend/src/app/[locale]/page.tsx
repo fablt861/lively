@@ -18,6 +18,8 @@ export default function Home() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showPaywall, setShowPaywall] = useState(false);
     const [userCredits, setUserCredits] = useState(0);
+    const [userRole, setUserRole] = useState<string | null>(null);
+    const [modelEarnings, setModelEarnings] = useState(0);
     const [showAgeModal, setShowAgeModal] = useState(false);
     const [isAgeVerified, setIsAgeVerified] = useState(false);
 
@@ -34,6 +36,25 @@ export default function Home() {
         if (ageVerified === 'true') {
             setIsAgeVerified(true);
         }
+
+        const role = localStorage.getItem('kinky_user_role');
+        setUserRole(role);
+
+        if (role === 'model') {
+            const email = localStorage.getItem('kinky_user_email');
+            if (email) {
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/model/${email}/stats`, {
+                    headers: { 'Authorization': `Bearer model-token-${email}` }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.balance !== undefined) {
+                        setModelEarnings(data.balance);
+                    }
+                })
+                .catch(console.error);
+            }
+        }
     }, [showPaywall]);
 
     const handleLogout = () => {
@@ -46,6 +67,7 @@ export default function Home() {
         localStorage.removeItem('kinky_role'); // Legacy cleanup
         localStorage.removeItem('kinky_email'); // Legacy cleanup
         setUserPseudo(null);
+        setUserRole(null);
     };
 
     return (
@@ -88,27 +110,44 @@ export default function Home() {
                                     <div className="fixed inset-0 z-30" onClick={() => setIsMenuOpen(false)} />
                                     <div className="absolute right-0 mt-2 w-56 bg-[#0f0f0f] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-40 animate-in fade-in zoom-in duration-200">
                                         <div className="px-5 py-4 border-b border-white/5">
-                                            <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mb-1.5">{t('nav.menu.balance', { amount: 0 }).split(':')[0]}</p>
+                                            <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mb-1.5">
+                                                {userRole === 'model' ? 'Earnings' : t('nav.menu.balance', { amount: 0 }).split(':')[0]}
+                                            </p>
                                             <div className="flex items-center gap-2">
-                                                <Wallet size={16} className="text-indigo-400" />
+                                                <Wallet size={16} className={userRole === 'model' ? 'text-pink-400' : 'text-indigo-400'} />
                                                 <span className="text-sm font-black text-white tracking-tight">
-                                                    {userCredits.toFixed(0)} <span className="text-[10px] text-white/60">CREDITS</span>
+                                                    {userRole === 'model' ? modelEarnings.toFixed(2) : userCredits.toFixed(0)} 
+                                                    <span className="text-[10px] text-white/60 ml-1">
+                                                        {userRole === 'model' ? '€' : 'CREDITS'}
+                                                    </span>
                                                 </span>
                                             </div>
                                         </div>
                                         <div className="p-2">
-                                            <button
-                                                onClick={() => {
-                                                    setShowPaywall(true);
-                                                    setIsMenuOpen(false);
-                                                }}
-                                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-white transition-colors group"
-                                            >
-                                                <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all">
-                                                    <CreditCard size={16} />
-                                                </div>
-                                                <span className="text-xs font-bold uppercase tracking-wider">{t('nav.menu.buy')}</span>
-                                            </button>
+                                            {userRole === 'model' ? (
+                                                <button
+                                                    onClick={() => window.location.href = `/${language}/model/dashboard`}
+                                                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-white transition-colors group"
+                                                >
+                                                    <div className="p-2 bg-pink-500/10 rounded-lg text-pink-400 group-hover:bg-pink-500 group-hover:text-white transition-all">
+                                                        <Activity size={16} />
+                                                    </div>
+                                                    <span className="text-xs font-bold uppercase tracking-wider">Dashboard</span>
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    onClick={() => {
+                                                        setShowPaywall(true);
+                                                        setIsMenuOpen(false);
+                                                    }}
+                                                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-white transition-colors group"
+                                                >
+                                                    <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all">
+                                                        <CreditCard size={16} />
+                                                    </div>
+                                                    <span className="text-xs font-bold uppercase tracking-wider">{t('nav.menu.buy')}</span>
+                                                </button>
+                                            )}
                                             <button
                                                 onClick={handleLogout}
                                                 className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/5 text-red-500 transition-colors mt-1"

@@ -30,6 +30,7 @@ export default function ModelSignupPage() {
     const [phone, setPhone] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
+    const [pseudo, setPseudo] = useState("");
     const [dob, setDob] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -97,7 +98,7 @@ export default function ModelSignupPage() {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/auth/model/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ country, phone, firstName, lastName, dob, email, password, photoProfile, photoId, photoIdSelfie })
+                body: JSON.stringify({ country, phone, firstName, lastName, pseudo, dob, email, password, photoProfile, photoId, photoIdSelfie })
             });
             const data = await res.json();
             if (data.success) {
@@ -305,6 +306,10 @@ export default function ModelSignupPage() {
                                         </div>
                                     </div>
                                     <div className="relative group">
+                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
+                                        <input type="text" value={pseudo} onChange={e => setPseudo(e.target.value)} placeholder={t('login.pseudo_placeholder')} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" />
+                                    </div>
+                                    <div className="relative group">
                                         <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 text-xs font-bold uppercase tracking-widest">{t('model.signup.step3_dob')}</div>
                                         <input type="date" value={dob} onChange={e => setDob(e.target.value)} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-24 pr-4 text-white/90 focus:outline-none focus:border-white/40 transition-all [&::-webkit-calendar-picker-indicator]:filter-[invert(0.5)]" />
                                     </div>
@@ -323,7 +328,7 @@ export default function ModelSignupPage() {
 
                                 <button
                                     onClick={handleNext}
-                                    disabled={!firstName || !lastName || !dob || !email || !password}
+                                    disabled={!firstName || !lastName || !pseudo || !dob || !email || !password}
                                     className="w-full mt-6 bg-gradient-to-r from-indigo-500 to-purple-600 hover:opacity-90 text-white font-bold py-5 rounded-full flex items-center justify-center gap-3 transition-all disabled:opacity-30 shadow-xl active:scale-95"
                                 >
                                     {t('model.signup.step3_btn')} <ArrowRight size={20} />
