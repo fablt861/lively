@@ -17,8 +17,8 @@ const requireModelAuth = async (req, res, next) => {
 router.get('/:email/billing', requireModelAuth, async (req, res) => {
     try {
         const redis = getRedisClient();
-        const email = req.params.email;
-        if (email !== req.modelEmail) return res.status(403).json({ error: 'Forbidden' });
+        const email = req.params.email.toLowerCase();
+        if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
 
         const data = await redis.get(`model:${email}:billing_info`);
         res.json(data ? JSON.parse(data) : {});
@@ -31,8 +31,8 @@ router.get('/:email/billing', requireModelAuth, async (req, res) => {
 router.post('/:email/billing', requireModelAuth, async (req, res) => {
     try {
         const redis = getRedisClient();
-        const email = req.params.email;
-        if (email !== req.modelEmail) return res.status(403).json({ error: 'Forbidden' });
+        const email = req.params.email.toLowerCase();
+        if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
 
         const billingInfo = req.body;
         await redis.set(`model:${email}:billing_info`, JSON.stringify(billingInfo));
@@ -46,8 +46,8 @@ router.post('/:email/billing', requireModelAuth, async (req, res) => {
 router.post('/:email/payout-request', requireModelAuth, async (req, res) => {
     try {
         const redis = getRedisClient();
-        const email = req.params.email;
-        if (email !== req.modelEmail) return res.status(403).json({ error: 'Forbidden' });
+        const email = req.params.email.toLowerCase();
+        if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
 
         const balance = parseFloat(await redis.get(`model:${email}:balance`) || '0');
         const billingInfoStr = await redis.get(`model:${email}:billing_info`);

@@ -41,9 +41,13 @@ async function stopBilling(roomId) {
         await logRevenue(userSpentUsd);
         await logModelPayout(parseFloat(modelEarned));
 
+        const effectiveModelId = session.modelId.toLowerCase();
+        const effectiveUserId = session.userId.toLowerCase();
+
         // Increment total spent/gains counters
-        await redis.incrbyfloat(`user:${session.userId}:total_spent`, userSpentUsd);
-        await redis.incrbyfloat(`model:${session.modelId}:total_gains`, parseFloat(modelEarned));
+        await redis.incrbyfloat(`user:${effectiveUserId}:total_spent`, userSpentUsd);
+        await redis.incrbyfloat(`model:${effectiveModelId}:total_gains`, parseFloat(modelEarned));
+        await redis.incrbyfloat(`model:${effectiveModelId}:balance`, parseFloat(modelEarned));
 
         // Save to history
         const historyEntry = {
@@ -93,10 +97,10 @@ function initBillingLoop() {
                 }
 
                 // Anti-fraud: Model earns only after antiFraudDelaySec seconds
+                // Real-time balance update removed for models to avoid double-billing.
+                // It is now strictly handled at the end of the call in stopBilling.
                 if (durationSec > settings.antiFraudDelaySec) {
-                    await redis.incrbyfloat(`model:${session.modelId}:balance`, rateModelUsdPerSec);
-                    // Also track real-time total gains
-                    await redis.incrbyfloat(`model:${session.modelId}:total_gains`, rateModelUsdPerSec);
+                    await redis.incrbyfloat(`model:${session.modelId.toLowerCase()}:total_gains`, rateModelUsdPerSec);
                 }
             }
         } catch (err) {
@@ -107,8 +111,9 @@ function initBillingLoop() {
 }
 
 async function getModelStats(modelId) {
-    const balanceStr = await redis.get(`model:${modelId}:balance`);
-    const historyStrs = await redis.lrange(`model:${modelId}:history`, 0, 50); // Get last 50 calls
+    const normalizedId = modelId.toLowerCase();
+    const balanceStr = await redis.get(`model:${normalizedId}:balance`);
+    const historyStrs = await redis.lrange(`model:${normalizedId}:history`, 0, 50); // Get last 50 calls
 
     return {
         balance: parseFloat(balanceStr || '0'),
