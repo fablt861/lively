@@ -145,7 +145,7 @@ export default function DashboardPage() {
                         <div className="flex flex-wrap gap-4 items-center">
                             <button 
                                 onClick={handlePayoutRequest}
-                                disabled={payoutLoading || (stats?.balance || 0) < 100}
+                                disabled={payoutLoading}
                                 className="group flex items-center gap-2 bg-indigo-500 hover:bg-indigo-400 disabled:opacity-50 disabled:translate-y-0 text-white px-8 py-4 rounded-full font-medium transition-all duration-300 shadow-lg shadow-indigo-500/25 hover:-translate-y-1"
                             >
                                 {payoutLoading ? t('auth.loading') : t('dashboard.payout_cta')} <ArrowUpRight size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
