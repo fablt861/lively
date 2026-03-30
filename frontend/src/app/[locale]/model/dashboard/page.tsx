@@ -40,7 +40,7 @@ export default function DashboardPage() {
     };
 
     useEffect(() => {
-        setId(localStorage.getItem('lively_email'));
+        setId(localStorage.getItem('kinky_user_email'));
     }, []);
 
     useEffect(() => {

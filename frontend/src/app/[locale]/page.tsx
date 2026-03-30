@@ -154,7 +154,7 @@ export default function Home() {
                             <button
                                 onClick={() => {
                                     const token = localStorage.getItem('kinky_token');
-                                    const role = localStorage.getItem('kinky_role');
+                                    const role = localStorage.getItem('kinky_user_role');
 
                                     if (!isAgeVerified) {
                                         setShowAgeModal(true);
@@ -244,7 +244,7 @@ export default function Home() {
                         if (!token) {
                             setShowGenderModal(true);
                         } else {
-                            const role = localStorage.getItem('kinky_role');
+                            const role = localStorage.getItem('kinky_user_role');
                             window.location.href = role === 'model' ? `/${language}/model/dashboard` : `/${language}/live`;
                         }
                     }}
