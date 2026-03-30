@@ -411,5 +411,20 @@
   "admin.payouts.table_method": "Méthode",
   "admin.payouts.table_details": "Détails",
   "admin.payouts.approve": "Approuver et Marquer Payé",
-  "admin.payouts.reject": "Rejeter et Rembourser Solde"
+  "admin.payouts.reject": "Rejeter et Rembourser Solde",
+  "dashboard.no_id": "Aucun identifiant trouvé. Veuillez vous reconnecter.",
+  "dashboard.title": "Tableau de Bord Élite",
+  "dashboard.subtitle": "Suivez vos performances et gérez vos paiements.",
+  "dashboard.launch_live": "LANCER SESSION LIVE",
+  "dashboard.balance_title": "SOLDE DISPONIBLE",
+  "dashboard.payout_cta": "Demander Paiement",
+  "dashboard.history_title": "Historique des Gains",
+  "dashboard.history_loading": "Chargement de l'historique...",
+  "dashboard.history_empty": "Aucune session enregistrée pour le moment.",
+  "dashboard.table_date": "Date",
+  "dashboard.table_calls": "Appels",
+  "dashboard.table_duration": "Durée",
+  "dashboard.table_earned": "Gagné",
+  "dashboard.sessions_title": "TOTAL SESSIONS",
+  "dashboard.sessions_count": "{{count}} sessions"
 }

@@ -373,5 +373,20 @@
   "terms.jurisdiction_section": "25. Law and Jurisdiction\nThese General Terms and Conditions of Use are governed by French law. Any dispute shall be brought before the courts of Paris.",
   "contact.title": "Contact Us",
   "contact.intro": "Have a question or need assistance? Our dedicated support team is here to help you experience the best of Kinky. Feel free to reach out to us at any time.",
-  "contact.email": "support@kinky.live"
+  "contact.email": "support@kinky.live",
+  "dashboard.no_id": "Nessun ID fornito. Effettua nuovamente l'accesso.",
+  "dashboard.title": "Dashboard Elite",
+  "dashboard.subtitle": "Monitora le tue prestazioni e gestisci i pagamenti.",
+  "dashboard.launch_live": "AVVIA SESSIONE LIVE",
+  "dashboard.balance_title": "SALDO DISPONIBILE",
+  "dashboard.payout_cta": "Richiedi Pagamento",
+  "dashboard.history_title": "Cronologia Guadagni",
+  "dashboard.history_loading": "Caricamento cronologia...",
+  "dashboard.history_empty": "Nessuna sessione registrata.",
+  "dashboard.table_date": "Data",
+  "dashboard.table_calls": "Chiamate",
+  "dashboard.table_duration": "Durata",
+  "dashboard.table_earned": "Guadagnato",
+  "dashboard.sessions_title": "SESSIONI TOTALI",
+  "dashboard.sessions_count": "{{count}} sessioni"
 }
