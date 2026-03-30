@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Camera, ShieldCheck, Flame, Play, Video, ChevronDown, CreditCard, Wallet } from "lucide-react";
+import { Camera, ShieldCheck, Flame, Play, Video, ChevronDown, CreditCard, Wallet, Activity } from "lucide-react";
 import Link from "next/link";
 import { GenderModal } from "@/components/GenderModal";
 import { OnlineGauge } from "@/components/OnlineGauge";
