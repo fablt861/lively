@@ -57,7 +57,7 @@ console.log('=> Starting billing loop...');
 initBillingLoop();
 console.log('=> Billing loop started.');
 
-app.use('/api/admin', adminRoutes);
+app.use('/api/admin', adminRoutes(io));
 app.use('/api/auth', authRoutes);
 app.use('/api/model', modelRoutes);
 

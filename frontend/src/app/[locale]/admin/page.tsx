@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, Video, DollarSign, Activity, Settings, Lock, CheckCircle, XCircle, Clock, Globe, Mail } from "lucide-react";
+import { Users, Video, DollarSign, Activity, Settings, Lock, CheckCircle, XCircle, Clock, Globe, Mail, Zap, UserCheck, ShieldCheck } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
 
@@ -19,6 +19,7 @@ export default function AdminPage() {
     const [users, setUsers] = useState<any[]>([]);
     const [models, setModels] = useState<any[]>([]);
     const [payoutRequests, setPayoutRequests] = useState<any[]>([]);
+    const [realtimeStats, setRealtimeStats] = useState<any>(null);
     const [userFilter, setUserFilter] = useState<'all' | 'buyers'>('all');
     const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking');
     const [fetchError, setFetchError] = useState<string | null>(null);
@@ -95,6 +96,16 @@ export default function AdminPage() {
         }
     };
 
+    const fetchRealtime = async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/realtime`, { headers: { Authorization: `Bearer ${token}` } });
+            const data = await res.json();
+            setRealtimeStats(data);
+        } catch (err) {
+            console.error("Fetch Realtime Error:", err);
+        }
+    };
+
     const checkConnectivity = async () => {
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/ping`);
@@ -112,6 +123,14 @@ export default function AdminPage() {
     }, []);
 
     useEffect(() => {
+        if (isLogged && token && activeTab === 'realtime') {
+            const interval = setInterval(fetchRealtime, 3000);
+            fetchRealtime();
+            return () => clearInterval(interval);
+        }
+    }, [isLogged, token, activeTab]);
+
+    useEffect(() => {
         const savedToken = localStorage.getItem("kinky_admin_token");
         if (savedToken) {
             setToken(savedToken);
@@ -125,6 +144,7 @@ export default function AdminPage() {
             if (activeTab === 'users') fetchUsers();
             if (activeTab === 'models') fetchModels();
             if (activeTab === 'payouts') fetchPayoutRequests();
+            if (activeTab === 'realtime') fetchRealtime();
 
             if (activeTab === 'settings') {
                 fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/settings`, { headers: { Authorization: `Bearer ${token}` } })
@@ -192,6 +212,9 @@ export default function AdminPage() {
                     </button>
                     <button onClick={() => setActiveTab('payouts')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'payouts' ? 'bg-green-500/20 text-green-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <DollarSign size={20} /> {t('admin.nav.payouts')} {payoutRequests.length > 0 && <span className="ml-auto bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{payoutRequests.length}</span>}
+                    </button>
+                    <button onClick={() => setActiveTab('realtime')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'realtime' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                        <Zap size={20} className={activeTab === 'realtime' ? 'animate-pulse text-indigo-400' : ''} /> {t('admin.nav.realtime')}
                     </button>
                     <div className="pt-4 mt-4 border-t border-white/5 space-y-2">
                         <button onClick={() => setActiveTab('settings')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'settings' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
@@ -266,6 +289,160 @@ export default function AdminPage() {
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'realtime' && (
+                    <div className="space-y-8 animate-in fade-in duration-700">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div className="bg-neutral-900 border border-white/5 p-6 rounded-[2rem] shadow-xl relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-indigo-500/20 transition-colors" />
+                                <div className="flex items-center gap-4 mb-4">
+                                    <div className="p-3 bg-indigo-500/20 rounded-2xl text-indigo-400">
+                                        <Video size={24} />
+                                    </div>
+                                    <p className="text-neutral-400 text-sm font-bold uppercase tracking-widest">{t('admin.realtime.online_models')}</p>
+                                </div>
+                                <div className="flex items-baseline gap-2">
+                                    <h4 className="text-5xl font-black text-white">{realtimeStats?.online?.totalModels || 0}</h4>
+                                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+                                </div>
+                            </div>
+
+                            <div className="bg-neutral-900 border border-white/5 p-6 rounded-[2rem] shadow-xl relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-pink-500/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-pink-500/20 transition-colors" />
+                                <div className="flex items-center gap-4 mb-4">
+                                    <div className="p-3 bg-pink-500/20 rounded-2xl text-pink-400">
+                                        <Users size={24} />
+                                    </div>
+                                    <p className="text-neutral-400 text-sm font-bold uppercase tracking-widest">{t('admin.realtime.online_users')}</p>
+                                </div>
+                                <div className="flex items-baseline gap-2">
+                                    <h4 className="text-5xl font-black text-white">{realtimeStats?.online?.totalUsers || 0}</h4>
+                                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+                                </div>
+                            </div>
+
+                            <div className="bg-neutral-900 border border-white/5 p-6 rounded-[2rem] shadow-xl relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-amber-500/20 transition-colors" />
+                                <div className="flex items-center gap-4 mb-4">
+                                    <div className="p-3 bg-amber-500/20 rounded-2xl text-amber-400">
+                                        <Clock size={24} />
+                                    </div>
+                                    <p className="text-neutral-400 text-sm font-bold uppercase tracking-widest">{t('admin.realtime.waiting_models')}</p>
+                                </div>
+                                <h4 className="text-5xl font-black text-white">{realtimeStats?.queue?.modelsCount || 0}</h4>
+                            </div>
+
+                            <div className="bg-neutral-900 border border-white/5 p-6 rounded-[2rem] shadow-xl relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-cyan-500/20 transition-colors" />
+                                <div className="flex items-center gap-4 mb-4">
+                                    <div className="p-3 bg-cyan-500/20 rounded-2xl text-cyan-400">
+                                        <Activity size={24} />
+                                    </div>
+                                    <p className="text-neutral-400 text-sm font-bold uppercase tracking-widest">{t('admin.realtime.waiting_users')}</p>
+                                </div>
+                                <h4 className="text-5xl font-black text-white">{realtimeStats?.queue?.usersCount || 0}</h4>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12">
+                            {/* Models Queue */}
+                            <div className="bg-neutral-900/50 border border-white/5 rounded-[2.5rem] p-8 backdrop-blur-xl">
+                                <div className="flex items-center justify-between mb-8">
+                                    <div className="flex items-center gap-4">
+                                        <div className="p-3 bg-indigo-500/20 rounded-2xl text-indigo-400">
+                                            <Video size={20} />
+                                        </div>
+                                        <h3 className="text-xl font-bold text-white uppercase tracking-wider">{t('admin.realtime.waiting_models')}</h3>
+                                    </div>
+                                    <span className="px-4 py-1.5 bg-indigo-500/10 text-indigo-400 rounded-full text-xs font-black uppercase tracking-widest border border-indigo-500/20">
+                                        {realtimeStats?.queue?.modelsCount || 0} LIVE
+                                    </span>
+                                </div>
+                                <div className="space-y-3">
+                                    {realtimeStats?.queue?.details?.models.length === 0 ? (
+                                        <div className="py-12 flex flex-col items-center justify-center text-neutral-600 border-2 border-dashed border-white/5 rounded-3xl">
+                                            <Activity className="w-8 h-8 opacity-20 mb-3" />
+                                            <p className="text-sm font-medium">Aucun modèle en attente</p>
+                                        </div>
+                                    ) : (
+                                        realtimeStats?.queue?.details?.models.map((m: any, i: number) => (
+                                            <div key={m.id} className="flex items-center justify-between p-4 bg-white/5 hover:bg-white/[0.08] border border-white/5 rounded-2xl transition-all group">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-10 h-10 bg-indigo-500/10 rounded-full flex items-center justify-center text-indigo-400 font-bold group-hover:scale-110 transition-transform">
+                                                        {i + 1}
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-white font-bold">{m.name}</p>
+                                                        <p className="text-neutral-500 text-[10px] font-mono">{m.email}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" />
+                                                    <span className="text-[10px] font-black text-indigo-400 tracking-widest uppercase">EN ATTENTE</span>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Users Queue */}
+                            <div className="bg-neutral-900/50 border border-white/5 rounded-[2.5rem] p-8 backdrop-blur-xl">
+                                <div className="flex items-center justify-between mb-8">
+                                    <div className="flex items-center gap-4">
+                                        <div className="p-3 bg-pink-500/20 rounded-2xl text-pink-400">
+                                            <Users size={20} />
+                                        </div>
+                                        <h3 className="text-xl font-bold text-white uppercase tracking-wider">{t('admin.realtime.waiting_users')}</h3>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <span className="px-3 py-1 bg-green-500/10 text-green-400 rounded-full text-[10px] font-black uppercase tracking-widest border border-green-500/20">
+                                            {realtimeStats?.queue?.details?.users.filter((u: any) => u.type === 'registered').length} {t('admin.realtime.registered')}
+                                        </span>
+                                        <span className="px-3 py-1 bg-neutral-500/10 text-neutral-400 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/5">
+                                            {realtimeStats?.queue?.details?.users.filter((u: any) => u.type === 'guest').length} {t('admin.realtime.guest')}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="space-y-3">
+                                    {realtimeStats?.queue?.details?.users.length === 0 ? (
+                                        <div className="py-12 flex flex-col items-center justify-center text-neutral-600 border-2 border-dashed border-white/5 rounded-3xl">
+                                            <Activity className="w-8 h-8 opacity-20 mb-3" />
+                                            <p className="text-sm font-medium">Aucun utilisateur en attente</p>
+                                        </div>
+                                    ) : (
+                                        realtimeStats?.queue?.details?.users.map((u: any, i: number) => (
+                                            <div key={u.id} className="flex items-center justify-between p-4 bg-white/5 hover:bg-white/[0.08] border border-white/5 rounded-2xl transition-all group">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-10 h-10 bg-pink-500/10 rounded-full flex items-center justify-center text-pink-400 font-bold group-hover:scale-110 transition-transform">
+                                                        {i + 1}
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-white font-bold">{u.name}</p>
+                                                        <p className="text-neutral-500 text-[10px] font-mono">{u.ip}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    {u.type === 'registered' ? (
+                                                        <div className="flex items-center gap-1.5 px-2 py-1 bg-green-500/10 rounded-lg border border-green-500/20">
+                                                            <ShieldCheck size={12} className="text-green-400" />
+                                                            <span className="text-[9px] font-black text-green-400 uppercase">{t('admin.realtime.registered')}</span>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-lg border border-white/5">
+                                                            <UserCheck size={12} className="text-neutral-500" />
+                                                            <span className="text-[9px] font-black text-neutral-400 uppercase">{t('admin.realtime.guest')}</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 )}

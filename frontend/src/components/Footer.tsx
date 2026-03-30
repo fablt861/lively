@@ -22,14 +22,14 @@ export function Footer() {
             <div className="max-w-7xl mx-auto flex flex-col items-center text-center space-y-12">
                 
                 {/* 1. Legal Links */}
-                <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-3 text-[11px] md:text-xs font-bold uppercase tracking-[0.2em] text-white/70">
-                    <Link href={`/${language}/contact`} className="hover:text-indigo-400 transition-colors">{t('footer.contact')}</Link>
+                <div className="flex flex-wrap justify-center items-center gap-x-4 md:gap-x-6 gap-y-3 text-[10px] md:text-xs font-bold uppercase tracking-[0.1em] md:tracking-[0.2em] text-white/70 px-4">
+                    <Link href={`/${language}/contact`} className="hover:text-indigo-400 transition-colors whitespace-nowrap">{t('footer.contact')}</Link>
                     <span className="w-px h-3 bg-white/20 hidden sm:block" />
-                    <Link href={`/${language}/legal`} className="hover:text-indigo-400 transition-colors">{t('footer.legal')}</Link>
+                    <Link href={`/${language}/legal`} className="hover:text-indigo-400 transition-colors whitespace-nowrap">{t('footer.legal')}</Link>
                     <span className="w-px h-3 bg-white/10 hidden sm:block" />
-                    <Link href={`/${language}/terms`} className="hover:text-indigo-400 transition-colors">{t('footer.terms')}</Link>
+                    <Link href={`/${language}/terms`} className="hover:text-indigo-400 transition-colors whitespace-nowrap">{t('footer.terms')}</Link>
                     <span className="w-px h-3 bg-white/10 hidden sm:block" />
-                    <Link href={`/${language}/slavery`} className="hover:text-indigo-400 transition-colors">{t('footer.slavery')}</Link>
+                    <Link href={`/${language}/slavery`} className="hover:text-indigo-400 transition-colors whitespace-nowrap">{t('footer.slavery')}</Link>
                 </div>
 
                 {/* 2. Payment & Security Logos */}

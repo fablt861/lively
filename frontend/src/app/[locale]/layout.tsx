@@ -43,7 +43,7 @@ export default async function RootLayout({
       lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased scroll-smooth overflow-x-hidden`}
     >
-      <body className="min-h-screen flex flex-col bg-[#050505] antialiased">
+      <body className="min-h-screen flex flex-col bg-[#050505] antialiased overflow-x-hidden">
         <LanguageProvider>
           {children}
           <Footer />

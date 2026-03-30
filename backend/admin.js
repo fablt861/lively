@@ -4,6 +4,12 @@ const { getGlobalStats, getDailyStats, logNewModel } = require('./stats');
 
 const router = express.Router();
 
+module.exports = (io) => {
+    const { getRedisClient } = require('./redis');
+    const redis = getRedisClient();
+    const QUEUE_MODELS = 'queue:models';
+    const QUEUE_USERS = 'queue:users';
+
 // Minimal mock authentication for demonstration
 const ADMIN_USER = 'admin';
 const ADMIN_PASS = 'admin123';
@@ -291,4 +297,64 @@ router.post('/maintenance/reset', requireAuth, async (req, res) => {
     }
 });
 
-module.exports = router;
+router.get('/realtime', requireAuth, async (req, res) => {
+    try {
+        const sockets = await io.fetchSockets();
+        
+        // 1. Basic Stats
+        const modelsOnline = sockets.filter(s => s.role === 'model').length;
+        const usersOnline = sockets.filter(s => s.role === 'user').length;
+
+        // 2. Queue Status (IDs from Redis)
+        const waitingModelsIds = await redis.lrange(QUEUE_MODELS, 0, -1);
+        const waitingUsersIds = await redis.lrange(QUEUE_USERS, 0, -1);
+
+        // 3. Detailed Queue Info
+        const queueDetails = {
+            models: [],
+            users: []
+        };
+
+        for (const id of waitingModelsIds) {
+            const s = sockets.find(s => s.id === id);
+            if (s) {
+                queueDetails.models.push({
+                    id,
+                    name: s.modelName || 'Model',
+                    email: s.userEmail
+                });
+            }
+        }
+
+        for (const id of waitingUsersIds) {
+            const s = sockets.find(s => s.id === id);
+            if (s) {
+                queueDetails.users.push({
+                    id,
+                    type: s.userEmail ? 'registered' : 'guest',
+                    name: s.userName || (s.userEmail ? s.userEmail.split('@')[0] : 'Guest'),
+                    ip: s.userIp
+                });
+            }
+        }
+
+        res.json({
+            online: {
+                totalModels: modelsOnline,
+                totalUsers: usersOnline
+            },
+            queue: {
+                modelsCount: waitingModelsIds.length,
+                usersCount: waitingUsersIds.length,
+                details: queueDetails
+            },
+            timestamp: Date.now()
+        });
+    } catch (err) {
+        console.error('[Realtime Stats Error]', err);
+        res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+
+    return router;
+};

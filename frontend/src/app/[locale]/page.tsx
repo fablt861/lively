@@ -49,13 +49,15 @@ export default function Home() {
     };
 
     return (
-        <div className="bg-[#050505] text-white relative font-sans">
+        <div className="bg-[#050505] text-white relative font-sans overflow-x-hidden">
             {/* Background Effects */}
-            <div className="absolute inset-0 lg:hidden bg-[url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&h=1200&fit=crop&crop=faces')] bg-cover bg-center opacity-30 pointer-events-none mix-blend-luminosity"></div>
-            <div className="absolute inset-0 lg:hidden bg-gradient-to-t from-[#050505] via-[#050505]/80 to-[#050505]/30 pointer-events-none"></div>
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute inset-0 lg:hidden bg-[url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&h=1200&fit=crop&crop=faces')] bg-cover bg-center opacity-30 mix-blend-luminosity"></div>
+                <div className="absolute inset-0 lg:hidden bg-gradient-to-t from-[#050505] via-[#050505]/80 to-[#050505]/30"></div>
 
-            <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-600/30 rounded-full blur-[140px] pointer-events-none translate-x-1/3 -translate-y-1/4" />
-            <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-pink-600/20 rounded-full blur-[120px] pointer-events-none -translate-x-1/4 translate-y-1/4" />
+                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-600/30 rounded-full blur-[140px] translate-x-1/3 -translate-y-1/4" />
+                <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-pink-600/20 rounded-full blur-[120px] -translate-x-1/4 translate-y-1/4" />
+            </div>
 
             {/* Navbar */}
             <nav className="relative z-20 flex justify-between items-center px-6 py-6 lg:px-12 w-full max-w-7xl mx-auto">
