@@ -99,7 +99,17 @@ router.post('/add-credits', async (req, res) => {
         return res.status(404).json({ error: 'auth.error.user_not_found' });
     }
 
-    const newCredits = await redis.incrbyfloat(`user:${email}:credits`, amount);
+    let newCredits;
+    const currentCredits = parseFloat((await redis.get(`user:${email}:credits`)) || '0');
+    
+    // If the user bled into a negative balance due to rapid testing or high consumption rates,
+    // we strictly forgive the debt so their purchase isn't instantly eaten by it.
+    if (currentCredits < 0) {
+        newCredits = parseFloat(amount);
+        await redis.set(`user:${email}:credits`, newCredits.toString());
+    } else {
+        newCredits = await redis.incrbyfloat(`user:${email}:credits`, amount);
+    }
 
     res.json({
         success: true,
