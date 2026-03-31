@@ -195,7 +195,7 @@ export function VideoRoom({
     };
 
     return (
-        <div className="flex flex-col md:flex-row h-[100dvh] w-full bg-neutral-950 text-white font-sans overflow-hidden">
+        <div className="flex flex-col md:flex-row h-[100dvh] w-full bg-neutral-950 text-white font-sans overflow-hidden no-scroll overscroll-none touch-none">
             {!hasStartedMatch && (
                 <PreMatchModal localStream={localStream} onJoin={handleStartMatch} />
             )}

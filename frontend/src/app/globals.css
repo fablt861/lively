@@ -111,6 +111,16 @@ label {
   animation-duration: 1000ms;
 }
 
+.no-scroll {
+  overflow: hidden !important;
+  height: 100dvh !important;
+  width: 100vw !important;
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  touch-action: none;
+}
+
 .slide-in-from-bottom-8 {
   animation-name: slideInFromBottom;
   animation-duration: 1200ms;
