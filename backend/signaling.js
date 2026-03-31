@@ -20,8 +20,16 @@ function setupSignaling(io, socket) {
         const roomSockets = await io.in(socket.currentRoom).fetchSockets();
         const partnerSocket = roomSockets.find(s => s.id !== socket.id);
         const targetLang = partnerSocket ? (partnerSocket.language || 'en') : 'en';
+        const sourceLang = socket.language || 'en';
 
-        const translated = await translateText(message, targetLang);
+        // Skip translation if languages are the same (comparing first 2 chars, e.g. "fr" vs "fr-FR")
+        const normalizedTarget = targetLang.split('-')[0].toLowerCase();
+        const normalizedSource = sourceLang.split('-')[0].toLowerCase();
+
+        let translated = message;
+        if (normalizedTarget !== normalizedSource) {
+            translated = await translateText(message, targetLang);
+        }
 
         // Envoyer à l'autre personne
         socket.to(socket.currentRoom).emit('chat_message', {
