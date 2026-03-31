@@ -85,8 +85,8 @@
   "model.landing.hero_cta_apply": "Ansök nu",
   "model.landing.hero_cta_earnings": "Beräkna inkomst",
   "model.stat.per_hour": "Inkomst / Timme",
-  "model.stat.fast_payout_val": "24h",
-  "model.stat.fast_payout": "Snabb utbetalning",
+  "model.stat.fast_payout_val": "Snabb Utbetalning",
+  "model.stat.fast_payout": "Pålitliga Belöningar",
   "model.stat.discretion": "Garanterad anonymitet",
   "model.stat.secure_access_val": "Toppskiktet",
   "model.stat.secure_access": "Säker åtkomst",
@@ -168,7 +168,7 @@
   "simulator.hours_unit": "h / dag",
   "simulator.range_low": "1H",
   "simulator.range_high": "12H+",
-  "simulator.estimated_income": "UPPSKATTAD INKOMST",
+  "simulator.estimated_income": "UPPSKATTAD MÅNADSINKOMST",
   "simulator.basis_text": "Baserat på 22 dagars månadsaktivitet",
   "simulator.cta": "Jag börjar idag",
   "room.searching": "SÖKER EFTER PARTNER...",
@@ -392,5 +392,8 @@
   "dashboard.table_duration": "Duration",
   "dashboard.table_earned": "Earned",
   "dashboard.sessions_title": "TOTAL SESSIONS",
-  "dashboard.sessions_count": "{{count}} sessions"
+  "dashboard.sessions_count": "{{count}} sessions",
+  "model.stat.real_time_earnings": "Tjäna varje sekund",
+  "model.landing.live_cam_title": "Live-videointeraktion",
+  "model.landing.live_cam_desc": "Sänd varifrån som helst, anslut till din publik i realtid och få betalt för varje sekund av videochatt."
 }

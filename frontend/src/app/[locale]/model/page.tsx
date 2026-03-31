@@ -68,12 +68,12 @@ export default function ModelLandingPage() {
 
                         <div className="flex flex-wrap items-center gap-4 pt-4">
                             <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col gap-1 min-w-[140px]">
-                                <span className="text-2xl font-black text-white leading-none">60€ - 200€</span>
-                                <span className="text-[9px] font-black text-white/30 uppercase tracking-[0.1em]">{t('model.stat.per_hour')}</span>
+                                <span className="text-2xl font-black text-white leading-none tracking-tight">{t('model.stat.real_time_earnings')}</span>
+                                <span className="text-[9px] font-black text-white/60 uppercase tracking-[0.1em]">{t('model.stat.per_hour')}</span>
                             </div>
                             <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col gap-1 min-w-[140px]">
-                                <span className="text-2xl font-black text-white leading-none">{t('model.stat.fast_payout_val')}</span>
-                                <span className="text-[9px] font-black text-white/30 uppercase tracking-[0.1em]">{t('model.stat.fast_payout')}</span>
+                                <span className="text-2xl font-black text-white leading-none whitespace-nowrap">{t('model.stat.fast_payout_val')}</span>
+                                <span className="text-[9px] font-black text-white/60 uppercase tracking-[0.1em]">{t('model.stat.fast_payout')}</span>
                             </div>
                         </div>
 
@@ -96,12 +96,12 @@ export default function ModelLandingPage() {
                             <ModelSimulator />
                             
                             {/* Trust Pill */}
-                            <div className="flex items-center gap-6 px-6 py-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full shadow-lg">
-                                <div className="flex items-center gap-2 text-[9px] font-black text-white/60 uppercase tracking-widest">
+                            <div className="flex items-center gap-6 px-6 py-3 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full shadow-lg">
+                                <div className="flex items-center gap-2 text-[9px] font-black text-white/70 uppercase tracking-widest">
                                     <CheckCircle2 size={12} className="text-indigo-400" /> {t('model.stat.discretion')} 100%
                                 </div>
-                                <div className="w-px h-3 bg-white/10" />
-                                <div className="flex items-center gap-2 text-[9px] font-black text-white/60 uppercase tracking-widest">
+                                <div className="w-px h-3 bg-white/20" />
+                                <div className="flex items-center gap-2 text-[9px] font-black text-white/70 uppercase tracking-widest">
                                     <Lock size={12} className="text-purple-400" /> {t('model.stat.secure_access_val')}
                                 </div>
                             </div>
@@ -109,6 +109,22 @@ export default function ModelLandingPage() {
                     </div>
                 </div>
             </header>
+
+            {/* NEW: Live Cam Section */}
+            <section className="relative z-10 py-16 md:py-24 border-y border-white/5 bg-gradient-to-b from-transparent via-indigo-500/[0.03] to-transparent">
+                <div className="max-w-4xl mx-auto px-6 text-center space-y-6">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-500/10 border border-red-500/20 rounded-full text-red-400 text-[8px] font-black uppercase tracking-[0.3em]">
+                        <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                        Live Cam Platform
+                    </div>
+                    <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
+                        {t('model.landing.live_cam_title')}
+                    </h2>
+                    <p className="text-lg text-white/60 font-medium max-w-2xl mx-auto leading-relaxed">
+                        {t('model.landing.live_cam_desc')}
+                    </p>
+                </div>
+            </section>
 
             {/* Split Section: Visual + Benefits */}
             <section className="relative z-10 border-t border-white/5 bg-white/[0.02]">

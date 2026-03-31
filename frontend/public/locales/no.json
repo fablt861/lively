@@ -85,8 +85,8 @@
   "model.landing.hero_cta_apply": "Søk nå",
   "model.landing.hero_cta_earnings": "Estimer inntekter",
   "model.stat.per_hour": "Inntekt / Time",
-  "model.stat.fast_payout_val": "24t",
-  "model.stat.fast_payout": "Rask utbetaling",
+  "model.stat.fast_payout_val": "Rask Utbetaling",
+  "model.stat.fast_payout": "Pålitelige Belønninger",
   "model.stat.discretion": "Garantert anonymitet",
   "model.stat.secure_access_val": "Toppnivå",
   "model.stat.secure_access": "Sikker tilgang",
@@ -168,7 +168,7 @@
   "simulator.hours_unit": "t / dag",
   "simulator.range_low": "1T",
   "simulator.range_high": "12T+",
-  "simulator.estimated_income": "ESTIMERT INNTEKT",
+  "simulator.estimated_income": "ESTIMERT MÅNEDLIG INNTEKT",
   "simulator.basis_text": "Basert på 22 dager med månedlig aktivitet",
   "simulator.cta": "Jeg starter i dag",
   "room.searching": "SØKER ETTER PARTNER...",
@@ -392,5 +392,8 @@
   "dashboard.table_duration": "Duration",
   "dashboard.table_earned": "Earned",
   "dashboard.sessions_title": "TOTAL SESSIONS",
-  "dashboard.sessions_count": "{{count}} sessions"
+  "dashboard.sessions_count": "{{count}} sessions",
+  "model.stat.real_time_earnings": "Tjen hvert sekund",
+  "model.landing.live_cam_title": "Live Videointeraksjon",
+  "model.landing.live_cam_desc": "Send fra hvor som helst, koble til publikummet ditt i sanntid og få betalt for hvert sekund med videochat."
 }

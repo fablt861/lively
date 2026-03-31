@@ -85,8 +85,8 @@
   "model.landing.hero_cta_apply": "Hae nyt",
   "model.landing.hero_cta_earnings": "Arvioi tulot",
   "model.stat.per_hour": "Ansio / tunti",
-  "model.stat.fast_payout_val": "24h",
-  "model.stat.fast_payout": "Nopea maksu",
+  "model.stat.fast_payout_val": "Nopea Maksu",
+  "model.stat.fast_payout": "Luotettavat Palkinnot",
   "model.stat.discretion": "Taattu anonymiteetti",
   "model.stat.secure_access_val": "Huipputaso",
   "model.stat.secure_access": "Suojattu pääsy",
@@ -168,7 +168,7 @@
   "simulator.hours_unit": "h / päivä",
   "simulator.range_low": "1H",
   "simulator.range_high": "12H+",
-  "simulator.estimated_income": "ARVIOITU TULO",
+  "simulator.estimated_income": "ARVIOITU KUUKAUSITULO",
   "simulator.basis_text": "Perustuu 22 aktiiviseen päivään kuukaudessa",
   "simulator.cta": "Aloitan tänään",
   "room.searching": "ETSITÄÄN KUMPPANIA...",
@@ -392,5 +392,8 @@
   "dashboard.table_duration": "Duration",
   "dashboard.table_earned": "Earned",
   "dashboard.sessions_title": "TOTAL SESSIONS",
-  "dashboard.sessions_count": "{{count}} sessions"
+  "dashboard.sessions_count": "{{count}} sessions",
+  "model.stat.real_time_earnings": "Ansaitse joka sekunti",
+  "model.landing.live_cam_title": "Live-videovuorovaikutus",
+  "model.landing.live_cam_desc": "Lähetä mistä tahansa, ota yhteys yleisöösi reaaliajassa ja saat palkan jokaisesta videochatin sekunnista."
 }

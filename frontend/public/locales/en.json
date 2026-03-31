@@ -85,8 +85,8 @@
   "model.landing.hero_cta_apply": "Apply now",
   "model.landing.hero_cta_earnings": "Estimate earnings",
   "model.stat.per_hour": "Earnings / Hour",
-  "model.stat.fast_payout_val": "24h",
-  "model.stat.fast_payout": "Fast Payout",
+  "model.stat.fast_payout_val": "Fast Payout",
+  "model.stat.fast_payout": "Reliable Rewards",
   "model.stat.discretion": "Guaranteed Anonymity",
   "model.stat.secure_access_val": "Top Tier",
   "model.stat.secure_access": "Secure Access",
@@ -170,7 +170,7 @@
   "simulator.hours_unit": "h / day",
   "simulator.range_low": "1H",
   "simulator.range_high": "12H+",
-  "simulator.estimated_income": "ESTIMATED INCOME",
+  "simulator.estimated_income": "ESTIMATED MONTHLY INCOME",
   "simulator.basis_text": "Based on 22 days of monthly activity",
   "simulator.cta": "I start today",
   "room.searching": "SEARCHING FOR PARTNER...",
@@ -456,5 +456,8 @@
   "admin.models.reset_balance_cta": "Reset Bal.",
   "admin.models.reset_balance_prompt": "Reset balance for {{name}} to what amount? (USD)",
   "admin.models.reset_balance_error": "Error resetting balance",
-  "admin.models.reset_balance_success": "Balance reset successfully"
+  "admin.models.reset_balance_success": "Balance reset successfully",
+  "model.stat.real_time_earnings": "Earn Every Second",
+  "model.landing.live_cam_title": "Live Video Interaction",
+  "model.landing.live_cam_desc": "Broadcast from anywhere, connect with your audience in real-time, and get paid for every second of video chat."
 }

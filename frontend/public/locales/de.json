@@ -85,8 +85,8 @@
   "model.landing.hero_cta_apply": "Jetzt bewerben",
   "model.landing.hero_cta_earnings": "Einnahmen schätzen",
   "model.stat.per_hour": "Verdienst / Stunde",
-  "model.stat.fast_payout_val": "24h",
-  "model.stat.fast_payout": "Schnelle Auszahlung",
+  "model.stat.fast_payout_val": "Schnelle Auszahlung",
+  "model.stat.fast_payout": "Verlässliche Belohnungen",
   "model.stat.discretion": "Garantierte Anonymität",
   "model.stat.secure_access_val": "Top-Tier",
   "model.stat.secure_access": "Sicherer Zugang",
@@ -168,7 +168,7 @@
   "simulator.hours_unit": "h / Tag",
   "simulator.range_low": "1H",
   "simulator.range_high": "12H+",
-  "simulator.estimated_income": "GESCHÄTZTES EINKOMMEN",
+  "simulator.estimated_income": "GESCHÄTZTES MONATLICHES EINKOMMEN",
   "simulator.basis_text": "Basierend auf 22 Tagen monatlicher Aktivität",
   "simulator.cta": "Ich starte heute",
   "room.searching": "PARTNER WIRD GESUCHT...",
@@ -392,5 +392,8 @@
   "dashboard.table_duration": "Duration",
   "dashboard.table_earned": "Earned",
   "dashboard.sessions_title": "TOTAL SESSIONS",
-  "dashboard.sessions_count": "{{count}} sessions"
+  "dashboard.sessions_count": "{{count}} sessions",
+  "model.stat.real_time_earnings": "Jede Sekunde verdienen",
+  "model.landing.live_cam_title": "Live-Video-Interaktion",
+  "model.landing.live_cam_desc": "Senden Sie von überall, verbinden Sie sich mit Ihrem Publikum in Echtzeit und werden Sie für jede Sekunde Video-Chat bezahlt."
 }

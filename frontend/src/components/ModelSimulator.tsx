@@ -32,8 +32,8 @@ export function ModelSimulator() {
                 <div className="space-y-6">
                     <div className="space-y-4">
                         <div className="flex justify-between items-end">
-                            <span className="text-[10px] font-black text-white/40 uppercase tracking-widest flex items-center gap-2">
-                                <Clock size={14} className="text-indigo-500/50" />
+                            <span className="text-[10px] font-black text-white/70 uppercase tracking-widest flex items-center gap-2">
+                                <Clock size={14} className="text-indigo-500" />
                                 {t('simulator.presence')}
                             </span>
                             <span className="text-3xl font-black text-white tabular-nums tracking-tighter">

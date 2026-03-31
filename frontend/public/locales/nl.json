@@ -85,8 +85,8 @@
   "model.landing.hero_cta_apply": "Nu aanmelden",
   "model.landing.hero_cta_earnings": "Inkomsten inschatten",
   "model.stat.per_hour": "Verdiensten / Uur",
-  "model.stat.fast_payout_val": "24u",
-  "model.stat.fast_payout": "Snelle Uitbetaling",
+  "model.stat.fast_payout_val": "Snelle Uitbetaling",
+  "model.stat.fast_payout": "Betrouwbare Beloningen",
   "model.stat.discretion": "Gegarandeerde Anoniemiteit",
   "model.stat.secure_access_val": "Topniveau",
   "model.stat.secure_access": "Beveiligde Toegang",
@@ -168,7 +168,7 @@
   "simulator.hours_unit": "u / dag",
   "simulator.range_low": "1U",
   "simulator.range_high": "12U+",
-  "simulator.estimated_income": "GESCHAT INKOMEN",
+  "simulator.estimated_income": "GESCHAT MAANDELIJKS INKOMEN",
   "simulator.basis_text": "Gebaseerd op 22 dagen maandelijkse activiteit",
   "simulator.cta": "Ik start vandaag",
   "room.searching": "PARTNER ZOEKEN...",
@@ -392,5 +392,8 @@
   "dashboard.table_duration": "Duration",
   "dashboard.table_earned": "Earned",
   "dashboard.sessions_title": "TOTAL SESSIONS",
-  "dashboard.sessions_count": "{{count}} sessions"
+  "dashboard.sessions_count": "{{count}} sessions",
+  "model.stat.real_time_earnings": "Verdien elke seconde",
+  "model.landing.live_cam_title": "Live Video Interactie",
+  "model.landing.live_cam_desc": "Zend overal uit, maak in realtime contact met je publiek en word betaald voor elke seconde videochat."
 }

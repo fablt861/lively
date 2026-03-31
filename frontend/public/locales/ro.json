@@ -85,8 +85,8 @@
   "model.landing.hero_cta_apply": "Aplică acum",
   "model.landing.hero_cta_earnings": "Estimează câștigurile",
   "model.stat.per_hour": "Câștig / Oră",
-  "model.stat.fast_payout_val": "24h",
-  "model.stat.fast_payout": "Plată Rapidă",
+  "model.stat.fast_payout_val": "Plată Rapidă",
+  "model.stat.fast_payout": "Recompensă Sigură",
   "model.stat.discretion": "Anonimat Garantat",
   "model.stat.secure_access_val": "Nivel Top",
   "model.stat.secure_access": "Acces Securizat",
@@ -168,7 +168,7 @@
   "simulator.hours_unit": "h / zi",
   "simulator.range_low": "1H",
   "simulator.range_high": "12H+",
-  "simulator.estimated_income": "VENIT ESTIMAT",
+  "simulator.estimated_income": "VENIT LUNAR ESTIMAT",
   "simulator.basis_text": "Bazat pe 22 de zile de activitate lunară",
   "simulator.cta": "Încep azi",
   "room.searching": "SE CAUTĂ PARTENER...",
@@ -392,5 +392,8 @@
   "dashboard.table_duration": "Duration",
   "dashboard.table_earned": "Earned",
   "dashboard.sessions_title": "TOTAL SESSIONS",
-  "dashboard.sessions_count": "{{count}} sessions"
+  "dashboard.sessions_count": "{{count}} sessions",
+  "model.stat.real_time_earnings": "Câștigă în fiecare secundă",
+  "model.landing.live_cam_title": "Interacțiune Video Live",
+  "model.landing.live_cam_desc": "Transmite de oriunde, conectează-te cu publicul tău în timp real și fii plătit pentru fiecare secundă de chat video."
 }

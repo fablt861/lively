@@ -85,8 +85,8 @@
   "model.landing.hero_cta_apply": "Postuler maintenant",
   "model.landing.hero_cta_earnings": "Estimer mes gains",
   "model.stat.per_hour": "Gains / Heure",
-  "model.stat.fast_payout_val": "24h",
-  "model.stat.fast_payout": "Paiement Rapide",
+  "model.stat.fast_payout_val": "Paiement Rapide",
+  "model.stat.fast_payout": "Récompenses Fiables",
   "model.stat.discretion": "Anonymat Garanti",
   "model.stat.secure_access_val": "Top Tier",
   "model.stat.secure_access": "Accès Sécurisé",
@@ -170,7 +170,7 @@
   "simulator.hours_unit": "h / jour",
   "simulator.range_low": "1H",
   "simulator.range_high": "12H+",
-  "simulator.estimated_income": "REVENUS ESTIMÉS",
+  "simulator.estimated_income": "REVENU MENSUEL ESTIMÉ",
   "simulator.basis_text": "Basé sur 22 jours d'activité mensuelle",
   "simulator.cta": "Je commence aujourd'hui",
   "room.searching": "RECHERCHE DE PARTENAIRE...",
@@ -456,5 +456,8 @@
   "admin.models.reset_balance_cta": "Rétablir",
   "admin.models.reset_balance_prompt": "Réinitialiser le solde de {{name}} à quel montant ? (USD)",
   "admin.models.reset_balance_error": "Erreur de réinitialisation",
-  "admin.models.reset_balance_success": "Solde réinitialisé avec succès"
+  "admin.models.reset_balance_success": "Solde réinitialisé avec succès",
+  "model.stat.real_time_earnings": "Gagnez à Chaque Seconde",
+  "model.landing.live_cam_title": "Interaction Vidéo en Direct",
+  "model.landing.live_cam_desc": "Diffusez de n'importe où, connectez-vous avec votre public en temps réel et soyez payé pour chaque seconde de chat vidéo."
 }

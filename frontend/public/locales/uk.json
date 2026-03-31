@@ -85,8 +85,8 @@
   "model.landing.hero_cta_apply": "Подати заявку",
   "model.landing.hero_cta_earnings": "Оцінити дохід",
   "model.stat.per_hour": "Заробіток / Година",
-  "model.stat.fast_payout_val": "24г",
-  "model.stat.fast_payout": "Швидка виплата",
+  "model.stat.fast_payout_val": "Швидка виплата",
+  "model.stat.fast_payout": "Надійні винагороди",
   "model.stat.discretion": "Гарантована анонімність",
   "model.stat.secure_access_val": "Топ рівень",
   "model.stat.secure_access": "Захищений доступ",
@@ -168,7 +168,7 @@
   "simulator.hours_unit": "г / день",
   "simulator.range_low": "1Г",
   "simulator.range_high": "12Г+",
-  "simulator.estimated_income": "ОЦІНОЧНИЙ ДОХІД",
+  "simulator.estimated_income": "ОЦІНЕНИЙ МІСЯЧНИЙ ДОХІД",
   "simulator.basis_text": "На основі 22 днів місячної активності",
   "simulator.cta": "Я починаю сьогодні",
   "room.searching": "ПОШУК ПАРТНЕРА...",
@@ -392,5 +392,8 @@
   "dashboard.table_duration": "Duration",
   "dashboard.table_earned": "Earned",
   "dashboard.sessions_title": "TOTAL SESSIONS",
-  "dashboard.sessions_count": "{{count}} sessions"
+  "dashboard.sessions_count": "{{count}} sessions",
+  "model.stat.real_time_earnings": "Заробляйте щосекунди",
+  "model.landing.live_cam_title": "Відео-взаємодія в прямому ефірі",
+  "model.landing.live_cam_desc": "Транслюйте з будь-якого місця, спілкуйтеся зі своєю аудиторією в режимі реального часу та отримуйте гроші за кожну секунду відеочату."
 }
