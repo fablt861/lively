@@ -195,6 +195,7 @@
   "prematch.model_title": "Earnings Reminder",
   "prematch.model_desc": "Your remuneration increases with the duration of the call for each partner.",
   "prematch.anti_fraud": "The first 5 seconds are not remunerated.",
+  "prematch.model_confirm": "Confirm & Start",
   "paywall.title": "Insufficient Credits",
   "paywall.desc": "Choose the pack that suits you and enjoy a privileged moment without any limits.",
   "paywall.best_value": "BEST VALUE",

@@ -191,6 +191,7 @@
   "prematch.model_title": "Recordatorio de Ganancias",
   "prematch.model_desc": "Su remuneración aumenta con la duración de la llamada para cada pareja.",
   "prematch.anti_fraud": "Los primeros 5 segundos no son remunerados.",
+  "prematch.model_confirm": "Confirmar y empezar",
   "paywall.title": "Créditos insuficientes",
   "paywall.desc": "Elige el pack que más te convenga y disfruta de un momento privilegiado sin límites.",
   "paywall.best_value": "MEJOR OFERTA",

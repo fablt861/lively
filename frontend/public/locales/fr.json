@@ -195,6 +195,7 @@
   "prematch.model_title": "Rappel de vos Gains",
   "prematch.model_desc": "Votre rémunération augmente avec la durée de l'appel pour chaque partenaire.",
   "prematch.anti_fraud": "Les 5 premières secondes ne sont pas rémunérées.",
+  "prematch.model_confirm": "Confirmer et Démarrer",
   "paywall.title": "Crédits Insuffisants",
   "paywall.desc": "Choisissez le pack qui vous correspond et profitez d'un moment privilégié sans aucune limite.",
   "paywall.best_value": "MEILLEUR PRIX",
