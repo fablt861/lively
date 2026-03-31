@@ -212,6 +212,20 @@ router.post('/models/:email/reject', requireAuth, async (req, res) => {
     }
 });
 
+router.post('/models/:email/reset-balance', requireAuth, async (req, res) => {
+    try {
+        const { getRedisClient } = require('./redis');
+        const redis = getRedisClient();
+        const email = req.params.email;
+        const { amount } = req.body;
+        if (amount === undefined || amount < 0) return res.status(400).json({ error: 'admin.error.invalid_amount' });
+        await redis.set(`model:${email.toLowerCase()}:balance`, amount.toString());
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+
 // Admin Payouts List
 router.get('/payouts/pending', requireAuth, async (req, res) => {
     try {

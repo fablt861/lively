@@ -761,7 +761,7 @@ export default function AdminPage() {
                                             <td className="p-5 font-mono text-white">${m.totalGains.toFixed(2)}</td>
                                             <td className="p-5 font-mono text-neutral-400">-${m.totalPayouts.toFixed(2)}</td>
                                             <td className="p-5 font-mono text-green-400 font-bold">${m.balance.toFixed(2)}</td>
-                                            <td className="p-5 text-right">
+                                            <td className="p-5 text-right space-x-2">
                                                 <button
                                                     onClick={async () => {
                                                         const amount = prompt(t('admin.models.payout_prompt', { name: m.pseudo, balance: m.balance.toFixed(2) }));
@@ -775,9 +775,30 @@ export default function AdminPage() {
                                                             else alert(t('admin.models.payout_error'));
                                                         }
                                                     }}
-                                                    className="bg-indigo-500 hover:bg-indigo-400 text-white text-xs font-bold px-3 py-2 rounded-lg transition-colors"
+                                                    className="bg-indigo-500 hover:bg-indigo-400 text-white text-[10px] font-bold px-3 py-2 rounded-lg transition-colors"
                                                 >
                                                     {t('admin.models.payout_cta')}
+                                                </button>
+                                                <button
+                                                    onClick={async () => {
+                                                        const amount = prompt(t('admin.models.reset_balance_prompt', { name: m.pseudo }));
+                                                        if (amount !== null) {
+                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/models/${encodeURIComponent(m.email)}/reset-balance`, {
+                                                                method: "POST",
+                                                                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                                                                body: JSON.stringify({ amount: parseFloat(amount) })
+                                                            });
+                                                            if (res.ok) {
+                                                                alert(t('admin.models.reset_balance_success'));
+                                                                fetchModels();
+                                                            } else {
+                                                                alert(t('admin.models.reset_balance_error'));
+                                                            }
+                                                        }
+                                                    }}
+                                                    className="bg-white/10 hover:bg-white/20 text-white text-[10px] font-bold px-3 py-2 rounded-lg transition-colors"
+                                                >
+                                                    {t('admin.models.reset_balance_cta')}
                                                 </button>
                                             </td>
                                         </tr>

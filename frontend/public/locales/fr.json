@@ -448,5 +448,9 @@
   "admin.reports.table_reported": "Signalé",
   "admin.reports.table_reason": "Raison",
   "admin.reports.ban_cta": "Bannir le compte",
-  "admin.reports.dismiss_cta": "Ignorer"
+  "admin.reports.dismiss_cta": "Ignorer",
+  "admin.models.reset_balance_cta": "Rétablir",
+  "admin.models.reset_balance_prompt": "Réinitialiser le solde de {{name}} à quel montant ? (USD)",
+  "admin.models.reset_balance_error": "Erreur de réinitialisation",
+  "admin.models.reset_balance_success": "Solde réinitialisé avec succès"
 }

@@ -448,5 +448,9 @@
   "admin.reports.table_reported": "Reported",
   "admin.reports.table_reason": "Reason",
   "admin.reports.ban_cta": "Ban account",
-  "admin.reports.dismiss_cta": "Dismiss"
+  "admin.reports.dismiss_cta": "Dismiss",
+  "admin.models.reset_balance_cta": "Reset Bal.",
+  "admin.models.reset_balance_prompt": "Reset balance for {{name}} to what amount? (USD)",
+  "admin.models.reset_balance_error": "Error resetting balance",
+  "admin.models.reset_balance_success": "Balance reset successfully"
 }

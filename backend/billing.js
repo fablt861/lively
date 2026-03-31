@@ -17,7 +17,9 @@ async function startBilling(roomId, userId, modelId) {
     const sessionData = JSON.stringify({ 
         userId: String(userId).toLowerCase(), 
         modelId: String(modelId).toLowerCase(), 
-        startTime: Date.now() 
+        startTime: Date.now(),
+        earnedUsd: 0,
+        spentCredits: 0
     });
     await redis.hset(ACTIVE_ROOMS_KEY, roomId, sessionData);
     await redis.lpush('debug:billing', JSON.stringify({ event: 'start', roomId, userId, modelId, timestamp: Date.now() }));
@@ -36,30 +38,26 @@ async function stopBilling(roomId) {
     }
 
     const session = JSON.parse(sessionStr);
-        const durationSec = Math.floor((Date.now() - session.startTime) / 1000);
+    const durationSec = Math.floor((Date.now() - session.startTime) / 1000);
 
-        // Normalize IDs to be sure
-        const modelId = String(session.modelId).toLowerCase();
-        const userId = String(session.userId).toLowerCase();
+    // Normalize IDs
+    const modelId = String(session.modelId).toLowerCase();
+    const userId = String(session.userId).toLowerCase();
 
-        // Calculate final earnings/spend
-        const settings = await getSettings();
-        const rateModelUsdPerSec = settings.modelPayoutPerMinute / 60.0;
-        const rateUserCreditsPerSec = settings.pricePerMinute * 10 / 60.0;
+    // Use accumulated totals instead of recalculating (prevents ghost billing)
+    const modelEarned = (session.earnedUsd || 0).toFixed(4);
+    const userSpentCredits = (session.spentCredits || 0).toFixed(4);
 
-        const effectiveModelSecs = Math.max(0, durationSec - settings.antiFraudDelaySec);
-        const modelEarned = (effectiveModelSecs * rateModelUsdPerSec).toFixed(4);
-        const userSpentCredits = (durationSec * rateUserCreditsPerSec).toFixed(4);
-
-        const userSpentUsd = parseFloat(userSpentCredits) / 10.0;
+    const userSpentUsd = parseFloat(userSpentCredits) / 10.0;
+    
+    // Only log if there were actual earnings (ignore 0-sec ghost sessions)
+    if (parseFloat(modelEarned) > 0 || parseFloat(userSpentCredits) > 0) {
         await logRevenue(userSpentUsd);
         await logModelPayout(parseFloat(modelEarned));
 
-        // Update Balance and Total Gains
+        // Update Total Spent (Balance was updated incrementally)
         await redis.incrbyfloat(`user:${userId}:total_spent`, userSpentUsd);
-        await redis.incrbyfloat(`model:${modelId}:total_gains`, parseFloat(modelEarned));
-        await redis.incrbyfloat(`model:${modelId}:balance`, parseFloat(modelEarned));
-
+        
         // Save to history
         const historyEntry = {
             roomId,
@@ -73,9 +71,10 @@ async function stopBilling(roomId) {
 
         await redis.lpush(`model:${modelId}:history`, JSON.stringify(historyEntry));
         await redis.lpush(`user:${userId}:history`, JSON.stringify(historyEntry));
-        await redis.lpush('debug:billing', JSON.stringify({ event: 'stop', roomId, userId, modelId, durationSec, modelEarned, timestamp: Date.now() }));
+    }
 
-        console.log(`[Billing] Stopped for room ${roomId}. Duration: ${durationSec}s`);
+    await redis.lpush('debug:billing', JSON.stringify({ event: 'stop', roomId, userId, modelId, durationSec, modelEarned, timestamp: Date.now() }));
+    console.log(`[Billing] Stopped for room ${roomId}. Duration: ${durationSec}s. Earned: $${modelEarned}`);
 }
 
 // Global loop that ticks every second
@@ -98,14 +97,24 @@ function initBillingLoop(io) {
                 }
 
                 const durationSec = Math.floor((Date.now() - session.startTime) / 1000);
-
                 const settings = await getSettings();
+                const rateModelUsdPerSec = settings.modelPayoutPerMinute / 60.0;
                 const rateUserCreditsPerSec = settings.pricePerMinute * 10 / 60.0;
 
-                // Atomically deduct user credits / increment free use
+                // 1. Model Pay (Incremental)
+                // Only pay after anti-fraud delay
+                if (durationSec > settings.antiFraudDelaySec) {
+                    await redis.incrbyfloat(`model:${session.modelId}:balance`, rateModelUsdPerSec);
+                    await redis.incrbyfloat(`model:${session.modelId}:total_gains`, rateModelUsdPerSec);
+                    session.earnedUsd = (session.earnedUsd || 0) + rateModelUsdPerSec;
+                }
+
+                // 2. User Deduction (Incremental)
                 if (session.userId.includes('@')) {
                     // Registered user: deduct and check balance
                     const remaining = await redis.incrbyfloat(`user:${session.userId}:credits`, -rateUserCreditsPerSec);
+                    session.spentCredits = (session.spentCredits || 0) + rateUserCreditsPerSec;
+
                     if (remaining <= 0) {
                         console.log(`[Billing] Registered user ${session.userId} out of credits. Stopping session.`);
                         if (io) {
@@ -113,10 +122,13 @@ function initBillingLoop(io) {
                             io.to(roomId).emit('partner_out_of_credits', { role: 'model' });
                         }
                         await stopBilling(roomId);
+                        continue;
                     }
                 } else {
                     // Guest user (userId is IP)
                     const nextVal = await redis.incrbyfloat(`free_secs:${session.userId}`, 1);
+                    session.spentCredits = (session.spentCredits || 0) + rateUserCreditsPerSec; // Just for logging
+
                     if (nextVal >= 60) {
                         console.log(`[Billing] Guest ${session.userId} reached limit. Stopping.`);
                         if (io) {
@@ -124,8 +136,12 @@ function initBillingLoop(io) {
                             io.to(roomId).emit('partner_out_of_credits', { role: 'model' });
                         }
                         await stopBilling(roomId);
+                        continue;
                     }
                 }
+
+                // 3. Update session object in Redis with latest totals
+                await redis.hset(ACTIVE_ROOMS_KEY, roomId, JSON.stringify(session));
             }
         } catch (err) {
             console.error('[Billing Loop Error]', err.message);
