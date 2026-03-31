@@ -6,9 +6,10 @@ import { useTranslation } from "@/context/LanguageContext";
 
 interface UnifiedAuthModalProps {
     onSuccess: (email: string, role: string, pseudo: string) => void;
+    onClose?: () => void;
 }
 
-export function UnifiedAuthModal({ onSuccess }: UnifiedAuthModalProps) {
+export function UnifiedAuthModal({ onSuccess, onClose }: UnifiedAuthModalProps) {
     const { t } = useTranslation();
     const [mode, setMode] = useState<"login" | "signup">("login");
     const [email, setEmail] = useState("");
@@ -57,6 +58,15 @@ export function UnifiedAuthModal({ onSuccess }: UnifiedAuthModalProps) {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-2xl animate-in fade-in duration-300">
             <div className="bg-neutral-900 border border-white/10 p-8 rounded-[2.5rem] w-full max-w-sm shadow-2xl relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-500 shadow-[0_0_15px_rgba(99,102,241,0.5)]"></div>
+
+                {onClose && (
+                    <button 
+                        onClick={onClose}
+                        className="absolute top-4 right-4 text-white/30 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full"
+                    >
+                        <X size={20} />
+                    </button>
+                )}
 
                 <div className="text-center mb-8">
                     <h2 className="text-3xl font-bold text-white mb-2">

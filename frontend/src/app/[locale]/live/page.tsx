@@ -17,5 +17,5 @@ export default function LivePage({ params }: { params: { locale: string } }) {
 
     if (!role) return <div className="min-h-screen bg-[#050505]"></div>;
 
-    return <VideoRoom {...webRTC} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={() => {}} onNext={webRTC.nextPartner} />;
+    return <VideoRoom {...webRTC} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={webRTC.endCall} onNext={webRTC.nextPartner} />;
 }

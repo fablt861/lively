@@ -195,7 +195,7 @@ export function useWebRTC(role: "user" | "model" | null) {
         socket?.emit("out_of_credits");
     };
 
-    const nextPartner = () => {
+    const endCall = () => {
         if (peerConnectionRef.current) {
             peerConnectionRef.current.close();
             peerConnectionRef.current = null;
@@ -203,7 +203,12 @@ export function useWebRTC(role: "user" | "model" | null) {
         setIsConnected(false);
         setRemoteStream(null);
         setPartnerInfo(null);
-        socket?.emit("next");
+        socket?.emit("next"); // This unmatches but we won't follow with join_queue in the UI
+    };
+
+    const nextPartner = () => {
+        endCall();
+        joinQueue();
     };
 
     const toggleAudio = () => {
@@ -240,6 +245,7 @@ export function useWebRTC(role: "user" | "model" | null) {
         queuePosition,
         partnerInfo,
         socket,
-        socketId: socket?.id
+        socketId: socket?.id,
+        endCall
     };
 }

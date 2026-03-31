@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2 } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { PaywallModal } from "./PaywallModal";
 import { UnifiedAuthModal } from "./UnifiedAuthModal";
 import { PreMatchModal } from "./PreMatchModal";
@@ -84,10 +85,12 @@ export function VideoRoom({
     role,
     onNext,
     handleOutOfCredits,
+    onCallEnd,
     partnerInfo,
     queuePosition,
 }: VideoRoomProps) {
     const { t, language } = useTranslation();
+    const router = useRouter();
     const localVideoRef = useRef<HTMLVideoElement>(null);
     const remoteVideoRef = useRef<HTMLVideoElement>(null);
 
@@ -127,6 +130,7 @@ export function VideoRoom({
 
         const handleOutOfCredits = () => {
             if (role === 'user') {
+                if (onCallEnd) onCallEnd();
                 if (accountStatus === 'guest') setShowAuthModal(true);
                 else setShowPaywall(true);
             }
@@ -323,7 +327,14 @@ export function VideoRoom({
                 </div>
 
                 {showAuthModal && (
-                    <UnifiedAuthModal onSuccess={(email, userRole, name) => {
+                    <UnifiedAuthModal 
+                        onClose={() => {
+                            setShowAuthModal(false);
+                            if (role === 'user' && (userCredits === null || userCredits <= 0)) {
+                                router.push('/');
+                            }
+                        }}
+                        onSuccess={(email, userRole, name) => {
                         localStorage.setItem('kinky_account_status', 'registered');
                         localStorage.setItem('kinky_user_email', email);
                         localStorage.setItem('kinky_user_pseudo', name);
@@ -338,7 +349,12 @@ export function VideoRoom({
 
                 {showPaywall && (
                     <PaywallModal
-                        onClose={() => setShowPaywall(false)}
+                        onClose={() => {
+                            setShowPaywall(false);
+                            if (userCredits !== null && userCredits <= 0) {
+                                router.push('/');
+                            }
+                        }}
                         onPurchase={(credits) => {
                             localStorage.setItem('kinky_account_status', 'premium');
                             const newBalance = (userCredits || 0) + credits;
