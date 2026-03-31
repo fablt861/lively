@@ -50,9 +50,11 @@ function initBillingLoop(io) {
                         // Registered user: decrement in Redis
                         remaining = await redis.incrbyfloat(`user:${session.userId}:credits`, -rateUserCreditsPerSec);
                         
-                        // Sync to user socket
-                        if (ioInstance && session.userSocketId) {
-                            ioInstance.to(session.userSocketId).emit('credits_update', Math.max(0, remaining));
+                        console.log(`[Billing Loop] User ${session.userId} | Remaining: ${remaining} | Room: ${roomId}`);
+
+                        // Sync to room (User will pick it up)
+                        if (ioInstance) {
+                            ioInstance.to(roomId).emit('credits_update', Math.max(0, remaining));
                         }
 
                         if (remaining <= 0) {
@@ -69,9 +71,9 @@ function initBillingLoop(io) {
                         const used = await redis.incrby(`free_secs:${session.userId}`, 1);
                         remaining = 60 - used;
                         
-                        // Sync to user socket
-                        if (ioInstance && session.userSocketId) {
-                            ioInstance.to(session.userSocketId).emit('credits_update', Math.max(0, remaining));
+                        // Sync to room (User will pick it up)
+                        if (ioInstance) {
+                            ioInstance.to(roomId).emit('credits_update', Math.max(0, remaining));
                         }
 
                         if (used >= 60) {
