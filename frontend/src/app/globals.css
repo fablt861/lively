@@ -25,6 +25,16 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Global Interactive Cursor */
+button, 
+a, 
+[role="button"],
+input[type="button"],
+input[type="submit"],
+label {
+  cursor: pointer;
+}
+
 @keyframes chatBubbleIn {
   from {
     opacity: 0;
