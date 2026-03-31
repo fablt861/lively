@@ -79,7 +79,7 @@ async function stopBilling(roomId) {
 }
 
 // Global loop that ticks every second
-function initBillingLoop() {
+function initBillingLoop(io) {
     if (billingInterval) return;
     billingInterval = setInterval(async () => {
         try {
@@ -91,23 +91,31 @@ function initBillingLoop() {
 
                 const settings = await getSettings();
                 const rateUserCreditsPerSec = settings.pricePerMinute * 10 / 60.0;
-                const rateModelUsdPerSec = settings.modelPayoutPerMinute / 60.0;
 
                 // Atomically deduct user credits / increment free use
                 if (session.userId.includes('@')) {
-                    // Registered user
-                    await redis.incrbyfloat(`user:${session.userId}:credits`, -rateUserCreditsPerSec);
+                    // Registered user: deduct and check balance
+                    const remaining = await redis.incrbyfloat(`user:${session.userId}:credits`, -rateUserCreditsPerSec);
+                    if (remaining <= 0) {
+                        console.log(`[Billing] Registered user ${session.userId} out of credits. Stopping session.`);
+                        if (io) {
+                            io.to(roomId).emit('out_of_credits', { role: 'user' });
+                            io.to(roomId).emit('partner_out_of_credits', { role: 'model' });
+                        }
+                        await stopBilling(roomId);
+                    }
                 } else {
                     // Guest user (userId is IP)
                     const nextVal = await redis.incrbyfloat(`free_secs:${session.userId}`, 1);
                     if (nextVal >= 60) {
                         console.log(`[Billing] Guest ${session.userId} reached limit. Stopping.`);
+                        if (io) {
+                            io.to(roomId).emit('out_of_credits', { role: 'user' });
+                            io.to(roomId).emit('partner_out_of_credits', { role: 'model' });
+                        }
                         await stopBilling(roomId);
                     }
                 }
-
-                // Real-time balance and total_gains updates removed for models to avoid double-billing.
-                // All earnings are now handled strictly at the end of the call in stopBilling.
             }
         } catch (err) {
             console.error('[Billing Loop Error]', err.message);

@@ -120,6 +120,32 @@ export function VideoRoom({
         setUserCredits(Number(storedCredits));
     }, [role]);
 
+    useEffect(() => {
+        if (!socket) return;
+
+        const handleOutOfCredits = () => {
+            if (role === 'user') {
+                if (accountStatus === 'guest') setShowAuthModal(true);
+                else setShowPaywall(true);
+            }
+        };
+
+        const handlePartnerOutOfCredits = () => {
+            if (role === 'model') {
+                console.log("[Auto-Next] Partner out of credits, re-joining queue");
+                onNext();
+            }
+        };
+
+        socket.on('out_of_credits', handleOutOfCredits);
+        socket.on('partner_out_of_credits', handlePartnerOutOfCredits);
+
+        return () => {
+            socket.off('out_of_credits', handleOutOfCredits);
+            socket.off('partner_out_of_credits', handlePartnerOutOfCredits);
+        };
+    }, [socket, role, accountStatus, onNext]);
+
     // Timer & Teaser logic
     const teaserTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -137,7 +163,6 @@ export function VideoRoom({
             console.log("[Teaser] Starting 4s teaser countdown");
             teaserTimerRef.current = setTimeout(() => {
                 console.log("[Teaser] Teaser ended");
-                if (handleOutOfCredits) handleOutOfCredits();
                 if (accountStatus === 'guest') setShowAuthModal(true);
                 else setShowPaywall(true);
             }, 4000);
@@ -267,8 +292,6 @@ export function VideoRoom({
                     setReportReason("");
                 }, 2000);
             } else {
-                const errorData = await response.json().catch(() => ({}));
-                console.error("[Report Error Status]", response.status, errorData);
                 setReportError("report.error.failed");
             }
         } catch (err) {

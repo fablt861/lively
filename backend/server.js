@@ -56,11 +56,9 @@ initSettings();
 
 // Start the billing interval
 console.log('=> Starting billing loop...');
-initBillingLoop();
-console.log('=> Billing loop started.');
+initBillingLoop(io);
 
 // Registering Routes
-console.log('=> Registering /api/report route...');
 app.use('/api/report', reportRoutes);
 
 app.use('/api/admin', adminRoutes(io));
