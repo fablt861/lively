@@ -56,7 +56,24 @@ function initBillingLoop(io) {
 
                     const settings = await getSettings();
                     const rateUserCreditsPerSec = (settings.pricePerMinute * 10) / 60.0;
-                    const rateModelUsdPerSec = settings.modelPayoutPerMinute / 60.0;
+                    
+                    // Calculate dynamic Model Payout Tier
+                    const durationSec = Math.floor((Date.now() - session.startTime) / 1000);
+                    const durationMin = durationSec / 60.0;
+                    
+                    // Default fallback rate if tiers are missing
+                    let activeRate = settings.modelPayoutPerMinute || 0.40;
+                    
+                    if (settings.payoutTiers && settings.payoutTiers.length > 0) {
+                        // Find the highest minMinutes tier that is <= current duration
+                        const tiers = [...settings.payoutTiers].sort((a, b) => b.minMinutes - a.minMinutes);
+                        const activeTier = tiers.find(t => durationMin >= t.minMinutes);
+                        if (activeTier) {
+                            activeRate = activeTier.rate;
+                        }
+                    }
+                    
+                    const rateModelUsdPerSec = activeRate / 60.0;
 
                     // 2. Decrement User Credits
                     let remaining = 0;
@@ -114,7 +131,6 @@ function initBillingLoop(io) {
                     session.spentCredits = (session.spentCredits || 0) + rateUserCreditsPerSec;
 
                     // 3. Increment Model Earnings
-                    const durationSec = Math.floor((Date.now() - session.startTime) / 1000);
                     if (durationSec > settings.antiFraudDelaySec) {
                         await redis.incrbyfloat(`model:${session.modelId}:balance`, rateModelUsdPerSec);
                         await redis.incrbyfloat(`model:${session.modelId}:total_gains`, rateModelUsdPerSec);

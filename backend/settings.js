@@ -5,8 +5,12 @@ const SETTINGS_KEY = 'global:settings';
 
 const DEFAULT_SETTINGS = {
     pricePerMinute: 1.00,
-    modelPayoutPerMinute: 0.40,
     antiFraudDelaySec: 5,
+    payoutTiers: [
+        { label: 'Tier 1', minMinutes: 0, rate: 0.40 },
+        { label: 'Tier 2', minMinutes: 5, rate: 0.50 },
+        { label: 'Tier 3', minMinutes: 10, rate: 0.55 }
+    ],
     packs: [
         { id: 'essential', name: 'Essential', credits: 100, priceUsd: 9.99 },
         { id: 'premium', name: 'Premium', credits: 300, priceUsd: 24.99 },

@@ -495,9 +495,57 @@ export default function AdminPage() {
                         <div className="bg-neutral-900 border border-white/5 p-8 rounded-3xl space-y-6 shadow-2xl">
                             <h3 className="text-xl font-medium text-indigo-400 border-b border-white/5 pb-4">{t('admin.settings.rates_title')}</h3>
                             <div className="grid grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-sm text-neutral-400 mb-2">{t('admin.settings.model_payout_per_min')}</label>
-                                    <input type="number" step="0.01" value={settings.modelPayoutPerMinute} onChange={e => setSettings({ ...settings, modelPayoutPerMinute: parseFloat(e.target.value) })} className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 transition-colors" />
+                                <div className="col-span-2 space-y-4">
+                                    <label className="block text-sm text-neutral-400 mb-2">Model Payout Tiers (Graduated)</label>
+                                    {(settings.payoutTiers || []).map((tier: any, idx: number) => (
+                                        <div key={idx} className="flex items-center gap-4 bg-black/30 p-4 rounded-xl border border-white/5">
+                                            <div className="flex-1">
+                                                <label className="block text-[10px] text-neutral-500 uppercase font-bold mb-1">Dès (Minutes)</label>
+                                                <input 
+                                                    type="number" 
+                                                    value={tier.minMinutes} 
+                                                    onChange={e => {
+                                                        const newTiers = [...settings.payoutTiers];
+                                                        newTiers[idx].minMinutes = parseFloat(e.target.value);
+                                                        setSettings({ ...settings, payoutTiers: newTiers });
+                                                    }}
+                                                    className="w-full bg-transparent border-b border-white/10 focus:border-indigo-500 p-1 text-white outline-none"
+                                                />
+                                            </div>
+                                            <div className="flex-1">
+                                                <label className="block text-[10px] text-neutral-500 uppercase font-bold mb-1">Gains ($ / min)</label>
+                                                <input 
+                                                    type="number" 
+                                                    step="0.01"
+                                                    value={tier.rate} 
+                                                    onChange={e => {
+                                                        const newTiers = [...settings.payoutTiers];
+                                                        newTiers[idx].rate = parseFloat(e.target.value);
+                                                        setSettings({ ...settings, payoutTiers: newTiers });
+                                                    }}
+                                                    className="w-full bg-transparent border-b border-white/10 focus:border-indigo-500 p-1 text-white outline-none"
+                                                />
+                                            </div>
+                                            <button 
+                                                onClick={() => {
+                                                    const newTiers = settings.payoutTiers.filter((_: any, i: number) => i !== idx);
+                                                    setSettings({ ...settings, payoutTiers: newTiers });
+                                                }}
+                                                className="mt-4 p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                                            >
+                                                <XCircle size={16} />
+                                            </button>
+                                        </div>
+                                    ))}
+                                    <button 
+                                        onClick={() => {
+                                            const newTiers = [...(settings.payoutTiers || []), { label: `Tier ${(settings.payoutTiers?.length || 0) + 1}`, minMinutes: 0, rate: 0.10 }];
+                                            setSettings({ ...settings, payoutTiers: newTiers });
+                                        }}
+                                        className="text-xs font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-2 px-2 py-1"
+                                    >
+                                        + Ajouter un palier
+                                    </button>
                                 </div>
                                 <div className="col-span-2">
                                     <label className="block text-sm text-neutral-400 mb-2">{t('admin.settings.anti_fraud_delay')}</label>
