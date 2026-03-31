@@ -110,11 +110,26 @@ router.get('/users', requireAuth, async (req, res) => {
                     registeredAt: u.registeredAt,
                     lastLogin,
                     totalSpent: parseFloat(totalSpent),
+                    credits: parseFloat(credits),
                     isBuyer: parseFloat(totalSpent) > 0 || parseFloat(credits) > 5 // Mock check: spent or has recharged
                 });
             }
         }
         res.json(users);
+    } catch (err) {
+        res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+
+router.post('/users/:email/credits', requireAuth, async (req, res) => {
+    try {
+        const { getRedisClient } = require('./redis');
+        const redis = getRedisClient();
+        const email = req.params.email;
+        const { credits } = req.body;
+        if (credits === undefined || credits < 0) return res.status(400).json({ error: 'admin.error.invalid_amount' });
+        await redis.set(`user:${email.toLowerCase()}:credits`, credits.toString());
+        res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: 'api.error.internal_server_error' });
     }

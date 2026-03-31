@@ -704,6 +704,7 @@ export default function AdminPage() {
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.registration')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.last_login')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.total_spent')}</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Crédits</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase text-right">{t('admin.table.status')}</th>
                                     </tr>
                                 </thead>
@@ -717,11 +718,32 @@ export default function AdminPage() {
                                             <td className="p-5 text-neutral-400 text-sm">{new Date(u.registeredAt).toLocaleDateString()}</td>
                                             <td className="p-5 text-neutral-400 text-sm">{new Date(u.lastLogin).toLocaleString()}</td>
                                             <td className="p-5 font-mono text-indigo-400 font-bold">${u.totalSpent.toFixed(2)}</td>
-                                            <td className="p-5 text-right">
+                                            <td className="p-5 font-mono text-white font-bold">{u.credits ? u.credits.toFixed(0) : 0}</td>
+                                            <td className="p-5 text-right space-x-2">
                                                 {u.isBuyer ?
                                                     <span className="bg-green-500/10 text-green-400 text-[10px] font-black uppercase px-2 py-1 rounded-md border border-green-500/20">{t('admin.status.buyer')}</span>
                                                     : <span className="bg-neutral-500/10 text-neutral-500 text-[10px] font-black uppercase px-2 py-1 rounded-md text-white">{t('admin.status.free')}</span>
                                                 }
+                                                <button
+                                                    onClick={async () => {
+                                                        const amount = prompt(`Modifier les crédits de ${u.pseudo} :`, u.credits || 0);
+                                                        if (amount !== null && !isNaN(parseFloat(amount))) {
+                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/users/${encodeURIComponent(u.email)}/credits`, {
+                                                                method: "POST",
+                                                                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                                                                body: JSON.stringify({ credits: parseFloat(amount) })
+                                                            });
+                                                            if (res.ok) {
+                                                                fetchUsers();
+                                                            } else {
+                                                                alert("Erreur lors de la modification des crédits.");
+                                                            }
+                                                        }
+                                                    }}
+                                                    className="bg-white/10 hover:bg-white/20 text-white text-[10px] font-bold px-3 py-2 rounded-lg transition-colors ml-2"
+                                                >
+                                                    Modifier
+                                                </button>
                                             </td>
                                         </tr>
                                     ))}
