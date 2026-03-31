@@ -236,9 +236,10 @@ export function useWebRTC(role: "user" | "model" | null) {
         toggleVideo,
         messages,
         sendMessage,
-        socketId: socket?.id,
         handleOutOfCredits,
         queuePosition,
-        partnerInfo
+        partnerInfo,
+        socket,
+        socketId: socket?.id
     };
 }

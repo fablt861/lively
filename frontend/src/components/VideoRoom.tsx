@@ -57,6 +57,7 @@ interface VideoRoomProps {
     messages: any[];
     sendMessage: (text: string) => void;
     socketId: string | undefined;
+    socket: any;
     role: "user" | "model" | null;
     onNext: () => void;
     handleOutOfCredits: () => void;
@@ -79,6 +80,7 @@ export function VideoRoom({
     messages,
     sendMessage,
     socketId,
+    socket,
     role,
     onNext,
     handleOutOfCredits,
