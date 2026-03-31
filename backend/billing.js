@@ -73,6 +73,12 @@ function initBillingLoop(io) {
 
                         if (remaining <= 0) {
                             console.log(`[Billing] User ${session.userId} out of credits.`);
+                            
+                            // Prevent negative balance bleed
+                            if (remaining < 0) {
+                                await redis.set(`user:${session.userId}:credits`, 0);
+                            }
+
                             if (ioInstance) {
                                 ioInstance.to(roomId).emit('out_of_credits', { reason: 'balance_exhausted' });
                                 ioInstance.to(roomId).emit('partner_out_of_credits');
@@ -92,6 +98,11 @@ function initBillingLoop(io) {
 
                         if (used >= 60) {
                             console.log(`[Billing] Guest ${session.userId} reached time limit.`);
+                            
+                            if (used > 60) {
+                                await redis.set(`free_secs:${session.userId}`, 60);
+                            }
+
                             if (ioInstance) {
                                 ioInstance.to(roomId).emit('out_of_credits', { reason: 'guest_limit_reached' });
                                 ioInstance.to(roomId).emit('partner_out_of_credits');
