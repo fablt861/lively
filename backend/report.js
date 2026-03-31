@@ -19,9 +19,11 @@ const requireAdminAuth = (req, res, next) => {
 router.post('/', async (req, res) => {
     try {
         const redis = getRedisClient();
+        console.log('[Report Request Body]', { ...req.body, screenshots: req.body.screenshots?.length + ' items' });
         const { reporterEmail, reportedEmail, reason, screenshots, roomId, reporterRole, reportedRole, reporterName, reportedName } = req.body;
 
         if (!reportedEmail || !reason) {
+            console.warn('[Report Error] Missing fields:', { reportedEmail, reason });
             return res.status(400).json({ error: 'report.error.missing_fields' });
         }
 

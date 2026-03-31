@@ -267,6 +267,8 @@ export function VideoRoom({
                     setReportReason("");
                 }, 2000);
             } else {
+                const errorData = await response.json().catch(() => ({}));
+                console.error("[Report Error Status]", response.status, errorData);
                 setReportError("report.error.failed");
             }
         } catch (err) {
