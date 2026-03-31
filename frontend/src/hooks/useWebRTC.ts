@@ -14,6 +14,7 @@ export function useWebRTC(role: "user" | "model" | null) {
     const [isConnected, setIsConnected] = useState(false);
     const [messages, setMessages] = useState<{ senderId: string; text: string; originalText?: string; timestamp: number }[]>([]);
     const [queuePosition, setQueuePosition] = useState<number | null>(null);
+    const [partnerInfo, setPartnerInfo] = useState<{ email: string; role: string; name: string } | null>(null);
 
     const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
     const iceServersRef = useRef<any[]>(DEFAULT_ICE_SERVERS);
@@ -104,11 +105,20 @@ export function useWebRTC(role: "user" | "model" | null) {
             setQueuePosition(position);
         });
 
-        socket.on("matched", async ({ initiator }: { initiator: string }) => {
+        socket.on("matched", async (data: any) => {
+            const { initiator, partnerEmail, partnerRole, partnerName } = data;
             console.log('[WebRTC] Matched event received. Initiator:', initiator);
             setIsMatching(false);
             setIsConnected(true);
             setMessages([]);
+
+            if (partnerEmail) {
+                setPartnerInfo({
+                    email: partnerEmail,
+                    role: partnerRole,
+                    name: partnerName
+                });
+            }
 
             const pc = createPeerConnection();
 
@@ -192,6 +202,7 @@ export function useWebRTC(role: "user" | "model" | null) {
         }
         setIsConnected(false);
         setRemoteStream(null);
+        setPartnerInfo(null);
         socket?.emit("next");
     };
 
@@ -227,6 +238,7 @@ export function useWebRTC(role: "user" | "model" | null) {
         sendMessage,
         socketId: socket?.id,
         handleOutOfCredits,
-        queuePosition
+        queuePosition,
+        partnerInfo
     };
 }

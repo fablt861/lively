@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { VideoRoom } from "@/components/VideoRoom";
 import { useWebRTC } from "@/hooks/useWebRTC";
 
-export default function LivePage() {
+export default function LivePage({ params }: { params: { locale: string } }) {
     const [role, setRole] = useState<"user" | "model" | null>(null);
 
     useEffect(() => {
@@ -17,5 +17,5 @@ export default function LivePage() {
 
     if (!role) return <div className="min-h-screen bg-[#050505]"></div>;
 
-    return <VideoRoom {...webRTC} role={role} />;
+    return <VideoRoom {...webRTC} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={() => {}} onNext={webRTC.nextPartner} />;
 }

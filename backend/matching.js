@@ -154,7 +154,22 @@ async function handleJoinQueue(io, socket) {
             
             await startBilling(roomId, userBillingId, modelBillingId);
 
-            io.to(roomId).emit('matched', { roomId, initiator: socket.id });
+            // Notify both parties with partner info for reporting
+            socket.emit('matched', { 
+                roomId, 
+                initiator: socket.id, 
+                partnerEmail: partnerSocket.userEmail || partnerSocket.userIp, 
+                partnerRole: partnerSocket.role,
+                partnerName: partnerSocket.pseudo || partnerSocket.userEmail?.split('@')[0] || 'Partner'
+            });
+            partnerSocket.emit('matched', { 
+                roomId, 
+                initiator: socket.id, 
+                partnerEmail: socket.userEmail || socket.userIp, 
+                partnerRole: socket.role,
+                partnerName: socket.pseudo || socket.userEmail?.split('@')[0] || 'Partner'
+            });
+
             foundPartner = true;
             // Update positions for the rest of the target queue
             await updateQueuePositions(io, isModel ? 'user' : 'model');

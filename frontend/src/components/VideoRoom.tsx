@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal } from "lucide-react";
+import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2 } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 import Link from "next/link";
 import { PaywallModal } from "./PaywallModal";
@@ -58,7 +58,12 @@ interface VideoRoomProps {
     sendMessage: (text: string) => void;
     socketId: string | undefined;
     role: "user" | "model" | null;
-    handleOutOfCredits?: () => void;
+    onNext: () => void;
+    handleOutOfCredits: () => void;
+    partnerInfo: { email: string; role: string; name: string } | null;
+    language: string;
+    onCreditsUpdate: (credits: number) => void;
+    onCallEnd: () => void;
     queuePosition?: number | null;
 }
 
@@ -75,7 +80,9 @@ export function VideoRoom({
     sendMessage,
     socketId,
     role,
+    onNext,
     handleOutOfCredits,
+    partnerInfo,
     queuePosition,
 }: VideoRoomProps) {
     const { t, language } = useTranslation();
@@ -92,6 +99,10 @@ export function VideoRoom({
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [hasStartedMatch, setHasStartedMatch] = useState(false);
+    const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+    const [isReporting, setIsReporting] = useState(false);
+    const [reportReason, setReportReason] = useState("");
+    const [reportSuccess, setReportSuccess] = useState(false);
 
     // Load state from localStorage on mount
     useEffect(() => {
@@ -186,6 +197,77 @@ export function VideoRoom({
         if (chatInput.trim()) {
             sendMessage(chatInput);
             setChatInput("");
+        }
+    };
+
+    const captureScreenshots = async (): Promise<string[]> => {
+        const video = remoteVideoRef.current;
+        if (!video) return [];
+
+        const screenshots: string[] = [];
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth || 640;
+        canvas.height = video.videoHeight || 480;
+        const ctx = canvas.getContext("2d");
+
+        for (let i = 0; i < 3; i++) {
+            if (ctx) {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                screenshots.push(canvas.toDataURL("image/jpeg", 0.7));
+            }
+            if (i < 2) await new Promise(r => setTimeout(r, 500));
+        }
+        return screenshots;
+    };
+
+    const handleReportSubmit = async () => {
+        if (!reportReason || isReporting) return;
+        setIsReporting(true);
+
+        try {
+            const screenshots = await captureScreenshots();
+            const reporterEmail = localStorage.getItem('kinky_user_email') || 'Guest';
+            const reporterName = localStorage.getItem('kinky_user_pseudo') || 'Guest';
+            const reporterRole = localStorage.getItem('kinky_user_role') || 'guest';
+
+            // We don't have the reported email directly in props, 
+            // but we can assume the backend knows who is in the room.
+            // However, the instructions say "capture screenshots of the reported party".
+            // For now, we send what we have. 
+            // In a real scenario, the signaling server would provide peer info.
+            // I'll use a placeholder 'peer@example.com' or similar if not available, 
+            // but ideally we should have it.
+            
+            // Let's check if we can get the peer info. 
+            // The backend report.js expects reportedEmail.
+            
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/report`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    reporterEmail,
+                    reporterName,
+                    reporterRole,
+                    reason: reportReason,
+                    screenshots,
+                    reportedEmail: partnerInfo?.email || 'unknown@lively.live',
+                    reportedName: partnerInfo?.name || 'Unknown',
+                    reportedRole: partnerInfo?.role || (role === 'model' ? 'user' : 'model')
+                })
+            });
+
+            if (response.ok) {
+                setReportSuccess(true);
+                setTimeout(() => {
+                    setIsReportModalOpen(false);
+                    setReportSuccess(false);
+                    setReportReason("");
+                }, 2000);
+            }
+        } catch (err) {
+            console.error("Report failed:", err);
+        } finally {
+            setIsReporting(false);
         }
     };
 
@@ -322,6 +404,12 @@ export function VideoRoom({
                         </button>
                     )}
                     <button
+                        onClick={() => setIsReportModalOpen(true)}
+                        className="w-12 h-12 flex items-center justify-center rounded-2xl bg-orange-500/80 border border-orange-400/50 text-white backdrop-blur-md"
+                    >
+                        <ShieldAlert size={20} />
+                    </button>
+                    <button
                         onClick={() => window.location.href = `/${language}`}
                         className="w-12 h-12 flex items-center justify-center rounded-2xl bg-red-600/80 border border-red-500/50 text-white backdrop-blur-md"
                     >
@@ -348,6 +436,9 @@ export function VideoRoom({
                     {role !== 'model' && (
                         <button onClick={handleToggleVideo} className={`p-4 rounded-full ${isVideoMuted ? "bg-red-500" : "bg-white/10"}`}><Video size={24} /></button>
                     )}
+                    <button onClick={() => setIsReportModalOpen(true)} className="p-4 rounded-full bg-orange-600/80 hover:bg-orange-500 transition-colors border border-orange-400/30">
+                        <ShieldAlert size={24} />
+                    </button>
                     <button onClick={() => window.location.href = `/${language}`} className="p-4 rounded-full bg-red-600"><PhoneOff size={24} /></button>
                 </div>
             </div>
@@ -393,6 +484,75 @@ export function VideoRoom({
                     </form>
                 </div>
             </div>
+
+            {/* REPORT MODAL */}
+            {isReportModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+                    <div className="w-full max-w-md bg-neutral-900 border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl relative">
+                        <button 
+                            onClick={() => setIsReportModalOpen(false)}
+                            className="absolute top-6 right-6 text-white/50 hover:text-white"
+                        >
+                            <X size={24} />
+                        </button>
+
+                        <div className="p-8">
+                            <div className="w-16 h-16 bg-orange-500/20 rounded-2xl flex items-center justify-center mb-6 border border-orange-500/30">
+                                <ShieldAlert size={32} className="text-orange-500" />
+                            </div>
+
+                            <h2 className="text-2xl font-black mb-2">{t('report.modal.title')}</h2>
+                            <p className="text-white/60 text-sm mb-6 leading-relaxed">
+                                {t('report.modal.desc')}
+                            </p>
+
+                            {reportSuccess ? (
+                                <div className="py-8 flex flex-col items-center justify-center gap-4 animate-in fade-in zoom-in duration-300">
+                                    <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center border border-green-500/30">
+                                        <CheckCircle2 size={32} className="text-green-500" />
+                                    </div>
+                                    <p className="text-green-400 font-bold">{t('report.success')}</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-3">
+                                    {[
+                                        { id: 'nudity', key: 'report.reason.nudity' },
+                                        { id: 'harassment', key: 'report.reason.harassment' },
+                                        { id: 'scam', key: 'report.reason.scam' },
+                                        { id: 'underage', key: 'report.reason.underage' },
+                                        { id: 'other', key: 'report.reason.other' },
+                                    ].map((reason) => (
+                                        <button
+                                            key={reason.id}
+                                            onClick={() => setReportReason(reason.id)}
+                                            className={`w-full p-4 rounded-2xl border text-left transition-all flex items-center justify-between group ${
+                                                reportReason === reason.id 
+                                                ? 'bg-orange-500 border-orange-400 text-white shadow-lg shadow-orange-500/20' 
+                                                : 'bg-white/5 border-white/5 text-white/70 hover:bg-white/10'
+                                            }`}
+                                        >
+                                            <span className="font-semibold text-sm">{t(reason.key)}</span>
+                                            {reportReason === reason.id && <CheckCircle2 size={18} />}
+                                        </button>
+                                    ))}
+
+                                    <button
+                                        disabled={!reportReason || isReporting}
+                                        onClick={handleReportSubmit}
+                                        className="w-full mt-6 py-4 rounded-2xl bg-white text-black font-black uppercase tracking-widest text-sm hover:bg-neutral-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95 flex items-center justify-center gap-3 shadow-xl"
+                                    >
+                                        {isReporting ? (
+                                            <span className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                                        ) : (
+                                            t('report.submit')
+                                        )}
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, Video, DollarSign, Activity, Settings, Lock, CheckCircle, XCircle, Clock, Globe, Mail, Zap, UserCheck, ShieldCheck, ChevronLeft, ChevronRight } from "lucide-react";
+import { Users, Video, DollarSign, Activity, Settings, Lock, CheckCircle, XCircle, Clock, Globe, Mail, Zap, UserCheck, ShieldCheck, ChevronLeft, ChevronRight, AlertCircle, ShieldAlert } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
 
@@ -26,6 +26,7 @@ export default function AdminPage() {
     const [users, setUsers] = useState<any[]>([]);
     const [models, setModels] = useState<any[]>([]);
     const [payoutRequests, setPayoutRequests] = useState<any[]>([]);
+    const [reports, setReports] = useState<any[]>([]);
     const [realtimeStats, setRealtimeStats] = useState<any>(null);
     const [userFilter, setUserFilter] = useState<'all' | 'buyers'>('all');
     const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking');
@@ -104,6 +105,16 @@ export default function AdminPage() {
         }
     };
 
+    const fetchReports = async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/report/admin/list`, { headers: { Authorization: `Bearer ${token}` } });
+            const data = await res.json();
+            if (Array.isArray(data)) setReports(data);
+        } catch (err) {
+            console.error("Fetch Reports Error:", err);
+        }
+    };
+
     const fetchRealtime = async () => {
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/realtime`, { headers: { Authorization: `Bearer ${token}` } });
@@ -156,6 +167,7 @@ export default function AdminPage() {
             if (activeTab === 'users') fetchUsers();
             if (activeTab === 'models') fetchModels();
             if (activeTab === 'payouts') fetchPayoutRequests();
+            if (activeTab === 'reports') fetchReports();
             if (activeTab === 'realtime') fetchRealtime();
 
             if (activeTab === 'settings') {
@@ -224,6 +236,9 @@ export default function AdminPage() {
                     </button>
                     <button onClick={() => setActiveTab('payouts')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'payouts' ? 'bg-green-500/20 text-green-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <DollarSign size={20} /> {t('admin.nav.payouts')} {payoutRequests.length > 0 && <span className="ml-auto bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{payoutRequests.length}</span>}
+                    </button>
+                    <button onClick={() => setActiveTab('reports')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'reports' ? 'bg-orange-500/20 text-orange-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                        <ShieldAlert size={20} /> {t('admin.nav.reports')} {reports.filter(r => r.status === 'active').length > 0 && <span className="ml-auto bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{reports.filter(r => r.status === 'active').length}</span>}
                     </button>
                     <button onClick={() => setActiveTab('realtime')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'realtime' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <Zap size={20} className={activeTab === 'realtime' ? 'animate-pulse text-indigo-400' : ''} /> {t('admin.nav.realtime')}
@@ -853,6 +868,93 @@ export default function AdminPage() {
                                         ))}
                                     </tbody>
                                 </table>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {activeTab === 'reports' && (
+                    <div className="space-y-8 animate-in fade-in duration-500 pb-20">
+                        <h2 className="text-3xl font-light">{t('admin.reports.title')}</h2>
+
+                        {reports.filter(r => r.status === 'active').length === 0 ? (
+                            <div className="bg-neutral-900 border border-white/5 rounded-3xl p-12 text-center text-neutral-500">
+                                {t('admin.reports.empty')}
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 gap-8">
+                                {reports.filter(r => r.status === 'active').sort((a,b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).map((report: any) => (
+                                    <div key={report.id} className="bg-neutral-900 border border-white/5 rounded-3xl p-8 shadow-2xl space-y-6">
+                                        <div className="flex flex-col md:flex-row justify-between items-start gap-6">
+                                            <div className="space-y-4 flex-1">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="p-2 bg-orange-500/20 rounded-lg text-orange-500 border border-orange-500/20">
+                                                        <AlertCircle size={18} />
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="text-xl font-bold text-white capitalize">{t(`report.reason.${report.reason}`)}</h3>
+                                                        <p className="text-neutral-500 text-xs font-mono">{new Date(report.timestamp).toLocaleString()}</p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
+                                                        <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-black mb-1">{t('admin.reports.table_reporter')}</p>
+                                                        <p className="font-bold text-white tracking-tight">{report.reporterName}</p>
+                                                        <p className="text-[10px] text-neutral-500 font-mono italic">{report.reporterEmail}</p>
+                                                        <span className="text-[8px] px-1.5 py-0.5 bg-neutral-800 rounded font-black text-neutral-400 mt-2 inline-block uppercase">{report.reporterRole}</span>
+                                                    </div>
+                                                    <div className="p-4 bg-orange-500/10 rounded-2xl border border-orange-500/20">
+                                                        <p className="text-[10px] text-orange-500 uppercase tracking-widest font-black mb-1">{t('admin.reports.table_reported')}</p>
+                                                        <p className="font-bold text-white tracking-tight">{report.reportedName}</p>
+                                                        <p className="text-[10px] text-neutral-400 font-mono italic">{report.reportedEmail}</p>
+                                                        <span className="text-[8px] px-1.5 py-0.5 bg-orange-500/20 rounded font-black text-orange-500 mt-2 inline-block uppercase">{report.reportedRole}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-3 gap-2 w-full md:w-auto">
+                                                {report.screenshots?.map((img: string, idx: number) => (
+                                                    <div key={idx} className="relative group cursor-zoom-in" onClick={() => setSelectedImage({ images: report.screenshots, index: idx })}>
+                                                        <img src={img} className="w-24 h-32 md:w-32 md:h-40 object-cover rounded-xl border border-white/10 hover:brightness-110 transition-all shadow-lg" alt="Report capture" />
+                                                        <div className="absolute inset-0 bg-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div className="flex gap-4 pt-4 border-t border-white/5">
+                                            <button
+                                                onClick={async () => {
+                                                    if (confirm("Ignore this report and close it?")) {
+                                                        await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/report/admin/${report.id}/dismiss`, { 
+                                                            method: "POST", 
+                                                            headers: { Authorization: `Bearer ${token}` } 
+                                                        });
+                                                        fetchReports();
+                                                    }
+                                                }}
+                                                className="flex-1 bg-white/5 hover:bg-white/10 text-neutral-400 font-bold py-4 rounded-xl transition-all active:scale-[0.98]"
+                                            >
+                                                {t('admin.reports.dismiss_cta')}
+                                            </button>
+                                            <button
+                                                onClick={async () => {
+                                                    if (confirm(`ARE YOU SURE? This will permanently BAN the account: ${report.reportedEmail}`)) {
+                                                        await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/report/admin/${report.id}/ban`, { 
+                                                            method: "POST", 
+                                                            headers: { Authorization: `Bearer ${token}` } 
+                                                        });
+                                                        fetchReports();
+                                                    }
+                                                }}
+                                                className="flex-1 bg-red-500 hover:bg-red-400 text-white font-black py-4 rounded-xl shadow-lg shadow-red-500/20 transition-all active:scale-[0.98] uppercase tracking-widest text-xs"
+                                            >
+                                                {t('admin.reports.ban_cta')}
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         )}
                     </div>

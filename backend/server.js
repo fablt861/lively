@@ -48,6 +48,7 @@ const { initSettings } = require('./settings');
 const adminRoutes = require('./admin');
 const authRoutes = require('./auth');
 const modelRoutes = require('./model');
+const reportRoutes = require('./report');
 
 // Initialize settings if empty
 console.log('--- Starting startup sequence ---');
@@ -61,6 +62,7 @@ console.log('=> Billing loop started.');
 app.use('/api/admin', adminRoutes(io));
 app.use('/api/auth', authRoutes);
 app.use('/api/model', modelRoutes);
+app.use('/api/report', reportRoutes);
 
 app.get('/api/ice-servers', async (req, res) => {
   try {
