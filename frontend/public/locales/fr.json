@@ -440,6 +440,8 @@
   "report.reason.other": "Autre raison",
   "report.submit": "Confirmer le signalement",
   "report.success": "Signalement envoyé.",
+  "report.error.failed": "Échec de l'envoi du signalement.",
+  "report.error.network": "Erreur réseau. Vérifiez votre connexion.",
   "admin.reports.title": "Signalements en Attente",
   "admin.reports.empty": "Aucun signalement à traiter.",
   "admin.reports.table_reporter": "Signaleur",

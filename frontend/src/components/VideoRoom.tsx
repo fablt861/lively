@@ -103,6 +103,7 @@ export function VideoRoom({
     const [isReporting, setIsReporting] = useState(false);
     const [reportReason, setReportReason] = useState("");
     const [reportSuccess, setReportSuccess] = useState(false);
+    const [reportError, setReportError] = useState("");
 
     // Load state from localStorage on mount
     useEffect(() => {
@@ -223,6 +224,7 @@ export function VideoRoom({
     const handleReportSubmit = async () => {
         if (!reportReason || isReporting) return;
         setIsReporting(true);
+        setReportError("");
 
         try {
             const screenshots = await captureScreenshots();
@@ -241,7 +243,8 @@ export function VideoRoom({
             // Let's check if we can get the peer info. 
             // The backend report.js expects reportedEmail.
             
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/report`, {
+            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+            const response = await fetch(`${backendUrl}/api/report`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -263,9 +266,12 @@ export function VideoRoom({
                     setReportSuccess(false);
                     setReportReason("");
                 }, 2000);
+            } else {
+                setReportError("report.error.failed");
             }
         } catch (err) {
             console.error("Report failed:", err);
+            setReportError("report.error.network");
         } finally {
             setIsReporting(false);
         }
@@ -505,6 +511,12 @@ export function VideoRoom({
                             <p className="text-white/60 text-sm mb-6 leading-relaxed">
                                 {t('report.modal.desc')}
                             </p>
+
+                            {reportError && (
+                                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-[11px] font-bold rounded-xl text-center animate-shake uppercase">
+                                    {t(reportError)}
+                                </div>
+                            )}
 
                             {reportSuccess ? (
                                 <div className="py-8 flex flex-col items-center justify-center gap-4 animate-in fade-in zoom-in duration-300">
