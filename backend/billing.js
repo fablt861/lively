@@ -140,6 +140,15 @@ function initBillingLoop(io) {
                     // Update session state in Redis
                     await redis.hset(ACTIVE_ROOMS_KEY, roomId, JSON.stringify(session));
 
+                    // 4. Sync Payout Info to Model
+                    if (ioInstance) {
+                        ioInstance.to(roomId).emit('payout_update', { 
+                            rate: activeRate, 
+                            earned: session.earnedUsd || 0,
+                            durationSec
+                        });
+                    }
+
                 } catch (err) {
                     console.error(`[Billing Loop Error] Room ${roomId}:`, err.message);
                 }

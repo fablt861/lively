@@ -9,39 +9,22 @@ import { PaywallModal } from "./PaywallModal";
 import { UnifiedAuthModal } from "./UnifiedAuthModal";
 import { PreMatchModal } from "./PreMatchModal";
 
-function EarningsCounter({ hasVideo }: { hasVideo: boolean }) {
+function EarningsCounter({ hasVideo, currentRate, totalEarned }: { hasVideo: boolean; currentRate: number; totalEarned: number }) {
     const { t } = useTranslation();
-    const counterRef = useRef<HTMLSpanElement>(null);
-    const hasVideoRef = useRef(hasVideo);
-
-    useEffect(() => {
-        hasVideoRef.current = hasVideo;
-    }, [hasVideo]);
-
-    useEffect(() => {
-        let earned = 0;
-        let secondsPassed = 0;
-        const RATE_PER_SEC = 0.40 / 60;
-
-        const interval = setInterval(() => {
-            if (!hasVideoRef.current) return;
-            secondsPassed++;
-            if (secondsPassed > 5) {
-                earned += RATE_PER_SEC;
-                if (counterRef.current) {
-                    counterRef.current.innerText = `$${earned.toFixed(2)}`;
-                }
-            }
-        }, 1000);
-        return () => clearInterval(interval);
-    }, []);
 
     return (
-        <div className="absolute top-[160px] right-4 md:top-6 md:right-6 z-30 flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 shadow-2xl transition-all">
-            <span className="text-white/80 text-xs font-semibold tracking-wider uppercase hidden sm:block">{t('room.earnings_call')}</span>
-            <span ref={counterRef} className="text-green-400 font-mono text-base sm:text-lg font-bold">
-                $0.00
-            </span>
+        <div className="absolute top-[160px] right-4 md:top-6 md:right-6 z-30 flex flex-col items-end gap-2">
+            <div className="flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 shadow-2xl transition-all">
+                <span className="text-white/80 text-xs font-semibold tracking-wider uppercase hidden sm:block">{t('room.earnings_call')}</span>
+                <span className="text-green-400 font-mono text-base sm:text-lg font-bold">
+                    ${totalEarned.toFixed(2)}
+                </span>
+            </div>
+            {currentRate > 0 && (
+                <div className="px-3 py-1 bg-indigo-500/80 backdrop-blur-md rounded-full border border-indigo-400/30 text-[10px] font-black uppercase tracking-tighter shadow-lg animate-in slide-in-from-right-4 duration-500">
+                    Gain actuel : ${currentRate.toFixed(2)} / min
+                </div>
+            )}
         </div>
     );
 }
@@ -109,6 +92,7 @@ export function VideoRoom({
     const [reportReason, setReportReason] = useState("");
     const [reportSuccess, setReportSuccess] = useState(false);
     const [reportError, setReportError] = useState("");
+    const [payoutInfo, setPayoutInfo] = useState({ rate: 0, earned: 0 });
 
     // Load state from localStorage on mount
     useEffect(() => {
@@ -157,14 +141,22 @@ export function VideoRoom({
             }
         };
 
+        const handlePayoutUpdate = (data: { rate: number; earned: number }) => {
+            if (role === 'model') {
+                setPayoutInfo(data);
+            }
+        };
+
         socket.on('out_of_credits', handleOutOfCredits);
         socket.on('partner_out_of_credits', handlePartnerOutOfCredits);
         socket.on('credits_update', handleCreditsUpdate);
+        socket.on('payout_update', handlePayoutUpdate);
 
         return () => {
             socket.off('out_of_credits', handleOutOfCredits);
             socket.off('partner_out_of_credits', handlePartnerOutOfCredits);
             socket.off('credits_update', handleCreditsUpdate);
+            socket.off('payout_update', handlePayoutUpdate);
         };
     }, [socket, role, accountStatus, onNext, onCallEnd]);
 
@@ -410,7 +402,13 @@ export function VideoRoom({
                     </div>
                 )}
                 {/* Model Earning Counter */}
-                {role === "model" && isConnected && <EarningsCounter hasVideo={!!remoteStream} />}
+                {role === "model" && isConnected && (
+                    <EarningsCounter 
+                        hasVideo={!!remoteStream} 
+                        currentRate={payoutInfo.rate} 
+                        totalEarned={payoutInfo.earned} 
+                    />
+                )}
 
 
                 {/* Remote Video (Full Screen) */}
