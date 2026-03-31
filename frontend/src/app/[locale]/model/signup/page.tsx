@@ -221,7 +221,14 @@ export default function ModelSignupPage() {
                                     <select
                                         className="w-full bg-black/60 border border-white/20 rounded-2xl py-4.5 pl-12 pr-4 text-white/90 appearance-none focus:outline-none focus:border-white/40 transition-all cursor-pointer"
                                         value={country}
-                                        onChange={e => setCountry(e.target.value)}
+                                        onChange={e => {
+                                            const code = e.target.value;
+                                            setCountry(code);
+                                            const selected = countries.find(c => c.code === code);
+                                            if (selected) {
+                                                setPhonePrefix(selected.dialCode);
+                                            }
+                                        }}
                                     >
                                         <option value="" disabled>{t('model.signup.step1_placeholder')}</option>
                                         {countries.map(c => (
