@@ -14,6 +14,8 @@ const requireAdminAuth = (req, res, next) => {
         res.status(401).json({ error: 'admin.error.unauthorized' });
     }
 };
+// Diagnostics
+router.get('/ping', (req, res) => res.json({ status: 'report router active' }));
 
 // Submit a report
 router.post('/', async (req, res) => {

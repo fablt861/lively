@@ -59,10 +59,13 @@ console.log('=> Starting billing loop...');
 initBillingLoop();
 console.log('=> Billing loop started.');
 
+// Registering Routes
+console.log('=> Registering /api/report route...');
+app.use('/api/report', reportRoutes);
+
 app.use('/api/admin', adminRoutes(io));
 app.use('/api/auth', authRoutes);
 app.use('/api/model', modelRoutes);
-app.use('/api/report', reportRoutes);
 
 app.get('/api/ice-servers', async (req, res) => {
   try {
@@ -85,7 +88,7 @@ app.get('/api/ice-servers', async (req, res) => {
 });
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', version: '1.0.4', timestamp: Date.now() });
+  res.json({ status: 'ok', version: '1.0.5', timestamp: Date.now() });
 });
 
 app.get('/api/settings', async (req, res) => {
