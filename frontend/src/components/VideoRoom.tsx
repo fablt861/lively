@@ -313,12 +313,14 @@ export function VideoRoom({
                     >
                         {isAudioMuted ? <MicOff size={20} /> : <Mic size={20} />}
                     </button>
-                    <button
-                        onClick={handleToggleVideo}
-                        className={`w-12 h-12 flex items-center justify-center rounded-2xl transition-all backdrop-blur-md border ${isVideoMuted ? "bg-red-500/80 border-red-500/50 text-white" : "bg-white/10 border-white/10 text-white"}`}
-                    >
-                        {isVideoMuted ? <VideoOff size={20} /> : <Video size={20} />}
-                    </button>
+                    {role !== 'model' && (
+                        <button
+                            onClick={handleToggleVideo}
+                            className={`w-12 h-12 flex items-center justify-center rounded-2xl transition-all backdrop-blur-md border ${isVideoMuted ? "bg-red-500/80 border-red-500/50 text-white" : "bg-white/10 border-white/10 text-white"}`}
+                        >
+                            {isVideoMuted ? <VideoOff size={20} /> : <Video size={20} />}
+                        </button>
+                    )}
                     <button
                         onClick={() => window.location.href = `/${language}`}
                         className="w-12 h-12 flex items-center justify-center rounded-2xl bg-red-600/80 border border-red-500/50 text-white backdrop-blur-md"
@@ -343,7 +345,9 @@ export function VideoRoom({
                 {/* Desktop Controls (Hidden on Mobile) */}
                 <div className="hidden md:flex absolute bottom-8 right-6 z-40 flex-row gap-4">
                     <button onClick={handleToggleAudio} className={`p-4 rounded-full ${isAudioMuted ? "bg-red-500" : "bg-white/10"}`}><Mic size={24} /></button>
-                    <button onClick={handleToggleVideo} className={`p-4 rounded-full ${isVideoMuted ? "bg-red-500" : "bg-white/10"}`}><Video size={24} /></button>
+                    {role !== 'model' && (
+                        <button onClick={handleToggleVideo} className={`p-4 rounded-full ${isVideoMuted ? "bg-red-500" : "bg-white/10"}`}><Video size={24} /></button>
+                    )}
                     <button onClick={() => window.location.href = `/${language}`} className="p-4 rounded-full bg-red-600"><PhoneOff size={24} /></button>
                 </div>
             </div>
