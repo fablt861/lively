@@ -20,171 +20,173 @@ import { LanguageSelector } from "@/components/LanguageSelector";
 export default function ModelLandingPage() {
     const { t, language } = useTranslation();
     return (
-        <div className="min-h-screen bg-[#08080a] text-white flex flex-col font-sans relative selection:bg-pink-500/30">
-            {/* Mesh Gradient Background Layer */}
+        <div className="min-h-screen bg-[#0a0a0c] text-white flex flex-col font-sans relative selection:bg-indigo-500/30 overflow-x-hidden">
+            {/* Mesh Gradient Background Layer - Brighter */}
             <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-                <div className="absolute top-[-10%] left-[-10%] w-[70%] h-[70%] bg-indigo-600/15 rounded-full blur-[120px] animate-pulse duration-[10s]" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-pink-600/15 rounded-full blur-[100px] animate-pulse duration-[8s]" />
-                <div className="absolute top-[30%] right-[10%] w-[40%] h-[40%] bg-purple-600/10 rounded-full blur-[80px]" />
-
-                {/* Noise Texture Overlay */}
-                <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+                <div className="absolute top-[-5%] left-[-5%] w-[60%] h-[60%] bg-indigo-500/20 rounded-full blur-[100px] animate-pulse duration-[8s]" />
+                <div className="absolute bottom-[-10%] right-[-5%] w-[50%] h-[50%] bg-purple-500/15 rounded-full blur-[90px] animate-pulse duration-[6s]" />
+                
+                {/* Dots Pattern */}
+                <div className="absolute inset-0 opacity-[0.15] [mask-image:radial-gradient(ellipse_at_center,black,transparent)] bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:32px_32px]" />
             </div>
 
             {/* Navbar */}
-            <nav className="relative z-50 flex justify-between items-center px-6 lg:px-12 py-10 max-w-7xl mx-auto w-full">
-                <Link href={`/${language}`} className="text-3xl font-black tracking-tighter text-white group">
-                    KINKY<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500 group-hover:from-indigo-500 transition-all duration-500">.</span>
-                    <span className="text-[10px] font-black text-white/40 ml-2 uppercase tracking-[0.4em] align-middle">{t('model.landing.navbar_suite')}</span>
+            <nav className="relative z-50 flex justify-between items-center px-6 lg:px-12 py-8 max-w-7xl mx-auto w-full">
+                <Link href={`/${language}`} className="text-2xl font-black tracking-tighter text-white group">
+                    KINKY<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 group-hover:from-white transition-all duration-500">.</span>
+                    <span className="text-[9px] font-black text-white/30 ml-2 uppercase tracking-[0.3em] align-middle hidden sm:inline-block">{t('model.landing.navbar_suite')}</span>
                 </Link>
-                <div className="hidden md:flex items-center gap-10">
-                    <a href="#simulator" className="text-[11px] font-black text-white/50 hover:text-white transition-colors uppercase tracking-[0.2em]">{t('model.landing.nav_simulator')}</a>
-                    <a href="#benefits" className="text-[11px] font-black text-white/50 hover:text-white transition-colors uppercase tracking-[0.2em]">{t('model.landing.nav_benefits')}</a>
-                    <Link href={`/${language}/model/signup`} className="px-8 py-3 rounded-full bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-[0.2em] hover:bg-white/10 transition-all shadow-xl">
+                <div className="flex items-center gap-6 md:gap-10">
+                    <a href="#simulator" className="hidden lg:block text-[10px] font-black text-white/40 hover:text-white transition-colors uppercase tracking-[0.2em]">{t('model.landing.nav_simulator')}</a>
+                    <LanguageSelector />
+                    <Link href={`/${language}/model/signup`} className="px-6 py-2.5 rounded-full bg-white text-black text-[10px] font-black uppercase tracking-[0.2em] hover:bg-neutral-200 transition-all shadow-xl">
                         {t('model.landing.nav_join')}
                     </Link>
-                    <LanguageSelector />
                 </div>
             </nav>
 
-            {/* Hero Section */}
-            <header className="relative z-10 min-h-[80vh] flex flex-col items-center justify-center px-6 pt-12 pb-24 text-center max-w-5xl mx-auto">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-[10px] font-black uppercase tracking-[0.2em] mb-12 animate-in fade-in slide-in-from-bottom-4">
-                    <Star size={14} className="fill-indigo-400" />
-                    {t('model.landing.hero_badge')}
-                </div>
+            {/* Combined Hero & Simulator - 2 Columns */}
+            <header className="relative z-10 max-w-7xl mx-auto w-full px-6 pt-8 pb-16 md:py-20 lg:py-24">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-12 items-center">
+                    {/* Left: Content */}
+                    <div className="space-y-8 animate-in fade-in slide-in-from-left-8 duration-700">
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 text-[9px] font-black uppercase tracking-[0.2em]">
+                            <Star size={12} className="fill-indigo-300" />
+                            {t('model.landing.hero_badge')}
+                        </div>
 
-                <h1 className="text-6xl md:text-8xl font-black mb-10 leading-[0.95] tracking-tighter animate-in fade-in slide-in-from-bottom-6">
-                    {t('model.landing.hero_title_line1')} <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-400">{t('model.landing.hero_title_line2')}</span>
-                </h1>
+                        <h1 className="text-5xl md:text-7xl font-black leading-[0.95] tracking-tighter text-white">
+                            {t('model.landing.hero_title_line1')} <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+                                {t('model.landing.hero_title_line2')}
+                            </span>
+                        </h1>
 
-                <p className="text-xl md:text-2xl text-white/40 font-light max-w-2xl leading-relaxed mb-16 animate-in fade-in slide-in-from-bottom-8">
-                    {t('model.landing.hero_desc')}
-                </p>
+                        <p className="text-lg md:text-xl text-white/60 font-medium max-w-xl leading-relaxed">
+                            {t('model.landing.hero_desc')}
+                        </p>
 
-                <div className="flex flex-col sm:flex-row items-center gap-6 animate-in fade-in slide-in-from-bottom-10">
-                    <Link href={`/${language}/model/signup`} className="px-10 py-6 rounded-full bg-white text-black font-black text-lg shadow-[0_20px_40px_rgba(255,255,255,0.2)] hover:scale-105 active:scale-95 transition-all">
-                        {t('model.landing.hero_cta_apply')}
-                    </Link>
-                    <a href="#simulator" className="px-10 py-6 rounded-full bg-white/5 border border-white/10 text-white font-black text-lg hover:bg-white/10 transition-all">
-                        {t('model.landing.hero_cta_earnings')}
-                    </a>
+                        <div className="flex flex-wrap items-center gap-4 pt-4">
+                            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col gap-1 min-w-[140px]">
+                                <span className="text-2xl font-black text-white leading-none">60€ - 200€</span>
+                                <span className="text-[9px] font-black text-white/30 uppercase tracking-[0.1em]">{t('model.stat.per_hour')}</span>
+                            </div>
+                            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col gap-1 min-w-[140px]">
+                                <span className="text-2xl font-black text-white leading-none">{t('model.stat.fast_payout_val')}</span>
+                                <span className="text-[9px] font-black text-white/30 uppercase tracking-[0.1em]">{t('model.stat.fast_payout')}</span>
+                            </div>
+                        </div>
+
+                        <div className="pt-6 flex flex-col sm:flex-row items-center gap-4">
+                            <Link href={`/${language}/model/signup`} className="w-full sm:w-auto px-10 py-5 rounded-full bg-white text-black font-black text-base shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3">
+                                {t('model.landing.hero_cta_apply')}
+                                <ChevronRight size={20} />
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* Right: Simulator & Premium Image */}
+                    <div className="relative animate-in fade-in slide-in-from-right-8 duration-700">
+                        {/* Decorative Premium Image Background */}
+                        <div className="absolute -top-12 -right-12 w-64 h-64 rounded-full border border-white/5 overflow-hidden opacity-20 blur-sm pointer-events-none hidden lg:block">
+                            <img src="/images/model_hero.png" alt="" className="w-full h-full object-cover grayscale" />
+                        </div>
+                        
+                        <div className="relative z-10 flex flex-col items-center gap-8">
+                            <ModelSimulator />
+                            
+                            {/* Trust Pill */}
+                            <div className="flex items-center gap-6 px-6 py-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full shadow-lg">
+                                <div className="flex items-center gap-2 text-[9px] font-black text-white/40 uppercase tracking-widest">
+                                    <CheckCircle2 size={12} className="text-indigo-400" /> {t('model.stat.discretion')} 100%
+                                </div>
+                                <div className="w-px h-3 bg-white/10" />
+                                <div className="flex items-center gap-2 text-[9px] font-black text-white/40 uppercase tracking-widest">
+                                    <Lock size={12} className="text-purple-400" /> {t('model.stat.secure_access_val')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </header>
 
-            {/* Statistics / Trust Bar */}
-            <div className="relative z-10 border-y border-white/5 bg-white/[0.01] backdrop-blur-sm">
-                <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
-                    <div>
-                        <div className="text-3xl font-black text-white/90 mb-1">60€ - 200€</div>
-                        <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">{t('model.stat.per_hour')}</div>
-                    </div>
-                    <div>
-                        <div className="text-3xl font-black text-white/90 mb-1">{t('model.stat.fast_payout_val')}</div>
-                        <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">{t('model.stat.fast_payout')}</div>
-                    </div>
-                    <div>
-                        <div className="text-3xl font-black text-white/90 mb-1">100%</div>
-                        <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">{t('model.stat.discretion')}</div>
-                    </div>
-                    <div>
-                        <div className="text-3xl font-black text-white/90 mb-1">{t('model.stat.secure_access_val')}</div>
-                        <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">{t('model.stat.secure_access')}</div>
-                    </div>
-                </div>
-            </div>
+            {/* Split Section: Visual + Benefits */}
+            <section className="relative z-10 border-t border-white/5 bg-white/[0.02]">
+                <div className="max-w-7xl mx-auto px-6 py-20 lg:py-32">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                        {/* Left: 3D Illustration/Photo */}
+                        <div className="relative group flex justify-center">
+                            <div className="w-full max-w-md aspect-square rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl relative">
+                                <img 
+                                    src="/images/privacy_illustration.png" 
+                                    alt="Privacy Illustration" 
+                                    className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110" 
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-10">
+                                    <span className="text-3xl font-black text-white mb-2 tracking-tighter">{t('model.benefit.anon_title')}</span>
+                                    <p className="text-white/60 text-sm font-medium leading-relaxed uppercase tracking-widest">{t('model.landing.hero_badge')}</p>
+                                </div>
+                            </div>
+                            
+                            {/* Decorative Floating Element */}
+                            <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-indigo-500 rounded-3xl rotate-12 flex items-center justify-center shadow-2xl border-4 border-[#0a0a0c] z-20 group-hover:rotate-0 transition-transform duration-500">
+                                <ShieldCheck size={48} className="text-white" />
+                            </div>
+                        </div>
 
-            {/* Income Simulator Section */}
-            <section id="simulator" className="relative z-10 py-48 px-6 flex flex-col items-center max-w-7xl mx-auto w-full gap-24">
-                <div className="text-center space-y-4 max-w-2xl">
-                    <h2 className="text-4xl md:text-6xl font-black tracking-tight leading-tight">{t('model.landing.sim_title')}</h2>
-                    <p className="text-white/40 text-lg md:text-xl font-light">{t('model.landing.sim_desc')}</p>
-                </div>
+                        {/* Right: Compact Benefits Grid */}
+                        <div className="space-y-12">
+                            <div className="space-y-4">
+                                <h2 className="text-4xl md:text-5xl font-black tracking-tight">{t('model.landing.sim_title')}</h2>
+                                <p className="text-white/50 text-lg font-medium">{t('model.landing.sim_desc')}</p>
+                            </div>
 
-                <div className="w-full flex justify-center">
-                    <ModelSimulator />
-                </div>
-            </section>
-
-            {/* Features / Benefits */}
-            <section id="benefits" className="relative z-10 py-48 px-6 max-w-7xl mx-auto w-full border-t border-white/5">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-24 md:gap-12 lg:gap-20">
-                    <div className="space-y-8 group">
-                        <div className="w-16 h-16 rounded-[1.5rem] bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 transition-all duration-500 group-hover:text-white group-hover:shadow-[0_0_30px_rgba(99,102,241,0.5)]">
-                            <Lock size={28} />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                {[
+                                    { icon: Lock, title: t('model.benefit.anon_title'), desc: t('model.benefit.anon_desc'), color: 'indigo' },
+                                    { icon: DollarSign, title: t('model.benefit.payout_title'), desc: t('model.benefit.payout_desc'), color: 'pink' },
+                                    { icon: Zap, title: t('model.benefit.flex_title'), desc: t('model.benefit.flex_desc'), color: 'purple' },
+                                    { icon: Globe, title: t('model.landing.hero_badge'), desc: t('model.landing.hero_desc'), color: 'blue' }
+                                ].slice(0, 3).map((item, i) => (
+                                    <div key={i} className="space-y-3">
+                                        <div className={`w-10 h-10 rounded-xl bg-${item.color}-500/20 border border-${item.color}-500/30 flex items-center justify-center text-${item.color}-400`}>
+                                            <item.icon size={20} />
+                                        </div>
+                                        <h4 className="text-lg font-bold">{item.title}</h4>
+                                        <p className="text-sm text-white/40 leading-relaxed font-medium">{item.desc}</p>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                        <div className="space-y-4">
-                            <h3 className="text-2xl font-bold tracking-tight">{t('model.benefit.anon_title')}</h3>
-                            <p className="text-white/40 leading-relaxed font-light text-lg">{t('model.benefit.anon_desc')}</p>
-                        </div>
-                        <ul className="space-y-4 pt-4 border-t border-white/5">
-                            {[t('model.benefit.anon_item1'), t('model.benefit.anon_item2'), t('model.benefit.anon_item3')].map((item) => (
-                                <li key={item} className="flex items-center gap-3 text-sm font-bold text-white/50">
-                                    <CheckCircle2 size={16} className="text-green-500" /> {item}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    <div className="space-y-8 group">
-                        <div className="w-16 h-16 rounded-[1.5rem] bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 group-hover:bg-pink-500 transition-all duration-500 group-hover:text-white group-hover:shadow-[0_0_30px_rgba(236,72,153,0.5)]">
-                            <DollarSign size={28} />
-                        </div>
-                        <div className="space-y-4">
-                            <h3 className="text-2xl font-bold tracking-tight">{t('model.benefit.payout_title')}</h3>
-                            <p className="text-white/40 leading-relaxed font-light text-lg">{t('model.benefit.payout_desc')}</p>
-                        </div>
-                        <ul className="space-y-4 pt-4 border-t border-white/5">
-                            {[t('model.benefit.payout_item1'), t('model.benefit.payout_item2'), t('model.benefit.payout_item3')].map((item) => (
-                                <li key={item} className="flex items-center gap-3 text-sm font-bold text-white/50">
-                                    <CheckCircle2 size={16} className="text-green-500" /> {item}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    <div className="space-y-8 group">
-                        <div className="w-16 h-16 rounded-[1.5rem] bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 group-hover:bg-purple-500 transition-all duration-500 group-hover:text-white group-hover:shadow-[0_0_30px_rgba(168,85,247,0.5)]">
-                            <Zap size={28} />
-                        </div>
-                        <div className="space-y-4">
-                            <h3 className="text-2xl font-bold tracking-tight">{t('model.benefit.flex_title')}</h3>
-                            <p className="text-white/40 leading-relaxed font-light text-lg">{t('model.benefit.flex_desc')}</p>
-                        </div>
-                        <ul className="space-y-4 pt-4 border-t border-white/5">
-                            {[t('model.benefit.flex_item1'), t('model.benefit.flex_item2'), t('model.benefit.flex_item3')].map((item) => (
-                                <li key={item} className="flex items-center gap-3 text-sm font-bold text-white/50">
-                                    <CheckCircle2 size={16} className="text-green-500" /> {item}
-                                </li>
-                            ))}
-                        </ul>
                     </div>
                 </div>
             </section>
 
-            {/* Footer CTA */}
-            <footer className="relative z-10 py-48 border-t border-white/5 bg-white/[0.01]">
-                <div className="max-w-4xl mx-auto px-6 text-center space-y-16">
+            {/* Footer Compact CTA */}
+            <footer className="relative z-10 pt-20 pb-32 border-t border-white/5">
+                <div className="max-w-4xl mx-auto px-6 text-center space-y-12">
                     <div className="space-y-6">
-                        <h2 className="text-5xl md:text-7xl font-black tracking-tight leading-[0.9]">{t('model.landing.footer_title_line1')} <br /> {t('model.landing.footer_title_line2')}</h2>
-                        <p className="text-xl text-white/40 max-w-xl mx-auto font-light leading-relaxed">{t('model.landing.footer_desc')}</p>
+                        <h2 className="text-5xl md:text-6xl font-black tracking-tight leading-[0.95]">
+                            {t('model.landing.footer_title_line1')} <br /> 
+                            <span className="text-white/20">{t('model.landing.footer_title_line2')}</span>
+                        </h2>
                     </div>
 
-                    <div className="pt-8">
-                        <Link href={`/${language}/model/signup`} className="group relative inline-flex items-center justify-center gap-4 px-12 py-8 rounded-full bg-white text-black font-black text-xl shadow-[0_30px_60px_rgba(255,255,255,0.1)] transition-all duration-500 hover:scale-[1.05] active:scale-95 overflow-hidden">
-                            <span className="relative z-10">{t('model.landing.footer_cta')}</span>
-                            <ArrowRight size={24} className="relative z-10 group-hover:translate-x-2 transition-transform duration-500" />
+                    <div className="flex flex-col items-center gap-10">
+                        <Link href={`/${language}/model/signup`} className="group relative inline-flex items-center justify-center gap-4 px-12 py-6 rounded-full bg-white text-black font-black text-lg shadow-2xl transition-all duration-500 hover:scale-[1.05] active:scale-95">
+                            {t('model.landing.footer_cta')}
+                            <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
                         </Link>
-                    </div>
 
-                    <div className="pt-24 flex items-center justify-center gap-12 opacity-20 filter grayscale hover:grayscale-0 transition-all duration-700">
-                        <ShieldCheck size={48} />
-                        <Globe size={48} />
-                        <Heart size={48} />
+                        <div className="flex items-center justify-center gap-12 opacity-20">
+                            <ShieldCheck size={32} />
+                            <Globe size={32} />
+                            <Heart size={32} />
+                        </div>
+                        
+                        <p className="text-[9px] font-black text-white/10 uppercase tracking-[0.5em]">{t('model.landing.navbar_suite')} • LUXURY DIGITAL EXPERIENCE</p>
+                        <p className="text-[10px] font-bold text-white/40 tracking-widest -mt-4 uppercase">© 2026 KINKY.LIVE</p>
                     </div>
-
-                    <p className="text-[10px] font-black text-white/10 uppercase tracking-[0.5em] pt-12">© 2026 KINKY.LIVE • LUXURY DIGITAL EXPERIENCE</p>
                 </div>
             </footer>
         </div>
