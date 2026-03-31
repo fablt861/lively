@@ -30,18 +30,32 @@ function initBillingLoop(io) {
                 try {
                     const session = JSON.parse(rooms[roomId]);
 
-                    // 1. Verify room still exists in socket.io (prevent ghost billing)
+                    // 1. Verify room still exists in socket.io
                     if (ioInstance) {
                         const activeRoom = ioInstance.sockets.adapter.rooms.get(roomId);
                         if (!activeRoom || activeRoom.size === 0) {
-                            console.log(`[Billing] Room ${roomId} is empty/ghost. Auto-closing.`);
-                            await stopBilling(roomId);
-                            continue;
+                            // Give it a 5-second grace period before closing
+                            session.emptyTicks = (session.emptyTicks || 0) + 1;
+                            console.log(`[Billing] Room ${roomId} is empty (Tick ${session.emptyTicks}/5).`);
+                            
+                            if (session.emptyTicks >= 5) {
+                                console.log(`[Billing] Room ${roomId} exceeded grace period. Auto-closing.`);
+                                await stopBilling(roomId);
+                                continue;
+                            }
+                            // Update session with new tick count
+                            await redis.hset(ACTIVE_ROOMS_KEY, roomId, JSON.stringify(session));
+                        } else {
+                            // Reset grace period if sockets are found
+                            if (session.emptyTicks) {
+                                delete session.emptyTicks;
+                                await redis.hset(ACTIVE_ROOMS_KEY, roomId, JSON.stringify(session));
+                            }
                         }
                     }
 
                     const settings = await getSettings();
-                    const rateUserCreditsPerSec = settings.pricePerMinute / 60.0;
+                    const rateUserCreditsPerSec = (settings.pricePerMinute * 10) / 60.0;
                     const rateModelUsdPerSec = settings.modelPayoutPerMinute / 60.0;
 
                     // 2. Decrement User Credits

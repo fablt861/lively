@@ -6,7 +6,8 @@ const crypto = require('crypto');
 const router = express.Router();
 
 router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+    const { email: rawEmail, password } = req.body;
+    const email = rawEmail?.toLowerCase();
     const redis = getRedisClient();
 
     // 1. Try Model
@@ -46,12 +47,12 @@ router.post('/login', async (req, res) => {
         }
     }
 
-    // fallback for old mock logic if needed, but better to be strict
     return res.status(401).json({ error: 'auth.error.invalid_credentials' });
 });
 
 router.post('/register', async (req, res) => {
-    const { email, password, pseudo } = req.body;
+    const { email: rawEmail, password, pseudo } = req.body;
+    const email = rawEmail?.toLowerCase();
     const redis = getRedisClient();
 
     if (!email || !password || !pseudo) {
@@ -67,14 +68,13 @@ router.post('/register', async (req, res) => {
     const newUser = {
         id: crypto.randomUUID(),
         email,
-        password, // In production, hash it
+        password,
         pseudo,
         role: 'user',
         registeredAt: new Date().toISOString()
     };
 
     await redis.set(`user:active:${email}`, JSON.stringify(newUser));
-    // Grant 5 free credits (30 seconds) for new accounts
     await redis.set(`user:${email}:credits`, "5");
     await logNewUser();
 
@@ -87,7 +87,8 @@ router.post('/register', async (req, res) => {
 
 router.post('/model/register', async (req, res) => {
     const redis = getRedisClient();
-    const { country, phone, firstName, lastName, pseudo, dob, email, password, photoProfile, photoId, photoIdSelfie } = req.body;
+    const { country, phone, firstName, lastName, pseudo, dob, email: rawEmail, password, photoProfile, photoId, photoIdSelfie } = req.body;
+    const email = rawEmail?.toLowerCase();
 
     if (!email || !password || !firstName || !lastName || !photoProfile || !photoId || !photoIdSelfie) {
         return res.status(400).json({ error: 'auth.error.missing_fields' });

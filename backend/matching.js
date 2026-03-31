@@ -27,7 +27,7 @@ function setupMatching(io, socket) {
         try {
             socket.role = role;
             socket.language = language || 'en';
-            socket.userEmail = email; // Persistent ID for registered users
+            socket.userEmail = email?.toLowerCase(); // Persistent ID for registered users
 
             // Get IP for guest tracking
             const userIp = socket.handshake.headers['x-forwarded-for'] || socket.handshake.address;
