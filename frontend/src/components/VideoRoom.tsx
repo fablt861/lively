@@ -361,10 +361,14 @@ export function VideoRoom({
                                         body: JSON.stringify({ email, amount: credits })
                                     });
                                     if (!res.ok) {
-                                        console.error('[Purchase] Failed to sync credits with backend');
+                                        console.error('[Purchase] Failed to sync credits with backend:', await res.text());
+                                        alert("Error: Purchase failed to sync with our servers. Please try again.");
+                                        return;
                                     }
                                 } catch (err) {
                                     console.error('[Purchase Exception]', err);
+                                    alert("Network Error: Could not connect to the billing server.");
+                                    return;
                                 }
                             }
 
