@@ -292,12 +292,27 @@ export default function Home() {
             {showPaywall && (
                 <PaywallModal
                     onClose={() => setShowPaywall(false)}
-                    onPurchase={(credits) => {
+                    onPurchase={async (credits) => {
+                        const email = localStorage.getItem('kinky_user_email');
+                        if (email) {
+                            try {
+                                const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/auth/add-credits`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ email, amount: credits })
+                                });
+                                if (!res.ok) {
+                                    console.error('[Purchase] Failed to sync credits with backend from Home');
+                                }
+                            } catch (err) {
+                                console.error('[Purchase Exception]', err);
+                            }
+                        }
+
                         const current = parseFloat(localStorage.getItem('kinky_credits') || "0");
                         localStorage.setItem('kinky_credits', (current + credits).toString());
                         setUserCredits(current + credits);
                         setShowPaywall(false);
-                        alert(`Successfully added ${credits} credits!`);
                     }}
                 />
             )}
