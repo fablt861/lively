@@ -34,10 +34,10 @@ export default function ModelLandingPage() {
             <nav className="relative z-50 flex justify-between items-center px-6 lg:px-12 py-8 max-w-7xl mx-auto w-full">
                 <Link href={`/${language}`} className="text-2xl font-black tracking-tighter text-white group">
                     KINKY<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 group-hover:from-white transition-all duration-500">.</span>
-                    <span className="text-[9px] font-black text-white/30 ml-2 uppercase tracking-[0.3em] align-middle hidden sm:inline-block">{t('model.landing.navbar_suite')}</span>
+                    <span className="text-[9px] font-black text-white/60 ml-2 uppercase tracking-[0.3em] align-middle hidden sm:inline-block">{t('model.landing.navbar_suite')}</span>
                 </Link>
                 <div className="flex items-center gap-6 md:gap-10">
-                    <a href="#simulator" className="hidden lg:block text-[10px] font-black text-white/40 hover:text-white transition-colors uppercase tracking-[0.2em]">{t('model.landing.nav_simulator')}</a>
+                    <a href="#simulator" className="hidden lg:block text-[10px] font-black text-white/60 hover:text-white transition-colors uppercase tracking-[0.2em]">{t('model.landing.nav_simulator')}</a>
                     <LanguageSelector />
                     <Link href={`/${language}/model/signup`} className="px-6 py-2.5 rounded-full bg-white text-black text-[10px] font-black uppercase tracking-[0.2em] hover:bg-neutral-200 transition-all shadow-xl">
                         {t('model.landing.nav_join')}
@@ -97,11 +97,11 @@ export default function ModelLandingPage() {
                             
                             {/* Trust Pill */}
                             <div className="flex items-center gap-6 px-6 py-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full shadow-lg">
-                                <div className="flex items-center gap-2 text-[9px] font-black text-white/40 uppercase tracking-widest">
+                                <div className="flex items-center gap-2 text-[9px] font-black text-white/60 uppercase tracking-widest">
                                     <CheckCircle2 size={12} className="text-indigo-400" /> {t('model.stat.discretion')} 100%
                                 </div>
                                 <div className="w-px h-3 bg-white/10" />
-                                <div className="flex items-center gap-2 text-[9px] font-black text-white/40 uppercase tracking-widest">
+                                <div className="flex items-center gap-2 text-[9px] font-black text-white/60 uppercase tracking-widest">
                                     <Lock size={12} className="text-purple-400" /> {t('model.stat.secure_access_val')}
                                 </div>
                             </div>
@@ -178,14 +178,11 @@ export default function ModelLandingPage() {
                             <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
                         </Link>
 
-                        <div className="flex items-center justify-center gap-12 opacity-20">
+                        <div className="flex items-center justify-center gap-12 opacity-40">
                             <ShieldCheck size={32} />
                             <Globe size={32} />
                             <Heart size={32} />
                         </div>
-                        
-                        <p className="text-[9px] font-black text-white/10 uppercase tracking-[0.5em]">{t('model.landing.navbar_suite')} • LUXURY DIGITAL EXPERIENCE</p>
-                        <p className="text-[10px] font-bold text-white/40 tracking-widest -mt-4 uppercase">© 2026 KINKY.LIVE</p>
                     </div>
                 </div>
             </footer>

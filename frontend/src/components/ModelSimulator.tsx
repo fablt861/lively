@@ -71,8 +71,8 @@ export function ModelSimulator() {
                                 </span>
                                 <span className="text-xl font-bold text-white/30 tracking-tight">€</span>
                             </div>
-                            <p className="text-[9px] text-white/20 font-medium pt-3 flex items-center gap-2 uppercase tracking-widest">
-                                <Calendar size={10} className="opacity-50" /> {t('simulator.basis_text', { days: DAYS_PER_MONTH })}
+                            <p className="text-[9px] text-white/60 font-medium pt-3 flex items-center gap-2 uppercase tracking-widest">
+                                <Calendar size={10} className="opacity-70" /> {t('simulator.basis_text', { days: DAYS_PER_MONTH })}
                             </p>
                         </div>
                     </div>
