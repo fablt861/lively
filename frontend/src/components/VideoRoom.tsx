@@ -390,7 +390,13 @@ export function VideoRoom({
                         {userCredits <= 2 && (
                             <div className="flex items-center gap-2 sm:gap-4 pl-3 sm:pl-4 ml-2 border-l border-white/10">
                                 <button
-                                    onClick={() => setShowPaywall(true)}
+                                    onClick={() => {
+                                        if (accountStatus === 'guest') {
+                                            setShowAuthModal(true);
+                                        } else {
+                                            setShowPaywall(true);
+                                        }
+                                    }}
                                     className="px-3 py-1 bg-red-500 hover:bg-red-400 text-white rounded-full text-[10px] sm:text-sm font-black transition-all active:scale-95 whitespace-nowrap shadow-lg shadow-red-500/20"
                                 >
                                     {t('room.topup')}
