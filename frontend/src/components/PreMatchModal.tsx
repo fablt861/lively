@@ -124,7 +124,7 @@ export function PreMatchModal({ localStream, onJoin, role = "user" }: PreMatchMo
                     <h2 className="text-2xl md:text-4xl font-black text-white mb-3 tracking-tight">
                         {step === "earnings" ? t('prematch.model_title') : t('prematch.title')}
                     </h2>
-                    <p className="text-white/40 text-xs md:text-sm max-w-xs mx-auto leading-relaxed font-bold uppercase tracking-widest opacity-60">
+                    <p className="text-white/70 text-xs md:text-sm max-w-xs mx-auto leading-relaxed font-semibold">
                         {step === "earnings" ? t('prematch.model_desc') : t('prematch.desc')}
                     </p>
                 </div>
@@ -148,12 +148,12 @@ export function PreMatchModal({ localStream, onJoin, role = "user" }: PreMatchMo
                 </button>
 
                 {/* Small Trust Badges */}
-                <div className="mt-8 md:mt-16 flex items-center gap-8 text-white/30 font-black uppercase tracking-[0.3em] text-[8px] md:text-[10px]">
-                    <div className="flex items-center gap-2 hover:text-white/50 transition-colors">
-                        <Shield size={14} className="text-indigo-500/50" /> {t('prematch.anonymous')}
+                <div className="mt-8 md:mt-16 flex items-center gap-8 text-white/60 font-black uppercase tracking-[0.2em] text-[8px] md:text-[10px]">
+                    <div className="flex items-center gap-2 hover:text-white transition-colors">
+                        <Shield size={14} className="text-indigo-400" /> {t('prematch.anonymous')}
                     </div>
-                    <div className="flex items-center gap-2 hover:text-white/50 transition-colors">
-                        <Zap size={14} className="text-pink-500/50" /> {t('prematch.instant')}
+                    <div className="flex items-center gap-2 hover:text-white transition-colors">
+                        <Zap size={14} className="text-pink-400" /> {t('prematch.instant')}
                     </div>
                 </div>
             </div>
