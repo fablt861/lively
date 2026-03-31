@@ -7,9 +7,10 @@ import { useTranslation } from "@/context/LanguageContext";
 interface PreMatchModalProps {
     localStream: MediaStream | null;
     onJoin: () => void;
+    role?: "user" | "model";
 }
 
-export function PreMatchModal({ localStream, onJoin }: PreMatchModalProps) {
+export function PreMatchModal({ localStream, onJoin, role = "user" }: PreMatchModalProps) {
     const { t } = useTranslation();
     const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -35,7 +36,7 @@ export function PreMatchModal({ localStream, onJoin }: PreMatchModalProps) {
 
             <div className="relative z-10 w-full max-w-lg p-6 flex flex-col items-center">
                 {/* Logo Area */}
-                <div className="mb-6 md:mb-12 text-center scale-90 md:scale-100">
+                <div className="mb-6 md:mb-10 text-center scale-90 md:scale-100">
                     <span className="text-4xl md:text-5xl font-black tracking-tighter text-white drop-shadow-2xl">
                         KINKY<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">.</span>
                     </span>
@@ -44,20 +45,57 @@ export function PreMatchModal({ localStream, onJoin }: PreMatchModalProps) {
                     </div>
                 </div>
 
-                {/* Camera Preview Circular */}
-                <div className="relative mb-8 md:mb-12">
-                    <div className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-[3px] border-white/40 shadow-[0_0_80px_rgba(99,102,241,0.2)] bg-neutral-900 group">
-                        <video
-                            ref={videoRef}
-                            autoPlay
-                            playsInline
-                            muted
-                            className="w-full h-full object-cover scale-105"
-                        />
-                    </div>
-                </div>
+                {role === "model" ? (
+                    /* Model Remuneration Teaser */
+                    <div className="w-full bg-white/5 backdrop-blur-2xl rounded-3xl border border-white/10 p-6 mb-8 shadow-2xl animate-in zoom-in-95 duration-500">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="p-2 bg-indigo-500/20 rounded-xl">
+                                <Zap className="text-indigo-400 w-5 h-5" />
+                            </div>
+                            <h3 className="text-lg font-bold text-white tracking-tight uppercase">
+                                {t('prematch.model_title')}
+                            </h3>
+                        </div>
+                        
+                        <p className="text-white/60 text-xs mb-6 leading-relaxed">
+                            {t('prematch.model_desc')}
+                        </p>
 
-                <div className="text-center mb-6 md:mb-10 px-4">
+                        <div className="space-y-3">
+                            <div className="flex justify-between items-center p-3 bg-white/5 rounded-2xl border border-white/5">
+                                <span className="text-white/80 text-xs font-medium">0 - 5 min</span>
+                                <span className="text-indigo-400 font-bold">$0.40 / min</span>
+                            </div>
+                            <div className="flex justify-between items-center p-3 bg-indigo-500/10 rounded-2xl border border-indigo-500/20">
+                                <span className="text-white/80 text-xs font-medium">5 - 10 min</span>
+                                <span className="text-indigo-400 font-bold">$0.50 / min</span>
+                            </div>
+                            <div className="flex justify-between items-center p-3 bg-pink-500/10 rounded-2xl border border-pink-500/20">
+                                <span className="text-white/80 text-xs font-medium">+ 10 min</span>
+                                <span className="text-pink-400 font-bold">$0.55 / min</span>
+                            </div>
+                        </div>
+
+                        <div className="mt-6 flex items-center gap-2 text-[10px] text-white/30 font-bold uppercase tracking-widest text-center justify-center">
+                            <Shield size={12} /> {t('prematch.anti_fraud')}
+                        </div>
+                    </div>
+                ) : (
+                    /* Standard User Preview */
+                    <div className="relative mb-8 md:mb-12">
+                        <div className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-[3px] border-white/40 shadow-[0_0_80px_rgba(99,102,241,0.2)] bg-neutral-900">
+                            <video
+                                ref={videoRef}
+                                autoPlay
+                                playsInline
+                                muted
+                                className="w-full h-full object-cover scale-105"
+                            />
+                        </div>
+                    </div>
+                )}
+
+                <div className="text-center mb-6 md:mb-8 px-4">
                     <h2 className="text-2xl md:text-4xl font-bold text-white mb-2 md:mb-4 tracking-tight">{t('prematch.title')}</h2>
                     <p className="text-white/40 text-xs md:text-sm max-w-xs mx-auto leading-relaxed">
                         {t('prematch.desc')}
