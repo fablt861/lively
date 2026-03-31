@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useTranslation } from "@/context/LanguageContext";
+import { countries } from "@/utils/countries";
 
 export default function ModelSignupPage() {
     const { t, language } = useTranslation();
@@ -27,6 +28,7 @@ export default function ModelSignupPage() {
 
     // Form State
     const [country, setCountry] = useState("");
+    const [phonePrefix, setPhonePrefix] = useState("+33");
     const [phone, setPhone] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
@@ -98,7 +100,7 @@ export default function ModelSignupPage() {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/auth/model/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ country, phone, firstName, lastName, pseudo, dob, email, password, photoProfile, photoId, photoIdSelfie })
+                body: JSON.stringify({ country, phone: `${phonePrefix}${phone}`, firstName, lastName, pseudo, dob, email, password, photoProfile, photoId, photoIdSelfie })
             });
             const data = await res.json();
             if (data.success) {
@@ -222,12 +224,9 @@ export default function ModelSignupPage() {
                                         onChange={e => setCountry(e.target.value)}
                                     >
                                         <option value="" disabled>{t('model.signup.step1_placeholder')}</option>
-                                        <option value="FR">France</option>
-                                        <option value="BE">Belgique</option>
-                                        <option value="CH">Suisse</option>
-                                        <option value="CA">Canada</option>
-                                        <option value="IT">Italie</option>
-                                        <option value="ES">Espagne</option>
+                                        {countries.map(c => (
+                                            <option key={c.code} value={c.code}>{c.flag} {c.nameFr}</option>
+                                        ))}
                                     </select>
                                     <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/20">
                                         <ArrowRight size={16} className="rotate-90" />
@@ -254,13 +253,19 @@ export default function ModelSignupPage() {
                                     <p className="text-neutral-400 text-sm leading-relaxed px-4">{t('model.signup.step2_desc')}</p>
                                 </div>
                                 <div className="flex gap-3">
-                                    <div className="w-[100px] shrink-0">
-                                        <select className="w-full bg-black/60 border border-white/20 rounded-2xl py-4.5 px-2 text-white/90 appearance-none focus:outline-none focus:border-white/40 text-center font-bold">
-                                            <option>+33</option>
-                                            <option>+32</option>
-                                            <option>+41</option>
-                                            <option>+39</option>
+                                    <div className="w-[120px] shrink-0 relative group">
+                                        <select 
+                                            value={phonePrefix}
+                                            onChange={e => setPhonePrefix(e.target.value)}
+                                            className="w-full bg-black/60 border border-white/20 rounded-2xl py-4.5 pl-2 pr-6 text-white/90 appearance-none focus:outline-none focus:border-white/40 text-center font-bold cursor-pointer"
+                                        >
+                                            {countries.map(c => (
+                                                <option key={c.code} value={c.dialCode}>{c.flag} {c.dialCode}</option>
+                                            ))}
                                         </select>
+                                        <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">
+                                            <ArrowRight size={12} className="rotate-90" />
+                                        </div>
                                     </div>
                                     <div className="flex-1 relative group">
                                         <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
