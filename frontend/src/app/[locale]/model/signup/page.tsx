@@ -138,64 +138,27 @@ export default function ModelSignupPage() {
                 </Link>
             </nav>
 
-            {/* Split Content */}
-            <div className="flex-1 flex flex-col lg:flex-row relative z-20">
-
-                {/* Left Side: Benefits (Desktop only/ordered first) */}
-                <div className="hidden lg:flex flex-1 flex-col justify-center px-12 xl:px-24 py-12 bg-white/[0.02] border-r border-white/5">
-                    <div className="max-w-md space-y-12">
-                        <div className="space-y-4">
-                            <h1 className="text-4xl xl:text-5xl font-black leading-tight">
-                                {t('model.signup.hero_title_line1')} <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-500">{t('model.signup.hero_title_line2')}</span>
-                            </h1>
-                            <p className="text-lg text-white/40 font-light">
-                                {t('model.signup.hero_desc')}
-                            </p>
+            {/* Main Content */}
+            <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-12 py-12 md:py-24 relative z-20">
+                
+                {/* Progress Indicator */}
+                {step < 5 && (
+                    <div className="w-full max-w-md mb-10">
+                        <div className="flex justify-between items-center mb-4">
+                            <button onClick={handlePrev} className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest hover:text-white transition-colors ${step === 1 ? 'invisible' : 'text-neutral-500'}`}>
+                                <ArrowLeft size={14} /> {t('model.signup.step_prev')}
+                            </button>
+                            <div className="text-[10px] font-black tracking-[0.3em] text-pink-500 uppercase">{t('model.signup.step_indicator', { step, total: 4 })}</div>
                         </div>
-
-                        <div className="space-y-8">
-                            {[
-                                { icon: DollarSign, title: t('model.signup.benefit1_title'), desc: t('model.signup.benefit1_desc'), color: "text-green-400" },
-                                { icon: EyeOff, title: t('model.signup.benefit2_title'), desc: t('model.signup.benefit2_desc'), color: "text-indigo-400" },
-                                { icon: Clock, title: t('model.signup.benefit3_title'), desc: t('model.signup.benefit3_desc'), color: "text-pink-400" },
-                                { icon: HeartPulse, title: t('model.signup.benefit4_title'), desc: t('model.signup.benefit4_desc'), color: "text-rose-400" },
-                            ].map((item, i) => (
-                                <div key={i} className="flex gap-5 group items-center">
-                                    <div className={`w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center ${item.color} group-hover:scale-110 transition-transform shadow-xl`}>
-                                        <item.icon size={26} />
-                                    </div>
-                                    <div>
-                                        <h3 className="font-bold text-white/90">{item.title}</h3>
-                                        <p className="text-sm text-white/30 leading-relaxed">{item.desc}</p>
-                                    </div>
-                                </div>
+                        <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden flex gap-1">
+                            {steps.map(s => (
+                                <div key={s.id} className={`h-full flex-1 rounded-full transition-all duration-500 ${step >= s.id ? 'bg-gradient-to-r from-pink-500 to-indigo-500 shadow-[0_0_10px_rgba(236,72,153,0.3)]' : 'bg-white/5'}`} />
                             ))}
                         </div>
                     </div>
-                </div>
+                )}
 
-                {/* Right Side: Form */}
-                <div className="flex-1 flex flex-col items-center justify-center p-6 lg:p-12">
-
-                    {/* Progress Indicator */}
-                    {step < 5 && (
-                        <div className="w-full max-w-md mb-8">
-                            <div className="flex justify-between items-center mb-4">
-                                <button onClick={handlePrev} className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest hover:text-white transition-colors ${step === 1 ? 'invisible' : 'text-neutral-500'}`}>
-                                    <ArrowLeft size={14} /> {t('model.signup.step_prev')}
-                                </button>
-                                <div className="text-[10px] font-black tracking-[0.3em] text-pink-500 uppercase">{t('model.signup.step_indicator', { step, total: 4 })}</div>
-                            </div>
-                            <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden flex gap-1">
-                                {steps.map(s => (
-                                    <div key={s.id} className={`h-full flex-1 rounded-full transition-all duration-500 ${step >= s.id ? 'bg-gradient-to-r from-pink-500 to-indigo-500 shadow-[0_0_10px_rgba(236,72,153,0.3)]' : 'bg-white/5'}`} />
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    <div className="w-full max-w-md bg-neutral-900 border border-white/10 p-8 sm:p-10 rounded-[2.5rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] relative overflow-hidden">
+                <div className="w-full max-w-md bg-neutral-900 border border-white/10 p-8 sm:p-10 rounded-[2.5rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] relative overflow-hidden">
 
                         {/* Internal Glow */}
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500/20 via-indigo-500/20 to-pink-500/20" />
@@ -442,7 +405,6 @@ export default function ModelSignupPage() {
                         <ShieldCheck size={14} className="text-white/40" />
                         {t('model.signup.footer_secure')}
                     </div>
-                </div>
             </div>
         </div>
     );
