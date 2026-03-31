@@ -496,10 +496,6 @@ export default function AdminPage() {
                             <h3 className="text-xl font-medium text-indigo-400 border-b border-white/5 pb-4">{t('admin.settings.rates_title')}</h3>
                             <div className="grid grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-sm text-neutral-400 mb-2">{t('admin.settings.price_per_min')}</label>
-                                    <input type="number" step="0.01" value={settings.pricePerMinute} onChange={e => setSettings({ ...settings, pricePerMinute: parseFloat(e.target.value) })} className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 transition-colors" />
-                                </div>
-                                <div>
                                     <label className="block text-sm text-neutral-400 mb-2">{t('admin.settings.model_payout_per_min')}</label>
                                     <input type="number" step="0.01" value={settings.modelPayoutPerMinute} onChange={e => setSettings({ ...settings, modelPayoutPerMinute: parseFloat(e.target.value) })} className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 transition-colors" />
                                 </div>
@@ -530,15 +526,24 @@ export default function AdminPage() {
                                             const newPacks = [...settings.packs];
                                             newPacks[i].credits = parseInt(e.target.value);
                                             setSettings({ ...settings, packs: newPacks });
-                                        }} className="w-full bg-transparent border-b border-white/20 focus:border-indigo-500 p-1 text-white outline-none transition-colors text-right" />
+                                        }} className="w-full bg-transparent border-b border-white/20 focus:border-indigo-500 p-1 text-white outline-none transition-colors text-right font-mono" />
+                                        <div className="text-[10px] text-indigo-400 mt-2 text-right font-medium tracking-wide">
+                                            {Math.floor((pack.credits || 0) / 10)} min
+                                        </div>
                                     </div>
                                     <div className="w-24">
                                         <label className="block text-xs text-neutral-500 mb-1">{t('admin.pack.price')}</label>
-                                        <input type="number" step="0.01" value={pack.priceUsd} onChange={e => {
-                                            const newPacks = [...settings.packs];
-                                            newPacks[i].priceUsd = parseFloat(e.target.value);
-                                            setSettings({ ...settings, packs: newPacks });
-                                        }} className="w-full bg-transparent border-b border-white/20 focus:border-indigo-500 p-1 text-white outline-none transition-colors text-right" />
+                                        <div className="relative">
+                                            <span className="absolute left-0 top-1.5 text-white/50 text-sm">$</span>
+                                            <input type="number" step="0.01" value={pack.priceUsd} onChange={e => {
+                                                const newPacks = [...settings.packs];
+                                                newPacks[i].priceUsd = parseFloat(e.target.value);
+                                                setSettings({ ...settings, packs: newPacks });
+                                            }} className="w-full bg-transparent border-b border-white/20 focus:border-indigo-500 p-1 pl-4 text-white outline-none transition-colors text-right font-mono" />
+                                        </div>
+                                        <div className="text-[10px] text-green-400 mt-2 text-right font-medium tracking-wide">
+                                            ${((pack.priceUsd || 0) / Math.max(1, ((pack.credits || 0) / 10))).toFixed(2)}/min
+                                        </div>
                                     </div>
                                 </div>
                             ))}
