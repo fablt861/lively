@@ -5,7 +5,7 @@ import { ArrowRight, User, Lock, Mail, ShieldCheck, X, CheckSquare, Square } fro
 import { useTranslation } from "@/context/LanguageContext";
 
 interface UnifiedAuthModalProps {
-    onSuccess: (email: string, role: string, pseudo: string) => void;
+    onSuccess: (email: string, role: string, pseudo: string, credits: number) => void;
     onClose?: () => void;
 }
 
@@ -43,7 +43,7 @@ export function UnifiedAuthModal({ onSuccess, onClose }: UnifiedAuthModalProps) 
             const data = await res.json();
 
             if (res.ok && data.success) {
-                onSuccess(data.user.email, data.user.role, data.user.name);
+                onSuccess(data.user.email, data.user.role, data.user.name, data.user.credits || 0);
             } else {
                 setError(t(data.error) || t('auth.error.invalid'));
             }

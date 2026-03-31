@@ -37,10 +37,11 @@ router.post('/login', async (req, res) => {
         if (user.password === password) {
             // Update last login
             await redis.set(`user:${email}:last_login`, new Date().toISOString());
+            const credits = await redis.get(`user:${email}:credits`) || "0";
             return res.json({
                 success: true,
                 token: `user-token-${email}`,
-                user: { email, role: 'user', name: user.name || user.pseudo }
+                user: { email, role: 'user', name: user.name || user.pseudo, credits: parseFloat(credits) }
             });
         }
     }
@@ -80,7 +81,7 @@ router.post('/register', async (req, res) => {
     res.json({
         success: true,
         token: `user-token-${email}`,
-        user: { email, role: 'user', name: pseudo }
+        user: { email, role: 'user', name: pseudo, credits: 5 }
     });
 });
 
