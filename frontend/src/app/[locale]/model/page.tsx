@@ -112,17 +112,44 @@ export default function ModelLandingPage() {
 
             {/* NEW: Live Cam Section */}
             <section className="relative z-10 py-16 md:py-24 border-y border-white/5 bg-gradient-to-b from-transparent via-indigo-500/[0.03] to-transparent">
-                <div className="max-w-4xl mx-auto px-6 text-center space-y-6">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-500/10 border border-red-500/20 rounded-full text-red-400 text-[8px] font-black uppercase tracking-[0.3em]">
-                        <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                        Live Cam Platform
+                <div className="max-w-7xl mx-auto px-6">
+                    <div className="text-center space-y-6 mb-16">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-500/10 border border-red-500/20 rounded-full text-red-400 text-[8px] font-black uppercase tracking-[0.3em]">
+                            <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                            Live Cam Platform
+                        </div>
+                        <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
+                            {t('model.landing.live_cam_title')}
+                        </h2>
+                        <p className="text-lg text-white/60 font-medium max-w-2xl mx-auto leading-relaxed">
+                            {t('model.landing.live_cam_desc')}
+                        </p>
                     </div>
-                    <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
-                        {t('model.landing.live_cam_title')}
-                    </h2>
-                    <p className="text-lg text-white/60 font-medium max-w-2xl mx-auto leading-relaxed">
-                        {t('model.landing.live_cam_desc')}
-                    </p>
+
+                    {/* Image Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="group relative overflow-hidden rounded-3xl bg-white/5 border border-white/10 aspect-[4/3] hover:border-indigo-500/50 transition-all duration-500">
+                            <img src="/images/live_cam_mockup_1.png" alt="Live Cam Desktop" className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+                            <div className="absolute bottom-6 left-6">
+                                <p className="text-[10px] font-black text-white uppercase tracking-widest">Premium Desktop Experience</p>
+                            </div>
+                        </div>
+                        <div className="group relative overflow-hidden rounded-3xl bg-white/5 border border-white/10 aspect-[4/3] md:translate-y-6 hover:border-purple-500/50 transition-all duration-500">
+                            <img src="/images/live_cam_mockup_2.png" alt="Live Cam Mobile" className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+                            <div className="absolute bottom-6 left-6">
+                                <p className="text-[10px] font-black text-white uppercase tracking-widest">Mobile Live Streaming</p>
+                            </div>
+                        </div>
+                        <div className="group relative overflow-hidden rounded-3xl bg-white/5 border border-white/10 aspect-[4/3] hover:border-indigo-500/50 transition-all duration-500">
+                            <img src="/images/live_cam_mockup_3.png" alt="Pro Camera Setup" className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+                            <div className="absolute bottom-6 left-6">
+                                <p className="text-[10px] font-black text-white uppercase tracking-widest">High-End Equipment Support</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
