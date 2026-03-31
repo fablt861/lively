@@ -85,6 +85,28 @@ router.post('/register', async (req, res) => {
     });
 });
 
+router.post('/add-credits', async (req, res) => {
+    const { email: rawEmail, amount } = req.body;
+    const email = rawEmail?.toLowerCase();
+    const redis = getRedisClient();
+
+    if (!email || !amount) {
+        return res.status(400).json({ error: 'auth.error.missing_fields' });
+    }
+
+    const userData = await redis.get(`user:active:${email}`);
+    if (!userData) {
+        return res.status(404).json({ error: 'auth.error.user_not_found' });
+    }
+
+    const newCredits = await redis.incrbyfloat(`user:${email}:credits`, amount);
+
+    res.json({
+        success: true,
+        credits: newCredits
+    });
+});
+
 router.post('/model/register', async (req, res) => {
     const redis = getRedisClient();
     const { country, phone, firstName, lastName, pseudo, dob, email: rawEmail, password, photoProfile, photoId, photoIdSelfie } = req.body;
