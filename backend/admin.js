@@ -304,7 +304,20 @@ router.get('/realtime', requireAuth, async (req, res) => {
         // 1. Basic Stats
         const modelsOnline = sockets.filter(s => s.role === 'model').length;
         const usersOnline = sockets.filter(s => s.role === 'user').length;
-        const activeCalls = await redis.hlen('billing:active_rooms');
+        const rooms = await redis.hgetall('billing:active_rooms');
+        const activeCallsCount = Object.keys(rooms).length;
+
+        const roomDetails = [];
+        for (const roomId in rooms) {
+            const data = JSON.parse(rooms[roomId]);
+            roomDetails.push({
+                roomId,
+                userId: data.userId,
+                modelId: data.modelId,
+                startTime: data.startTime,
+                durationSec: Math.floor((Date.now() - data.startTime) / 1000)
+            });
+        }
 
         // 2. Queue Status (IDs from Redis)
         const waitingModelsIds = await redis.lrange(QUEUE_MODELS, 0, -1);
@@ -343,7 +356,8 @@ router.get('/realtime', requireAuth, async (req, res) => {
             online: {
                 totalModels: modelsOnline,
                 totalUsers: usersOnline,
-                activeCalls: activeCalls
+                activeCalls: activeCallsCount,
+                roomDetails
             },
             queue: {
                 modelsCount: waitingModelsIds.length,

@@ -87,6 +87,16 @@ function initBillingLoop(io) {
             for (const roomId in rooms) {
                 const session = JSON.parse(rooms[roomId]);
 
+                // Check if room still has active sockets
+                if (io) {
+                    const activeRoom = io.sockets.adapter.rooms.get(roomId);
+                    if (!activeRoom || activeRoom.size === 0) {
+                        console.log(`[Billing] Room ${roomId} is empty. Auto-closing ghost session.`);
+                        await stopBilling(roomId);
+                        continue;
+                    }
+                }
+
                 const durationSec = Math.floor((Date.now() - session.startTime) / 1000);
 
                 const settings = await getSettings();
