@@ -158,7 +158,7 @@ export default function ModelSignupPage() {
                     </div>
                 )}
 
-                <div className="w-full max-w-md bg-neutral-900 border border-white/10 p-8 sm:p-10 rounded-[2.5rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] relative overflow-hidden">
+                <div className={`w-full ${step === 4 ? 'max-w-5xl' : 'max-w-md'} bg-neutral-900 border border-white/10 p-8 sm:p-10 rounded-[2.5rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] relative overflow-hidden transition-all duration-700`}>
 
                         {/* Internal Glow */}
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500/20 via-indigo-500/20 to-pink-500/20" />
@@ -322,26 +322,26 @@ export default function ModelSignupPage() {
                                     <p className="text-neutral-400 text-sm leading-relaxed px-4">{t('model.signup.step4_desc')}</p>
                                 </div>
 
-                                <div className="space-y-4">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     {[
                                         { id: 'profile', label: t('model.signup.step4_instruction1'), photo: photoProfile },
                                         { id: 'id', label: t('model.signup.step4_instruction2'), photo: photoId },
                                         { id: 'selfie', label: t('model.signup.step4_instruction3'), photo: photoIdSelfie }
                                     ].map((p, idx) => (
-                                        <div key={idx} className={`p-4 rounded-3xl border transition-all duration-300 ${p.photo ? 'bg-green-500/10 border-green-500/40' : 'bg-black/40 border-white/5 group hover:border-white/20'}`}>
+                                        <div key={idx} className={`p-3 rounded-2xl border transition-all duration-300 ${p.photo ? 'bg-green-500/10 border-green-500/40' : 'bg-black/40 border-white/5 group hover:border-white/20'}`}>
                                             <div className="flex items-center justify-between mb-2">
                                                 <p className="font-bold text-[10px] uppercase tracking-widest text-white/50">{idx + 1}. {t('model.signup.step4_consigne')}</p>
                                                 {p.photo && <CheckCircle2 className="text-green-500" size={16} />}
                                             </div>
-                                            <p className="text-xs font-medium mb-3 text-white/90">{p.label}</p>
-
-                                            <div className="relative group/photo overflow-hidden rounded-2xl bg-black/60 aspect-video flex items-center justify-center border border-white/5">
+                                            <p className="text-[10px] font-medium mb-3 text-white/90 leading-tight h-8 line-clamp-2">{p.label}</p>
+                                            
+                                            <div className="relative group/photo overflow-hidden rounded-xl bg-black/60 aspect-[4/3] flex items-center justify-center border border-white/5">
                                                 {p.photo ? (
                                                     <img src={p.photo} alt="Verification" className="w-full h-full object-cover" />
                                                 ) : (
-                                                    <Camera className="text-white/10" size={32} />
+                                                    <Camera className="text-white/10" size={24} />
                                                 )}
-
+                                                
                                                 <input
                                                     type="file"
                                                     accept="image/*"
@@ -353,8 +353,8 @@ export default function ModelSignupPage() {
                                                     htmlFor={`upload-${p.id}`}
                                                     className={`absolute inset-0 flex items-center justify-center cursor-pointer transition-all ${p.photo ? 'bg-black/60 opacity-0 hover:opacity-100' : 'bg-transparent'}`}
                                                 >
-                                                    <div className="bg-white text-black font-black text-[9px] uppercase tracking-widest px-4 py-2 rounded-full shadow-2xl flex items-center gap-2">
-                                                        <Camera size={12} />
+                                                    <div className="bg-white text-black font-black text-[8px] uppercase tracking-widest px-3 py-1.5 rounded-full shadow-2xl flex items-center gap-1.5">
+                                                        <Camera size={10} />
                                                         {compressing ? t('model.signup.step4_compressing') : p.photo ? t('model.signup.step4_change') : t('model.signup.step4_upload')}
                                                     </div>
                                                 </label>
@@ -363,14 +363,16 @@ export default function ModelSignupPage() {
                                     ))}
                                 </div>
 
-                                <button
-                                    onClick={handleSubmit}
-                                    disabled={!photoProfile || !photoId || !photoIdSelfie || loading}
-                                    className="w-full mt-6 bg-gradient-to-r from-pink-500 to-rose-600 hover:opacity-90 text-white font-bold py-5 rounded-full flex items-center justify-center gap-3 transition-all disabled:opacity-30 shadow-xl active:scale-95"
-                                >
-                                    {loading ? t('model.signup.step4_submitting') : t('model.signup.step4_btn')}
-                                    {!loading && <Check size={20} />}
-                                </button>
+                                <div className="flex justify-center mt-8">
+                                    <button
+                                        onClick={handleSubmit}
+                                        disabled={!photoProfile || !photoId || !photoIdSelfie || loading}
+                                        className="w-full max-w-md bg-gradient-to-r from-pink-500 to-rose-600 hover:opacity-90 text-white font-bold py-5 rounded-full flex items-center justify-center gap-3 transition-all disabled:opacity-30 shadow-xl active:scale-95"
+                                    >
+                                        {loading ? t('model.signup.step4_submitting') : t('model.signup.step4_btn')}
+                                        {!loading && <Check size={20} />}
+                                    </button>
+                                </div>
                             </div>
                         )}
 
