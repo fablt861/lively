@@ -152,7 +152,7 @@ async function handleJoinQueue(io, socket) {
             const userBillingId = (isModel ? (partnerSocket.userEmail || partnerSocket.userIp) : (socket.userEmail || socket.userIp))?.toLowerCase();
             const modelBillingId = (isModel ? (socket.userEmail || socket.id) : (partnerSocket.userEmail || partnerId))?.toLowerCase();
             
-            await startBilling(roomId, userBillingId, modelBillingId);
+            await startBilling(roomId, userBillingId, modelBillingId, isModel ? partnerId : socket.id, isModel ? socket.id : partnerId);
 
             // Notify both parties with partner info for reporting
             socket.emit('matched', { 

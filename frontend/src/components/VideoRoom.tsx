@@ -143,16 +143,31 @@ export function VideoRoom({
             }
         };
 
+        const handleCreditsUpdate = (newCredits: number) => {
+            if (role === 'user') {
+                setUserCredits(newCredits);
+                localStorage.setItem('kinky_credits', String(newCredits));
+                
+                if (newCredits <= 0) {
+                    if (onCallEnd) onCallEnd();
+                    if (accountStatus === 'guest') setShowAuthModal(true);
+                    else setShowPaywall(true);
+                }
+            }
+        };
+
         socket.on('out_of_credits', handleOutOfCredits);
         socket.on('partner_out_of_credits', handlePartnerOutOfCredits);
+        socket.on('credits_update', handleCreditsUpdate);
 
         return () => {
             socket.off('out_of_credits', handleOutOfCredits);
             socket.off('partner_out_of_credits', handlePartnerOutOfCredits);
+            socket.off('credits_update', handleCreditsUpdate);
         };
-    }, [socket, role, accountStatus, onNext]);
+    }, [socket, role, accountStatus, onNext, onCallEnd]);
 
-    // Timer & Teaser logic
+    // Teaser logic (only for 0-credit entries)
     const teaserTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
@@ -164,7 +179,7 @@ export function VideoRoom({
             return;
         }
 
-        // --- CASE 1: 0 CREDITS TEASER ---
+        // --- 0 CREDITS TEASER (on initial connect only) ---
         if (userCredits <= 0) {
             console.log("[Teaser] Starting 4s teaser countdown");
             teaserTimerRef.current = setTimeout(() => {
@@ -176,27 +191,7 @@ export function VideoRoom({
                 if (teaserTimerRef.current) clearTimeout(teaserTimerRef.current);
             };
         }
-
-        // --- CASE 2: NORMAL BILLING ---
-        const interval = setInterval(() => {
-            setUserCredits((prev) => {
-                if (prev === null) return null;
-                const next = Math.max(0, prev - 1);
-                localStorage.setItem('kinky_credits', next.toString());
-                if (next === 0) {
-                    if (handleOutOfCredits) handleOutOfCredits();
-                    if (accountStatus === 'guest') setShowAuthModal(true);
-                    else setShowPaywall(true);
-                }
-                return next;
-            });
-        }, 6000);
-
-        return () => {
-            clearInterval(interval);
-            if (teaserTimerRef.current) clearTimeout(teaserTimerRef.current);
-        };
-    }, [role, isConnected, userCredits, accountStatus, handleOutOfCredits]);
+    }, [role, isConnected, userCredits, accountStatus]);
 
     useEffect(() => {
         if (localVideoRef.current && localStream) {
