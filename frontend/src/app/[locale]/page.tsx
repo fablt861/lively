@@ -111,7 +111,7 @@ export default function Home() {
                                     <div className="absolute right-0 mt-2 w-56 bg-[#0f0f0f] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-40 animate-in fade-in zoom-in duration-200">
                                         <div className="px-5 py-4 border-b border-white/5">
                                             <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mb-1.5">
-                                                {userRole === 'model' ? 'Earnings' : t('nav.menu.balance', { amount: 0 }).split(':')[0]}
+                                                {userRole === 'model' ? t('dashboard.balance_title') : t('nav.menu.balance_label')}
                                             </p>
                                             <div className="flex items-center gap-2">
                                                 <Wallet size={16} className={userRole === 'model' ? 'text-pink-400' : 'text-indigo-400'} />
@@ -303,12 +303,12 @@ export default function Home() {
                                 });
                                 if (!res.ok) {
                                     console.error('[Purchase] Failed to sync credits with backend from Home:', await res.text());
-                                    alert("Error: Purchase failed to sync with our servers. Please try again.");
+                                    alert(t('billing.error_sync'));
                                     return;
                                 }
                             } catch (err) {
                                 console.error('[Purchase Exception]', err);
-                                alert("Network Error: Could not connect to the billing server.");
+                                alert(t('billing.error_network'));
                                 return;
                             }
                         }

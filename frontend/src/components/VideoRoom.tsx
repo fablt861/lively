@@ -26,7 +26,7 @@ function EarningsCounter({ hasVideo, currentRate, totalEarned }: { hasVideo: boo
             </div>
             {currentRate > 0 && (
                 <div className="px-3 py-1 bg-indigo-500/80 backdrop-blur-md rounded-full border border-indigo-400/30 text-[10px] font-black uppercase tracking-tighter shadow-lg animate-in slide-in-from-right-4 duration-500">
-                    Gain actuel : ${currentRate.toFixed(2)} / min
+                    {t('room.current_rate', { rate: currentRate.toFixed(2) })}
                 </div>
             )}
         </div>
@@ -288,7 +288,7 @@ export function VideoRoom({
                     reporterRole,
                     reason: reportReason,
                     screenshots,
-                    reportedEmail: partnerInfo?.email || 'unknown@lively.live',
+                    reportedEmail: partnerInfo?.email || 'unknown@kinky.live',
                     reportedName: partnerInfo?.name || 'Unknown',
                     reportedRole: partnerInfo?.role || (role === 'model' ? 'user' : 'model')
                 })
@@ -373,12 +373,12 @@ export function VideoRoom({
                                     });
                                     if (!res.ok) {
                                         console.error('[Purchase] Failed to sync credits with backend:', await res.text());
-                                        alert("Error: Purchase failed to sync with our servers. Please try again.");
+                                        alert(t('billing.error_sync'));
                                         return;
                                     }
                                 } catch (err) {
                                     console.error('[Purchase Exception]', err);
-                                    alert("Network Error: Could not connect to the billing server.");
+                                    alert(t('billing.error_network'));
                                     return;
                                 }
                             }

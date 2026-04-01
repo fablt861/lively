@@ -867,7 +867,7 @@ export default function AdminPage() {
                             <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm flex items-center gap-3">
                                 <XCircle size={20} />
                                 {fetchError}
-                                <button onClick={fetchUsers} className="ml-auto underline font-bold">Réessayer</button>
+                                <button onClick={fetchUsers} className="ml-auto underline font-bold">{t('common.retry')}</button>
                             </div>
                         )}
 
@@ -879,7 +879,7 @@ export default function AdminPage() {
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.registration')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.last_login')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.total_spent')}</th>
-                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Crédits</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.credits')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase text-right">{t('admin.table.status')}</th>
                                     </tr>
                                 </thead>
@@ -901,7 +901,7 @@ export default function AdminPage() {
                                                 }
                                                 <button
                                                     onClick={async () => {
-                                                        const amount = prompt(`Modifier les crédits de ${u.pseudo} :`, u.credits || 0);
+                                                        const amount = prompt(t('admin.users.edit_credits_prompt', { pseudo: u.pseudo }), u.credits || 0);
                                                         if (amount !== null && !isNaN(parseFloat(amount))) {
                                                             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/users/${encodeURIComponent(u.email)}/credits`, {
                                                                 method: "POST",
@@ -911,13 +911,13 @@ export default function AdminPage() {
                                                             if (res.ok) {
                                                                 fetchUsers();
                                                             } else {
-                                                                alert("Erreur lors de la modification des crédits.");
+                                                                alert(t('admin.users.edit_credits_error'));
                                                             }
                                                         }
                                                     }}
                                                     className="bg-white/10 hover:bg-white/20 text-white text-[10px] font-bold px-3 py-2 rounded-lg transition-colors ml-2"
                                                 >
-                                                    Modifier
+                                                    {t('admin.users.edit_credits_cta')}
                                                 </button>
                                             </td>
                                         </tr>
