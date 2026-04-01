@@ -66,8 +66,9 @@ router.get('/marketing', requireAuth, async (req, res) => {
 router.post('/stats/track-visit', async (req, res) => {
     try {
         const { src, camp, ad } = req.body;
+        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
         const { trackMarketingVisit } = require('./stats');
-        await trackMarketingVisit(src, camp, ad);
+        await trackMarketingVisit(src, camp, ad, ip);
         res.json({ success: true });
     } catch (err) {
         console.error(err);

@@ -58,8 +58,15 @@ async function getDailyStats(daysBack = 30) {
     return results;
 }
 
-async function trackMarketingVisit(src, camp, ad) {
+async function trackMarketingVisit(src, camp, ad, ip) {
     const key = (src || camp || ad) ? `src:${src || ''}|camp:${camp || ''}|ad:${ad || ''}` : 'direct';
+    
+    // Uniqueness check based on IP
+    if (ip) {
+        const isNew = await redis.sadd(`marketing:visitors:${key}`, ip);
+        if (!isNew) return; // Not a unique visit
+    }
+
     await redis.hincrby(`marketing:stats:${key}`, 'visits', 1);
     await redis.sadd('marketing:active_keys', key);
 }
