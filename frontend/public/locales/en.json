@@ -406,8 +406,8 @@
   "billing.method_bank": "Bank Transfer",
   "billing.method_paypal": "PayPal",
   "billing.method_crypto": "Cryptocurrency",
-  "billing.bank_iban": "IBAN / Account Number",
-  "billing.bank_swift": "SWIFT / BIC",
+  "billing.bank_iban": "IBAN",
+  "billing.bank_swift": "BIC/SWIFT",
   "billing.paypal_email": "PayPal Email",
   "billing.crypto_address": "Wallet Address",
   "billing.save": "Save Billing Information",
@@ -469,5 +469,9 @@
   "model.signup.error.invalid_email": "Please enter a valid email address.",
   "model.signup.error.password_short": "Password must be at least 8 characters.",
   "model.signup.error.underage": "You must be at least 18 years old to join.",
-  "model.signup.error.fields_required": "Please fill in all required fields."
+  "model.signup.error.fields_required": "Please fill in all required fields.",
+  "billing.bank_country": "Bank Country",
+  "billing.bank_routing": "Routing Number",
+  "billing.bank_account": "Account Number",
+  "billing.bank_sort_code": "Sort Code"
 }

@@ -1,16 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, ShieldCheck, Landmark, Wallet, Mail, Globe, User, MapPin } from "lucide-react";
+import { X, ShieldCheck, Landmark, Wallet, Mail, Globe, User, MapPin, ChevronDown } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
+import { countries } from "@/utils/countries";
 
 interface BillingInfo {
     name: string;
     address: string;
     country: string;
     method: 'bank' | 'paypal' | 'crypto';
+    bankCountry?: string;
     bankIban?: string;
     bankSwift?: string;
+    bankRouting?: string;
+    bankAccount?: string;
+    bankSortCode?: string;
     paypalEmail?: string;
     cryptoAddress?: string;
 }
@@ -128,13 +133,22 @@ export function ModelBillingModal({ isOpen, onClose, modelEmail }: ModelBillingM
                                     <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
                                         <Globe size={12} /> {t('billing.country')}
                                     </label>
-                                    <input 
-                                        type="text"
-                                        required
-                                        value={info.country}
-                                        onChange={e => setInfo({...info, country: e.target.value})}
-                                        className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all"
-                                    />
+                                    <div className="relative group">
+                                        <select 
+                                            required
+                                            value={info.country}
+                                            onChange={e => setInfo({...info, country: e.target.value})}
+                                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all appearance-none cursor-pointer"
+                                        >
+                                            <option value="" disabled>Select Country</option>
+                                            {countries.map(c => (
+                                                <option key={c.code} value={c.code}>{c.nameFr} {c.flag}</option>
+                                            ))}
+                                        </select>
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">
+                                            <ChevronDown size={16} />
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className="space-y-2 col-span-1 md:col-span-2">
                                     <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
@@ -179,25 +193,129 @@ export function ModelBillingModal({ isOpen, onClose, modelEmail }: ModelBillingM
                                 {info.method === 'bank' && (
                                     <>
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2">{t('billing.bank_iban')}</label>
-                                            <input 
-                                                type="text"
-                                                required
-                                                value={info.bankIban || ""}
-                                                onChange={e => setInfo({...info, bankIban: e.target.value})}
-                                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all font-mono"
-                                            />
+                                            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
+                                                <Globe size={12} /> {t('billing.bank_country')}
+                                            </label>
+                                            <div className="relative group">
+                                                <select 
+                                                    required
+                                                    value={info.bankCountry || ""}
+                                                    onChange={e => setInfo({...info, bankCountry: e.target.value})}
+                                                    className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all appearance-none cursor-pointer"
+                                                >
+                                                    <option value="" disabled>Select Bank Country</option>
+                                                    {countries.map(c => (
+                                                        <option key={c.code} value={c.code}>{c.nameFr} {c.flag}</option>
+                                                    ))}
+                                                </select>
+                                                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">
+                                                    <ChevronDown size={16} />
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2">{t('billing.bank_swift')}</label>
-                                            <input 
-                                                type="text"
-                                                required
-                                                value={info.bankSwift || ""}
-                                                onChange={e => setInfo({...info, bankSwift: e.target.value})}
-                                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all font-mono"
-                                            />
-                                        </div>
+
+                                        {/* Dynamic Fields based on Bank Country */}
+                                        {info.bankCountry && (
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                                                {/* SEPA (Europe) */}
+                                                {['FR', 'DE', 'IT', 'ES', 'NL', 'BE', 'LU', 'IE', 'PT', 'GR', 'AT', 'FI', 'EE', 'LV', 'LT', 'SK', 'SI', 'MT', 'CY', 'CH', 'LI', 'NO', 'IS', 'HR', 'MC', 'SM', 'AD', 'VA'].includes(info.bankCountry) ? (
+                                                    <>
+                                                        <div className="space-y-2 col-span-2">
+                                                            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2">{t('billing.bank_iban')}</label>
+                                                            <input 
+                                                                type="text"
+                                                                required
+                                                                value={info.bankIban || ""}
+                                                                onChange={e => setInfo({...info, bankIban: e.target.value})}
+                                                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all font-mono"
+                                                            />
+                                                        </div>
+                                                        <div className="space-y-2 col-span-2">
+                                                            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2">{t('billing.bank_swift')}</label>
+                                                            <input 
+                                                                type="text"
+                                                                required
+                                                                value={info.bankSwift || ""}
+                                                                onChange={e => setInfo({...info, bankSwift: e.target.value})}
+                                                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all font-mono"
+                                                            />
+                                                        </div>
+                                                    </>
+                                                ) : info.bankCountry === 'US' ? (
+                                                    /* USA */
+                                                    <>
+                                                        <div className="space-y-2 col-span-2">
+                                                            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2">{t('billing.bank_routing')}</label>
+                                                            <input 
+                                                                type="text"
+                                                                required
+                                                                value={info.bankRouting || ""}
+                                                                onChange={e => setInfo({...info, bankRouting: e.target.value})}
+                                                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all font-mono"
+                                                            />
+                                                        </div>
+                                                        <div className="space-y-2 col-span-2">
+                                                            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2">{t('billing.bank_account')}</label>
+                                                            <input 
+                                                                type="text"
+                                                                required
+                                                                value={info.bankAccount || ""}
+                                                                onChange={e => setInfo({...info, bankAccount: e.target.value})}
+                                                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all font-mono"
+                                                            />
+                                                        </div>
+                                                    </>
+                                                ) : info.bankCountry === 'GB' ? (
+                                                    /* UK */
+                                                    <>
+                                                        <div className="space-y-2 col-span-2">
+                                                            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2">{t('billing.bank_sort_code')}</label>
+                                                            <input 
+                                                                type="text"
+                                                                required
+                                                                value={info.bankSortCode || ""}
+                                                                onChange={e => setInfo({...info, bankSortCode: e.target.value})}
+                                                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all font-mono"
+                                                            />
+                                                        </div>
+                                                        <div className="space-y-2 col-span-2">
+                                                            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2">{t('billing.bank_account')}</label>
+                                                            <input 
+                                                                type="text"
+                                                                required
+                                                                value={info.bankAccount || ""}
+                                                                onChange={e => setInfo({...info, bankAccount: e.target.value})}
+                                                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all font-mono"
+                                                            />
+                                                        </div>
+                                                    </>
+                                                ) : (
+                                                    /* Global / Others */
+                                                    <>
+                                                        <div className="space-y-2 col-span-2">
+                                                            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2">{t('billing.bank_swift')}</label>
+                                                            <input 
+                                                                type="text"
+                                                                required
+                                                                value={info.bankSwift || ""}
+                                                                onChange={e => setInfo({...info, bankSwift: e.target.value})}
+                                                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all font-mono"
+                                                            />
+                                                        </div>
+                                                        <div className="space-y-2 col-span-2">
+                                                            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2">{t('billing.bank_account')}</label>
+                                                            <input 
+                                                                type="text"
+                                                                required
+                                                                value={info.bankAccount || ""}
+                                                                onChange={e => setInfo({...info, bankAccount: e.target.value})}
+                                                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all font-mono"
+                                                            />
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
+                                        )}
                                     </>
                                 )}
                                 {info.method === 'paypal' && (

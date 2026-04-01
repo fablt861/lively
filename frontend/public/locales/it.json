@@ -405,5 +405,11 @@
   "model.signup.error.invalid_email": "Please enter a valid email address.",
   "model.signup.error.password_short": "Password must be at least 8 characters.",
   "model.signup.error.underage": "You must be at least 18 years old to join.",
-  "model.signup.error.fields_required": "Please fill in all required fields."
+  "model.signup.error.fields_required": "Please fill in all required fields.",
+  "billing.bank_country": "Bank Country",
+  "billing.bank_routing": "Routing Number",
+  "billing.bank_account": "Account Number",
+  "billing.bank_sort_code": "Sort Code",
+  "billing.bank_iban": "IBAN",
+  "billing.bank_swift": "BIC/SWIFT"
 }
