@@ -412,5 +412,9 @@
   "billing.bank_sort_code": "Sort Code",
   "billing.bank_iban": "IBAN",
   "billing.bank_swift": "BIC/SWIFT",
-  "room.rotate_device": "Vă rugăm să rotiți dispozitivul în modul portret pentru a continua."
+  "room.rotate_device": "Vă rugăm să rotiți dispozitivul în modul portret pentru a continua.",
+  "admin.settings.maintenance_mode": "Mod Mentenanță",
+  "admin.settings.maintenance_desc": "Blocați accesul la chat-ul live pentru toată lumea.",
+  "maintenance.overlay_title": "În Mentenanță",
+  "maintenance.overlay_desc": "Efectuăm actualizări pentru a vă îmbunătăți experiența. Vă mulțumim pentru răbdare."
 }

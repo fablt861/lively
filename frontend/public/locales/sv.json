@@ -412,5 +412,9 @@
   "billing.bank_sort_code": "Sort Code",
   "billing.bank_iban": "IBAN",
   "billing.bank_swift": "BIC/SWIFT",
-  "room.rotate_device": "Vänligen rotera din enhet till porträttläge för att fortsätta."
+  "room.rotate_device": "Vänligen rotera din enhet till porträttläge för att fortsätta.",
+  "admin.settings.maintenance_mode": "Underhållsläge",
+  "admin.settings.maintenance_desc": "Blockera åtkomst till livechatt för alla.",
+  "maintenance.overlay_title": "Underhåll pågår",
+  "maintenance.overlay_desc": "Vi utför uppdateringar för att förbättra din upplevelse. Tack för ditt tålamod."
 }

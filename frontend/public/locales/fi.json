@@ -412,5 +412,9 @@
   "billing.bank_sort_code": "Sort Code",
   "billing.bank_iban": "IBAN",
   "billing.bank_swift": "BIC/SWIFT",
-  "room.rotate_device": "Käännä laite pystyasentoon jatkaaksesi."
+  "room.rotate_device": "Käännä laite pystyasentoon jatkaaksesi.",
+  "admin.settings.maintenance_mode": "Huoltotila",
+  "admin.settings.maintenance_desc": "Estä pääsy live-chattiin kaikille.",
+  "maintenance.overlay_title": "Huoltotila",
+  "maintenance.overlay_desc": "Teemme päivityksiä parantaaksemme kokemustasi. Kiitos kärsivällisyydestäsi."
 }

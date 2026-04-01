@@ -412,5 +412,9 @@
   "billing.bank_sort_code": "Sort Code",
   "billing.bank_iban": "IBAN",
   "billing.bank_swift": "BIC/SWIFT",
-  "room.rotate_device": "Si prega di ruotare il dispositivo in modalità verticale per continuare."
+  "room.rotate_device": "Si prega di ruotare il dispositivo in modalità verticale per continuare.",
+  "admin.settings.maintenance_mode": "Modalità Manutenzione",
+  "admin.settings.maintenance_desc": "Blocca l'accesso alla live chat per tutti.",
+  "maintenance.overlay_title": "In Manutenzione",
+  "maintenance.overlay_desc": "Stiamo effettuando aggiornamenti per migliorare la tua esperienza. Grazie per la pazienza."
 }

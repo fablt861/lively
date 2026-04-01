@@ -597,9 +597,37 @@ export default function AdminPage() {
                             ))}
                         </div>
 
+                        <div className="bg-neutral-900 border border-white/5 p-8 rounded-3xl space-y-6 shadow-2xl relative overflow-hidden group">
+                            <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -mr-16 -mt-16 transition-colors ${settings.maintenanceMode ? 'bg-red-500/20' : 'bg-green-500/10'}`} />
+                            
+                            <div className="flex items-center justify-between">
+                                <div className="space-y-1">
+                                    <h3 className="text-xl font-medium text-white flex items-center gap-2">
+                                        <AlertCircle className={settings.maintenanceMode ? 'text-red-500' : 'text-green-500'} size={20} />
+                                        {t('admin.settings.maintenance_mode')}
+                                    </h3>
+                                    <p className="text-xs text-neutral-500">{t('admin.settings.maintenance_desc')}</p>
+                                </div>
+                                <button 
+                                    onClick={() => setSettings({ ...settings, maintenanceMode: !settings.maintenanceMode })}
+                                    className={`w-14 h-8 rounded-full p-1 transition-all duration-300 flex items-center ${settings.maintenanceMode ? 'bg-red-500' : 'bg-neutral-700'}`}
+                                >
+                                    <div className={`w-6 h-6 bg-white rounded-full shadow-lg transition-all duration-300 transform ${settings.maintenanceMode ? 'translate-x-6' : 'translate-x-0'}`} />
+                                </button>
+                            </div>
+
+                            {settings.maintenanceMode && (
+                                <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-3 animate-pulse">
+                                    <ShieldAlert size={14} />
+                                    Accès au live chat est actuellement bloqué
+                                </div>
+                            )}
+                        </div>
+
                         <button onClick={saveSettings} className="bg-indigo-500 hover:bg-indigo-400 text-white px-8 py-5 rounded-2xl font-semibold transition-all w-full shadow-lg shadow-indigo-500/25 active:scale-[0.98]">
                             {t('admin.settings.save_cta')}
                         </button>
+
 
                         <div className="pt-8 mt-8 border-t border-white/5 space-y-4">
                             <h3 className="text-sm font-bold text-red-500 uppercase tracking-widest">{t('admin.danger.title')}</h3>

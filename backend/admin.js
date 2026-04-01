@@ -63,11 +63,15 @@ router.get('/settings', requireAuth, async (req, res) => {
 router.post('/settings', requireAuth, async (req, res) => {
     try {
         const updated = await updateSettings(req.body);
+        if (updated.maintenanceMode) {
+            io.emit('maintenance_active');
+        }
         res.json(updated);
     } catch (err) {
         res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });
+
 
 // Admin Model Validations
 router.get('/models/pending', requireAuth, async (req, res) => {

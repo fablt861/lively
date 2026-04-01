@@ -1,6 +1,7 @@
 const Redis = require('ioredis');
 const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
 const { startBilling, stopBilling } = require('./billing');
+const { getSettings } = require('./settings');
 
 redis.on('error', (err) => {
     console.error('[Redis Error] Could not connect. Is Redis running?', err.message);
@@ -25,7 +26,15 @@ function setupMatching(io, socket) {
         if (isProcessing) return;
         isProcessing = true;
         try {
+            // Check Maintenance Mode
+            const settings = await getSettings();
+            if (settings.maintenanceMode) {
+                console.log(`[Maintenance] Blocking join_queue for ${socket.id} (${role})`);
+                return socket.emit('maintenance_active');
+            }
+
             socket.role = role;
+
             socket.language = language || 'en';
             socket.userEmail = email?.toLowerCase(); // Persistent ID for registered users
 

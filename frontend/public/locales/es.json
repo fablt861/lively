@@ -412,5 +412,9 @@
   "billing.bank_sort_code": "Código de sucursal",
   "billing.bank_iban": "IBAN",
   "billing.bank_swift": "BIC/SWIFT",
-  "room.rotate_device": "Por favor, ponga su téléphone en modo retrato para continuar."
+  "room.rotate_device": "Por favor, ponga su téléphone en modo retrato para continuar.",
+  "admin.settings.maintenance_mode": "Modo de Mantenimiento",
+  "admin.settings.maintenance_desc": "Bloquear el acceso al chat en vivo para todos.",
+  "maintenance.overlay_title": "En Mantenimiento",
+  "maintenance.overlay_desc": "Estamos realizando actualizaciones para mejorar su experiencia. Gracias por su paciencia."
 }

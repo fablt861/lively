@@ -15,6 +15,8 @@ export function useWebRTC(role: "user" | "model" | null) {
     const [messages, setMessages] = useState<{ senderId: string; text: string; originalText?: string; timestamp: number }[]>([]);
     const [queuePosition, setQueuePosition] = useState<number | null>(null);
     const [partnerInfo, setPartnerInfo] = useState<{ email: string; role: string; name: string } | null>(null);
+    const [isMaintenance, setIsMaintenance] = useState(false);
+
 
     const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
     const iceServersRef = useRef<any[]>(DEFAULT_ICE_SERVERS);
@@ -168,12 +170,25 @@ export function useWebRTC(role: "user" | "model" | null) {
             socket.emit("next");
         });
 
+        socket.on("maintenance_active", () => {
+            console.log('[WebRTC] Maintenance Mode Activated');
+            setIsMaintenance(true);
+            setIsConnected(false);
+            setRemoteStream(null);
+            if (peerConnectionRef.current) {
+                peerConnectionRef.current.close();
+                peerConnectionRef.current = null;
+            }
+        });
+
         socket.on("chat_message", (msg) => {
             setMessages((prev) => [...prev, msg]);
         });
 
         return () => {
+            socket.off("maintenance_active");
             socket.off("waiting");
+
             socket.off("queue_update");
             socket.off("matched");
             socket.off("offer");
@@ -246,6 +261,8 @@ export function useWebRTC(role: "user" | "model" | null) {
         partnerInfo,
         socket,
         socketId: socket?.id,
-        endCall
+        endCall,
+        isMaintenance
     };
 }
+

@@ -15,8 +15,10 @@ const DEFAULT_SETTINGS = {
         { id: 'essential', name: 'Essential', credits: 100, priceUsd: 9.99 },
         { id: 'premium', name: 'Premium', credits: 300, priceUsd: 24.99 },
         { id: 'privilege', name: 'Privilege', credits: 1300, priceUsd: 99.99 }
-    ]
+    ],
+    maintenanceMode: false
 };
+
 
 async function initSettings() {
     console.log('=> Initializing settings...');

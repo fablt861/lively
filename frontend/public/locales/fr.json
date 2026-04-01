@@ -474,5 +474,9 @@
   "billing.bank_routing": "Routing Number",
   "billing.bank_account": "Numéro de compte",
   "billing.bank_sort_code": "Sort Code",
-  "room.rotate_device": "Veuillez mettre votre téléphone en mode portrait pour continuer."
+  "room.rotate_device": "Veuillez mettre votre téléphone en mode portrait pour continuer.",
+  "admin.settings.maintenance_mode": "Mode Maintenance",
+  "admin.settings.maintenance_desc": "Bloquer l'accès au live chat pour tout le monde.",
+  "maintenance.overlay_title": "Maintenance en cours",
+  "maintenance.overlay_desc": "Nous effectuons des mises à jour pour améliorer votre expérience. Merci de votre patience."
 }

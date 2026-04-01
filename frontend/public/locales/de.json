@@ -412,5 +412,9 @@
   "billing.bank_sort_code": "Bankleitzahl",
   "billing.bank_iban": "IBAN",
   "billing.bank_swift": "BIC/SWIFT",
-  "room.rotate_device": "Bitte drehen Sie Ihr Gerät ins Hochformat, um fortzufahren."
+  "room.rotate_device": "Bitte drehen Sie Ihr Gerät ins Hochformat, um fortzufahren.",
+  "admin.settings.maintenance_mode": "Wartungsmodus",
+  "admin.settings.maintenance_desc": "Zugriff auf den Live-Chat für alle sperren.",
+  "maintenance.overlay_title": "Wartungsarbeiten",
+  "maintenance.overlay_desc": "Wir führen Aktualisierungen durch, um Ihr Erlebnis zu verbessern. Vielen Dank für Ihre Geduld."
 }

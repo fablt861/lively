@@ -412,5 +412,9 @@
   "billing.bank_sort_code": "Sort Code",
   "billing.bank_iban": "IBAN",
   "billing.bank_swift": "BIC/SWIFT",
-  "room.rotate_device": "Пожалуйста, поверните устройство в портретный режим, чтобы продолжить."
+  "room.rotate_device": "Пожалуйста, поверните устройство в портретный режим, чтобы продолжить.",
+  "admin.settings.maintenance_mode": "Режим обслуживания",
+  "admin.settings.maintenance_desc": "Заблокировать доступ к живому чату для всех.",
+  "maintenance.overlay_title": "Технические работы",
+  "maintenance.overlay_desc": "Мы проводим обновления, чтобы улучшить ваш опыт. Спасибо за терпение."
 }

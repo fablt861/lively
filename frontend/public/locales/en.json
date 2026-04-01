@@ -474,5 +474,9 @@
   "billing.bank_routing": "Routing Number",
   "billing.bank_account": "Account Number",
   "billing.bank_sort_code": "Sort Code",
-  "room.rotate_device": "Please rotate your device to portrait mode to continue."
+  "room.rotate_device": "Please rotate your device to portrait mode to continue.",
+  "admin.settings.maintenance_mode": "Maintenance Mode",
+  "admin.settings.maintenance_desc": "Block access to live chat for everyone.",
+  "maintenance.overlay_title": "Under Maintenance",
+  "maintenance.overlay_desc": "We are performing updates to improve your experience. Thank you for your patience."
 }
