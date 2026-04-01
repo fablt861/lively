@@ -69,7 +69,7 @@ export function LaunchPage() {
             {/* Footer Tagline */}
             <div className="mt-20 w-full text-center pb-10">
                 <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.5em]">
-                    © 2026 KINKY ELITE • PARIS • LONDON • NYC
+                    © 2026 KINKY
                 </p>
             </div>
         </div>
