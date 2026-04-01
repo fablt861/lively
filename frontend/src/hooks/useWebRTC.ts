@@ -6,7 +6,8 @@ import { io, Socket } from "socket.io-client";
 // Default STUN servers as fallback
 const DEFAULT_ICE_SERVERS = [{ urls: "stun:stun.l.google.com:19302" }];
 
-export function useWebRTC(role: "user" | "model" | null) {
+export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = true) {
+
     const [socket, setSocket] = useState<Socket | null>(null);
     const [localStream, setLocalStream] = useState<MediaStream | null>(null);
     const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
@@ -28,6 +29,8 @@ export function useWebRTC(role: "user" | "model" | null) {
     }, [localStream]);
 
     useEffect(() => {
+        if (!isEnabled) return;
+
         // 1. Fetch ICE servers from backend (Twilio)
         fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/ice-servers`)
             .then(res => res.json())
@@ -52,7 +55,8 @@ export function useWebRTC(role: "user" | "model" | null) {
         return () => {
             newSocket.disconnect();
         };
-    }, []);
+    }, [isEnabled]);
+
 
     // Manual join triggered by UI
     const joinQueue = () => {
