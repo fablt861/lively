@@ -411,5 +411,6 @@
   "billing.bank_account": "Número de cuenta",
   "billing.bank_sort_code": "Código de sucursal",
   "billing.bank_iban": "IBAN",
-  "billing.bank_swift": "BIC/SWIFT"
+  "billing.bank_swift": "BIC/SWIFT",
+  "room.rotate_device": "Por favor, ponga su téléphone en modo retrato para continuar."
 }

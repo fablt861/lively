@@ -130,3 +130,24 @@ label {
   animation-name: slideInFromBottom;
   animation-duration: 1400ms;
 }
+
+@keyframes rotateDevice {
+  0% { transform: translate(-50%, -50%) rotate(90deg); opacity: 0; }
+  20% { transform: translate(-50%, -50%) rotate(90deg); opacity: 1; }
+  50% { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; }
+  80% { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; }
+  100% { transform: translate(-50%, -50%) rotate(0deg); opacity: 0; }
+}
+
+@keyframes bounceSlow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-rotate-device {
+  animation: rotateDevice 3s ease-in-out infinite;
+}
+
+.animate-bounce-slow {
+  animation: bounceSlow 2s ease-in-out infinite;
+}

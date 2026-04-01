@@ -411,5 +411,6 @@
   "billing.bank_account": "Kontonummer",
   "billing.bank_sort_code": "Bankleitzahl",
   "billing.bank_iban": "IBAN",
-  "billing.bank_swift": "BIC/SWIFT"
+  "billing.bank_swift": "BIC/SWIFT",
+  "room.rotate_device": "Bitte drehen Sie Ihr Gerät ins Hochformat, um fortzufahren."
 }

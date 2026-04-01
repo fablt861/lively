@@ -411,5 +411,6 @@
   "billing.bank_account": "Account Number",
   "billing.bank_sort_code": "Sort Code",
   "billing.bank_iban": "IBAN",
-  "billing.bank_swift": "BIC/SWIFT"
+  "billing.bank_swift": "BIC/SWIFT",
+  "room.rotate_device": "Käännä laite pystyasentoon jatkaaksesi."
 }

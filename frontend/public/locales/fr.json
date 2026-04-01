@@ -473,5 +473,6 @@
   "billing.bank_country": "Pays de la banque",
   "billing.bank_routing": "Routing Number",
   "billing.bank_account": "Numéro de compte",
-  "billing.bank_sort_code": "Sort Code"
+  "billing.bank_sort_code": "Sort Code",
+  "room.rotate_device": "Veuillez mettre votre téléphone en mode portrait pour continuer."
 }

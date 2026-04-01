@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import { PaywallModal } from "./PaywallModal";
 import { UnifiedAuthModal } from "./UnifiedAuthModal";
 import { PreMatchModal } from "./PreMatchModal";
+import { OrientationGuard } from "./OrientationGuard";
+
 
 function EarningsCounter({ hasVideo, currentRate, totalEarned }: { hasVideo: boolean; currentRate: number; totalEarned: number }) {
     const { t } = useTranslation();
@@ -306,6 +308,9 @@ export function VideoRoom({
             {!hasStartedMatch && (
                 <PreMatchModal localStream={localStream} onJoin={handleStartMatch} role={role as any} />
             )}
+
+            <OrientationGuard />
+
 
             <div className="flex-1 relative flex items-center justify-center overflow-hidden h-[100dvh]">
 
