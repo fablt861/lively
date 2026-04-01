@@ -499,5 +499,14 @@
   "admin.marketing.models.title": "Models Acquisition Funnel",
   "admin.marketing.models.intro": "Track model recruitment performance.",
   "admin.marketing.table.validated": "Validated",
-  "admin.marketing.params_reminder": "Active tracking parameters: src, camp, ad"
+  "admin.marketing.params_reminder": "Active tracking parameters: src, camp, ad",
+  "admin.nav.finances": "Finances",
+  "admin.finances.title": "Global Financial Report",
+  "admin.finances.summary": "Cumulative Summary",
+  "admin.finances.table.month": "Month",
+  "admin.finances.table.rev_ttc": "Revenue TTC",
+  "admin.finances.table.rev_ht": "Revenue HT",
+  "admin.finances.table.model_gains": "Model Gains",
+  "admin.finances.table.fees": "Fees (5%)",
+  "admin.finances.table.profit": "Profit"
 }

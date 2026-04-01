@@ -120,6 +120,8 @@ router.post('/add-credits', async (req, res) => {
     }
 
     await trackMarketingRevenue(src, camp, ad, amount, email);
+    const { logPurchase } = require('./stats');
+    await logPurchase(amount);
 
     res.json({
         success: true,

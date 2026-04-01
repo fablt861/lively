@@ -63,6 +63,17 @@ router.get('/marketing', requireAuth, async (req, res) => {
     }
 });
 
+router.get('/finances', requireAuth, async (req, res) => {
+    try {
+        const { getFinancialStats } = require('./stats');
+        const stats = await getFinancialStats();
+        res.json(stats);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+
 // Public Tracking Endpoint
 router.post('/stats/track-visit', async (req, res) => {
     try {

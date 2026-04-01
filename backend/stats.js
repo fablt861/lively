@@ -24,6 +24,10 @@ async function logRevenue(usd) {
     await redis.hincrbyfloat(getTodayKey(), 'revenue_usd', usd);
 }
 
+async function logPurchase(usd) {
+    await redis.hincrbyfloat(getTodayKey(), 'purchases_usd', usd);
+}
+
 async function logModelPayout(usd) {
     await redis.hincrbyfloat(getTodayKey(), 'model_payout_usd', usd);
 }
@@ -97,34 +101,55 @@ async function trackModelValidation(src, camp, ad) {
     await redis.sadd('marketing:models:active_keys', key);
 }
 
-async function getMarketingStats(type) {
-    const role = type === 'model' ? 'models' : 'users';
-    const keys = await redis.smembers(`marketing:${role}:active_keys`);
-    const results = [];
-    for (const key of keys) {
-        const data = await redis.hgetall(`marketing:${role}:stats:${key}`);
-        if (type === 'model') {
-            results.push({
-                id: key,
-                visits: parseInt(data.visits || '0'),
-                signups: parseInt(data.signups || '0'),
-                validated: parseInt(data.validated || '0')
-            });
-        } else {
-            results.push({
-                id: key,
-                visits: parseInt(data.visits || '0'),
-                signups: parseInt(data.signups || '0'),
-                clients: parseInt(data.clients_count || '0'),
-                revenue: parseFloat(data.revenue || '0')
-            });
+async function getFinancialStats() {
+    // 1. Get all daily stats keys
+    const rawKeys = await redis.keys('stats:????-??-??');
+    const sortedKeys = rawKeys.sort(); // Chronological
+    
+    const monthlyGroups = {}; // { '2026-04': { ttc: 0, gains: 0 } }
+    
+    for (const key of sortedKeys) {
+        const data = await redis.hgetall(key);
+        const month = key.split(':')[1].substring(0, 7); // '2026-04'
+        
+        if (!monthlyGroups[month]) {
+            monthlyGroups[month] = { ttc: 0, gains: 0 };
         }
+        
+        monthlyGroups[month].ttc += parseFloat(data.purchases_usd || '0');
+        monthlyGroups[month].gains += parseFloat(data.model_payout_usd || '0');
     }
-    return results;
+    
+    const results = Object.keys(monthlyGroups).sort((a,b) => b.localeCompare(a)).map(month => {
+        const ttc = monthlyGroups[month].ttc;
+        const ht = ttc / 1.2;
+        const gains = monthlyGroups[month].gains;
+        const fees = ttc * 0.05;
+        const profit = ht - gains - fees;
+        
+        return {
+            month,
+            revenue_ttc: ttc,
+            revenue_ht: ht,
+            model_gains: gains,
+            processor_fees: fees,
+            net_profit: profit
+        };
+    });
+    
+    const totals = results.reduce((acc, curr) => ({
+        revenue_ttc: acc.revenue_ttc + curr.revenue_ttc,
+        revenue_ht: acc.revenue_ht + curr.revenue_ht,
+        model_gains: acc.model_gains + curr.model_gains,
+        processor_fees: acc.processor_fees + curr.processor_fees,
+        net_profit: acc.net_profit + curr.net_profit
+    }), { revenue_ttc: 0, revenue_ht: 0, model_gains: 0, processor_fees: 0, net_profit: 0 });
+    
+    return { months: results, totals };
 }
 
 module.exports = {
-    logNewUser, logNewModel, logNewClient, logRevenue, logModelPayout,
-    getGlobalStats, getDailyStats,
-    trackMarketingVisit, trackMarketingSignup, trackMarketingRevenue, getMarketingStats
+    logNewUser, logNewModel, logNewClient, logRevenue, logPurchase, logModelPayout,
+    getGlobalStats, getDailyStats, getFinancialStats,
+    trackMarketingVisit, trackMarketingSignup, trackMarketingRevenue, trackModelValidation, getMarketingStats
 };

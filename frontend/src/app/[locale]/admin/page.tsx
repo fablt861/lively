@@ -27,6 +27,7 @@ export default function AdminPage() {
     const [models, setModels] = useState<any[]>([]);
     const [payoutRequests, setPayoutRequests] = useState<any[]>([]);
     const [reports, setReports] = useState<any[]>([]);
+    const [financesStats, setFinancesStats] = useState<any>(null);
     const [marketingUsersStats, setMarketingUsersStats] = useState<any[]>([]);
     const [marketingModelsStats, setMarketingModelsStats] = useState<any[]>([]);
     const [realtimeStats, setRealtimeStats] = useState<any>(null);
@@ -137,6 +138,16 @@ export default function AdminPage() {
         }
     };
 
+    const fetchFinancesStats = async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/finances`, { headers: { Authorization: `Bearer ${token}` } });
+            const data = await res.json();
+            setFinancesStats(data);
+        } catch (err) {
+            console.error("Fetch Finances Stats Error:", err);
+        }
+    };
+
     const fetchRealtime = async () => {
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/realtime`, { headers: { Authorization: `Bearer ${token}` } });
@@ -192,6 +203,7 @@ export default function AdminPage() {
             if (activeTab === 'reports') fetchReports();
             if (activeTab === 'marketing_users') fetchMarketingUsersStats();
             if (activeTab === 'marketing_models') fetchMarketingModelsStats();
+            if (activeTab === 'finances') fetchFinancesStats();
             if (activeTab === 'realtime') fetchRealtime();
 
             if (activeTab === 'settings') {
@@ -260,6 +272,9 @@ export default function AdminPage() {
                     </button>
                     <button onClick={() => setActiveTab('payouts')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'payouts' ? 'bg-green-500/20 text-green-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <DollarSign size={20} /> {t('admin.nav.payouts')} {payoutRequests.length > 0 && <span className="ml-auto bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{payoutRequests.length}</span>}
+                    </button>
+                    <button onClick={() => setActiveTab('finances')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'finances' ? 'bg-amber-500/20 text-amber-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                        <DollarSign size={20} /> {t('admin.nav.finances')}
                     </button>
                     <button onClick={() => setActiveTab('reports')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'reports' ? 'bg-orange-500/20 text-orange-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <ShieldAlert size={20} /> {t('admin.nav.reports')} {reports.filter(r => r.status === 'active').length > 0 && <span className="ml-auto bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{reports.filter(r => r.status === 'active').length}</span>}
@@ -1280,6 +1295,67 @@ export default function AdminPage() {
                                             </tr>
                                         );
                                     })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+                {activeTab === 'finances' && financesStats && (
+                    <div className="space-y-8 animate-in fade-in duration-500 pb-20">
+                        <div className="flex flex-col gap-2">
+                            <h2 className="text-3xl font-light">{t('admin.finances.title')}</h2>
+                        </div>
+
+                        {/* Summary Cards */}
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div className="bg-neutral-900 border border-white/5 p-6 rounded-2xl">
+                                <div className="text-neutral-500 text-[10px] uppercase font-bold tracking-widest mb-1">{t('admin.finances.table.rev_ttc')}</div>
+                                <div className="text-2xl font-black text-white">${financesStats.totals.revenue_ttc.toFixed(2)}</div>
+                            </div>
+                            <div className="bg-neutral-900 border border-white/5 p-6 rounded-2xl">
+                                <div className="text-neutral-500 text-[10px] uppercase font-bold tracking-widest mb-1">{t('admin.finances.table.rev_ht')}</div>
+                                <div className="text-2xl font-black text-neutral-300">${financesStats.totals.revenue_ht.toFixed(2)}</div>
+                            </div>
+                            <div className="bg-neutral-900 border border-white/5 p-6 rounded-2xl">
+                                <div className="text-neutral-500 text-[10px] uppercase font-bold tracking-widest mb-1">{t('admin.finances.table.model_gains')}</div>
+                                <div className="text-2xl font-black text-pink-400">${financesStats.totals.model_gains.toFixed(2)}</div>
+                            </div>
+                            <div className="bg-indigo-500/10 border border-indigo-500/20 p-6 rounded-2xl">
+                                <div className="text-indigo-400/60 text-[10px] uppercase font-bold tracking-widest mb-1">{t('admin.finances.table.profit')}</div>
+                                <div className="text-2xl font-black text-indigo-300">${financesStats.totals.net_profit.toFixed(2)}</div>
+                            </div>
+                        </div>
+
+                        <div className="bg-neutral-900 border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-xl">
+                            <table className="w-full text-left">
+                                <thead className="bg-white/[0.02] border-b border-white/5">
+                                    <tr>
+                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.finances.table.month')}</th>
+                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.finances.table.rev_ttc')}</th>
+                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.finances.table.rev_ht')}</th>
+                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.finances.table.model_gains')}</th>
+                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.finances.table.fees')}</th>
+                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em] text-right">{t('admin.finances.table.profit')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-white/5">
+                                    {financesStats.months.length === 0 && (
+                                        <tr><td colSpan={6} className="p-12 text-center text-neutral-500 font-medium tracking-wide uppercase text-xs italic">Aucune donnée financière enregistrée.</td></tr>
+                                    )}
+                                    {financesStats.months.map((row: any, i: number) => (
+                                        <tr key={i} className="hover:bg-white/[0.02] transition-colors group">
+                                            <td className="p-6 font-bold text-white tracking-tight capitalize">{row.month}</td>
+                                            <td className="p-6 font-mono text-neutral-300 text-sm font-bold">${row.revenue_ttc.toFixed(2)}</td>
+                                            <td className="p-6 font-mono text-neutral-400 text-sm">{row.revenue_ht.toFixed(2)}</td>
+                                            <td className="p-6 font-mono text-pink-400 text-sm font-bold">${row.model_gains.toFixed(2)}</td>
+                                            <td className="p-6 font-mono text-neutral-500 text-xs">${row.processor_fees.toFixed(2)}</td>
+                                            <td className="p-6 text-right">
+                                                <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border font-mono font-black text-sm ${row.net_profit > 0 ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-red-500/10 text-red-300 border-red-500/20'}`}>
+                                                    ${row.net_profit.toFixed(2)}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
