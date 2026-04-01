@@ -21,23 +21,23 @@ export function ModelSimulator() {
             <div className="absolute -top-12 -right-12 w-48 h-48 bg-indigo-500/10 rounded-full blur-[60px]" />
 
             <div className="relative z-10 space-y-6">
-                <div className="space-y-1">
-                    <h3 className="text-xl font-black text-white flex items-center gap-2">
-                        <TrendingUp className="text-indigo-400 w-5 h-5" />
+                <div className="space-y-2">
+                    <h3 className="text-2xl font-black text-white flex items-center gap-2">
+                        <TrendingUp className="text-indigo-400 w-6 h-6" />
                         {t('simulator.title')}
                     </h3>
-                    <p className="text-white/30 text-[9px] font-black uppercase tracking-[0.2em]">{t('simulator.subtitle')}</p>
+                    <p className="text-white/40 text-[11px] font-black uppercase tracking-[0.2em]">{t('simulator.subtitle')}</p>
                 </div>
 
-                <div className="space-y-6">
-                    <div className="space-y-4">
+                <div className="space-y-8">
+                    <div className="space-y-5">
                         <div className="flex justify-between items-end">
-                            <span className="text-[10px] font-black text-white/70 uppercase tracking-widest flex items-center gap-2">
-                                <Clock size={14} className="text-indigo-500" />
+                            <span className="text-xs font-black text-white/80 uppercase tracking-widest flex items-center gap-2.5">
+                                <Clock size={16} className="text-indigo-500" />
                                 {t('simulator.presence')}
                             </span>
-                            <span className="text-3xl font-black text-white tabular-nums tracking-tighter">
-                                {hours}<span className="text-sm text-white/30 ml-0.5">{t('simulator.hours_unit')}</span>
+                            <span className="text-4xl font-black text-white tabular-nums tracking-tighter">
+                                {hours}<span className="text-base text-white/40 ml-1">{t('simulator.hours_unit')}</span>
                             </span>
                         </div>
 
@@ -48,41 +48,41 @@ export function ModelSimulator() {
                                 max="12"
                                 value={hours}
                                 onChange={(e) => setHours(parseInt(e.target.value))}
-                                className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer accent-indigo-500 hover:accent-indigo-400 transition-all"
+                                className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer accent-indigo-500 hover:accent-indigo-400 transition-all"
                             />
                         </div>
 
-                        <div className="flex justify-between text-[8px] font-black text-white/20 uppercase tracking-[0.2em]">
+                        <div className="flex justify-between text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">
                             <span>{t('simulator.range_low')}</span>
                             <span>{t('simulator.range_high')}</span>
                         </div>
                     </div>
 
-                    <div className="p-6 rounded-2xl bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-transparent border border-white/5 relative overflow-hidden">
-                        <div className="absolute -bottom-4 -right-4 opacity-[0.03] rotate-12">
-                            <DollarSign size={100} />
+                    <div className="p-8 rounded-[2rem] bg-gradient-to-br from-indigo-500/15 via-purple-500/10 to-transparent border border-white/10 relative overflow-hidden shadow-inner">
+                        <div className="absolute -bottom-6 -right-6 opacity-[0.05] rotate-12">
+                            <DollarSign size={120} />
                         </div>
 
-                        <div className="relative z-10 space-y-1">
-                            <p className="text-[9px] font-black text-indigo-400/80 uppercase tracking-[0.3em] mb-1">{t('simulator.estimated_income')}</p>
-                            <div className="flex items-baseline gap-1.5">
-                                <span className="text-4xl md:text-5xl font-black text-white tracking-tighter">
+                        <div className="relative z-10 space-y-2">
+                            <p className="text-[11px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-2">{t('simulator.estimated_income')}</p>
+                            <div className="flex items-baseline gap-2">
+                                <span className="text-5xl md:text-6xl font-black text-white tracking-tighter">
                                     {monthlyEarnings.toLocaleString()}
                                 </span>
-                                <span className="text-xl font-bold text-white/30 tracking-tight">€</span>
+                                <span className="text-2xl font-bold text-white/40 tracking-tight">€</span>
                             </div>
-                            <p className="text-[9px] text-white/60 font-medium pt-3 flex items-center gap-2 uppercase tracking-widest">
-                                <Calendar size={10} className="opacity-70" /> {t('simulator.basis_text', { days: DAYS_PER_MONTH })}
+                            <p className="text-xs text-white/60 font-semibold pt-4 flex items-center gap-2 uppercase tracking-widest">
+                                <Calendar size={12} className="text-indigo-400" /> {t('simulator.basis_text', { days: DAYS_PER_MONTH })}
                             </p>
                         </div>
                     </div>
 
                     <button
                         onClick={() => window.location.href = `/${language}/model/signup`}
-                        className="w-full py-4 rounded-full bg-white text-black font-black text-sm shadow-xl hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 ring-1 ring-white/20"
+                        className="w-full py-5 rounded-full bg-white text-black font-black text-base shadow-2xl hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 ring-1 ring-white/20"
                     >
                         {t('simulator.cta')}
-                        <ArrowRight size={16} />
+                        <ArrowRight size={20} />
                     </button>
                 </div>
             </div>
