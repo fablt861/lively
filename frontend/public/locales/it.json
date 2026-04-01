@@ -421,7 +421,6 @@
   "payout.status.pending": "In attesa",
   "payout.status.paid": "Pagato",
   "payout.status.rejected": "Rifiutato",
-  "admin.nav.marketing": "Marketing",
   "admin.marketing.title": "Analisi di Acquisizione e Funnel",
   "admin.marketing.intro": "Monitora le prestazioni delle tue fonti di traffico in tempo reale.",
   "admin.marketing.table.source": "Sorgente / Campagna / Annuncio",
@@ -432,5 +431,10 @@
   "admin.marketing.table.cr_signup": "CR Iscr.",
   "admin.marketing.table.cr_client": "CR Cliente",
   "admin.marketing.table.arpu": "ARPU",
-  "admin.marketing.direct": "Diretto / Organico"
+  "admin.marketing.direct": "Diretto / Organico",
+  "admin.nav.marketing_users": "Marketing Users",
+  "admin.nav.marketing_models": "Marketing Models",
+  "admin.marketing.models.title": "Models Acquisition Funnel",
+  "admin.marketing.models.intro": "Track model recruitment performance.",
+  "admin.marketing.table.validated": "Validated"
 }

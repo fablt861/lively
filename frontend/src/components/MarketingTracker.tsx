@@ -14,6 +14,9 @@ export function MarketingTracker() {
         // Don't track visits to the admin panel
         if (pathname?.includes("/admin")) return;
 
+        // Detect if we are on a model landing page
+        const type = pathname?.includes("/model") ? "model" : "user";
+
         const src = searchParams.get("src");
         const camp = searchParams.get("camp");
         const ad = searchParams.get("ad");
@@ -23,7 +26,8 @@ export function MarketingTracker() {
             const params = {
                 src: src || "",
                 camp: camp || "",
-                ad: ad || ""
+                ad: ad || "",
+                type
             };
 
             // 1. Persist for signup/purchase association
@@ -37,11 +41,6 @@ export function MarketingTracker() {
                 body: JSON.stringify(params)
             }).catch(err => console.error("[MarketingTracker] Failed to log visit:", err));
         } else {
-            // Log a 'direct' visit if no params and we haven't tracked yet
-            // Wait: we only want to track each 'session' or landing once.
-            // For now, let's just track if params are present to avoid flooding 'direct' 
-            // OR we track 'direct' only if no marketing params are in localStorage either.
-            
             const saved = localStorage.getItem("kinky_marketing_params");
             const alreadyTrackedDirect = sessionStorage.getItem("kinky_tracked_direct");
 
@@ -51,7 +50,7 @@ export function MarketingTracker() {
                 fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/stats/track-visit`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ src: "", camp: "", ad: "" })
+                    body: JSON.stringify({ src: "", camp: "", ad: "", type })
                 }).catch(err => console.error("[MarketingTracker] Failed to log direct visit:", err));
             }
         }

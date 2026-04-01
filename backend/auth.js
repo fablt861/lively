@@ -79,7 +79,7 @@ router.post('/register', async (req, res) => {
     await redis.set(`user:active:${email}`, JSON.stringify(newUser));
     await redis.set(`user:${email}:credits`, "5");
     await logNewUser();
-    await trackMarketingSignup(src, camp, ad);
+    await trackMarketingSignup('user', src, camp, ad);
 
     res.json({
         success: true,
@@ -129,12 +129,14 @@ router.post('/add-credits', async (req, res) => {
 
 router.post('/model/register', async (req, res) => {
     const redis = getRedisClient();
-    const { country, phone, firstName, lastName, pseudo, dob, email: rawEmail, password, photoProfile, photoId, photoIdSelfie } = req.body;
+    const { country, phone, firstName, lastName, pseudo, dob, email: rawEmail, password, photoProfile, photoId, photoIdSelfie, src, camp, ad } = req.body;
     const email = rawEmail?.toLowerCase();
 
     if (!email || !password || !firstName || !lastName || !photoProfile || !photoId || !photoIdSelfie) {
         return res.status(400).json({ error: 'auth.error.missing_fields' });
     }
+
+    const { trackMarketingSignup } = require('./stats');
 
     const existing = await redis.get(`model:active:${email}`);
     if (existing) {
@@ -159,10 +161,12 @@ router.post('/model/register', async (req, res) => {
         photoProfile,
         photoId,
         photoIdSelfie,
-        registeredAt: new Date().toISOString()
+        registeredAt: new Date().toISOString(),
+        marketing: { src, camp, ad }
     };
 
     await redis.set(`model:pending:${email}`, JSON.stringify(payload));
+    await trackMarketingSignup('model', src, camp, ad);
     res.json({ success: true, message: 'auth.success.registration_submitted' });
 });
 

@@ -27,7 +27,8 @@ export default function AdminPage() {
     const [models, setModels] = useState<any[]>([]);
     const [payoutRequests, setPayoutRequests] = useState<any[]>([]);
     const [reports, setReports] = useState<any[]>([]);
-    const [marketingStats, setMarketingStats] = useState<any[]>([]);
+    const [marketingUsersStats, setMarketingUsersStats] = useState<any[]>([]);
+    const [marketingModelsStats, setMarketingModelsStats] = useState<any[]>([]);
     const [realtimeStats, setRealtimeStats] = useState<any>(null);
     const [userFilter, setUserFilter] = useState<'all' | 'buyers'>('all');
     const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking');
@@ -116,13 +117,23 @@ export default function AdminPage() {
         }
     };
 
-    const fetchMarketingStats = async () => {
+    const fetchMarketingUsersStats = async () => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/marketing`, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/marketing?type=user`, { headers: { Authorization: `Bearer ${token}` } });
             const data = await res.json();
-            if (Array.isArray(data)) setMarketingStats(data);
+            if (Array.isArray(data)) setMarketingUsersStats(data);
         } catch (err) {
-            console.error("Fetch Marketing Stats Error:", err);
+            console.error("Fetch Marketing Users Stats Error:", err);
+        }
+    };
+
+    const fetchMarketingModelsStats = async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/marketing?type=model`, { headers: { Authorization: `Bearer ${token}` } });
+            const data = await res.json();
+            if (Array.isArray(data)) setMarketingModelsStats(data);
+        } catch (err) {
+            console.error("Fetch Marketing Models Stats Error:", err);
         }
     };
 
@@ -179,7 +190,8 @@ export default function AdminPage() {
             if (activeTab === 'models') fetchModels();
             if (activeTab === 'payouts') fetchPayoutRequests();
             if (activeTab === 'reports') fetchReports();
-            if (activeTab === 'marketing') fetchMarketingStats();
+            if (activeTab === 'marketing_users') fetchMarketingUsersStats();
+            if (activeTab === 'marketing_models') fetchMarketingModelsStats();
             if (activeTab === 'realtime') fetchRealtime();
 
             if (activeTab === 'settings') {
@@ -255,8 +267,11 @@ export default function AdminPage() {
                     <button onClick={() => setActiveTab('realtime')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'realtime' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <Zap size={20} className={activeTab === 'realtime' ? 'animate-pulse text-indigo-400' : ''} /> {t('admin.nav.realtime')}
                     </button>
-                    <button onClick={() => setActiveTab('marketing')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'marketing' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
-                        <Globe size={20} /> {t('admin.nav.marketing')}
+                    <button onClick={() => setActiveTab('marketing_users')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'marketing_users' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                        <Globe size={20} /> {t('admin.nav.marketing_users')}
+                    </button>
+                    <button onClick={() => setActiveTab('marketing_models')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'marketing_models' ? 'bg-pink-500/20 text-pink-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                        <Zap size={20} /> {t('admin.nav.marketing_models')}
                     </button>
                     <div className="pt-4 mt-4 border-t border-white/5 space-y-2">
                         <button onClick={() => setActiveTab('settings')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'settings' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
@@ -1098,7 +1113,7 @@ export default function AdminPage() {
                         )}
                     </div>
                 )}
-                {activeTab === 'marketing' && (
+                {activeTab === 'marketing_users' && (
                     <div className="space-y-8 animate-in fade-in duration-500 pb-20">
                         <div className="flex flex-col gap-2">
                             <h2 className="text-3xl font-light">{t('admin.marketing.title')}</h2>
@@ -1120,10 +1135,10 @@ export default function AdminPage() {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
-                                    {marketingStats.length === 0 && (
+                                    {marketingUsersStats.length === 0 && (
                                         <tr><td colSpan={8} className="p-12 text-center text-neutral-500 font-medium tracking-wide uppercase text-xs italic">Aucune donnée de tracking enregistrée.</td></tr>
                                     )}
-                                    {[...marketingStats].sort((a,b) => b.revenue - a.revenue || b.visits - a.visits).map((row, i) => {
+                                    {[...marketingUsersStats].sort((a,b) => b.revenue - a.revenue || b.visits - a.visits).map((row, i) => {
                                         const crSignup = row.visits > 0 ? (row.signups / row.visits) * 100 : 0;
                                         const crClient = row.signups > 0 ? (row.clients / row.signups) * 100 : 0;
                                         const arpu = row.clients > 0 ? row.revenue / row.clients : 0;
@@ -1172,6 +1187,83 @@ export default function AdminPage() {
                                                 </td>
                                                 <td className="p-6 text-right">
                                                     <span className="font-mono text-white text-sm font-black tracking-tighter">${arpu.toFixed(1)}</span>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'marketing_models' && (
+                    <div className="space-y-8 animate-in fade-in duration-500 pb-20">
+                        <div className="flex flex-col gap-2">
+                            <h2 className="text-3xl font-light">{t('admin.marketing.models.title')}</h2>
+                            <p className="text-neutral-500 text-sm tracking-wide">{t('admin.marketing.models.intro')}</p>
+                        </div>
+
+                        <div className="bg-neutral-900 border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-xl">
+                            <table className="w-full text-left">
+                                <thead className="bg-white/[0.02] border-b border-white/5">
+                                    <tr>
+                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.source')}</th>
+                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.visits')}</th>
+                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.signups')}</th>
+                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.validated')}</th>
+                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em] text-right">{t('admin.marketing.table.cr_signup')}</th>
+                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em] text-right">{t('admin.marketing.table.cr_client')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-white/5">
+                                    {marketingModelsStats.length === 0 && (
+                                        <tr><td colSpan={6} className="p-12 text-center text-neutral-500 font-medium tracking-wide uppercase text-xs italic">Aucune donnée de tracking enregistrée pour les models.</td></tr>
+                                    )}
+                                    {[...marketingModelsStats].sort((a,b) => b.validated - a.validated || b.visits - a.visits).map((row, i) => {
+                                        const crSignup = row.visits > 0 ? (row.signups / row.visits) * 100 : 0;
+                                        const crValidation = row.signups > 0 ? (row.validated / row.signups) * 100 : 0;
+
+                                        return (
+                                            <tr key={i} className="hover:bg-white/[0.02] transition-colors group">
+                                                <td className="p-6">
+                                                    <div className="flex items-center gap-3">
+                                                        {row.id === 'direct' ? (
+                                                            <div className="p-2 bg-neutral-800 rounded-lg text-neutral-400 border border-white/10 group-hover:bg-neutral-700 transition-colors">
+                                                                <Globe size={16} />
+                                                            </div>
+                                                        ) : (
+                                                            <div className="p-2 bg-pink-500/10 rounded-lg text-pink-400 border border-pink-500/20 group-hover:bg-pink-500/20 transition-colors">
+                                                                <Zap size={16} />
+                                                            </div>
+                                                        )}
+                                                        <div>
+                                                            <div className="font-bold text-white tracking-tight">
+                                                                {row.id === 'direct' ? t('admin.marketing.direct') : row.id.replace(/\|/g, ' ')}
+                                                            </div>
+                                                            <div className="text-[9px] text-neutral-500 font-mono mt-0.5 opacity-50 uppercase tracking-widest">{row.id === 'direct' ? 'Organic attraction' : 'Tracked recruitment'}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="p-6 font-mono text-neutral-300 text-sm font-bold">{row.visits.toLocaleString()}</td>
+                                                <td className="p-6 font-mono text-neutral-300 text-sm font-bold">{row.signups.toLocaleString()}</td>
+                                                <td className="p-6">
+                                                    <div className="flex flex-col">
+                                                        <span className="font-mono text-pink-400 text-lg font-black">{row.validated.toLocaleString()}</span>
+                                                        <div className="w-full bg-white/5 h-1 rounded-full mt-2 overflow-hidden">
+                                                            <div className="bg-pink-500 h-full" style={{ width: `${Math.min(100, (row.validated / 10) * 100)}%` }} />
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="p-6 text-right">
+                                                    <span className={`text-[10px] font-black px-2 py-1 rounded-lg border uppercase tracking-tighter ${crSignup > 5 ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-white/5 text-neutral-500 border-white/10'}`}>
+                                                        {crSignup.toFixed(1)}%
+                                                    </span>
+                                                </td>
+                                                <td className="p-6 text-right">
+                                                    <span className={`text-[10px] font-black px-2 py-1 rounded-lg border uppercase tracking-tighter ${crValidation > 20 ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' : 'bg-white/5 text-neutral-500 border-white/10'}`}>
+                                                        {crValidation.toFixed(1)}%
+                                                    </span>
                                                 </td>
                                             </tr>
                                         );

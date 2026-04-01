@@ -58,51 +58,67 @@ async function getDailyStats(daysBack = 30) {
     return results;
 }
 
-async function trackMarketingVisit(src, camp, ad, ip) {
+async function trackMarketingVisit(type, src, camp, ad, ip) {
+    const role = type === 'model' ? 'models' : 'users';
     const key = (src || camp || ad) ? `src:${src || ''}|camp:${camp || ''}|ad:${ad || ''}` : 'direct';
     
-    // Uniqueness check based on IP
     if (ip) {
-        const isNew = await redis.sadd(`marketing:visitors:${key}`, ip);
-        if (!isNew) return; // Not a unique visit
+        const isNew = await redis.sadd(`marketing:${role}:visitors:${key}`, ip);
+        if (!isNew) return;
     }
 
-    await redis.hincrby(`marketing:stats:${key}`, 'visits', 1);
-    await redis.sadd('marketing:active_keys', key);
+    await redis.hincrby(`marketing:${role}:stats:${key}`, 'visits', 1);
+    await redis.sadd(`marketing:${role}:active_keys`, key);
 }
 
-async function trackMarketingSignup(src, camp, ad) {
+async function trackMarketingSignup(type, src, camp, ad) {
+    const role = type === 'model' ? 'models' : 'users';
     const key = (src || camp || ad) ? `src:${src || ''}|camp:${camp || ''}|ad:${ad || ''}` : 'direct';
-    await redis.hincrby(`marketing:stats:${key}`, 'signups', 1);
-    await redis.sadd('marketing:active_keys', key);
+    await redis.hincrby(`marketing:${role}:stats:${key}`, 'signups', 1);
+    await redis.sadd(`marketing:${role}:active_keys`, key);
 }
 
 async function trackMarketingRevenue(src, camp, ad, amount, email) {
     const key = (src || camp || ad) ? `src:${src || ''}|camp:${camp || ''}|ad:${ad || ''}` : 'direct';
-    await redis.hincrbyfloat(`marketing:stats:${key}`, 'revenue', amount);
+    await redis.hincrbyfloat(`marketing:users:stats:${key}`, 'revenue', amount);
     
-    // Tracking unique clients per source
     if (email) {
-        const added = await redis.sadd(`marketing:clients:${key}`, email);
+        const added = await redis.sadd(`marketing:users:clients:${key}`, email);
         if (added) {
-            await redis.hincrby(`marketing:stats:${key}`, 'clients_count', 1);
+            await redis.hincrby(`marketing:users:stats:${key}`, 'clients_count', 1);
         }
     }
-    await redis.sadd('marketing:active_keys', key);
+    await redis.sadd('marketing:users:active_keys', key);
 }
 
-async function getMarketingStats() {
-    const keys = await redis.smembers('marketing:active_keys');
+async function trackModelValidation(src, camp, ad) {
+    const key = (src || camp || ad) ? `src:${src || ''}|camp:${camp || ''}|ad:${ad || ''}` : 'direct';
+    await redis.hincrby(`marketing:models:stats:${key}`, 'validated', 1);
+    await redis.sadd('marketing:models:active_keys', key);
+}
+
+async function getMarketingStats(type) {
+    const role = type === 'model' ? 'models' : 'users';
+    const keys = await redis.smembers(`marketing:${role}:active_keys`);
     const results = [];
     for (const key of keys) {
-        const data = await redis.hgetall(`marketing:stats:${key}`);
-        results.push({
-            id: key,
-            visits: parseInt(data.visits || '0'),
-            signups: parseInt(data.signups || '0'),
-            clients: parseInt(data.clients_count || '0'),
-            revenue: parseFloat(data.revenue || '0')
-        });
+        const data = await redis.hgetall(`marketing:${role}:stats:${key}`);
+        if (type === 'model') {
+            results.push({
+                id: key,
+                visits: parseInt(data.visits || '0'),
+                signups: parseInt(data.signups || '0'),
+                validated: parseInt(data.validated || '0')
+            });
+        } else {
+            results.push({
+                id: key,
+                visits: parseInt(data.visits || '0'),
+                signups: parseInt(data.signups || '0'),
+                clients: parseInt(data.clients_count || '0'),
+                revenue: parseFloat(data.revenue || '0')
+            });
+        }
     }
     return results;
 }

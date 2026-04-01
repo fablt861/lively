@@ -53,8 +53,9 @@ router.get('/stats', requireAuth, async (req, res) => {
 // Marketing Analytics
 router.get('/marketing', requireAuth, async (req, res) => {
     try {
+        const type = req.query.type || 'user';
         const { getMarketingStats } = require('./stats');
-        const stats = await getMarketingStats();
+        const stats = await getMarketingStats(type);
         res.json(stats);
     } catch (err) {
         console.error(err);
@@ -65,10 +66,10 @@ router.get('/marketing', requireAuth, async (req, res) => {
 // Public Tracking Endpoint
 router.post('/stats/track-visit', async (req, res) => {
     try {
-        const { src, camp, ad } = req.body;
+        const { src, camp, ad, type } = req.body;
         const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
         const { trackMarketingVisit } = require('./stats');
-        await trackMarketingVisit(src, camp, ad, ip);
+        await trackMarketingVisit(type || 'user', src, camp, ad, ip);
         res.json({ success: true });
     } catch (err) {
         console.error(err);
@@ -236,6 +237,11 @@ router.post('/models/:email/validate', requireAuth, async (req, res) => {
         await redis.set(`model:active:${email}`, JSON.stringify(model));
         await redis.del(`model:pending:${email}`);
         await logNewModel();
+        
+        // Track marketing validation
+        const { trackModelValidation } = require('./stats');
+        const { src, camp, ad } = model.marketing || {};
+        await trackModelValidation(src, camp, ad);
 
         console.log(`\n[EMAIL MOCK] 📧 -> To: ${email} | Subject: Votre compte est validé ! | Body: Bonjour ${model.name}, vous pouvez désormais vous connecter et commencer vos appels.\n`);
 

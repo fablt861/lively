@@ -483,7 +483,6 @@
   "payout.status.pending": "En attente",
   "payout.status.paid": "Payé",
   "payout.status.rejected": "Rejeté",
-  "admin.nav.marketing": "Marketing",
   "admin.marketing.title": "Analyse d'Acquisition & Funnels",
   "admin.marketing.intro": "Suivez la performance de vos sources de trafic en temps réel.",
   "admin.marketing.table.source": "Source / Campagne / Ad",
@@ -494,5 +493,10 @@
   "admin.marketing.table.cr_signup": "Taux Insc.",
   "admin.marketing.table.cr_client": "Taux Client",
   "admin.marketing.table.arpu": "ARPU",
-  "admin.marketing.direct": "Direct / Naturel"
+  "admin.marketing.direct": "Direct / Naturel",
+  "admin.nav.marketing_users": "Marketing Users",
+  "admin.nav.marketing_models": "Marketing Models",
+  "admin.marketing.models.title": "Funnel d'Acquisition Models",
+  "admin.marketing.models.intro": "Suivez la performance du recrutement des models.",
+  "admin.marketing.table.validated": "Validés"
 }

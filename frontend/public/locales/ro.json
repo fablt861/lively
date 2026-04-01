@@ -421,7 +421,6 @@
   "payout.status.pending": "În așteptare",
   "payout.status.paid": "Plătit",
   "payout.status.rejected": "Respins",
-  "admin.nav.marketing": "Marketing",
   "admin.marketing.title": "Acquisition Analysis & Funnels",
   "admin.marketing.intro": "Track your traffic source performance in real-time.",
   "admin.marketing.table.source": "Source / Campaign / Ad",
@@ -432,5 +431,10 @@
   "admin.marketing.table.cr_signup": "Signup CR",
   "admin.marketing.table.cr_client": "Customer CR",
   "admin.marketing.table.arpu": "ARPU",
-  "admin.marketing.direct": "Direct / Organic"
+  "admin.marketing.direct": "Direct / Organic",
+  "admin.nav.marketing_users": "Marketing Users",
+  "admin.nav.marketing_models": "Marketing Models",
+  "admin.marketing.models.title": "Models Acquisition Funnel",
+  "admin.marketing.models.intro": "Track model recruitment performance.",
+  "admin.marketing.table.validated": "Validated"
 }
