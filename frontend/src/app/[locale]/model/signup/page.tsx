@@ -195,7 +195,7 @@ export default function ModelSignupPage() {
                                     >
                                         <option value="" disabled>{t('model.signup.step1_placeholder')}</option>
                                         {countries.map(c => (
-                                            <option key={c.code} value={c.code}>{c.flag} {c.nameFr}</option>
+                                            <option key={c.code} value={c.code}>{c.nameFr} {c.flag}</option>
                                         ))}
                                     </select>
                                     <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/20">
@@ -230,7 +230,7 @@ export default function ModelSignupPage() {
                                             className="w-full bg-black/60 border border-white/20 rounded-2xl py-4.5 pl-2 pr-6 text-white/90 appearance-none focus:outline-none focus:border-white/40 text-center font-bold cursor-pointer"
                                         >
                                             {countries.map(c => (
-                                                <option key={c.code} value={c.dialCode}>{c.flag} {c.dialCode}</option>
+                                                <option key={c.code} value={c.dialCode}>{c.dialCode} {c.flag}</option>
                                             ))}
                                         </select>
                                         <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">
