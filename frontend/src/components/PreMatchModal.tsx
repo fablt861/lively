@@ -120,32 +120,24 @@ export function PreMatchModal({ localStream, onJoin, role = "user" }: PreMatchMo
                     </div>
                 )}
 
-                <div className="text-center mb-6 md:mb-10 px-4">
-                    <h2 className="text-xl md:text-4xl font-black text-white mb-2 md:mb-3 tracking-tight">
-                        {step === "earnings" ? t('prematch.model_title') : t('prematch.title')}
-                    </h2>
-                    <p className="text-white/70 text-[10px] md:text-sm max-w-xs mx-auto leading-relaxed font-semibold">
-                        {step === "earnings" ? t('prematch.model_desc') : t('prematch.desc')}
-                    </p>
-                </div>
-
                 <button
                     onClick={handleJoinClick}
-                    className="group relative flex items-center gap-3 md:gap-4 px-8 md:px-14 py-4 md:py-7 bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-600 rounded-full text-white font-black text-base md:text-xl uppercase tracking-[0.2em] shadow-[0_20px_50px_rgba(99,102,241,0.4)] transition-all hover:scale-105 active:scale-95 overflow-hidden"
+                    className="group relative flex items-center gap-2 px-10 py-5 bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-600 rounded-full text-white font-black text-xs md:text-sm uppercase tracking-[0.2em] shadow-[0_15px_40px_rgba(99,102,241,0.3)] transition-all hover:scale-105 active:scale-95 overflow-hidden"
                 >
                     <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
                     {step === "earnings" ? (
                         <>
-                            <ArrowRight className="w-5 h-5 md:w-6 md:h-6 transition-transform group-hover:translate-x-1" size={24} />
+                            <ArrowRight className="w-4 h-4 md:w-5 md:h-5 transition-transform group-hover:translate-x-1" />
                             {t('prematch.model_confirm')}
                         </>
                     ) : (
                         <>
-                            <Play className="fill-white w-5 h-5 md:w-6 md:h-6" size={24} />
+                            <Play className="fill-white w-4 h-4 md:w-5 md:h-5" />
                             {t('prematch.btn')}
                         </>
                     )}
                 </button>
+
 
                 {/* Small Trust Badges */}
                 <div className="mt-8 md:mt-16 mb-8 flex items-center gap-6 md:gap-8 text-white/60 font-black uppercase tracking-[0.2em] text-[7px] md:text-[10px]">
