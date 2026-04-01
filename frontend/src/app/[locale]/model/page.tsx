@@ -55,7 +55,7 @@ export default function ModelLandingPage() {
                             {t('model.landing.hero_badge')}
                         </div>
 
-                        <h1 className="text-5xl md:text-7xl font-black leading-[0.95] tracking-tighter text-white">
+                        <h1 className="text-5xl md:text-6xl lg:text-[4.5rem] font-black leading-[0.9] tracking-tighter text-white">
                             {t('model.landing.hero_title_line1')} <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
                                 {t('model.landing.hero_title_line2')}
@@ -67,13 +67,17 @@ export default function ModelLandingPage() {
                         </p>
 
                         <div className="flex flex-wrap items-center gap-4 pt-4">
-                            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col gap-1 min-w-[140px]">
+                            <div className="bg-white/5 backdrop-blur-md rounded-3xl p-5 border border-white/10 flex items-center gap-4 min-w-[180px] hover:bg-white/10 transition-colors cursor-default group">
+                                <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
+                                    <DollarSign size={24} />
+                                </div>
                                 <span className="text-2xl font-black text-white leading-none tracking-tight">{t('model.stat.real_time_earnings')}</span>
-                                <span className="text-[9px] font-black text-white/60 uppercase tracking-[0.1em]">{t('model.stat.per_hour')}</span>
                             </div>
-                            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col gap-1 min-w-[140px]">
+                            <div className="bg-white/5 backdrop-blur-md rounded-3xl p-5 border border-white/10 flex items-center gap-4 min-w-[180px] hover:bg-white/10 transition-colors cursor-default group">
+                                <div className="w-12 h-12 rounded-2xl bg-pink-500/20 flex items-center justify-center text-pink-400 group-hover:scale-110 transition-transform">
+                                    <Zap size={24} />
+                                </div>
                                 <span className="text-2xl font-black text-white leading-none whitespace-nowrap">{t('model.stat.fast_payout_val')}</span>
-                                <span className="text-[9px] font-black text-white/60 uppercase tracking-[0.1em]">{t('model.stat.fast_payout')}</span>
                             </div>
                         </div>
 
