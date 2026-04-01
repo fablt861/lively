@@ -178,6 +178,7 @@ async function startBilling(roomId, userId, modelId, userSocketId, modelSocketId
 }
 
 async function stopBilling(roomId) {
+    const { markAsSeen } = require('./matching'); // Circular dependency safe
     const sessionStr = await redis.hget(ACTIVE_ROOMS_KEY, roomId);
     if (!sessionStr) return;
 
@@ -213,6 +214,11 @@ async function stopBilling(roomId) {
 
         await redis.lpush(`model:${modelId}:history`, JSON.stringify(historyEntry));
         await redis.lpush(`user:${userId}:history`, JSON.stringify(historyEntry));
+
+        // Mark as seen if call lasted > 15 seconds (Anti-Rebound)
+        if (durationSec > 15) {
+            await markAsSeen(userId, modelId);
+        }
     }
 
     await redis.lpush('debug:billing', JSON.stringify({ event: 'stop', roomId, userId, modelId, durationSec, modelEarned, timestamp: Date.now() }));

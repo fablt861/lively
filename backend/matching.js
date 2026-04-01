@@ -139,9 +139,50 @@ async function handleJoinQueue(io, socket) {
     let foundPartner = false;
     let maxRetries = 10;
 
+    const myIdentifier = socket.userEmail || socket.userIp;
+
     while (maxRetries > 0) {
-        partnerId = await redis.rpop(targetQueue);
-        if (!partnerId) break;
+        // Anti-Rebound Search: get all candidates (limit to first 30 for performance)
+        const candidates = await redis.lrange(targetQueue, -30, -1); // FIFO order: tail is newest? No, LINDEX 0 is head. list is [head ... tail]. Tail is newest? No, lpush pushes to head.
+        // Let's use standard list order: LPUSH to head, RPOP from tail. 
+        // LINDEX tail (length -1) is the oldest.
+        
+        let targetIndex = -1;
+        for (let i = candidates.length - 1; i >= 0; i--) {
+             const cId = candidates[i];
+             const cSocket = io.sockets.sockets.get(cId);
+             if (!cSocket) continue;
+
+             const cIdentifier = cSocket.userEmail || cSocket.userIp;
+             const alreadySeen = await redis.get(`seen:${myIdentifier}:${cIdentifier}`);
+             
+             if (!alreadySeen) {
+                 targetIndex = i;
+                 break;
+             }
+        }
+
+        // If all available candidates are "seen", fallback to the oldest one (tail)
+        if (targetIndex === -1 && candidates.length > 0) {
+            console.log(`[Match Cooldown] Everyone in queue (+${candidates.length}) already seen by ${myIdentifier}. Falling back to oldest.`);
+            targetIndex = candidates.length - 1;
+        }
+
+        if (targetIndex !== -1) {
+            const chosenId = candidates[targetIndex];
+            // Remove exactly this ID from the queue
+            const removedCount = await redis.lrem(targetQueue, 1, chosenId);
+            if (removedCount > 0) {
+                partnerId = chosenId;
+            } else {
+                // Someone else grabbed it or they left
+                maxRetries--;
+                continue;
+            }
+        } else {
+            // Nothing in queue
+            break;
+        }
 
         const partnerSocket = io.sockets.sockets.get(partnerId);
         if (partnerSocket) {
@@ -211,4 +252,14 @@ async function disconnectFromRoom(socket) {
     }
 }
 
-module.exports = { setupMatching, handleJoinQueue, disconnectFromRoom };
+async function markAsSeen(id1, id2) {
+    if (!id1 || !id2) return;
+    const key1 = `seen:${id1.toLowerCase()}:${id2.toLowerCase()}`;
+    const key2 = `seen:${id2.toLowerCase()}:${id1.toLowerCase()}`;
+    // Cool down for 1 hour (3600 seconds)
+    await redis.set(key1, '1', 'EX', 3600);
+    await redis.set(key2, '1', 'EX', 3600);
+    console.log(`[Cooldown] Marked ${id1} and ${id2} as seen for 1h.`);
+}
+
+module.exports = { setupMatching, handleJoinQueue, disconnectFromRoom, markAsSeen };
