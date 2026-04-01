@@ -20,17 +20,9 @@ export function OnlineGauge() {
             {/* Background Glow */}
             <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-pink-500/30 via-indigo-500/30 to-pink-500/30 opacity-30" />
 
-            <div className="flex items-center gap-4 shrink-0">
-                <div className="flex flex-col">
-                    <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.2em] leading-none mb-1">{t('gauge.online')}</span>
-                    <span className="text-lg font-black text-white tabular-nums leading-none">
-                        {(femaleCount + maleCount).toLocaleString()}
-                    </span>
-                </div>
-                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-500/10 border border-green-500/20">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                    <span className="text-[8px] font-black text-green-400 uppercase tracking-widest">{t('gauge.live')}</span>
-                </div>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20">
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-[9px] font-black text-green-400 uppercase tracking-widest leading-none">{t('gauge.live')}</span>
             </div>
 
             {/* Gauge with Labels Container */}
