@@ -10,11 +10,11 @@ interface PaywallModalProps {
 
 const PROFILES = [
     { id: 1, img: "/assets/profiles/p1.png", name: "Elena" },
-    { id: 2, img: "/assets/profiles/p2.png", name: "Sophie" },
-    { id: 3, img: "/assets/profiles/p3.png", name: "Clara" },
-    { id: 4, img: "/assets/profiles/p4.png", name: "Mélissa" },
+    { id: 2, img: "/assets/profiles/p2.png", name: "Zoya" },
+    { id: 3, img: "/assets/profiles/p3.png", name: "Mei" },
+    { id: 4, img: "/assets/profiles/p4.png", name: "Layla" },
     { id: 5, img: "/assets/profiles/p5.png", name: "Jade" },
-    { id: 6, img: "/assets/profiles/p6.png", name: "Léa" },
+    { id: 6, img: "/assets/profiles/p6.png", name: "Amira" },
 ];
 
 export function PaywallModal({ onClose, onPurchase, packs: propPacks = [] }: PaywallModalProps) {
