@@ -56,6 +56,7 @@ interface VideoRoomProps {
     queuePosition?: number | null;
     isLaunch?: boolean;
     isLaunchOverride?: boolean;
+    packs?: any[];
 }
 
 export function VideoRoom({
@@ -78,7 +79,8 @@ export function VideoRoom({
     partnerInfo,
     queuePosition,
     isLaunch,
-    isLaunchOverride
+    isLaunchOverride,
+    packs
 }: VideoRoomProps) {
     const { t, language } = useTranslation();
     const router = useRouter();

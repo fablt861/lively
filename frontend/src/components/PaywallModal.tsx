@@ -5,6 +5,7 @@ import { useTranslation } from "@/context/LanguageContext";
 interface PaywallModalProps {
     onClose: () => void;
     onPurchase: (credits: number, priceUsd: number) => void;
+    packs?: any[];
 }
 
 const PROFILES = [
@@ -16,26 +17,31 @@ const PROFILES = [
     { id: 6, img: "/assets/profiles/p6.png", name: "Léa" },
 ];
 
-export function PaywallModal({ onClose, onPurchase }: PaywallModalProps) {
+export function PaywallModal({ onClose, onPurchase, packs = [] }: PaywallModalProps) {
     const { t } = useTranslation();
     const [selectedPack, setSelectedPack] = useState(300);
-    const [packs, setPacks] = useState<any[]>([]);
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/settings`)
-            .then(res => res.json())
-            .then(data => {
-                if (data && data.packs) {
-                    setPacks(data.packs);
-                    setSelectedPack(data.packs[1]?.credits || 300);
-                }
-            })
-            .catch(console.error);
-    }, []);
+        if (packs.length > 0 && selectedPack === 300) {
+            setSelectedPack(packs[1]?.credits || packs[0]?.credits || 300);
+        }
+    }, [packs]);
 
-    const pack1 = packs[0] || { name: 'Essentiel', credits: 100, priceUsd: 9.99 };
-    const pack2 = packs[1] || { name: 'Premium', credits: 300, priceUsd: 24.99 };
-    const pack3 = packs[2] || { name: 'Privilège', credits: 1300, priceUsd: 99.99 };
+    if (!packs || packs.length === 0) {
+        return (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                <div className="absolute inset-0 bg-black/60 backdrop-blur-3xl" onClick={onClose} />
+                <div className="relative bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] p-12 text-center">
+                    <div className="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin mx-auto mb-4" />
+                    <p className="text-white/40 text-xs font-bold uppercase tracking-widest">{t('common.loading')}</p>
+                </div>
+            </div>
+        );
+    }
+
+    const pack1 = packs[0];
+    const pack2 = packs[1];
+    const pack3 = packs[2];
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 overflow-hidden">
@@ -106,7 +112,7 @@ export function PaywallModal({ onClose, onPurchase }: PaywallModalProps) {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-8">
-                        {[pack1, pack2, pack3].map((pack, idx) => {
+                        {[pack1, pack2, pack3].filter(Boolean).map((pack, idx) => {
                             const isSelected = selectedPack === pack.credits;
                             const isPremium = idx === 1;
                             const isPrivilege = idx === 2;

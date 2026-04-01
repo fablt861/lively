@@ -10,6 +10,7 @@ export default function LivePage({ params }: { params: { locale: string } }) {
     const [isMaintenance, setIsMaintenance] = useState(false);
     const [isLaunch, setIsLaunch] = useState(false);
     const [isChecking, setIsChecking] = useState(true);
+    const [settings, setSettings] = useState<any>(null);
 
     useEffect(() => {
         const storedRole = localStorage.getItem("kinky_user_role") as "user" | "model" | null;
@@ -18,9 +19,10 @@ export default function LivePage({ params }: { params: { locale: string } }) {
         // Check maintenance & launch mode
         fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/settings`)
             .then(res => res.json())
-            .then(settings => {
-                if (settings.maintenanceMode) setIsMaintenance(true);
-                if (settings.launchMode) setIsLaunch(true);
+            .then(data => {
+                setSettings(data);
+                if (data.maintenanceMode) setIsMaintenance(true);
+                if (data.launchMode) setIsLaunch(true);
             })
             .catch(() => {})
             .finally(() => setIsChecking(false));
@@ -32,10 +34,10 @@ export default function LivePage({ params }: { params: { locale: string } }) {
     const activeLaunch = isLaunch || webRTC.isLaunch;
     
     if (activeMaintenance) return <MaintenanceGuard />;
-    if (activeLaunch) return <VideoRoom {...webRTC} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={webRTC.endCall} onNext={webRTC.nextPartner} isLaunchOverride={true} />;
+    if (activeLaunch) return <VideoRoom {...webRTC} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={webRTC.endCall} onNext={webRTC.nextPartner} isLaunchOverride={true} packs={settings?.packs} />;
     if (isChecking || !role) return <div className="min-h-screen bg-[#050505]"></div>;
 
-    return <VideoRoom {...webRTC} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={webRTC.endCall} onNext={webRTC.nextPartner} />;
+    return <VideoRoom {...webRTC} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={webRTC.endCall} onNext={webRTC.nextPartner} packs={settings?.packs} />;
 }
 
 
