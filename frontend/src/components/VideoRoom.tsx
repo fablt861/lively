@@ -350,14 +350,14 @@ export function VideoRoom({
                                 router.push('/');
                             }
                         }}
-                        onPurchase={async (credits) => {
+                        onPurchase={async (credits, priceUsd) => {
                             const email = localStorage.getItem('kinky_user_email');
                             if (email) {
                                 try {
                                     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/auth/add-credits`, {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ email, amount: credits })
+                                        body: JSON.stringify({ email, amount: credits, priceUsd })
                                     });
                                     if (!res.ok) {
                                         console.error('[Purchase] Failed to sync credits with backend:', await res.text());

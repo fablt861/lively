@@ -4,7 +4,7 @@ import { useTranslation } from "@/context/LanguageContext";
 
 interface PaywallModalProps {
     onClose: () => void;
-    onPurchase: (credits: number) => void;
+    onPurchase: (credits: number, priceUsd: number) => void;
 }
 
 const PROFILES = [
@@ -140,7 +140,10 @@ export function PaywallModal({ onClose, onPurchase }: PaywallModalProps) {
                     {/* Unified CTA */}
                     <div className="mt-auto space-y-4 max-w-sm w-full mx-auto md:mx-0">
                         <button
-                            onClick={() => onPurchase(selectedPack)}
+                            onClick={() => {
+                                const pack = packs.find(p => p.credits === selectedPack);
+                                onPurchase(selectedPack, pack?.priceUsd || 0);
+                            }}
                             className="w-full py-4 md:py-5 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 text-white font-black text-lg hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_30px_rgba(99,102,241,0.4)] flex items-center justify-center group"
                         >
                             {t('paywall.cta')}

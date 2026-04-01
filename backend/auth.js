@@ -119,9 +119,9 @@ router.post('/add-credits', async (req, res) => {
         newCredits = await redis.incrbyfloat(`user:${email}:credits`, amount);
     }
 
-    await trackMarketingRevenue(src, camp, ad, amount, email);
+    await trackMarketingRevenue(src, camp, ad, priceUsd || parseFloat(amount) / 10, email);
     const { logPurchase } = require('./stats');
-    await logPurchase(amount);
+    await logPurchase(priceUsd || parseFloat(amount) / 10);
 
     res.json({
         success: true,
