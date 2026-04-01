@@ -142,7 +142,13 @@ async function getFinancialStats() {
             monthlyGroups[month] = { ttc: 0, gains: 0 };
         }
         
-        monthlyGroups[month].ttc += parseFloat(data.purchases_usd || '0');
+        // Use purchases_usd (Sales) as primary, fallback to historical revenue_usd (Consumption)
+        const purchases = parseFloat(data.purchases_usd || '0');
+        const consumption = parseFloat(data.revenue_usd || '0');
+        
+        // If it's a historical month where we didn't have purchases_usd yet, 
+        // we use consumption as a proxy for TTC Revenue.
+        monthlyGroups[month].ttc += purchases > 0 ? purchases : consumption;
         monthlyGroups[month].gains += parseFloat(data.model_payout_usd || '0');
     }
     
