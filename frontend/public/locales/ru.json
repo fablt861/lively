@@ -112,7 +112,7 @@
   "model.landing.footer_desc": "Регистрация занимает менее 5 минут. Наша команда обработает вашу заявку в течение 24 часов.",
   "model.landing.footer_cta": "Начать сейчас",
   "model.landing.navbar_suite": "Elite Suite",
-  "model.signup.navbar_models": "СОЗДАТЕЛИ",
+  "model.signup.navbar_models": "ELITE",
   "model.signup.navbar_login": "ВХОД",
   "model.signup.hero_title_line1": "Начните свою",
   "model.signup.hero_title_line2": "Новую жизнь.",
@@ -126,7 +126,7 @@
   "model.signup.benefit4_title": "Специальная поддержка",
   "model.signup.benefit4_desc": "Команда к вашим услугам 24/7.",
   "model.signup.step_prev": "Назад",
-  "model.signup.step_indicator": "СОЗДАНИЕ ДОСЬЕ • ШАГ {{step}} ИЗ {{total}}",
+  "model.signup.step_indicator": "ШАГ {{step}} ИЗ {{total}}",
   "model.signup.step1_title": "Где вы проживаете?",
   "model.signup.step1_desc": "Мы ограничиваем доступ к определенным странам, чтобы обеспечить вашу конфиденциальность.",
   "model.signup.step1_placeholder": "Выберите вашу страну",
@@ -396,4 +396,11 @@
   "model.stat.real_time_earnings": "Зарабатывайте каждую секунду",
   "model.landing.live_cam_title": "Видео-взаимодействие в прямом эфире",
   "model.landing.live_cam_desc": "Транслируйте из любого места, общайтесь с нашей аудиторией в режиме реального времени и получайте деньги за каждую секунду видеочата."
+,
+  "model.signup.step4_take_photo": "Take Photo",
+  "model.signup.camera_title": "Camera Capture",
+  "model.signup.camera_capture_btn": "Capture",
+  "model.signup.camera_cancel_btn": "Cancel",
+  "model.signup.camera_save_btn": "Save Photo",
+  "model.signup.camera_flip_btn": "Flip Camera"
 }

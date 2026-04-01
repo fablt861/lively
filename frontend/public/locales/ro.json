@@ -112,7 +112,7 @@
   "model.landing.footer_desc": "Înregistrarea durează mai puțin de 5 minute. Echipa noastră îți procesează cererea în 24 de ore.",
   "model.landing.footer_cta": "Începe acum",
   "model.landing.navbar_suite": "Elite Suite",
-  "model.signup.navbar_models": "CREATOARE",
+  "model.signup.navbar_models": "ELITE",
   "model.signup.navbar_login": "LOGIN",
   "model.signup.hero_title_line1": "Începe-ți",
   "model.signup.hero_title_line2": "Noua Viață.",
@@ -126,7 +126,7 @@
   "model.signup.benefit4_title": "Suport Dedicat",
   "model.signup.benefit4_desc": "O echipă la dispoziția ta 24/7.",
   "model.signup.step_prev": "Anterior",
-  "model.signup.step_indicator": "CREARE DOSAR • PASUL {{step}} DIN {{total}}",
+  "model.signup.step_indicator": "PASUL {{step}} DIN {{total}}",
   "model.signup.step1_title": "Unde locuiești?",
   "model.signup.step1_desc": "Limităm accesul în anumite țări pentru a-ți garanta discreția.",
   "model.signup.step1_placeholder": "Selectează țara ta",
@@ -396,4 +396,11 @@
   "model.stat.real_time_earnings": "Câștigă în fiecare secundă",
   "model.landing.live_cam_title": "Interacțiune Video Live",
   "model.landing.live_cam_desc": "Transmite de oriunde, conectează-te cu publicul nostru în timp real și fii plătit pentru fiecare secundă de chat video."
+,
+  "model.signup.step4_take_photo": "Take Photo",
+  "model.signup.camera_title": "Camera Capture",
+  "model.signup.camera_capture_btn": "Capture",
+  "model.signup.camera_cancel_btn": "Cancel",
+  "model.signup.camera_save_btn": "Save Photo",
+  "model.signup.camera_flip_btn": "Flip Camera"
 }

@@ -21,6 +21,7 @@ import {
 import Link from "next/link";
 import { useTranslation } from "@/context/LanguageContext";
 import { countries } from "@/utils/countries";
+import CameraCapture from "@/components/CameraCapture";
 
 export default function ModelSignupPage() {
     const { t, language } = useTranslation();
@@ -42,6 +43,8 @@ export default function ModelSignupPage() {
     const [apiError, setApiError] = useState("");
     const [loading, setLoading] = useState(false);
     const [compressing, setCompressing] = useState<number | null>(null);
+    const [isCameraOpen, setIsCameraOpen] = useState(false);
+    const [cameraTarget, setCameraTarget] = useState<'profile' | 'id' | 'selfie' | null>(null);
 
     const handleNext = () => setStep(s => s + 1);
     const handlePrev = () => setStep(s => Math.max(1, s - 1));
@@ -92,6 +95,12 @@ export default function ModelSignupPage() {
         if (type === 'id') setPhotoId(compressed);
         if (type === 'selfie') setPhotoIdSelfie(compressed);
         setCompressing(null);
+    };
+
+    const handleCameraCapture = (dataUrl: string) => {
+        if (cameraTarget === 'profile') setPhotoProfile(dataUrl);
+        if (cameraTarget === 'id') setPhotoId(dataUrl);
+        if (cameraTarget === 'selfie') setPhotoIdSelfie(dataUrl);
     };
 
     const handleSubmit = async () => {
@@ -349,15 +358,28 @@ export default function ModelSignupPage() {
                                                     className="hidden"
                                                     onChange={(e) => handleFileChange(e, p.id as any)}
                                                 />
-                                                <label
-                                                    htmlFor={`upload-${p.id}`}
-                                                    className={`absolute inset-0 flex items-center justify-center cursor-pointer transition-all ${p.photo ? 'bg-black/60 opacity-0 hover:opacity-100' : 'bg-transparent'}`}
-                                                >
-                                                    <div className="bg-white text-black font-black text-[8px] uppercase tracking-widest px-3 py-1.5 rounded-full shadow-2xl flex items-center gap-1.5">
-                                                        <Camera size={10} />
-                                                        {compressing ? t('model.signup.step4_compressing') : p.photo ? t('model.signup.step4_change') : t('model.signup.step4_upload')}
+                                                <div className={`absolute inset-0 flex flex-col items-center justify-center cursor-pointer transition-all ${p.photo ? 'bg-black/60 opacity-0 hover:opacity-100' : 'bg-transparent'}`}>
+                                                    <div className="flex flex-col gap-2 scale-90 sm:scale-100">
+                                                        <label
+                                                            htmlFor={`upload-${p.id}`}
+                                                            className="bg-white text-black font-black text-[8px] uppercase tracking-widest px-3 py-1.5 rounded-full shadow-2xl flex items-center gap-1.5 cursor-pointer hover:bg-neutral-200 transition-colors"
+                                                        >
+                                                            <Camera size={10} />
+                                                            {compressing ? t('model.signup.step4_compressing') : p.photo ? t('model.signup.step4_change') : t('model.signup.step4_upload')}
+                                                        </label>
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                setCameraTarget(p.id as any);
+                                                                setIsCameraOpen(true);
+                                                            }}
+                                                            className="bg-pink-500 text-white font-black text-[8px] uppercase tracking-widest px-3 py-1.5 rounded-full shadow-2xl flex items-center gap-1.5 hover:bg-pink-600 transition-colors"
+                                                        >
+                                                            <Camera size={10} />
+                                                            {t('model.signup.step4_take_photo') || "Take Photo"}
+                                                        </button>
                                                     </div>
-                                                </label>
+                                                </div>
                                             </div>
                                         </div>
                                     ))}
@@ -408,6 +430,16 @@ export default function ModelSignupPage() {
                         {t('model.signup.footer_secure')}
                     </div>
             </div>
+
+            {isCameraOpen && (
+                <CameraCapture 
+                    onCapture={handleCameraCapture}
+                    onClose={() => {
+                        setIsCameraOpen(false);
+                        setCameraTarget(null);
+                    }}
+                />
+            )}
         </div>
     );
 }

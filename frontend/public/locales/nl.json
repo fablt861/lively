@@ -112,7 +112,7 @@
   "model.landing.footer_desc": "De registratie duurt minder dan 5 minuten. Ons team verwerkt je aanvraag binnen 24 uur.",
   "model.landing.footer_cta": "Nu starten",
   "model.landing.navbar_suite": "Elite Suite",
-  "model.signup.navbar_models": "CREATORS",
+  "model.signup.navbar_models": "ELITE",
   "model.signup.navbar_login": "LOGIN",
   "model.signup.hero_title_line1": "Start je",
   "model.signup.hero_title_line2": "Nieuwe Leven.",
@@ -126,7 +126,7 @@
   "model.signup.benefit4_title": "Toegewijde ondersteuning",
   "model.signup.benefit4_desc": "Een team tot je dienst 24/7.",
   "model.signup.step_prev": "Vorige",
-  "model.signup.step_indicator": "DOSSIERVORMING • STAP {{step}} VAN {{total}}",
+  "model.signup.step_indicator": "STAP {{step}} VAN {{total}}",
   "model.signup.step1_title": "Waar woont u?",
   "model.signup.step1_desc": "We beperken de toegang in bepaalde landen om uw discretie te garanderen.",
   "model.signup.step1_placeholder": "Selecteer uw land",
@@ -396,4 +396,11 @@
   "model.stat.real_time_earnings": "Verdien elke seconde",
   "model.landing.live_cam_title": "Live Video Interactie",
   "model.landing.live_cam_desc": "Zend overal uit, maak in realtime contact met ons publiek en word betaald voor elke seconde videochat."
+,
+  "model.signup.step4_take_photo": "Take Photo",
+  "model.signup.camera_title": "Camera Capture",
+  "model.signup.camera_capture_btn": "Capture",
+  "model.signup.camera_cancel_btn": "Cancel",
+  "model.signup.camera_save_btn": "Save Photo",
+  "model.signup.camera_flip_btn": "Flip Camera"
 }

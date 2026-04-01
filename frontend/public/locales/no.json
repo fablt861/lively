@@ -112,7 +112,7 @@
   "model.landing.footer_desc": "Registreringen tar mindre enn 5 minutter. Teamet vårt behandler søknaden din innen 24 timer.",
   "model.landing.footer_cta": "Start nå",
   "model.landing.navbar_suite": "Elite Suite",
-  "model.signup.navbar_models": "KREATØRER",
+  "model.signup.navbar_models": "ELITE",
   "model.signup.navbar_login": "LOGG INN",
   "model.signup.hero_title_line1": "Start ditt",
   "model.signup.hero_title_line2": "Nye liv.",
@@ -126,7 +126,7 @@
   "model.signup.benefit4_title": "Dedikert støtte",
   "model.signup.benefit4_desc": "Et team til din tjeneste 24/7.",
   "model.signup.step_prev": "Forrige",
-  "model.signup.step_indicator": "OPPRETTELSE AV SAK • TRINN {{step}} AV {{total}}",
+  "model.signup.step_indicator": "TRINN {{step}} AV {{total}}",
   "model.signup.step1_title": "Hvor bor du?",
   "model.signup.step1_desc": "Vi begrenser tilgangen i visse land for å garantere din diskresjon.",
   "model.signup.step1_placeholder": "Velg ditt land",
@@ -396,4 +396,11 @@
   "model.stat.real_time_earnings": "Tjen hvert sekund",
   "model.landing.live_cam_title": "Live Videointeraksjon",
   "model.landing.live_cam_desc": "Send fra hvor som helst, koble til publikummet vårt i sanntid og få betalt for hvert sekund med videochat."
+,
+  "model.signup.step4_take_photo": "Take Photo",
+  "model.signup.camera_title": "Camera Capture",
+  "model.signup.camera_capture_btn": "Capture",
+  "model.signup.camera_cancel_btn": "Cancel",
+  "model.signup.camera_save_btn": "Save Photo",
+  "model.signup.camera_flip_btn": "Flip Camera"
 }

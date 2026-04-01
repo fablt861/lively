@@ -112,7 +112,7 @@
   "model.landing.footer_desc": "Rekisteröityminen kestää alle 5 minuuttia. Tiimimme käsittelee hakemuksesi 24 tunnin kuluessa.",
   "model.landing.footer_cta": "Aloita nyt",
   "model.landing.navbar_suite": "Elite Suite",
-  "model.signup.navbar_models": "SISÄLLÖNTUOTTAJAT",
+  "model.signup.navbar_models": "ELITE",
   "model.signup.navbar_login": "KIRJAUDU",
   "model.signup.hero_title_line1": "Aloita uusi",
   "model.signup.hero_title_line2": "elämäsi.",
@@ -126,7 +126,7 @@
   "model.signup.benefit4_title": "Omistautunut tuki",
   "model.signup.benefit4_desc": "Tiimi palveluksessasi 24/7.",
   "model.signup.step_prev": "Edellinen",
-  "model.signup.step_indicator": "HAKEMUKSEN LUONTI • VAIHE {{step}} / {{total}}",
+  "model.signup.step_indicator": "VAIHE {{step}} / {{total}}",
   "model.signup.step1_title": "Missä asutte?",
   "model.signup.step1_desc": "Rajoitamme pääsyä tietyistä maista varmistaaksemme luottamuksellisuutenne.",
   "model.signup.step1_placeholder": "Valitse maasi",
@@ -396,4 +396,11 @@
   "model.stat.real_time_earnings": "Ansaitse joka sekunti",
   "model.landing.live_cam_title": "Live-videovuorovaikutus",
   "model.landing.live_cam_desc": "Lähetä mistä tahansa, ota yhteys yleisöömme reaaliajassa ja saat palkan jokaisesta videochatin sekunnista."
+,
+  "model.signup.step4_take_photo": "Take Photo",
+  "model.signup.camera_title": "Camera Capture",
+  "model.signup.camera_capture_btn": "Capture",
+  "model.signup.camera_cancel_btn": "Cancel",
+  "model.signup.camera_save_btn": "Save Photo",
+  "model.signup.camera_flip_btn": "Flip Camera"
 }

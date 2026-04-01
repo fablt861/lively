@@ -112,7 +112,7 @@
   "model.landing.footer_desc": "Реєстрація займає менше 5 хвилин. Наша команда обробляє вашу заявку протягом 24 годин.",
   "model.landing.footer_cta": "Почати зараз",
   "model.landing.navbar_suite": "Elite Suite",
-  "model.signup.navbar_models": "КРЕАТОРИ",
+  "model.signup.navbar_models": "ELITE",
   "model.signup.navbar_login": "УВІЙТИ",
   "model.signup.hero_title_line1": "Почніть своє",
   "model.signup.hero_title_line2": "Нове життя.",
@@ -126,7 +126,7 @@
   "model.signup.benefit4_title": "Спеціальна підтримка",
   "model.signup.benefit4_desc": "Команда до ваших послуг 24/7.",
   "model.signup.step_prev": "Попередній",
-  "model.signup.step_indicator": "СТВОРЕННЯ СПРАВИ • КРОК {{step}} З {{total}}",
+  "model.signup.step_indicator": "КРОК {{step}} З {{total}}",
   "model.signup.step1_title": "Де ви проживаєте?",
   "model.signup.step1_desc": "Ми обмежуємо доступ до певних країн, щоб забезпечити вашу конфіденційність.",
   "model.signup.step1_placeholder": "Оберіть свою країну",
@@ -396,4 +396,11 @@
   "model.stat.real_time_earnings": "Заробляйте щосекунди",
   "model.landing.live_cam_title": "Відео-взаємодія в прямому ефірі",
   "model.landing.live_cam_desc": "Транслюйте з будь-якого місця, спілкуйтеся з нашою аудиторією в режимі реального часу та отримуйте гроші за кожну секунду відеочату."
+,
+  "model.signup.step4_take_photo": "Take Photo",
+  "model.signup.camera_title": "Camera Capture",
+  "model.signup.camera_capture_btn": "Capture",
+  "model.signup.camera_cancel_btn": "Cancel",
+  "model.signup.camera_save_btn": "Save Photo",
+  "model.signup.camera_flip_btn": "Flip Camera"
 }

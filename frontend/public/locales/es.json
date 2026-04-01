@@ -112,7 +112,7 @@
   "model.landing.footer_desc": "El registro toma menos de 5 minutos. Nuestro equipo procesa tu solicitud en 24 horas.",
   "model.landing.footer_cta": "Empezar ahora",
   "model.landing.navbar_suite": "Elite Suite",
-  "model.signup.navbar_models": "CREADORAS",
+  "model.signup.navbar_models": "ELITE",
   "model.signup.navbar_login": "ENTRAR",
   "model.signup.hero_title_line1": "Comienza tu",
   "model.signup.hero_title_line2": "Nueva Vida.",
@@ -126,7 +126,7 @@
   "model.signup.benefit4_title": "Soporte dedicado",
   "model.signup.benefit4_desc": "Un equipo a tu servicio 24/7.",
   "model.signup.step_prev": "Anterior",
-  "model.signup.step_indicator": "CREACIÓN DE EXPEDIENTE • PASO {{step}} DE {{total}}",
+  "model.signup.step_indicator": "PASO {{step}} DE {{total}}",
   "model.signup.step1_title": "¿Dónde resides?",
   "model.signup.step1_desc": "Limitamos el acceso en ciertos países para garantizar tu discreción.",
   "model.signup.step1_placeholder": "Selecciona tu país",
@@ -396,4 +396,11 @@
   "model.stat.real_time_earnings": "Gana cada segundo",
   "model.landing.live_cam_title": "Interacción de Video en Vivo",
   "model.landing.live_cam_desc": "Transmite desde cualquier lugar, conéctate con nuestra audiencia en tiempo real y recibe pagos por cada segundo de video chat."
+,
+  "model.signup.step4_take_photo": "Take Photo",
+  "model.signup.camera_title": "Camera Capture",
+  "model.signup.camera_capture_btn": "Capture",
+  "model.signup.camera_cancel_btn": "Cancel",
+  "model.signup.camera_save_btn": "Save Photo",
+  "model.signup.camera_flip_btn": "Flip Camera"
 }
