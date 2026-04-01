@@ -152,7 +152,7 @@
   "model.signup.step4_consigne": "Required Photo",
   "model.signup.step4_compressing": "Processing...",
   "model.signup.step4_change": "Change photo",
-  "model.signup.step4_upload": "Take photo",
+  "model.signup.step4_upload": "Upload photo",
   "model.signup.step4_submitting": "Sending case...",
   "model.signup.step4_btn": "Send my request",
   "model.signup.success_title": "Case sent!",
@@ -459,5 +459,11 @@
   "admin.models.reset_balance_success": "Balance reset successfully",
   "model.stat.real_time_earnings": "Earn Every Second",
   "model.landing.live_cam_title": "Live Video Interaction",
-  "model.landing.live_cam_desc": "Broadcast from anywhere, connect with our audience in real-time, and get paid for every second of video chat."
+  "model.landing.live_cam_desc": "Broadcast from anywhere, connect with our audience in real-time, and get paid for every second of video chat.",
+  "model.signup.step4_take_photo": "Take with camera",
+  "model.signup.camera_title": "Camera Capture",
+  "model.signup.camera_capture_btn": "Capture",
+  "model.signup.camera_cancel_btn": "Cancel",
+  "model.signup.camera_save_btn": "Save Photo",
+  "model.signup.camera_flip_btn": "Flip Camera"
 }

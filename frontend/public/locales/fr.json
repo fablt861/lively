@@ -152,7 +152,7 @@
   "model.signup.step4_consigne": "Photo requise",
   "model.signup.step4_compressing": "Traitement...",
   "model.signup.step4_change": "Changer la photo",
-  "model.signup.step4_upload": "Prendre la photo",
+  "model.signup.step4_upload": "Télécharger une photo",
   "model.signup.step4_submitting": "Envoi du dossier...",
   "model.signup.step4_btn": "Envoyer ma demande",
   "model.signup.success_title": "Dossier envoyé !",
@@ -459,5 +459,11 @@
   "admin.models.reset_balance_success": "Solde réinitialisé avec succès",
   "model.stat.real_time_earnings": "Gagnez à Chaque Seconde",
   "model.landing.live_cam_title": "Interaction Vidéo en Direct",
-  "model.landing.live_cam_desc": "Diffusez de n'importe où, connectez-vous avec notre public en temps réel et soyez payé pour chaque seconde de chat vidéo."
+  "model.landing.live_cam_desc": "Diffusez de n'importe où, connectez-vous avec notre public en temps réel et soyez payé pour chaque seconde de chat vidéo.",
+  "model.signup.step4_take_photo": "Prendre avec la caméra",
+  "model.signup.camera_title": "Capture Caméra",
+  "model.signup.camera_capture_btn": "Capturer",
+  "model.signup.camera_cancel_btn": "Annuler",
+  "model.signup.camera_save_btn": "Enregistrer la photo",
+  "model.signup.camera_flip_btn": "Retourner la caméra"
 }
