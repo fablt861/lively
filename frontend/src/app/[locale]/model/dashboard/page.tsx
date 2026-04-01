@@ -212,8 +212,9 @@ export default function DashboardPage() {
                                             {Math.floor(day.durationSec / 60)}m {day.durationSec % 60}s
                                         </td>
                                         <td className="p-6 text-right font-mono text-green-400">
-                                            +${day.modelEarned.toFixed(4)}
+                                            +${day.modelEarned.toFixed(2)}
                                         </td>
+
                                     </tr>
                                 ))}
                             </tbody>
