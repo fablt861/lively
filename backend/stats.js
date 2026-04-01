@@ -58,7 +58,50 @@ async function getDailyStats(daysBack = 30) {
     return results;
 }
 
+async function trackMarketingVisit(src, camp, ad) {
+    const key = (src || camp || ad) ? `src:${src || ''}|camp:${camp || ''}|ad:${ad || ''}` : 'direct';
+    await redis.hincrby(`marketing:stats:${key}`, 'visits', 1);
+    await redis.sadd('marketing:active_keys', key);
+}
+
+async function trackMarketingSignup(src, camp, ad) {
+    const key = (src || camp || ad) ? `src:${src || ''}|camp:${camp || ''}|ad:${ad || ''}` : 'direct';
+    await redis.hincrby(`marketing:stats:${key}`, 'signups', 1);
+    await redis.sadd('marketing:active_keys', key);
+}
+
+async function trackMarketingRevenue(src, camp, ad, amount, email) {
+    const key = (src || camp || ad) ? `src:${src || ''}|camp:${camp || ''}|ad:${ad || ''}` : 'direct';
+    await redis.hincrbyfloat(`marketing:stats:${key}`, 'revenue', amount);
+    
+    // Tracking unique clients per source
+    if (email) {
+        const added = await redis.sadd(`marketing:clients:${key}`, email);
+        if (added) {
+            await redis.hincrby(`marketing:stats:${key}`, 'clients_count', 1);
+        }
+    }
+    await redis.sadd('marketing:active_keys', key);
+}
+
+async function getMarketingStats() {
+    const keys = await redis.smembers('marketing:active_keys');
+    const results = [];
+    for (const key of keys) {
+        const data = await redis.hgetall(`marketing:stats:${key}`);
+        results.push({
+            id: key,
+            visits: parseInt(data.visits || '0'),
+            signups: parseInt(data.signups || '0'),
+            clients: parseInt(data.clients_count || '0'),
+            revenue: parseFloat(data.revenue || '0')
+        });
+    }
+    return results;
+}
+
 module.exports = {
     logNewUser, logNewModel, logNewClient, logRevenue, logModelPayout,
-    getGlobalStats, getDailyStats
+    getGlobalStats, getDailyStats,
+    trackMarketingVisit, trackMarketingSignup, trackMarketingRevenue, getMarketingStats
 };

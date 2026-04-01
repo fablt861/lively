@@ -482,5 +482,17 @@
   "dashboard.payout_history_title": "Historique des Paiements",
   "payout.status.pending": "En attente",
   "payout.status.paid": "Payé",
-  "payout.status.rejected": "Rejeté"
+  "payout.status.rejected": "Rejeté",
+  "admin.nav.marketing": "Marketing",
+  "admin.marketing.title": "Analyse d'Acquisition & Funnels",
+  "admin.marketing.intro": "Suivez la performance de vos sources de trafic en temps réel.",
+  "admin.marketing.table.source": "Source / Campagne / Ad",
+  "admin.marketing.table.visits": "Visites",
+  "admin.marketing.table.signups": "Inscrits",
+  "admin.marketing.table.clients": "Clients",
+  "admin.marketing.table.revenue": "CA ($)",
+  "admin.marketing.table.cr_signup": "Taux Insc.",
+  "admin.marketing.table.cr_client": "Taux Client",
+  "admin.marketing.table.arpu": "ARPU",
+  "admin.marketing.direct": "Direct / Naturel"
 }

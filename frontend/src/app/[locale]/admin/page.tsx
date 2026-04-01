@@ -27,6 +27,7 @@ export default function AdminPage() {
     const [models, setModels] = useState<any[]>([]);
     const [payoutRequests, setPayoutRequests] = useState<any[]>([]);
     const [reports, setReports] = useState<any[]>([]);
+    const [marketingStats, setMarketingStats] = useState<any[]>([]);
     const [realtimeStats, setRealtimeStats] = useState<any>(null);
     const [userFilter, setUserFilter] = useState<'all' | 'buyers'>('all');
     const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking');
@@ -115,6 +116,16 @@ export default function AdminPage() {
         }
     };
 
+    const fetchMarketingStats = async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/marketing`, { headers: { Authorization: `Bearer ${token}` } });
+            const data = await res.json();
+            if (Array.isArray(data)) setMarketingStats(data);
+        } catch (err) {
+            console.error("Fetch Marketing Stats Error:", err);
+        }
+    };
+
     const fetchRealtime = async () => {
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/realtime`, { headers: { Authorization: `Bearer ${token}` } });
@@ -168,6 +179,7 @@ export default function AdminPage() {
             if (activeTab === 'models') fetchModels();
             if (activeTab === 'payouts') fetchPayoutRequests();
             if (activeTab === 'reports') fetchReports();
+            if (activeTab === 'marketing') fetchMarketingStats();
             if (activeTab === 'realtime') fetchRealtime();
 
             if (activeTab === 'settings') {
@@ -242,6 +254,9 @@ export default function AdminPage() {
                     </button>
                     <button onClick={() => setActiveTab('realtime')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'realtime' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <Zap size={20} className={activeTab === 'realtime' ? 'animate-pulse text-indigo-400' : ''} /> {t('admin.nav.realtime')}
+                    </button>
+                    <button onClick={() => setActiveTab('marketing')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'marketing' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                        <Globe size={20} /> {t('admin.nav.marketing')}
                     </button>
                     <div className="pt-4 mt-4 border-t border-white/5 space-y-2">
                         <button onClick={() => setActiveTab('settings')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'settings' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
@@ -1083,7 +1098,90 @@ export default function AdminPage() {
                         )}
                     </div>
                 )}
-            </main>
+                {activeTab === 'marketing' && (
+                    <div className="space-y-8 animate-in fade-in duration-500 pb-20">
+                        <div className="flex flex-col gap-2">
+                            <h2 className="text-3xl font-light">{t('admin.marketing.title')}</h2>
+                            <p className="text-neutral-500 text-sm tracking-wide">{t('admin.marketing.intro')}</p>
+                        </div>
+
+                        <div className="bg-neutral-900 border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-xl">
+                            <table className="w-full text-left">
+                                <thead className="bg-white/[0.02] border-b border-white/5">
+                                    <tr>
+                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.source')}</th>
+                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.visits')}</th>
+                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.signups')}</th>
+                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.clients')}</th>
+                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.revenue')}</th>
+                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.cr_signup')}</th>
+                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.cr_client')}</th>
+                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em] text-right">{t('admin.marketing.table.arpu')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-white/5">
+                                    {marketingStats.length === 0 && (
+                                        <tr><td colSpan={8} className="p-12 text-center text-neutral-500 font-medium tracking-wide uppercase text-xs italic">Aucune donnée de tracking enregistrée.</td></tr>
+                                    )}
+                                    {[...marketingStats].sort((a,b) => b.revenue - a.revenue || b.visits - a.visits).map((row, i) => {
+                                        const crSignup = row.visits > 0 ? (row.signups / row.visits) * 100 : 0;
+                                        const crClient = row.signups > 0 ? (row.clients / row.signups) * 100 : 0;
+                                        const arpu = row.clients > 0 ? row.revenue / row.clients : 0;
+
+                                        return (
+                                            <tr key={i} className="hover:bg-white/[0.02] transition-colors group">
+                                                <td className="p-6">
+                                                    <div className="flex items-center gap-3">
+                                                        {row.id === 'direct' ? (
+                                                            <div className="p-2 bg-neutral-800 rounded-lg text-neutral-400 border border-white/10 group-hover:bg-neutral-700 transition-colors">
+                                                                <Globe size={16} />
+                                                            </div>
+                                                        ) : (
+                                                            <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400 border border-indigo-500/20 group-hover:bg-indigo-500/20 transition-colors">
+                                                                <Zap size={16} />
+                                                            </div>
+                                                        )}
+                                                        <div>
+                                                            <div className="font-bold text-white tracking-tight">
+                                                                {row.id === 'direct' ? t('admin.marketing.direct') : row.id.replace(/\|/g, ' ')}
+                                                            </div>
+                                                            <div className="text-[9px] text-neutral-500 font-mono mt-0.5 opacity-50 uppercase tracking-widest">{row.id === 'direct' ? 'Organic traffic' : 'Tracked campaign'}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="p-6 font-mono text-neutral-300 text-sm font-bold">{row.visits.toLocaleString()}</td>
+                                                <td className="p-6 font-mono text-neutral-300 text-sm font-bold">{row.signups.toLocaleString()}</td>
+                                                <td className="p-6 font-mono text-neutral-400 text-sm font-bold">{row.clients.toLocaleString()}</td>
+                                                <td className="p-6">
+                                                    <div className="flex flex-col">
+                                                        <span className="font-mono text-green-400 text-lg font-black">${row.revenue.toFixed(2)}</span>
+                                                        <div className="w-full bg-white/5 h-1 rounded-full mt-2 overflow-hidden">
+                                                            <div className="bg-green-500 h-full" style={{ width: `${Math.min(100, (row.revenue / 1000) * 100)}%` }} />
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="p-6">
+                                                    <span className={`text-[10px] font-black px-2 py-1 rounded-lg border uppercase tracking-tighter ${crSignup > 15 ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-white/5 text-neutral-500 border-white/10'}`}>
+                                                        {crSignup.toFixed(1)}%
+                                                    </span>
+                                                </td>
+                                                <td className="p-6">
+                                                    <span className={`text-[10px] font-black px-2 py-1 rounded-lg border uppercase tracking-tighter ${crClient > 5 ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' : 'bg-white/5 text-neutral-500 border-white/10'}`}>
+                                                        {crClient.toFixed(1)}%
+                                                    </span>
+                                                </td>
+                                                <td className="p-6 text-right">
+                                                    <span className="font-mono text-white text-sm font-black tracking-tighter">${arpu.toFixed(1)}</span>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+                </main>
             
             {/* Photo Lightbox */}
             {selectedImage && (

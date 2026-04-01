@@ -50,6 +50,31 @@ router.get('/stats', requireAuth, async (req, res) => {
     }
 });
 
+// Marketing Analytics
+router.get('/marketing', requireAuth, async (req, res) => {
+    try {
+        const { getMarketingStats } = require('./stats');
+        const stats = await getMarketingStats();
+        res.json(stats);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+
+// Public Tracking Endpoint
+router.post('/stats/track-visit', async (req, res) => {
+    try {
+        const { src, camp, ad } = req.body;
+        const { trackMarketingVisit } = require('./stats');
+        await trackMarketingVisit(src, camp, ad);
+        res.json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+
 // Admin Settings
 router.get('/settings', requireAuth, async (req, res) => {
     try {

@@ -32,8 +32,18 @@ export function UnifiedAuthModal({ onSuccess, onClose }: UnifiedAuthModalProps) 
 
         setLoading(true);
         try {
+            let marketingParams = {};
+            if (mode === 'signup') {
+                const saved = localStorage.getItem("kinky_marketing_params");
+                if (saved) {
+                    marketingParams = JSON.parse(saved);
+                }
+            }
+
             const endpoint = mode === 'login' ? '/api/auth/login' : '/api/auth/register';
-            const payload = mode === 'login' ? { email, password } : { email, password, pseudo };
+            const payload = mode === 'login' 
+                ? { email, password } 
+                : { email, password, pseudo, ...marketingParams };
 
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}${endpoint}`, {
                 method: "POST",

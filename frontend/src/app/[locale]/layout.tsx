@@ -29,6 +29,9 @@ export const viewport = {
   userScalable: false,
 };
 
+import { Suspense } from "react";
+import { MarketingTracker } from "@/components/MarketingTracker";
+
 export default async function RootLayout({
   children,
   params,
@@ -45,6 +48,9 @@ export default async function RootLayout({
     >
       <body className="min-h-screen flex flex-col bg-[#050505] antialiased overflow-x-hidden">
         <LanguageProvider>
+          <Suspense fallback={null}>
+            <MarketingTracker />
+          </Suspense>
           {children}
           <Footer />
         </LanguageProvider>

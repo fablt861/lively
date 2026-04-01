@@ -51,9 +51,10 @@ router.post('/login', async (req, res) => {
 });
 
 router.post('/register', async (req, res) => {
-    const { email: rawEmail, password, pseudo } = req.body;
+    const { email: rawEmail, password, pseudo, src, camp, ad } = req.body;
     const email = rawEmail?.toLowerCase();
     const redis = getRedisClient();
+    const { trackMarketingSignup } = require('./stats');
 
     if (!email || !password || !pseudo) {
         return res.status(400).json({ error: 'auth.error.missing_fields' });
@@ -71,12 +72,14 @@ router.post('/register', async (req, res) => {
         password,
         pseudo,
         role: 'user',
-        registeredAt: new Date().toISOString()
+        registeredAt: new Date().toISOString(),
+        marketing: { src, camp, ad }
     };
 
     await redis.set(`user:active:${email}`, JSON.stringify(newUser));
     await redis.set(`user:${email}:credits`, "5");
     await logNewUser();
+    await trackMarketingSignup(src, camp, ad);
 
     res.json({
         success: true,
@@ -94,10 +97,15 @@ router.post('/add-credits', async (req, res) => {
         return res.status(400).json({ error: 'auth.error.missing_fields' });
     }
 
+    const { trackMarketingRevenue } = require('./stats');
+
     const userData = await redis.get(`user:active:${email}`);
     if (!userData) {
         return res.status(404).json({ error: 'auth.error.user_not_found' });
     }
+
+    const user = JSON.parse(userData);
+    const { src, camp, ad } = user.marketing || {};
 
     let newCredits;
     const currentCredits = parseFloat((await redis.get(`user:${email}:credits`)) || '0');
@@ -110,6 +118,8 @@ router.post('/add-credits', async (req, res) => {
     } else {
         newCredits = await redis.incrbyfloat(`user:${email}:credits`, amount);
     }
+
+    await trackMarketingRevenue(src, camp, ad, amount, email);
 
     res.json({
         success: true,
