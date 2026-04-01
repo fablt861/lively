@@ -416,5 +416,9 @@
   "admin.settings.maintenance_mode": "Huoltotila",
   "admin.settings.maintenance_desc": "Estä pääsy live-chattiin kaikille.",
   "maintenance.overlay_title": "Huoltotila",
-  "maintenance.overlay_desc": "Teemme päivityksiä parantaaksemme kokemustasi. Kiitos kärsivällisyydestäsi."
+  "maintenance.overlay_desc": "Teemme päivityksiä parantaaksemme kokemustasi. Kiitos kärsivällisyydestäsi.",
+  "dashboard.payout_history_title": "Maksuhistoria",
+  "payout.status.pending": "Odottaa",
+  "payout.status.paid": "Maksettu",
+  "payout.status.rejected": "Hylätty"
 }

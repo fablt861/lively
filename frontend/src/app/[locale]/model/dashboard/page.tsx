@@ -19,11 +19,23 @@ interface Stats {
     }>;
 }
 
+interface PayoutRecord {
+    id: string;
+    modelEmail: string;
+    amount: number;
+    status: 'pending' | 'paid' | 'rejected';
+    timestamp: number;
+    processedAt?: number;
+    billingInfo: any;
+}
+
 export default function DashboardPage() {
     const { t, language } = useTranslation();
     const [id, setId] = useState<string | null>(null);
     const [stats, setStats] = useState<Stats | null>(null);
+    const [payoutHistory, setPayoutHistory] = useState<PayoutRecord[]>([]);
     const [loading, setLoading] = useState(true);
+    const [loadingPayouts, setLoadingPayouts] = useState(true);
     const [isBillingOpen, setIsBillingOpen] = useState(false);
     const [payoutLoading, setPayoutLoading] = useState(false);
     const [payoutMessage, setPayoutMessage] = useState<{ text: string, type: 'error' | 'success' } | null>(null);
@@ -39,12 +51,26 @@ export default function DashboardPage() {
             .catch(console.error);
     };
 
+    const fetchPayouts = () => {
+        if (!id) return;
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/model/${id}/payouts`, {
+            headers: { 'Authorization': `Bearer model-token-${id}` }
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                setPayoutHistory(data);
+                setLoadingPayouts(false);
+            })
+            .catch(console.error);
+    };
+
     useEffect(() => {
         setId(localStorage.getItem('kinky_user_email'));
     }, []);
 
     useEffect(() => {
         fetchStats();
+        fetchPayouts();
     }, [id]);
 
     const handlePayoutRequest = async () => {
@@ -184,7 +210,7 @@ export default function DashboardPage() {
                     <h2 className="text-2xl font-light">{t('dashboard.history_title')}</h2>
                 </div>
 
-                <div className="bg-neutral-900/50 border border-white/5 rounded-3xl overflow-hidden">
+                <div className="bg-neutral-900/50 border border-white/5 rounded-3xl overflow-hidden mb-16">
                     {loading ? (
                         <div className="p-12 text-center text-neutral-500">{t('dashboard.history_loading')}</div>
                     ) : dailyStats.length === 0 ? (
@@ -214,7 +240,55 @@ export default function DashboardPage() {
                                         <td className="p-6 text-right font-mono text-green-400">
                                             +${day.modelEarned.toFixed(2)}
                                         </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
+                </div>
 
+                {/* Payout History */}
+                <div className="flex items-center gap-3 text-white/80 mb-6">
+                    <Wallet size={24} />
+                    <h2 className="text-2xl font-light">{t('dashboard.payout_history_title')}</h2>
+                </div>
+
+                <div className="bg-neutral-900/50 border border-white/5 rounded-3xl overflow-hidden">
+                    {loadingPayouts ? (
+                        <div className="p-12 text-center text-neutral-500">{t('dashboard.history_loading')}</div>
+                    ) : payoutHistory.length === 0 ? (
+                        <div className="p-12 text-center text-neutral-500">{t('dashboard.history_empty')}</div>
+                    ) : (
+                        <table className="w-full text-left">
+                            <thead>
+                                <tr className="border-b border-white/5 bg-white/[0.02]">
+                                    <th className="p-6 text-sm font-medium text-neutral-400 uppercase tracking-wider">{t('dashboard.table_date')}</th>
+                                    <th className="p-6 text-sm font-medium text-neutral-400 uppercase tracking-wider">{t('admin.payouts.table_amount')}</th>
+                                    <th className="p-6 text-sm font-medium text-neutral-400 uppercase tracking-wider">{t('admin.payouts.table_method')}</th>
+                                    <th className="p-6 text-sm font-medium text-neutral-400 uppercase tracking-wider text-right">{t('admin.table.status')}</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/5">
+                                {payoutHistory.map((p, i) => (
+                                    <tr key={i} className="hover:bg-white/[0.02] transition-colors">
+                                        <td className="p-6 text-neutral-300 font-medium">
+                                            {new Date(p.timestamp).toLocaleDateString()}
+                                        </td>
+                                        <td className="p-6 text-neutral-300 font-mono">
+                                            ${p.amount.toFixed(2)}
+                                        </td>
+                                        <td className="p-6 text-neutral-500 text-sm">
+                                            {p.billingInfo?.method || 'N/A'}
+                                        </td>
+                                        <td className="p-6 text-right">
+                                            <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                                                p.status === 'paid' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
+                                                p.status === 'rejected' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
+                                                'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                                            }`}>
+                                                {t(`payout.status.${p.status}`)}
+                                            </span>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>

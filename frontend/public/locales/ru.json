@@ -416,5 +416,9 @@
   "admin.settings.maintenance_mode": "Режим обслуживания",
   "admin.settings.maintenance_desc": "Заблокировать доступ к живому чату для всех.",
   "maintenance.overlay_title": "Технические работы",
-  "maintenance.overlay_desc": "Мы проводим обновления, чтобы улучшить ваш опыт. Спасибо за терпение."
+  "maintenance.overlay_desc": "Мы проводим обновления, чтобы улучшить ваш опыт. Спасибо за терпение.",
+  "dashboard.payout_history_title": "История выплат",
+  "payout.status.pending": "В ожидании",
+  "payout.status.paid": "Оплачено",
+  "payout.status.rejected": "Отклонено"
 }

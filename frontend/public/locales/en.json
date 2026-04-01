@@ -478,5 +478,9 @@
   "admin.settings.maintenance_mode": "Maintenance Mode",
   "admin.settings.maintenance_desc": "Block access to live chat for everyone.",
   "maintenance.overlay_title": "Under Maintenance",
-  "maintenance.overlay_desc": "We are performing updates to improve your experience. Thank you for your patience."
+  "maintenance.overlay_desc": "We are performing updates to improve your experience. Thank you for your patience.",
+  "dashboard.payout_history_title": "Payout History",
+  "payout.status.pending": "Pending",
+  "payout.status.paid": "Paid",
+  "payout.status.rejected": "Rejected"
 }

@@ -416,5 +416,9 @@
   "admin.settings.maintenance_mode": "Mod Mentenanță",
   "admin.settings.maintenance_desc": "Blocați accesul la chat-ul live pentru toată lumea.",
   "maintenance.overlay_title": "În Mentenanță",
-  "maintenance.overlay_desc": "Efectuăm actualizări pentru a vă îmbunătăți experiența. Vă mulțumim pentru răbdare."
+  "maintenance.overlay_desc": "Efectuăm actualizări pentru a vă îmbunătăți experiența. Vă mulțumim pentru răbdare.",
+  "dashboard.payout_history_title": "Istoric Plăți",
+  "payout.status.pending": "În așteptare",
+  "payout.status.paid": "Plătit",
+  "payout.status.rejected": "Respins"
 }

@@ -416,5 +416,9 @@
   "admin.settings.maintenance_mode": "Onderhoudsmodus",
   "admin.settings.maintenance_desc": "Blokkeer toegang tot live chat voor iedereen.",
   "maintenance.overlay_title": "In Onderhoud",
-  "maintenance.overlay_desc": "We voeren updates uit om uw ervaring te verbeteren. Bedankt voor uw geduld."
+  "maintenance.overlay_desc": "We voeren updates uit om uw ervaring te verbeteren. Bedankt voor uw geduld.",
+  "dashboard.payout_history_title": "Uitbetalingsgeschiedenis",
+  "payout.status.pending": "In afwachting",
+  "payout.status.paid": "Betaald",
+  "payout.status.rejected": "Geweigerd"
 }

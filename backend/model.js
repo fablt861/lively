@@ -85,4 +85,35 @@ router.post('/:email/payout-request', requireModelAuth, async (req, res) => {
     }
 });
 
+// GET Payout History
+router.get('/:email/payouts', requireModelAuth, async (req, res) => {
+    try {
+        const redis = getRedisClient();
+        const email = req.params.email.toLowerCase();
+        if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
+
+        const payoutIds = await redis.lrange(`model:${email}:payouts`, 0, -1);
+        const history = [];
+
+        for (const id of payoutIds) {
+            // Check pending first
+            let data = await redis.hget('payouts:pending', id);
+            if (!data) {
+                // Check history
+                data = await redis.get(`payout:history:${id}`);
+            }
+
+            if (data) {
+                history.push(JSON.parse(data));
+            }
+        }
+
+        res.json(history);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 module.exports = router;
+
