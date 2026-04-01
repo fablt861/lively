@@ -420,5 +420,17 @@
   "dashboard.payout_history_title": "Cronologia Pagamenti",
   "payout.status.pending": "In attesa",
   "payout.status.paid": "Pagato",
-  "payout.status.rejected": "Rifiutato"
+  "payout.status.rejected": "Rifiutato",
+  "admin.nav.marketing": "Marketing",
+  "admin.marketing.title": "Analisi di Acquisizione e Funnel",
+  "admin.marketing.intro": "Monitora le prestazioni delle tue fonti di traffico in tempo reale.",
+  "admin.marketing.table.source": "Sorgente / Campagna / Annuncio",
+  "admin.marketing.table.visits": "Visite",
+  "admin.marketing.table.signups": "Iscrizioni",
+  "admin.marketing.table.clients": "Clienti",
+  "admin.marketing.table.revenue": "Entrate ($)",
+  "admin.marketing.table.cr_signup": "CR Iscr.",
+  "admin.marketing.table.cr_client": "CR Cliente",
+  "admin.marketing.table.arpu": "ARPU",
+  "admin.marketing.direct": "Diretto / Organico"
 }

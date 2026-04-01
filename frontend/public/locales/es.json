@@ -420,5 +420,17 @@
   "dashboard.payout_history_title": "Historial de Pagos",
   "payout.status.pending": "Pendiente",
   "payout.status.paid": "Pagado",
-  "payout.status.rejected": "Rechazado"
+  "payout.status.rejected": "Rechazado",
+  "admin.nav.marketing": "Marketing",
+  "admin.marketing.title": "Análisis de Adquisición y Embudos",
+  "admin.marketing.intro": "Sigue el rendimiento de tus fuentes de tráfico en tiempo real.",
+  "admin.marketing.table.source": "Fuente / Campaña / Anuncio",
+  "admin.marketing.table.visits": "Visitas",
+  "admin.marketing.table.signups": "Registros",
+  "admin.marketing.table.clients": "Clientes",
+  "admin.marketing.table.revenue": "Ingresos ($)",
+  "admin.marketing.table.cr_signup": "CR Registro",
+  "admin.marketing.table.cr_client": "CR Cliente",
+  "admin.marketing.table.arpu": "ARPU",
+  "admin.marketing.direct": "Directo / Orgánico"
 }

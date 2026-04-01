@@ -482,5 +482,17 @@
   "dashboard.payout_history_title": "Payout History",
   "payout.status.pending": "Pending",
   "payout.status.paid": "Paid",
-  "payout.status.rejected": "Rejected"
+  "payout.status.rejected": "Rejected",
+  "admin.nav.marketing": "Marketing",
+  "admin.marketing.title": "Acquisition Analysis & Funnels",
+  "admin.marketing.intro": "Track your traffic source performance in real-time.",
+  "admin.marketing.table.source": "Source / Campaign / Ad",
+  "admin.marketing.table.visits": "Visits",
+  "admin.marketing.table.signups": "Signups",
+  "admin.marketing.table.clients": "Customers",
+  "admin.marketing.table.revenue": "Revenue ($)",
+  "admin.marketing.table.cr_signup": "Signup CR",
+  "admin.marketing.table.cr_client": "Customer CR",
+  "admin.marketing.table.arpu": "ARPU",
+  "admin.marketing.direct": "Direct / Organic"
 }
