@@ -51,11 +51,11 @@ function setupMatching(io, socket) {
                 return;
             }
 
-            // If Guest: check free limit (60s)
+            // If Guest: check free limit (30s)
             if (role === 'user' && !email) {
                 const freeUsed = await redis.get(`free_secs:${userIp}`) || 0;
-                if (parseInt(freeUsed) >= 60) {
-                    console.log(`[Limit] IP ${userIp} reached free guest limit (60s).`);
+                if (parseInt(freeUsed) >= 30) {
+                    console.log(`[Limit] IP ${userIp} reached free guest limit (30s).`);
                     return socket.emit('out_of_credits', { reason: 'guest_limit_reached' });
                 }
             }

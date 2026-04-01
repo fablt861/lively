@@ -106,18 +106,18 @@ function initBillingLoop(io) {
                     } else {
                         // Guest user: increment time used
                         const used = await redis.incrby(`free_secs:${session.userId}`, 1);
-                        remaining = 60 - used;
+                        remaining = 30 - used;
                         
                         // Sync to room (User will pick it up)
                         if (ioInstance) {
                             ioInstance.to(roomId).emit('credits_update', Math.max(0, remaining));
                         }
 
-                        if (used >= 60) {
+                        if (used >= 30) {
                             console.log(`[Billing] Guest ${session.userId} reached time limit.`);
                             
-                            if (used > 60) {
-                                await redis.set(`free_secs:${session.userId}`, 60);
+                            if (used > 30) {
+                                await redis.set(`free_secs:${session.userId}`, 30);
                             }
 
                             if (ioInstance) {

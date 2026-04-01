@@ -100,11 +100,13 @@ export function VideoRoom({
     useEffect(() => {
         if (role !== "user") return;
         const storedStatus = (localStorage.getItem('kinky_account_status') as any) || 'guest';
+        const storedEmail = localStorage.getItem('kinky_user_email');
+        console.log(`[VideoRoom] Init - Status: ${storedStatus}, Email: ${storedEmail}`);
         setAccountStatus(storedStatus);
 
         let storedCredits = localStorage.getItem('kinky_credits');
         if (storedCredits === null) {
-            // New guest starts with 5 credits (30s)
+            // New guest starts with 5 credits (which is 30s at $1/min)
             storedCredits = "5";
             localStorage.setItem('kinky_credits', storedCredits);
         }
