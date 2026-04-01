@@ -8,7 +8,7 @@ export function LaunchPage() {
     const { t } = useTranslation();
 
     return (
-        <div className="fixed inset-0 z-[200] bg-black flex flex-col items-center justify-center overflow-hidden font-sans">
+        <div className="min-h-screen bg-black flex flex-col items-center justify-center py-20 px-6 font-sans relative overflow-x-hidden">
             {/* Animated Background Glows */}
             <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-pink-500/10 rounded-full blur-[120px] animate-pulse" />
             <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-[120px] animate-pulse delay-700" />
@@ -40,20 +40,6 @@ export function LaunchPage() {
                     </p>
                 </div>
 
-                {/* Social Proof / Stats */}
-                <div className="mt-12 flex flex-wrap justify-center gap-8 md:gap-16">
-                    {[
-                        { label: "launch.stat_users", value: "50k+" },
-                        { label: "launch.stat_models", value: "1.2k+" },
-                        { label: "launch.stat_countries", value: "40+" }
-                    ].map((stat, i) => (
-                        <div key={i} className="text-center">
-                            <div className="text-2xl md:text-4xl font-black text-white mb-1">{stat.value}</div>
-                            <div className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">{t(stat.label)}</div>
-                        </div>
-                    ))}
-                </div>
-
                 {/* Features / Marketing Perks / Stats */}
                 <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
                     {[
@@ -81,7 +67,7 @@ export function LaunchPage() {
             </div>
 
             {/* Footer Tagline */}
-            <div className="absolute bottom-10 left-0 right-0 text-center">
+            <div className="mt-20 w-full text-center pb-10">
                 <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.5em]">
                     © 2026 KINKY ELITE • PARIS • LONDON • NYC
                 </p>
