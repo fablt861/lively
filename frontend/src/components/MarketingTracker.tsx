@@ -1,14 +1,18 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 
 export function MarketingTracker() {
     const searchParams = useSearchParams();
+    const pathname = usePathname();
     const hasTracked = useRef(false);
 
     useEffect(() => {
         if (typeof window === "undefined" || hasTracked.current) return;
+        
+        // Don't track visits to the admin panel
+        if (pathname?.includes("/admin")) return;
 
         const src = searchParams.get("src");
         const camp = searchParams.get("camp");
@@ -39,8 +43,11 @@ export function MarketingTracker() {
             // OR we track 'direct' only if no marketing params are in localStorage either.
             
             const saved = localStorage.getItem("kinky_marketing_params");
-            if (!saved) {
+            const alreadyTrackedDirect = sessionStorage.getItem("kinky_tracked_direct");
+
+            if (!saved && !alreadyTrackedDirect) {
                 hasTracked.current = true;
+                sessionStorage.setItem("kinky_tracked_direct", "true");
                 fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/stats/track-visit`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
