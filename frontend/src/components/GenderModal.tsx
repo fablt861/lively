@@ -95,15 +95,6 @@ export function GenderModal({ onClose }: GenderModalProps) {
                             >
                                 {t('gender.back')}
                             </button>
-                            <button
-                                onClick={() => {
-                                    localStorage.setItem('kinky_user_role', 'model');
-                                    window.location.href = `/${language}/live`;
-                                }}
-                                className="text-white/20 hover:text-white/40 text-[10px] uppercase font-bold tracking-widest transition-colors mt-2"
-                            >
-                                {t('gender.test_bypass')}
-                            </button>
                         </div>
                     </div>
                 )}
