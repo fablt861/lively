@@ -132,6 +132,14 @@ async function getFinancialStats() {
     const rawKeys = await redis.keys('stats:????-??-??');
     const sortedKeys = rawKeys.sort(); // Chronological
     
+    // 2. Get all marketing expenses
+    const expKeys = await redis.keys('finances:marketing_expenses:????-??');
+    const expenses = {};
+    for (const k of expKeys) {
+        const m = k.split(':').pop();
+        expenses[m] = parseFloat(await redis.get(k) || '0');
+    }
+    
     const monthlyGroups = {}; // { '2026-04': { ttc: 0, gains: 0 } }
     
     for (const key of sortedKeys) {
@@ -157,7 +165,8 @@ async function getFinancialStats() {
         const ht = ttc / 1.2;
         const gains = monthlyGroups[month].gains;
         const fees = ttc * 0.05;
-        const profit = ht - gains - fees;
+        const marketing = expenses[month] || 0;
+        const profit = ht - gains - fees - marketing;
         
         return {
             month,
@@ -165,6 +174,7 @@ async function getFinancialStats() {
             revenue_ht: ht,
             model_gains: gains,
             processor_fees: fees,
+            marketing_expense: marketing,
             net_profit: profit
         };
     });
@@ -174,14 +184,19 @@ async function getFinancialStats() {
         revenue_ht: acc.revenue_ht + curr.revenue_ht,
         model_gains: acc.model_gains + curr.model_gains,
         processor_fees: acc.processor_fees + curr.processor_fees,
+        marketing_expense: acc.marketing_expense + curr.marketing_expense,
         net_profit: acc.net_profit + curr.net_profit
-    }), { revenue_ttc: 0, revenue_ht: 0, model_gains: 0, processor_fees: 0, net_profit: 0 });
+    }), { revenue_ttc: 0, revenue_ht: 0, model_gains: 0, processor_fees: 0, marketing_expense: 0, net_profit: 0 });
     
     return { months: results, totals };
 }
 
+async function saveMarketingExpense(month, amount) {
+    await redis.set(`finances:marketing_expenses:${month}`, amount);
+}
+
 module.exports = {
     logNewUser, logNewModel, logNewClient, logRevenue, logPurchase, logModelPayout,
-    getGlobalStats, getDailyStats, getFinancialStats,
+    getGlobalStats, getDailyStats, getFinancialStats, saveMarketingExpense,
     trackMarketingVisit, trackMarketingSignup, trackMarketingRevenue, trackModelValidation, getMarketingStats
 };

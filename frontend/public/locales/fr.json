@@ -508,5 +508,8 @@
   "admin.finances.table.rev_ht": "Revenue HT",
   "admin.finances.table.model_gains": "Gains Models",
   "admin.finances.table.fees": "Frais (5%)",
-  "admin.finances.table.profit": "Bénéfices"
+  "admin.finances.table.profit": "Bénéfices",
+  "admin.finances.table.marketing": "Marketing",
+  "admin.finances.summary.marketing": "Total Marketing",
+  "admin.finances.edit_marketing": "Cliquez pour modifier les dépenses"
 }

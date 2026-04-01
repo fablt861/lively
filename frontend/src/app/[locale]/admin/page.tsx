@@ -148,6 +148,27 @@ export default function AdminPage() {
         }
     };
 
+    const updateMarketingExpense = async (month: string, currentAmount: number) => {
+        const val = window.prompt(t('admin.finances.edit_marketing') || "Enter marketing expense for this month:", currentAmount.toString());
+        if (val === null) return;
+        const amount = parseFloat(val);
+        if (isNaN(amount)) return;
+
+        try {
+            await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/finances/marketing-expense`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}` 
+                },
+                body: JSON.stringify({ month, amount })
+            });
+            fetchFinancesStats();
+        } catch (err) {
+            console.error("Update Marketing Expense Error:", err);
+        }
+    };
+
     const fetchRealtime = async () => {
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/realtime`, { headers: { Authorization: `Bearer ${token}` } });
@@ -1320,6 +1341,10 @@ export default function AdminPage() {
                                 <div className="text-neutral-500 text-[10px] uppercase font-bold tracking-widest mb-1">{t('admin.finances.table.model_gains')}</div>
                                 <div className="text-2xl font-black text-pink-400">${financesStats.totals.model_gains.toFixed(2)}</div>
                             </div>
+                            <div className="bg-neutral-900 border border-white/5 p-6 rounded-2xl">
+                                <div className="text-neutral-500 text-[10px] uppercase font-bold tracking-widest mb-1">{t('admin.finances.summary.marketing')}</div>
+                                <div className="text-2xl font-black text-orange-400">${financesStats.totals.marketing_expense.toFixed(2)}</div>
+                            </div>
                             <div className="bg-indigo-500/10 border border-indigo-500/20 p-6 rounded-2xl">
                                 <div className="text-indigo-400/60 text-[10px] uppercase font-bold tracking-widest mb-1">{t('admin.finances.table.profit')}</div>
                                 <div className="text-2xl font-black text-indigo-300">${financesStats.totals.net_profit.toFixed(2)}</div>
@@ -1334,6 +1359,7 @@ export default function AdminPage() {
                                         <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.finances.table.rev_ttc')}</th>
                                         <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.finances.table.rev_ht')}</th>
                                         <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.finances.table.model_gains')}</th>
+                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.finances.table.marketing')}</th>
                                         <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.finances.table.fees')}</th>
                                         <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em] text-right">{t('admin.finances.table.profit')}</th>
                                     </tr>
@@ -1348,6 +1374,15 @@ export default function AdminPage() {
                                             <td className="p-6 font-mono text-neutral-300 text-sm font-bold">${row.revenue_ttc.toFixed(2)}</td>
                                             <td className="p-6 font-mono text-neutral-400 text-sm">{row.revenue_ht.toFixed(2)}</td>
                                             <td className="p-6 font-mono text-pink-400 text-sm font-bold">${row.model_gains.toFixed(2)}</td>
+                                            <td className="p-6">
+                                                <button 
+                                                    onClick={() => updateMarketingExpense(row.month, row.marketing_expense)}
+                                                    className="flex flex-col items-start hover:bg-white/5 p-2 -m-2 rounded-lg transition-colors group/edit"
+                                                >
+                                                    <span className="font-mono text-orange-400 text-sm font-bold border-b border-transparent group-hover/edit:border-orange-400/50">${row.marketing_expense.toFixed(2)}</span>
+                                                    <span className="text-[8px] text-neutral-600 uppercase font-black tracking-tighter opacity-0 group-hover/edit:opacity-100 transition-opacity">Modifier</span>
+                                                </button>
+                                            </td>
                                             <td className="p-6 font-mono text-neutral-500 text-xs">${row.processor_fees.toFixed(2)}</td>
                                             <td className="p-6 text-right">
                                                 <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border font-mono font-black text-sm ${row.net_profit > 0 ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-red-500/10 text-red-300 border-red-500/20'}`}>

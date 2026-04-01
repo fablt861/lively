@@ -74,6 +74,20 @@ router.get('/finances', requireAuth, async (req, res) => {
     }
 });
 
+router.post('/finances/marketing-expense', requireAuth, async (req, res) => {
+    try {
+        const { month, amount } = req.body;
+        if (!month) return res.status(400).json({ error: 'Missing month' });
+        
+        const { saveMarketingExpense } = require('./stats');
+        await saveMarketingExpense(month, parseFloat(amount || '0'));
+        res.json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+
 // Public Tracking Endpoint
 router.post('/stats/track-visit', async (req, res) => {
     try {
