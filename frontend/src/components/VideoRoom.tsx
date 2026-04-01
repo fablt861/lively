@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2 } from "lucide-react";
+import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
+import { MaintenanceGuard } from "./MaintenanceGuard";
+import { LaunchPage } from "./LaunchPage";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PaywallModal } from "./PaywallModal";
@@ -52,6 +54,8 @@ interface VideoRoomProps {
     onCreditsUpdate: (credits: number) => void;
     onCallEnd: () => void;
     queuePosition?: number | null;
+    isLaunch?: boolean;
+    isLaunchOverride?: boolean;
 }
 
 export function VideoRoom({
@@ -73,6 +77,8 @@ export function VideoRoom({
     onCallEnd,
     partnerInfo,
     queuePosition,
+    isLaunch,
+    isLaunchOverride
 }: VideoRoomProps) {
     const { t, language } = useTranslation();
     const router = useRouter();
@@ -163,6 +169,10 @@ export function VideoRoom({
             socket.off('payout_update', handlePayoutUpdate);
         };
     }, [socket, role, accountStatus, onNext, onCallEnd]);
+
+    if (isLaunch || isLaunchOverride) {
+        return <LaunchPage />;
+    }
 
     // Teaser logic (only for 0-credit entries)
     const teaserTimerRef = useRef<NodeJS.Timeout | null>(null);

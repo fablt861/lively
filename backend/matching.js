@@ -26,11 +26,15 @@ function setupMatching(io, socket) {
         if (isProcessing) return;
         isProcessing = true;
         try {
-            // Check Maintenance Mode
+            // Check Maintenance & Launch Mode
             const settings = await getSettings();
             if (settings.maintenanceMode) {
                 console.log(`[Maintenance] Blocking join_queue for ${socket.id} (${role})`);
                 return socket.emit('maintenance_active');
+            }
+            if (settings.launchMode) {
+                console.log(`[Launch] Blocking join_queue for ${socket.id} (${role})`);
+                return socket.emit('launch_active');
             }
 
             socket.role = role;

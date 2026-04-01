@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, Video, DollarSign, Activity, Settings, Lock, CheckCircle, XCircle, Clock, Globe, Mail, Zap, UserCheck, ShieldCheck, ChevronLeft, ChevronRight, AlertCircle, ShieldAlert } from "lucide-react";
+import { Users, Video, DollarSign, Activity, Settings, Lock, CheckCircle, XCircle, Clock, Globe, Mail, Zap, UserCheck, ShieldCheck, ChevronLeft, ChevronRight, AlertCircle, ShieldAlert, Sparkles } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
 
@@ -686,6 +686,34 @@ export default function AdminPage() {
                                 <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-3 animate-pulse">
                                     <ShieldAlert size={14} />
                                     Accès au live chat est actuellement bloqué
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Launch Mode */}
+                        <div className="bg-neutral-900 border border-white/5 p-8 rounded-3xl space-y-6 shadow-2xl relative overflow-hidden group">
+                            <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -mr-16 -mt-16 transition-colors ${settings.launchMode ? 'bg-indigo-500/20' : 'bg-green-500/10'}`} />
+                            
+                            <div className="flex items-center justify-between">
+                                <div className="space-y-1">
+                                    <h3 className="text-xl font-medium text-white flex items-center gap-2">
+                                        <Zap className={settings.launchMode ? 'text-indigo-500' : 'text-green-500'} size={20} />
+                                        Mode Lancement (Coming Soon)
+                                    </h3>
+                                    <p className="text-xs text-neutral-500">Affiche une page de capture magnifique au lieu du chat.</p>
+                                </div>
+                                <button 
+                                    onClick={() => setSettings({ ...settings, launchMode: !settings.launchMode })}
+                                    className={`w-14 h-8 rounded-full p-1 transition-all duration-300 flex items-center ${settings.launchMode ? 'bg-indigo-500' : 'bg-neutral-700'}`}
+                                >
+                                    <div className={`w-6 h-6 bg-white rounded-full shadow-lg transition-all duration-300 transform ${settings.launchMode ? 'translate-x-6' : 'translate-x-0'}`} />
+                                </button>
+                            </div>
+
+                            {settings.launchMode && (
+                                <div className="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl text-indigo-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-3 animate-pulse">
+                                    <Sparkles size={14} className="text-indigo-500" />
+                                    La page "magnifique" est activée pour tous les visiteurs
                                 </div>
                             )}
                         </div>

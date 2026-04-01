@@ -17,6 +17,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
     const [queuePosition, setQueuePosition] = useState<number | null>(null);
     const [partnerInfo, setPartnerInfo] = useState<{ email: string; role: string; name: string } | null>(null);
     const [isMaintenance, setIsMaintenance] = useState(false);
+    const [isLaunch, setIsLaunch] = useState(false);
 
 
     const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
@@ -185,12 +186,24 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
             }
         });
 
+        socket.on("launch_active", () => {
+            console.log('[WebRTC] Launch Mode Activated');
+            setIsLaunch(true);
+            setIsConnected(false);
+            setRemoteStream(null);
+            if (peerConnectionRef.current) {
+                peerConnectionRef.current.close();
+                peerConnectionRef.current = null;
+            }
+        });
+
         socket.on("chat_message", (msg) => {
             setMessages((prev) => [...prev, msg]);
         });
 
         return () => {
             socket.off("maintenance_active");
+            socket.off("launch_active");
             socket.off("waiting");
 
             socket.off("queue_update");
@@ -266,7 +279,8 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
         socket,
         socketId: socket?.id,
         endCall,
-        isMaintenance
+        isMaintenance,
+        isLaunch
     };
 }
 
