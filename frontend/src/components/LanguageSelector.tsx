@@ -11,8 +11,6 @@ const languages = [
     { code: 'fi', name: 'Suomi', flag: '🇫🇮' },
     { code: 'fr', name: 'Français', flag: '🇫🇷' },
     { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-    { code: 'ja', name: '日本語', flag: '🇯🇵' },
-    { code: 'ko', name: '한국어', flag: '🇰🇷' },
     { code: 'nl', name: 'Dutch', flag: '🇳🇱' },
     { code: 'no', name: 'Norsk', flag: '🇳🇴' },
     { code: 'pt', name: 'Português', flag: '🇵🇹' },
