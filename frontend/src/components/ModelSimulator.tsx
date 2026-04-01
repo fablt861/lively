@@ -8,8 +8,8 @@ export function ModelSimulator() {
     const [monthlyEarnings, setMonthlyEarnings] = useState(0);
 
     const MINUTE_RATE = 0.50;
-    const HOURLY_RATE = MINUTE_RATE * 60; // 30€
-    const DAYS_PER_MONTH = 22; // Standard active month
+    const HOURLY_RATE = MINUTE_RATE * 60; // 30$
+    const DAYS_PER_MONTH = 30; // 30 days calculation base
 
     useEffect(() => {
         setMonthlyEarnings(Math.round(hours * HOURLY_RATE * DAYS_PER_MONTH));
@@ -69,10 +69,10 @@ export function ModelSimulator() {
                                 <span className="text-5xl md:text-6xl font-black text-white tracking-tighter">
                                     {monthlyEarnings.toLocaleString()}
                                 </span>
-                                <span className="text-2xl font-bold text-white/40 tracking-tight">€</span>
+                                <span className="text-2xl font-bold text-white/40 tracking-tight">$</span>
                             </div>
                             <p className="text-xs text-white/60 font-semibold pt-4 flex items-center gap-2 uppercase tracking-widest">
-                                <Calendar size={12} className="text-indigo-400" /> {t('simulator.basis_text', { days: DAYS_PER_MONTH })}
+                                <Calendar size={12} className="text-indigo-400" /> {t('simulator.basis_text', { days: 30 })}
                             </p>
                         </div>
                     </div>
