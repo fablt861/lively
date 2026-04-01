@@ -10,11 +10,13 @@ export function OrientationGuard() {
 
     useEffect(() => {
         const checkOrientation = () => {
-            // Only trigger if it's a mobile-like screen size AND landscape
+            // Only trigger if it's a mobile-like screen size AND landscape AND touch device
             // We use 1024px as the breakpoint for desktop
             const isMobile = window.innerWidth < 1024;
+            const isTouch = window.matchMedia("(pointer: coarse)").matches;
             const landscape = window.matchMedia("(orientation: landscape)").matches;
-            setIsLandscape(isMobile && landscape);
+            setIsLandscape(isMobile && isTouch && landscape);
+
         };
 
         checkOrientation();
