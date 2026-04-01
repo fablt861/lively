@@ -101,6 +101,32 @@ async function trackModelValidation(src, camp, ad) {
     await redis.sadd('marketing:models:active_keys', key);
 }
 
+async function getMarketingStats(type) {
+    const role = type === 'model' ? 'models' : 'users';
+    const keys = await redis.smembers(`marketing:${role}:active_keys`);
+    const results = [];
+    for (const key of keys) {
+        const data = await redis.hgetall(`marketing:${role}:stats:${key}`);
+        if (type === 'model') {
+            results.push({
+                id: key,
+                visits: parseInt(data.visits || '0'),
+                signups: parseInt(data.signups || '0'),
+                validated: parseInt(data.validated || '0')
+            });
+        } else {
+            results.push({
+                id: key,
+                visits: parseInt(data.visits || '0'),
+                signups: parseInt(data.signups || '0'),
+                clients: parseInt(data.clients_count || '0'),
+                revenue: parseFloat(data.revenue || '0')
+            });
+        }
+    }
+    return results;
+}
+
 async function getFinancialStats() {
     // 1. Get all daily stats keys
     const rawKeys = await redis.keys('stats:????-??-??');
