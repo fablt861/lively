@@ -5,19 +5,21 @@ import { useTranslation } from '@/context/LanguageContext';
 import { Globe, ChevronDown } from 'lucide-react';
 
 const languages = [
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
-    { code: 'en', name: 'English', flag: '🇺🇸' },
     { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+    { code: 'en', name: 'English', flag: '🇺🇸' },
     { code: 'es', name: 'Español', flag: '🇪🇸' },
-    { code: 'nl', name: 'Nederlands', flag: '🇳🇱' },
+    { code: 'fi', name: 'Suomi', flag: '🇫🇮' },
+    { code: 'fr', name: 'Français', flag: '🇫🇷' },
     { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-    { code: 'ro', name: 'Română', flag: '🇷🇴' },
-    { code: 'uk', name: 'Українська', flag: '🇺🇦' },
+    { code: 'ja', name: '日本語', flag: '🇯🇵' },
+    { code: 'ko', name: '한국어', flag: '🇰🇷' },
+    { code: 'nl', name: 'Dutch', flag: '🇳🇱' },
+    { code: 'no', name: 'Norsk', flag: '🇳🇴' },
     { code: 'pt', name: 'Português', flag: '🇵🇹' },
+    { code: 'ro', name: 'Română', flag: '🇷🇴' },
     { code: 'ru', name: 'Русский', flag: '🇷🇺' },
     { code: 'sv', name: 'Svenska', flag: '🇸🇪' },
-    { code: 'no', name: 'Norsk', flag: '🇳🇴' },
-    { code: 'fi', name: 'Suomi', flag: '🇫🇮' },
+    { code: 'uk', name: 'Українська', flag: '🇺🇦' },
 ];
 
 export const LanguageSelector = () => {

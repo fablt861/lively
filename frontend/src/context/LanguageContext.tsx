@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 
-type Language = 'fr' | 'en' | 'de' | 'es' | 'nl' | 'it' | 'ro' | 'uk' | 'pt' | 'ru' | 'sv' | 'no' | 'fi';
+type Language = 'fr' | 'en' | 'de' | 'es' | 'nl' | 'it' | 'ro' | 'uk' | 'pt' | 'ru' | 'sv' | 'no' | 'fi' | 'ja' | 'ko';
 
 interface LanguageContextType {
     language: Language;
@@ -16,7 +16,8 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 // Map browser languages to our supported languages
 const languageMap: Record<string, Language> = {
     'fr': 'fr', 'en': 'en', 'de': 'de', 'es': 'es', 'nl': 'nl', 'it': 'it',
-    'ro': 'ro', 'uk': 'uk', 'pt': 'pt', 'ru': 'ru', 'sv': 'sv', 'no': 'no', 'fi': 'fi'
+    'ro': 'ro', 'uk': 'uk', 'pt': 'pt', 'ru': 'ru', 'sv': 'sv', 'no': 'no', 'fi': 'fi',
+    'ja': 'ja', 'ko': 'ko'
 };
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
