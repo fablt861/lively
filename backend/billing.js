@@ -73,7 +73,7 @@ function initBillingLoop(io) {
                         }
                     }
                     
-                    const rateModelUsdPerSec = activeRate / 60.0;
+                    const rateModelUsdPerSec = parseFloat((activeRate / 60.0).toFixed(6));
 
                     // 2. Decrement User Credits
                     let remaining = 0;
@@ -132,9 +132,10 @@ function initBillingLoop(io) {
 
                     // 3. Increment Model Earnings
                     if (durationSec > settings.antiFraudDelaySec) {
-                        await redis.incrbyfloat(`model:${session.modelId}:balance`, rateModelUsdPerSec);
-                        await redis.incrbyfloat(`model:${session.modelId}:total_gains`, rateModelUsdPerSec);
-                        session.earnedUsd = (session.earnedUsd || 0) + rateModelUsdPerSec;
+                        const preciseRate = parseFloat((activeRate / 60.0).toFixed(6));
+                        await redis.incrbyfloat(`model:${session.modelId}:balance`, preciseRate);
+                        await redis.incrbyfloat(`model:${session.modelId}:total_gains`, preciseRate);
+                        session.earnedUsd = (session.earnedUsd || 0) + preciseRate;
                     }
 
                     // Update session state in Redis
@@ -190,8 +191,9 @@ async function stopBilling(roomId) {
     const modelId = String(session.modelId).toLowerCase();
     const userId = String(session.userId).toLowerCase();
 
-    const modelEarned = (session.earnedUsd || 0).toFixed(4);
-    const userSpentCredits = (session.spentCredits || 0).toFixed(4);
+    // We use the EXACT accumulated value from the session ticks
+    const modelEarned = (session.earnedUsd || 0);
+    const userSpentCredits = (session.spentCredits || 0);
     const userSpentUsd = parseFloat(userSpentCredits) / 10.0;
     
     if (parseFloat(modelEarned) > 0 || parseFloat(userSpentCredits) > 0) {
