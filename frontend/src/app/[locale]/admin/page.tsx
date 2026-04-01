@@ -1117,7 +1117,13 @@ export default function AdminPage() {
                     <div className="space-y-8 animate-in fade-in duration-500 pb-20">
                         <div className="flex flex-col gap-2">
                             <h2 className="text-3xl font-light">{t('admin.marketing.title')}</h2>
-                            <p className="text-neutral-500 text-sm tracking-wide">{t('admin.marketing.intro')}</p>
+                            <div className="flex items-center justify-between">
+                                <p className="text-neutral-500 text-sm tracking-wide">{t('admin.marketing.intro')}</p>
+                                <div className="bg-white/5 border border-white/10 px-4 py-1.5 rounded-full flex items-center gap-2">
+                                    <Globe size={14} className="text-indigo-400" />
+                                    <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest">{t('admin.marketing.params_reminder')}</span>
+                                </div>
+                            </div>
                         </div>
 
                         <div className="bg-neutral-900 border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-xl">
@@ -1201,7 +1207,13 @@ export default function AdminPage() {
                     <div className="space-y-8 animate-in fade-in duration-500 pb-20">
                         <div className="flex flex-col gap-2">
                             <h2 className="text-3xl font-light">{t('admin.marketing.models.title')}</h2>
-                            <p className="text-neutral-500 text-sm tracking-wide">{t('admin.marketing.models.intro')}</p>
+                            <div className="flex items-center justify-between">
+                                <p className="text-neutral-500 text-sm tracking-wide">{t('admin.marketing.models.intro')}</p>
+                                <div className="bg-white/5 border border-white/10 px-4 py-1.5 rounded-full flex items-center gap-2">
+                                    <Zap size={14} className="text-pink-400" />
+                                    <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest">{t('admin.marketing.params_reminder')}</span>
+                                </div>
+                            </div>
                         </div>
 
                         <div className="bg-neutral-900 border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-xl">

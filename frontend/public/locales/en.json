@@ -498,5 +498,6 @@
   "admin.nav.marketing_models": "Marketing Models",
   "admin.marketing.models.title": "Models Acquisition Funnel",
   "admin.marketing.models.intro": "Track model recruitment performance.",
-  "admin.marketing.table.validated": "Validated"
+  "admin.marketing.table.validated": "Validated",
+  "admin.marketing.params_reminder": "Active tracking parameters: src, camp, ad"
 }
