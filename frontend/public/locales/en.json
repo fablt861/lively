@@ -1,4 +1,6 @@
 {
+  "common.loading": "Loading...",
+  "common.retry": "Retry",
   "nav.welcome": "Welcome,",
   "nav.logout": "Logout",
   "nav.login": "Login",

@@ -1,4 +1,6 @@
 {
+  "common.loading": "Chargement...",
+  "common.retry": "Réessayer",
   "nav.welcome": "Bienvenue,",
   "nav.logout": "Déconnexion",
   "nav.login": "Connexion",

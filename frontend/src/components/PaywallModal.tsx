@@ -17,12 +17,29 @@ const PROFILES = [
     { id: 6, img: "/assets/profiles/p6.png", name: "Léa" },
 ];
 
-export function PaywallModal({ onClose, onPurchase, packs = [] }: PaywallModalProps) {
+export function PaywallModal({ onClose, onPurchase, packs: propPacks = [] }: PaywallModalProps) {
     const { t } = useTranslation();
     const [selectedPack, setSelectedPack] = useState(300);
+    const [internalPacks, setInternalPacks] = useState<any[]>([]);
+
+    const packs = propPacks.length > 0 ? propPacks : internalPacks;
 
     useEffect(() => {
-        if (packs.length > 0 && selectedPack === 300) {
+        // Fallback fetch if propPacks is empty
+        if (propPacks.length === 0) {
+            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/settings`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.packs) {
+                        setInternalPacks(data.packs);
+                    }
+                })
+                .catch(console.error);
+        }
+    }, [propPacks]);
+
+    useEffect(() => {
+        if (packs.length > 0) {
             setSelectedPack(packs[1]?.credits || packs[0]?.credits || 300);
         }
     }, [packs]);
