@@ -401,5 +401,9 @@
   "model.signup.camera_capture_btn": "Capture",
   "model.signup.camera_cancel_btn": "Cancel",
   "model.signup.camera_save_btn": "Save Photo",
-  "model.signup.camera_flip_btn": "Flip Camera"
+  "model.signup.camera_flip_btn": "Flip Camera",
+  "model.signup.error.invalid_email": "Please enter a valid email address.",
+  "model.signup.error.password_short": "Password must be at least 8 characters.",
+  "model.signup.error.underage": "You must be at least 18 years old to join.",
+  "model.signup.error.fields_required": "Please fill in all required fields."
 }

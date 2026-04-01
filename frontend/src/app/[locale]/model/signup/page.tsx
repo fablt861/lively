@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     ArrowLeft,
     ArrowRight,
@@ -41,12 +41,90 @@ export default function ModelSignupPage() {
     const [photoId, setPhotoId] = useState<string | null>(null);
     const [photoIdSelfie, setPhotoIdSelfie] = useState<string | null>(null);
     const [apiError, setApiError] = useState("");
+    const [validationError, setValidationError] = useState("");
     const [loading, setLoading] = useState(false);
     const [compressing, setCompressing] = useState<number | null>(null);
     const [isCameraOpen, setIsCameraOpen] = useState(false);
     const [cameraTarget, setCameraTarget] = useState<'profile' | 'id' | 'selfie' | null>(null);
 
-    const handleNext = () => setStep(s => s + 1);
+    // Persistence: Load from localStorage
+    useEffect(() => {
+        const saved = localStorage.getItem('kinky_model_signup_draft');
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                if (data.step) setStep(data.step);
+                if (data.country) setCountry(data.country);
+                if (data.phonePrefix) setPhonePrefix(data.phonePrefix);
+                if (data.phone) setPhone(data.phone);
+                if (data.firstName) setFirstName(data.firstName);
+                if (data.lastName) setLastName(data.lastName);
+                if (data.pseudo) setPseudo(data.pseudo);
+                if (data.dob) setDob(data.dob);
+                if (data.email) setEmail(data.email);
+            } catch (e) {
+                console.error("Failed to load signup draft", e);
+            }
+        }
+    }, []);
+
+    // Persistence: Save to localStorage
+    useEffect(() => {
+        if (step === 5) {
+            localStorage.removeItem('kinky_model_signup_draft');
+            return;
+        }
+        const data = { country, phonePrefix, phone, firstName, lastName, pseudo, dob, email, step };
+        localStorage.setItem('kinky_model_signup_draft', JSON.stringify(data));
+    }, [country, phonePrefix, phone, firstName, lastName, pseudo, dob, email, step]);
+
+    const validateStep = () => {
+        setValidationError("");
+        setApiError("");
+        
+        if (step === 1) {
+            if (!country) return false;
+        }
+        if (step === 2) {
+            if (phone.length < 8) return false;
+        }
+        if (step === 3) {
+            if (!firstName || !lastName || !pseudo || !dob || !email || !password) {
+                setValidationError(t('model.signup.error.fields_required'));
+                return false;
+            }
+            // Email Regex
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                setValidationError(t('model.signup.error.invalid_email'));
+                return false;
+            }
+            // Password length
+            if (password.length < 8) {
+                setValidationError(t('model.signup.error.password_short'));
+                return false;
+            }
+            // Age Check (18+)
+            const birthDate = new Date(dob);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            if (age < 18) {
+                setValidationError(t('model.signup.error.underage'));
+                return false;
+            }
+        }
+        return true;
+    };
+
+    const handleNext = () => {
+        if (validateStep()) {
+            setStep(s => s + 1);
+        }
+    };
     const handlePrev = () => setStep(s => Math.max(1, s - 1));
 
     const compressImage = (file: File): Promise<string> => {
@@ -113,6 +191,7 @@ export default function ModelSignupPage() {
             });
             const data = await res.json();
             if (data.success) {
+                localStorage.removeItem('kinky_model_signup_draft');
                 setStep(5); // Confirmation Step
             } else {
                 setApiError(t(data.error) || t('model.signup.api_error'));
@@ -175,6 +254,12 @@ export default function ModelSignupPage() {
                         {apiError && (
                             <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-2xl text-red-400 text-sm text-center animate-in zoom-in duration-300">
                                 {apiError}
+                            </div>
+                        )}
+
+                        {validationError && (
+                            <div className="mb-6 p-4 bg-orange-500/10 border border-orange-500/30 rounded-2xl text-orange-400 text-sm text-center animate-in zoom-in duration-300">
+                                {validationError}
                             </div>
                         )}
 
