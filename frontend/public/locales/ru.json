@@ -449,5 +449,18 @@
   "admin.finances.table.profit": "Profit",
   "admin.finances.table.marketing": "Marketing",
   "admin.finances.summary.marketing": "Total Marketing",
-  "admin.finances.edit_marketing": "Click to edit marketing expense"
+  "admin.finances.edit_marketing": "Click to edit marketing expense",
+  "launch.title_1": "ОПЫТ",
+  "launch.title_2": "СКОРО БУДЕТ",
+  "launch.subtitle": "Готовьтесь к величайшей революции в приватном видеочате. Готовится эксклюзивная, анонимная и безграничная вселенная.",
+  "launch.perk1_title": "АНОНИМНОСТЬ",
+  "launch.perk1_desc": "Сквозное шифрование для абсолютной конфиденциальности.",
+  "launch.perk2_title": "СКОРОСТЬ",
+  "launch.perk2_desc": "Мгновенные соединения с проверенными профилями.",
+  "launch.perk3_title": "ЭКСКЛЮЗИВНОСТЬ",
+  "launch.perk3_desc": "Элитное сообщество для привилегированных моментов.",
+  "launch.stay_tuned": "СЛЕДИТЕ ЗА ОБНОВЛЕНИЯМИ",
+  "launch.stat_users": "ПОЛЬЗОВАТЕЛИ",
+  "launch.stat_models": "МОДЕЛИ",
+  "launch.stat_countries": "СТРАНЫ"
 }

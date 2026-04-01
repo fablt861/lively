@@ -449,5 +449,18 @@
   "admin.finances.table.profit": "Profit",
   "admin.finances.table.marketing": "Marketing",
   "admin.finances.summary.marketing": "Total Marketing",
-  "admin.finances.edit_marketing": "Click to edit marketing expense"
+  "admin.finances.edit_marketing": "Click to edit marketing expense",
+  "launch.title_1": "EXPERIENȚA",
+  "launch.title_2": "VINE CURÂND",
+  "launch.subtitle": "Pregătește-te pentru revoluția supremă în video chat privat. Un univers exclusiv, anonim și fără limite se pregătește.",
+  "launch.perk1_title": "ANONIMAT",
+  "launch.perk1_desc": "Criptare end-to-end pentru discreție absolută.",
+  "launch.perk2_title": "VITEZĂ",
+  "launch.perk2_desc": "Conexiuni instantanee cu profiluri verificate.",
+  "launch.perk3_title": "EXCLUSIVITATE",
+  "launch.perk3_desc": "O comunitate de elită pentru momente privilegiate.",
+  "launch.stay_tuned": "RĂMÂI PE FAZĂ",
+  "launch.stat_users": "UTILIZATORI",
+  "launch.stat_models": "MODELE",
+  "launch.stat_countries": "ȚĂRI"
 }

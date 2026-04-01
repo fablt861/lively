@@ -449,5 +449,18 @@
   "admin.finances.table.profit": "Profit",
   "admin.finances.table.marketing": "Marketing",
   "admin.finances.summary.marketing": "Total Marketing",
-  "admin.finances.edit_marketing": "Click to edit marketing expense"
+  "admin.finances.edit_marketing": "Click to edit marketing expense",
+  "launch.title_1": "UPPLEVELSEN",
+  "launch.title_2": "KOMMER SNART",
+  "launch.subtitle": "Gör dig redo för den ultimata revolutionen inom privat videochatt. Ett exklusivt, anonymt och gränslöst universum förbereds.",
+  "launch.perk1_title": "ANONYMITET",
+  "launch.perk1_desc": "End-to-end-kryptering för absolut diskretion.",
+  "launch.perk2_title": "HASTIGHET",
+  "launch.perk2_desc": "Omedelbara anslutningar med verifierade profiler.",
+  "launch.perk3_title": "EXKLUSIVITET",
+  "launch.perk3_desc": "En elitgemenskap för privilegierade stunder.",
+  "launch.stay_tuned": "HÅLL DIG UPPDATERAD",
+  "launch.stat_users": "ANVÄNDARE",
+  "launch.stat_models": "MODELLER",
+  "launch.stat_countries": "LÄNDER"
 }

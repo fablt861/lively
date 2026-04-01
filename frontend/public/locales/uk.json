@@ -449,5 +449,18 @@
   "admin.finances.table.profit": "Profit",
   "admin.finances.table.marketing": "Marketing",
   "admin.finances.summary.marketing": "Total Marketing",
-  "admin.finances.edit_marketing": "Click to edit marketing expense"
+  "admin.finances.edit_marketing": "Click to edit marketing expense",
+  "launch.title_1": "ДОСВІД",
+  "launch.title_2": "НЕЗАБАРОМ",
+  "launch.subtitle": "Готуйтеся до справжньої революції у приватному відеочаті. Готується ексклюзивний, анонімний та безмежний всесвіт.",
+  "launch.perk1_title": "АНОНІМНІСТЬ",
+  "launch.perk1_desc": "Наскрізне шифрування для абсолютної конфіденційності.",
+  "launch.perk2_title": "ШВИДКІСТЬ",
+  "launch.perk2_desc": "Миттєві з'єднання з перевіреними профілями.",
+  "launch.perk3_title": "ЕКСКЛЮЗИВНІСТЬ",
+  "launch.perk3_desc": "Елітна спільнота для привілейованих моментів.",
+  "launch.stay_tuned": "СЛІДКУЙТЕ ЗА ОНОВЛЕННЯМИ",
+  "launch.stat_users": "КОРИСТУВАЧІ",
+  "launch.stat_models": "МОДЕЛІ",
+  "launch.stat_countries": "КРАЇНИ"
 }

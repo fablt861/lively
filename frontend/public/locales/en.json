@@ -513,5 +513,18 @@
   "admin.finances.table.profit": "Profit",
   "admin.finances.table.marketing": "Marketing",
   "admin.finances.summary.marketing": "Total Marketing",
-  "admin.finances.edit_marketing": "Click to edit marketing expense"
+  "admin.finances.edit_marketing": "Click to edit marketing expense",
+  "launch.title_1": "THE EXPERIENCE",
+  "launch.title_2": "IS COMING SOON",
+  "launch.subtitle": "Get ready for the ultimate revolution in private video chat. An exclusive, anonymous, and boundless universe is being prepared.",
+  "launch.perk1_title": "ANONYMITY",
+  "launch.perk1_desc": "End-to-end encryption for absolute discretion.",
+  "launch.perk2_title": "VELOCITY",
+  "launch.perk2_desc": "Instant connections with verified profiles.",
+  "launch.perk3_title": "EXCLUSIVITY",
+  "launch.perk3_desc": "An elite community for privileged moments.",
+  "launch.stay_tuned": "STAY TUNED",
+  "launch.stat_users": "USERS",
+  "launch.stat_models": "MODELS",
+  "launch.stat_countries": "COUNTRIES"
 }

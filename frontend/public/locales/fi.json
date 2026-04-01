@@ -449,5 +449,18 @@
   "admin.finances.table.profit": "Profit",
   "admin.finances.table.marketing": "Marketing",
   "admin.finances.summary.marketing": "Total Marketing",
-  "admin.finances.edit_marketing": "Click to edit marketing expense"
+  "admin.finances.edit_marketing": "Click to edit marketing expense",
+  "launch.title_1": "KOKEMUS",
+  "launch.title_2": "TULEE PIAN",
+  "launch.subtitle": "Valmistaudu yksityisen videokeskustelun lopulliseen vallankumoukseen. Eksklusiivinen, anonyymi ja rajaton universumi on valmistelussa.",
+  "launch.perk1_title": "ANONYMITEETTI",
+  "launch.perk1_desc": "Päästä päähän -salaus ehdotonta hienovaraisuutta varten.",
+  "launch.perk2_title": "NOPEUS",
+  "launch.perk2_desc": "Välittömät yhteydet varmennettuihin profiileihin.",
+  "launch.perk3_title": "EKSKLUSIIVISUUS",
+  "launch.perk3_desc": "Eliittiyhteisö etuoikeutettuja hetkiä varten.",
+  "launch.stay_tuned": "PYSY KUULOLLA",
+  "launch.stat_users": "KÄYTTÄJÄT",
+  "launch.stat_models": "MALLIT",
+  "launch.stat_countries": "MAAT"
 }

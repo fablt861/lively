@@ -449,5 +449,18 @@
   "admin.finances.table.profit": "Profit",
   "admin.finances.table.marketing": "Marketing",
   "admin.finances.summary.marketing": "Total Marketing",
-  "admin.finances.edit_marketing": "Click to edit marketing expense"
+  "admin.finances.edit_marketing": "Click to edit marketing expense",
+  "launch.title_1": "DE ERVARING",
+  "launch.title_2": "KOMT ERBIJ",
+  "launch.subtitle": "Maak je klaar voor de ultieme revolutie in privé videochat. Een exclusief, anoniem en grenzeloos universum wordt voorbereid.",
+  "launch.perk1_title": "ANONYMITEIT",
+  "launch.perk1_desc": "End-to-end encryptie voor absolute discretie.",
+  "launch.perk2_title": "SNELHEID",
+  "launch.perk2_desc": "Directe verbindingen met geverifieerde profielen.",
+  "launch.perk3_title": "EXCLUSIVITEIT",
+  "launch.perk3_desc": "Een elitegemeenschap voor bevoorrechte momenten.",
+  "launch.stay_tuned": "BLIJF OP DE HOOGTE",
+  "launch.stat_users": "GEBRUIKERS",
+  "launch.stat_models": "MODELLEN",
+  "launch.stat_countries": "LANDEN"
 }

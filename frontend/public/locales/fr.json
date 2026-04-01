@@ -497,5 +497,18 @@
   "admin.finances.table.profit": "Bénéfices",
   "admin.finances.table.marketing": "Marketing",
   "admin.finances.summary.marketing": "Total Marketing",
-  "admin.finances.edit_marketing": "Cliquez pour modifier les dépenses"
+  "admin.finances.edit_marketing": "Cliquez pour modifier les dépenses",
+  "launch.title_1": "L'EXPÉRIENCE",
+  "launch.title_2": "ARRIVE BIENTÔT",
+  "launch.subtitle": "Préparez-vous à l'ultime révolution du chat vidéo privé. Un univers exclusif, anonyme et sans limite se prépare.",
+  "launch.perk1_title": "ANONYMAT",
+  "launch.perk1_desc": "Chiffrement de bout en bout pour une discrétion absolue.",
+  "launch.perk2_title": "VÉLOCITÉ",
+  "launch.perk2_desc": "Connexions instantanées avec des profils vérifiés.",
+  "launch.perk3_title": "EXCLUSIVITÉ",
+  "launch.perk3_desc": "Une communauté d'élite pour des moments privilégiés.",
+  "launch.stay_tuned": "RESTEZ CONNECTÉS",
+  "launch.stat_users": "UTILISATEURS",
+  "launch.stat_models": "MODÈLES",
+  "launch.stat_countries": "PAYS"
 }
