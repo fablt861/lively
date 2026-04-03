@@ -81,7 +81,7 @@
   "model.landing.hero_badge": "OPORTUNITATE ELITĂ",
   "model.landing.hero_title_line1": "Prezența ta este",
   "model.landing.hero_title_line2": "Un Atu Prețios",
-  "model.landing.hero_desc": "Generează venituri excepționale în deplină discreție. O platformă concepută pentru creatoare exigente care își prețuiesc timpul și confidențialitatea.",
+  "model.landing.hero_desc": "The best random video chat of 2026. Generate exceptional income in complete discretion. A platform designed for demanding creators who value their time and privacy.",
   "model.landing.hero_cta_apply": "Aplică acum",
   "model.landing.hero_cta_earnings": "Estimează câștigurile",
   "model.stat.per_hour": "Câștig / Oră",
@@ -168,7 +168,7 @@
   "simulator.range_low": "1H",
   "simulator.range_high": "12H+",
   "simulator.estimated_income": "VENIT LUNAR ESTIMAT",
-  "simulator.basis_text": "Bazat pe 22 de zile de activitate lunară",
+  "simulator.basis_text": "Based on 30 days of monthly activity",
   "simulator.cta": "Încep azi",
   "room.searching": "SE CAUTĂ PARTENER...",
   "room.connecting": "CONEXIUNE STABILITĂ...",
@@ -534,5 +534,6 @@
   "admin.models.reset_balance_cta": "Reset Bal.",
   "admin.models.reset_balance_prompt": "Reset balance for {{name}} to what amount? (USD)",
   "admin.models.reset_balance_error": "Error resetting balance",
-  "admin.models.reset_balance_success": "Balance reset successfully"
+  "admin.models.reset_balance_success": "Balance reset successfully",
+  "model.stat.best_market": "Best remuneration on the market for a random video chat"
 }

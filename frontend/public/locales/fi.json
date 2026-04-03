@@ -81,7 +81,7 @@
   "model.landing.hero_badge": "ELIITTMAHDOLLISUUS",
   "model.landing.hero_title_line1": "Läsnäolosi on",
   "model.landing.hero_title_line2": "Arvokas Omaisuus",
-  "model.landing.hero_desc": "Ansaitse poikkeuksellisia tuloja täysin luottamuksellisesti. Alusta on suunniteltu vaativille sisällöntuottajille, jotka arvostavat aikaansa ja yksityisyyttään.",
+  "model.landing.hero_desc": "The best random video chat of 2026. Generate exceptional income in complete discretion. A platform designed for demanding creators who value their time and privacy.",
   "model.landing.hero_cta_apply": "Hae nyt",
   "model.landing.hero_cta_earnings": "Arvioi tulot",
   "model.stat.per_hour": "Ansio / tunti",
@@ -168,7 +168,7 @@
   "simulator.range_low": "1H",
   "simulator.range_high": "12H+",
   "simulator.estimated_income": "ARVIOITU KUUKAUSITULO",
-  "simulator.basis_text": "Perustuu 22 aktiiviseen päivään kuukaudessa",
+  "simulator.basis_text": "Based on 30 days of monthly activity",
   "simulator.cta": "Aloitan tänään",
   "room.searching": "ETSITÄÄN KUMPPANIA...",
   "room.connecting": "YHTEYS MUODOSTETTU...",
@@ -534,5 +534,6 @@
   "admin.models.reset_balance_cta": "Reset Bal.",
   "admin.models.reset_balance_prompt": "Reset balance for {{name}} to what amount? (USD)",
   "admin.models.reset_balance_error": "Error resetting balance",
-  "admin.models.reset_balance_success": "Balance reset successfully"
+  "admin.models.reset_balance_success": "Balance reset successfully",
+  "model.stat.best_market": "Best remuneration on the market for a random video chat"
 }

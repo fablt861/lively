@@ -83,7 +83,7 @@
   "model.landing.hero_badge": "ELITE OPPORTUNITY",
   "model.landing.hero_title_line1": "Your Presence is",
   "model.landing.hero_title_line2": "A Valuable Asset",
-  "model.landing.hero_desc": "Generate exceptional income in complete discretion. A platform designed for demanding creators who value their time and privacy.",
+  "model.landing.hero_desc": "The best random video chat of 2026. Generate exceptional income in complete discretion. A platform designed for demanding creators who value their time and privacy.",
   "model.landing.hero_cta_apply": "Apply now",
   "model.landing.hero_cta_earnings": "Estimate earnings",
   "model.stat.per_hour": "Earnings / Hour",
@@ -173,7 +173,7 @@
   "simulator.range_low": "1H",
   "simulator.range_high": "12H+",
   "simulator.estimated_income": "ESTIMATED MONTHLY INCOME",
-  "simulator.basis_text": "Based on 22 days of monthly activity",
+  "simulator.basis_text": "Based on 30 days of monthly activity",
   "simulator.cta": "I start today",
   "room.searching": "SEARCHING FOR PARTNER...",
   "room.connecting": "CONNECTION ESTABLISHED...",
@@ -534,5 +534,6 @@
   "launch.stay_tuned": "STAY TUNED",
   "launch.stat_users": "USERS",
   "launch.stat_models": "MODELS",
-  "launch.stat_countries": "COUNTRIES"
+  "launch.stat_countries": "COUNTRIES",
+  "model.stat.best_market": "Best remuneration on the market for a random video chat"
 }

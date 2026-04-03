@@ -81,7 +81,7 @@
   "model.landing.hero_badge": "ЭЛИТНАЯ ВОЗМОЖНОСТЬ",
   "model.landing.hero_title_line1": "Ваше Присутствие —",
   "model.landing.hero_title_line2": "Ценный Актив",
-  "model.landing.hero_desc": "Получайте исключительный доход в полной конфиденциальности. Платформа, созданная для требовательных создателей, которые ценят свое время и приватность.",
+  "model.landing.hero_desc": "The best random video chat of 2026. Generate exceptional income in complete discretion. A platform designed for demanding creators who value their time and privacy.",
   "model.landing.hero_cta_apply": "Подать заявку",
   "model.landing.hero_cta_earnings": "Оценить доход",
   "model.stat.per_hour": "Заработок / Час",
@@ -168,7 +168,7 @@
   "simulator.range_low": "1Ч",
   "simulator.range_high": "12Ч+",
   "simulator.estimated_income": "ОЦЕНОЧНЫЙ МЕСЯЧНЫЙ ДОХОД",
-  "simulator.basis_text": "На основе 22 дней месячной активности",
+  "simulator.basis_text": "Based on 30 days of monthly activity",
   "simulator.cta": "Я начинаю сегодня",
   "room.searching": "ПОИСК ПАРТНЕРА...",
   "room.connecting": "СОЕДИНЕНИЕ УСТАНОВЛЕНО...",
@@ -534,5 +534,6 @@
   "admin.models.reset_balance_cta": "Reset Bal.",
   "admin.models.reset_balance_prompt": "Reset balance for {{name}} to what amount? (USD)",
   "admin.models.reset_balance_error": "Error resetting balance",
-  "admin.models.reset_balance_success": "Balance reset successfully"
+  "admin.models.reset_balance_success": "Balance reset successfully",
+  "model.stat.best_market": "Best remuneration on the market for a random video chat"
 }

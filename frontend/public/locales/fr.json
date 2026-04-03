@@ -67,7 +67,7 @@
   "model.landing.hero_badge": "OPPORTUNITÉ ÉLITE",
   "model.landing.hero_title_line1": "Votre Présence est",
   "model.landing.hero_title_line2": "Un Atout Précieux",
-  "model.landing.hero_desc": "Générez des revenus exceptionnels en toute discrétion. Une plateforme conçue pour les créatrices exigeantes qui valorisent leur temps et leur vie privée.",
+  "model.landing.hero_desc": "Le meilleur random video chat de 2026. Générez des revenus exceptionnels en toute discrétion. Une plateforme conçue pour les créateurs exigeants qui valorisent leur temps et leur vie privée.",
   "model.landing.hero_cta_apply": "Postuler maintenant",
   "model.landing.hero_cta_earnings": "Estimer mes gains",
   "model.stat.per_hour": "Gains / Heure",
@@ -157,7 +157,7 @@
   "simulator.range_low": "1H",
   "simulator.range_high": "12H+",
   "simulator.estimated_income": "REVENU MENSUEL ESTIMÉ",
-  "simulator.basis_text": "Basé sur 22 jours d'activité mensuelle",
+  "simulator.basis_text": "Basé sur 30 jours d'activité mensuelle",
   "simulator.cta": "Je commence aujourd'hui",
   "room.searching": "RECHERCHE DE PARTENAIRE...",
   "room.connecting": "CONNEXION ÉTABLIE...",
@@ -534,5 +534,6 @@
   "auth.confirm_password_placeholder": "Confirm Password",
   "auth.accept_cgv": "I accept T&Cs",
   "auth.login_btn": "Log in",
-  "auth.signup_btn": "Sign up"
+  "auth.signup_btn": "Sign up",
+  "model.stat.best_market": "Meilleure rémunération du marché pour un random video chat"
 }

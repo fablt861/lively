@@ -81,7 +81,7 @@
   "model.landing.hero_badge": "ELITMÖJLIGHET",
   "model.landing.hero_title_line1": "Din närvaro är",
   "model.landing.hero_title_line2": "En Värdefull Tillgång",
-  "model.landing.hero_desc": "Generera exceptionella inkomster med total diskretion. En plattform designad för krävande kreatörer som värdesätter sin tid och integritet.",
+  "model.landing.hero_desc": "The best random video chat of 2026. Generate exceptional income in complete discretion. A platform designed for demanding creators who value their time and privacy.",
   "model.landing.hero_cta_apply": "Ansök nu",
   "model.landing.hero_cta_earnings": "Beräkna inkomst",
   "model.stat.per_hour": "Inkomst / Timme",
@@ -168,7 +168,7 @@
   "simulator.range_low": "1H",
   "simulator.range_high": "12H+",
   "simulator.estimated_income": "UPPSKATTAD MÅNADSINKOMST",
-  "simulator.basis_text": "Baserat på 22 dagars månadsaktivitet",
+  "simulator.basis_text": "Based on 30 days of monthly activity",
   "simulator.cta": "Jag börjar idag",
   "room.searching": "SÖKER EFTER PARTNER...",
   "room.connecting": "ANSLUTNING ETABLERAD...",
@@ -534,5 +534,6 @@
   "admin.models.reset_balance_cta": "Reset Bal.",
   "admin.models.reset_balance_prompt": "Reset balance for {{name}} to what amount? (USD)",
   "admin.models.reset_balance_error": "Error resetting balance",
-  "admin.models.reset_balance_success": "Balance reset successfully"
+  "admin.models.reset_balance_success": "Balance reset successfully",
+  "model.stat.best_market": "Best remuneration on the market for a random video chat"
 }

@@ -81,7 +81,7 @@
   "model.landing.hero_badge": "OPORTUNIDADE ELITE",
   "model.landing.hero_title_line1": "Sua Presença é",
   "model.landing.hero_title_line2": "Um Recurso Valioso",
-  "model.landing.hero_desc": "Gere rendimentos excecionais com total discrição. Uma plataforma concebida para criadoras exigentes que valorizam o seu tempo e privacidade.",
+  "model.landing.hero_desc": "The best random video chat of 2026. Generate exceptional income in complete discretion. A platform designed for demanding creators who value their time and privacy.",
   "model.landing.hero_cta_apply": "Candidatar-se agora",
   "model.landing.hero_cta_earnings": "Estimar ganhos",
   "model.stat.per_hour": "Ganhos / Hora",
@@ -168,7 +168,7 @@
   "simulator.range_low": "1H",
   "simulator.range_high": "12H+",
   "simulator.estimated_income": "RENDA MENSAL ESTIMADA",
-  "simulator.basis_text": "Baseado em 22 dias de atividade mensal",
+  "simulator.basis_text": "Based on 30 days of monthly activity",
   "simulator.cta": "Começo hoje",
   "room.searching": "À PROCURA DE PARCEIRO...",
   "room.connecting": "LIGAÇÃO ESTABELECIDA...",
@@ -534,5 +534,6 @@
   "admin.models.reset_balance_cta": "Reset Bal.",
   "admin.models.reset_balance_prompt": "Reset balance for {{name}} to what amount? (USD)",
   "admin.models.reset_balance_error": "Error resetting balance",
-  "admin.models.reset_balance_success": "Balance reset successfully"
+  "admin.models.reset_balance_success": "Balance reset successfully",
+  "model.stat.best_market": "Best remuneration on the market for a random video chat"
 }

@@ -81,7 +81,7 @@
   "model.landing.hero_badge": "ELITE KANS",
   "model.landing.hero_title_line1": "Je Aanwezigheid is",
   "model.landing.hero_title_line2": "Een Waardevol Bezit",
-  "model.landing.hero_desc": "Genereer uitzonderlijke inkomsten in alle discretie. Een platform ontworpen voor veeleisende creators die hun tijd en privacy waarderen.",
+  "model.landing.hero_desc": "The best random video chat of 2026. Generate exceptional income in complete discretion. A platform designed for demanding creators who value their time and privacy.",
   "model.landing.hero_cta_apply": "Nu aanmelden",
   "model.landing.hero_cta_earnings": "Inkomsten inschatten",
   "model.stat.per_hour": "Verdiensten / Uur",
@@ -168,7 +168,7 @@
   "simulator.range_low": "1U",
   "simulator.range_high": "12U+",
   "simulator.estimated_income": "GESCHAT MAANDELIJKS INKOMEN",
-  "simulator.basis_text": "Gebaseerd op 22 dagen maandelijkse activiteit",
+  "simulator.basis_text": "Based on 30 days of monthly activity",
   "simulator.cta": "Ik start vandaag",
   "room.searching": "PARTNER ZOEKEN...",
   "room.connecting": "VERBINDING TOT STAND GEBRACHT...",
@@ -534,5 +534,6 @@
   "admin.models.reset_balance_cta": "Reset Bal.",
   "admin.models.reset_balance_prompt": "Reset balance for {{name}} to what amount? (USD)",
   "admin.models.reset_balance_error": "Error resetting balance",
-  "admin.models.reset_balance_success": "Balance reset successfully"
+  "admin.models.reset_balance_success": "Balance reset successfully",
+  "model.stat.best_market": "Best remuneration on the market for a random video chat"
 }
