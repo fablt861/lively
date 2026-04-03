@@ -4,7 +4,7 @@
   "nav.login": "Kirjaudu",
   "hero.title.part1": "Koe",
   "hero.title.part2": "KINKY livenä.",
-  "hero.description": "Koe aito magiikka. Tapaa kiehtovia ihmisiä yksityisissä videopuheluissa. Yhdistä heti ja sukella eksklusiiviseen maailmaan.",
+  "hero.description": "Experience real magic. Exclusive ♀ ↔ ♂ matches for private video calls. Connect instantly and dive into an exclusive world of private interaction.",
   "hero.cta": "Aloita match",
   "hero.badge": "#1 VIDEO DATING 2026",
   "hero.stats.calls": "14 203 Puhelua",
@@ -535,5 +535,6 @@
   "admin.models.reset_balance_prompt": "Reset balance for {{name}} to what amount? (USD)",
   "admin.models.reset_balance_error": "Error resetting balance",
   "admin.models.reset_balance_success": "Balance reset successfully",
-  "model.stat.best_market": "Best remuneration on the market for a random video chat"
+  "model.stat.best_market": "Highest Market Payouts",
+  "gauge.matchmaking": "Direct ♀ ↔ ♂ Matching"
 }

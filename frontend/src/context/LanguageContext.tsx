@@ -57,7 +57,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
         // 2. Load translations
         const loadTranslations = async () => {
             try {
-                const res = await fetch(`/locales/${language}.json?v=2026_v2`);
+                const res = await fetch(`/locales/${language}.json?v=2026_v3`);
                 const data = await res.json();
                 setTranslations(data);
                 setIsLoaded(true);

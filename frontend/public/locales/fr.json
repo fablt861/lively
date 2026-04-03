@@ -6,7 +6,7 @@
   "nav.login": "Connexion",
   "hero.title.part1": "Vivez l'expérience",
   "hero.title.part2": "KINKY en direct.",
-  "hero.description": "Vivez la magie du direct. Rencontrez des personnes fascinantes en appels vidéo privés. Connectez-vous instantanément et plongez dans un univers exclusif.",
+  "hero.description": "Vivez une expérience magique. Des rencontres exclusives ♀ ↔ ♂ pour des appels vidéo privés. Connectez-vous instantanément dans un univers d'interaction privée.",
   "hero.cta": "Lancer un Match",
   "hero.badge": "#1 VIDEO DATING 2026",
   "hero.stats.calls": "14,203 Appels",
@@ -535,5 +535,6 @@
   "auth.accept_cgv": "I accept T&Cs",
   "auth.login_btn": "Log in",
   "auth.signup_btn": "Sign up",
-  "model.stat.best_market": "Meilleure rémunération du marché pour un random video chat"
+  "model.stat.best_market": "Plus hauts revenus du marché",
+  "gauge.matchmaking": "Matching direct ♀ ↔ ♂"
 }
