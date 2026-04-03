@@ -211,7 +211,7 @@ router.get('/elite', requireAuth, async (req, res) => {
 
                 models.push({
                     email,
-                    pseudo: m.name,
+                    pseudo: m.pseudo || m.name || m.firstName,
                     phone: m.phone,
                     registeredAt: m.registeredAt,
                     lastLogin,
