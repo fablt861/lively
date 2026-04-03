@@ -75,7 +75,7 @@ export function GenderModal({ onClose }: GenderModalProps) {
 
                         <div className="flex flex-col gap-3 md:gap-4 max-w-xs mx-auto">
                             <Link
-                                href={`/${language}/model/signup`}
+                                href={`/${language}/elite/signup`}
                                 className="w-full py-4 md:py-5 rounded-xl md:rounded-2xl bg-gradient-to-r from-pink-500 to-indigo-600 text-white font-bold text-base md:text-lg hover:opacity-90 transition-all shadow-lg"
                             >
                                 {t('gender.model_cta')}

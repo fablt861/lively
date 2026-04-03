@@ -9,7 +9,7 @@ export function Footer() {
     const pathname = usePathname();
 
     // Do not show footer in the video chat interface
-    const isRoom = pathname.includes("/live") || pathname.includes("/model/dashboard");
+    const isRoom = pathname.includes("/live") || pathname.includes("/elite/dashboard");
     if (isRoom) {
         return null;
     }

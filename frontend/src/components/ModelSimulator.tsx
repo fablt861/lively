@@ -78,7 +78,7 @@ export function ModelSimulator() {
                     </div>
 
                     <button
-                        onClick={() => window.location.href = `/${language}/model/signup`}
+                        onClick={() => window.location.href = `/${language}/elite/signup`}
                         className="w-full py-5 rounded-full bg-white text-black font-black text-base shadow-2xl hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 ring-1 ring-white/20"
                     >
                         {t('simulator.cta')}

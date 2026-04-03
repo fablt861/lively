@@ -81,6 +81,16 @@ export default function ModelLandingPage() {
                             </div>
                         </div>
 
+                        {/* Third Badge: Best Remuneration */}
+                        <div className="bg-white/5 backdrop-blur-md rounded-[1.5rem] p-4 border border-white/10 flex items-center gap-3 w-fit hover:bg-white/10 transition-colors cursor-default group">
+                            <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
+                                <Star size={20} className="fill-purple-400" />
+                            </div>
+                            <span className="text-sm md:text-base font-black text-white leading-none tracking-tight">
+                                {t('model.stat.best_market')}
+                            </span>
+                        </div>
+
                         <div className="pt-6 flex flex-col sm:flex-row items-center gap-4">
                             <Link href={`/${language}/elite/signup`} className="w-full sm:w-auto px-10 py-5 rounded-full bg-white text-black font-black text-base shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3">
                                 {t('model.landing.hero_cta_apply')}

@@ -15,7 +15,7 @@ export function MarketingTracker() {
         if (pathname?.includes("/admin")) return;
 
         // Detect if we are on a model landing page
-        const type = pathname?.includes("/model") ? "model" : "user";
+        const type = pathname?.includes("/elite") ? "model" : "user";
 
         const src = searchParams.get("src");
         const camp = searchParams.get("camp");
