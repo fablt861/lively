@@ -49,6 +49,11 @@ export function OnlineGauge() {
                         style={{ left: `${ratio}%` }}
                     />
                 </div>
+
+                {/* Matchmaking Label */}
+                <div className="text-[8px] font-black text-white/40 uppercase tracking-[0.2em] text-center">
+                    {t('gauge.matchmaking')}
+                </div>
             </div>
         </div>
     );
