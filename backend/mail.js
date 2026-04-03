@@ -116,10 +116,13 @@ async function sendWelcomeEmail(email, name, lang = 'en', additionalAttributes =
     const subject = t.subject;
     const header = t.welcome.replace('{{name}}', name);
 
+    const senderEmail = process.env.BREVO_SENDER_EMAIL || 'hello@kinky.live';
+    const senderName = process.env.BREVO_SENDER_NAME || 'Kinky Elite';
+
     try {
         // 1. Send Transactional Email
         const emailData = {
-            sender: { name: 'Kinky Elite', email: 'hello@kinky.live' },
+            sender: { name: senderName, email: senderEmail },
             to: [{ email: email, name: name }],
             subject: subject,
             htmlContent: `
