@@ -27,8 +27,8 @@ const corsOptions = {
 const app = express();
 app.use(cors(corsOptions));
 app.use(express.static('public'));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ limit: '10mb', extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Diagnostic Logger for Production 404s
 app.use((req, res, next) => {
