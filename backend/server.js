@@ -26,6 +26,7 @@ const corsOptions = {
 
 const app = express();
 app.use(cors(corsOptions));
+app.use(express.static('public'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
@@ -63,7 +64,7 @@ app.use('/api/report', reportRoutes);
 
 app.use('/api/admin', adminRoutes(io));
 app.use('/api/auth', authRoutes);
-app.use('/api/model', modelRoutes);
+app.use('/api/elite', modelRoutes);
 
 app.get('/api/ice-servers', async (req, res) => {
   try {
@@ -108,7 +109,7 @@ app.post('/api/stats/client', async (req, res) => {
   }
 });
 
-app.get('/api/model/:id/stats', async (req, res) => {
+app.get('/api/elite/:id/stats', async (req, res) => {
   try {
     const stats = await getModelStats(req.params.id);
     res.json(stats);

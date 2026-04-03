@@ -43,7 +43,7 @@ export default function DashboardPage() {
 
     const fetchStats = () => {
         if (!id) return;
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/model/${id}/stats`)
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/elite/${id}/stats`)
             .then((res) => res.json())
             .then((data) => {
                 setStats(data);
@@ -54,7 +54,7 @@ export default function DashboardPage() {
 
     const fetchPayouts = () => {
         if (!id) return;
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/model/${id}/payouts`, {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/elite/${id}/payouts`, {
             headers: { 'Authorization': `Bearer model-token-${id}` }
         })
             .then((res) => res.json())
@@ -84,7 +84,7 @@ export default function DashboardPage() {
         setPayoutMessage(null);
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/model/${id}/payout-request`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/elite/${id}/payout-request`, {
                 method: 'POST',
                 headers: { 
                     'Authorization': `Bearer model-token-${id}`,
@@ -154,6 +154,27 @@ export default function DashboardPage() {
                     </Link>
                 </div>
             </header>
+            
+            {/* Telegram Community Banner */}
+            <div className="mb-12 relative overflow-hidden rounded-[2rem] bg-gradient-to-r from-cyan-600/20 to-blue-600/10 border border-cyan-500/20 p-8 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl backdrop-blur-md">
+                <div className="flex items-center gap-6">
+                    <div className="w-16 h-16 rounded-2xl bg-cyan-500/20 flex items-center justify-center text-cyan-400">
+                        <Activity size={32} />
+                    </div>
+                    <div>
+                        <h2 className="text-2xl font-bold text-white mb-1">{t('dashboard.telegram_title')}</h2>
+                        <p className="text-cyan-100/60 max-w-xl">{t('dashboard.telegram_desc')}</p>
+                    </div>
+                </div>
+                <a 
+                    href="https://t.me/+__YgonRl2681ODA0" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="whitespace-nowrap px-8 py-4 bg-cyan-500 hover:bg-cyan-400 text-white rounded-full font-bold transition-all duration-300 shadow-lg shadow-cyan-500/20 hover:scale-105"
+                >
+                    {t('dashboard.telegram_cta')}
+                </a>
+            </div>
 
             {/* Main Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">

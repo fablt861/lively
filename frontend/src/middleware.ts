@@ -30,7 +30,13 @@ export function middleware(request: NextRequest) {
         return NextResponse.rewrite(new URL(`/en`, request.url));
     }
 
-    // 4. Redirect if locale is missing from other paths (e.g. /login -> /en/login)
+    // 4. Handle legacy /model to /elite redirect
+    if (pathname.includes('/model')) {
+        const newPathname = pathname.replace('/model', '/elite');
+        return NextResponse.redirect(new URL(newPathname, request.url));
+    }
+
+    // 5. Redirect if locale is missing from other paths (e.g. /login -> /en/login)
     if (pathnameIsMissingLocale) {
         // We assume default English for missing locales
         return NextResponse.redirect(new URL(`/${defaultLocale}${pathname}`, request.url));

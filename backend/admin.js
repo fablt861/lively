@@ -126,7 +126,7 @@ router.post('/settings', requireAuth, async (req, res) => {
 
 
 // Admin Model Validations
-router.get('/models/pending', requireAuth, async (req, res) => {
+router.get('/elite/pending', requireAuth, async (req, res) => {
     try {
         const { getRedisClient } = require('./redis');
         const redis = getRedisClient();
@@ -192,7 +192,7 @@ router.post('/users/:email/credits', requireAuth, async (req, res) => {
 });
 
 // Admin Models List
-router.get('/models', requireAuth, async (req, res) => {
+router.get('/elite', requireAuth, async (req, res) => {
     try {
         const { getRedisClient } = require('./redis');
         const redis = getRedisClient();
@@ -227,7 +227,7 @@ router.get('/models', requireAuth, async (req, res) => {
     }
 });
 
-router.post('/models/:email/payout', requireAuth, async (req, res) => {
+router.post('/elite/:email/payout', requireAuth, async (req, res) => {
     try {
         const { getRedisClient } = require('./redis');
         const redis = getRedisClient();
@@ -248,7 +248,7 @@ router.post('/models/:email/payout', requireAuth, async (req, res) => {
     }
 });
 
-router.post('/models/:email/validate', requireAuth, async (req, res) => {
+router.post('/elite/:email/validate', requireAuth, async (req, res) => {
     try {
         const { getRedisClient } = require('./redis');
         const redis = getRedisClient();
@@ -268,7 +268,15 @@ router.post('/models/:email/validate', requireAuth, async (req, res) => {
         const { src, camp, ad } = model.marketing || {};
         await trackModelValidation(src, camp, ad);
 
-        console.log(`\n[EMAIL MOCK] 📧 -> To: ${email} | Subject: Votre compte est validé ! | Body: Bonjour ${model.name}, vous pouvez désormais vous connecter et commencer vos appels.\n`);
+        // Real Email Notification via Brevo
+        const { sendWelcomeEmail } = require('./mail');
+        await sendWelcomeEmail(email, model.pseudo || model.firstName, model.lang || 'en', {
+            FIRSTNAME: model.firstName,
+            LASTNAME: model.lastName,
+            COUNTRY: model.country,
+            SMS: model.phone,
+            PSEUDO: model.pseudo
+        });
 
         res.json({ success: true });
     } catch (err) {
@@ -276,7 +284,7 @@ router.post('/models/:email/validate', requireAuth, async (req, res) => {
     }
 });
 
-router.post('/models/:email/reject', requireAuth, async (req, res) => {
+router.post('/elite/:email/reject', requireAuth, async (req, res) => {
     try {
         const { getRedisClient } = require('./redis');
         const redis = getRedisClient();
@@ -288,7 +296,7 @@ router.post('/models/:email/reject', requireAuth, async (req, res) => {
     }
 });
 
-router.post('/models/:email/reset-balance', requireAuth, async (req, res) => {
+router.post('/elite/:email/reset-balance', requireAuth, async (req, res) => {
     try {
         const { getRedisClient } = require('./redis');
         const redis = getRedisClient();

@@ -42,7 +42,7 @@ export function ModelBillingModal({ isOpen, onClose, modelEmail }: ModelBillingM
     useEffect(() => {
         if (isOpen && modelEmail) {
             setLoading(true);
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/model/${modelEmail}/billing`, {
+            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/elite/${modelEmail}/billing`, {
                 headers: { 'Authorization': `Bearer model-token-${modelEmail}` }
             })
                 .then(res => res.json())
@@ -64,7 +64,7 @@ export function ModelBillingModal({ isOpen, onClose, modelEmail }: ModelBillingM
         setSuccess(false);
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/model/${modelEmail}/billing`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/elite/${modelEmail}/billing`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',

@@ -64,7 +64,7 @@ export default function LoginPage() {
 
                 if (data.user.role === 'model') {
                     localStorage.setItem("kinky_account_status", 'active_model');
-                    window.location.href = `/${language}/model/dashboard`;
+                    window.location.href = `/${language}/elite/dashboard`;
                 } else {
                     localStorage.setItem("kinky_account_status", 'registered');
                     window.location.href = `/${language}`;

@@ -83,7 +83,7 @@ export default function AdminPage() {
 
     const fetchModels = async () => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/models`, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/elite`, { headers: { Authorization: `Bearer ${token}` } });
             if (!res.ok) throw new Error(`Server returned ${res.status}`);
             const data = await res.json();
             if (Array.isArray(data)) {
@@ -233,7 +233,7 @@ export default function AdminPage() {
                     .then(setSettings);
             }
 
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/models/pending`, { headers: { Authorization: `Bearer ${token}` } })
+            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/elite/pending`, { headers: { Authorization: `Bearer ${token}` } })
                 .then(res => res.json())
                 .then(setPendingModels);
         }
@@ -825,7 +825,7 @@ export default function AdminPage() {
                                         <div className="flex gap-4 mt-2">
                                             <button
                                                 onClick={async () => {
-                                                    await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/models/${encodeURIComponent(model.email)}/reject`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+                                                    await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/elite/${encodeURIComponent(model.email)}/reject`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
                                                     setPendingModels(prev => prev.filter(m => m.email !== model.email));
                                                 }}
                                                 className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 rounded-xl py-4 font-bold transition-all flex items-center justify-center gap-2"
@@ -834,7 +834,7 @@ export default function AdminPage() {
                                             </button>
                                             <button
                                                 onClick={async () => {
-                                                    await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/models/${encodeURIComponent(model.email)}/validate`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+                                                    await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/elite/${encodeURIComponent(model.email)}/validate`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
                                                     setPendingModels(prev => prev.filter(m => m.email !== model.email));
                                                 }}
                                                 className="flex-1 bg-green-500 hover:bg-green-400 text-white shadow-lg shadow-green-500/20 rounded-xl py-4 font-bold transition-all flex items-center justify-center gap-2"
@@ -963,7 +963,7 @@ export default function AdminPage() {
                                                     onClick={async () => {
                                                         const amount = prompt(t('admin.models.payout_prompt', { name: m.pseudo, balance: m.balance.toFixed(2) }));
                                                         if (amount && parseFloat(amount) > 0) {
-                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/models/${encodeURIComponent(m.email)}/payout`, {
+                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/elite/${encodeURIComponent(m.email)}/payout`, {
                                                                 method: "POST",
                                                                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                                                                 body: JSON.stringify({ amount: parseFloat(amount) })
@@ -980,7 +980,7 @@ export default function AdminPage() {
                                                     onClick={async () => {
                                                         const amount = prompt(t('admin.models.reset_balance_prompt', { name: m.pseudo }));
                                                         if (amount !== null) {
-                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/models/${encodeURIComponent(m.email)}/reset-balance`, {
+                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/elite/${encodeURIComponent(m.email)}/reset-balance`, {
                                                                 method: "POST",
                                                                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                                                                 body: JSON.stringify({ amount: parseFloat(amount) })

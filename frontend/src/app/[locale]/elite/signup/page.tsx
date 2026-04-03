@@ -184,10 +184,10 @@ export default function ModelSignupPage() {
     const handleSubmit = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/auth/model/register`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/auth/elite/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ country, phone: `${phonePrefix}${phone}`, firstName, lastName, pseudo, dob, email, password, photoProfile, photoId, photoIdSelfie })
+                body: JSON.stringify({ lang: language, country, phone: `${phonePrefix}${phone}`, firstName, lastName, pseudo, dob, email, password, photoProfile, photoId, photoIdSelfie })
             });
             const data = await res.json();
             if (data.success) {

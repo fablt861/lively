@@ -129,7 +129,7 @@ router.post('/add-credits', async (req, res) => {
     });
 });
 
-router.post('/model/register', async (req, res) => {
+router.post('/elite/register', async (req, res) => {
     const redis = getRedisClient();
     const { country, phone, firstName, lastName, pseudo, dob, email: rawEmail, password, photoProfile, photoId, photoIdSelfie, src, camp, ad } = req.body;
     const email = rawEmail?.toLowerCase();
@@ -154,6 +154,7 @@ router.post('/model/register', async (req, res) => {
         id: crypto.randomUUID(),
         email,
         password,
+        lang: req.body.lang || 'en',
         firstName,
         lastName,
         pseudo,

@@ -43,7 +43,7 @@ export default function Home() {
         if (role === 'model') {
             const email = localStorage.getItem('kinky_user_email');
             if (email) {
-                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/model/${email}/stats`, {
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/elite/${email}/stats`, {
                     headers: { 'Authorization': `Bearer model-token-${email}` }
                 })
                 .then(res => res.json())
@@ -126,7 +126,7 @@ export default function Home() {
                                         <div className="p-2">
                                             {userRole === 'model' ? (
                                                 <button
-                                                    onClick={() => window.location.href = `/${language}/model/dashboard`}
+                                                    onClick={() => window.location.href = `/${language}/elite/dashboard`}
                                                     className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-white transition-colors group"
                                                 >
                                                     <div className="p-2 bg-pink-500/10 rounded-lg text-pink-400 group-hover:bg-pink-500 group-hover:text-white transition-all">
@@ -202,7 +202,7 @@ export default function Home() {
 
                                     if (token) {
                                         if (role === 'model') {
-                                            window.location.href = `/${language}/model/dashboard`;
+                                            window.location.href = `/${language}/elite/dashboard`;
                                         } else {
                                             window.location.href = `/${language}/live`;
                                         }
@@ -284,7 +284,7 @@ export default function Home() {
                             setShowGenderModal(true);
                         } else {
                             const role = localStorage.getItem('kinky_user_role');
-                            window.location.href = role === 'model' ? `/${language}/model/dashboard` : `/${language}/live`;
+                            window.location.href = role === 'model' ? `/${language}/elite/dashboard` : `/${language}/live`;
                         }
                     }}
                 />
