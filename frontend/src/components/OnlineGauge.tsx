@@ -3,9 +3,9 @@ import { useTranslation } from "@/context/LanguageContext";
 
 export function OnlineGauge() {
     const { t } = useTranslation();
-    const [femaleCount, setFemaleCount] = useState(2438);
-    const [maleCount, setMaleCount] = useState(4127);
-    const [ratio, setRatio] = useState(38); // 38% female
+    const [femaleCount, setFemaleCount] = useState(2691);
+    const [maleCount, setMaleCount] = useState(3874);
+    const [ratio, setRatio] = useState(41); // 41% female
 
     useEffect(() => {
         const interval = setInterval(() => {
