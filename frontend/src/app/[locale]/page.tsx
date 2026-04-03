@@ -210,7 +210,7 @@ export default function Home() {
                                         setShowGenderModal(true);
                                     }
                                 }}
-                                className="group relative w-full sm:w-auto px-10 py-5 rounded-full bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 hover:opacity-90 shadow-[0_0_50px_rgba(99,102,241,0.5)] transition-all duration-300 hover:scale-[1.03] active:scale-95 flex items-center justify-center gap-3 border border-white/20"
+                                className="group relative w-full sm:w-auto px-10 py-5 rounded-full bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 hover:opacity-90 shadow-[0_15px_40px_rgba(99,102,241,0.3)] transition-all duration-300 hover:scale-[1.03] active:scale-95 flex items-center justify-center gap-3 overflow-hidden"
                             >
                                 <Video size={24} className="text-white fill-white relative z-10" />
                                 <span className="text-white font-black text-lg tracking-wide relative z-10">{t('hero.cta')}</span>
