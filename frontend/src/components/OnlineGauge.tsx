@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "@/context/LanguageContext";
 
 export function OnlineGauge() {
+    // Build version: 2026_v4 - Ratio 41%
     const { t } = useTranslation();
     const [femaleCount, setFemaleCount] = useState(2691);
     const [maleCount, setMaleCount] = useState(3874);
