@@ -153,7 +153,7 @@ async function sendWelcomeEmail(email, name, lang = 'en', additionalAttributes =
             await axios.post(BREVO_CONTACT_URL, {
                 email: email,
                 attributes: { 
-                    FNAME: name,
+                    FIRSTNAME: name,
                     ...additionalAttributes 
                 },
                 listIds: [2],
