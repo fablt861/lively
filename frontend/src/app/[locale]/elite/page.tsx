@@ -39,7 +39,7 @@ export default function ModelLandingPage() {
                 <div className="flex items-center gap-6 md:gap-10">
                     <a href="#simulator" className="hidden lg:block text-[10px] font-black text-white/60 hover:text-white transition-colors uppercase tracking-[0.2em]">{t('model.landing.nav_simulator')}</a>
                     <LanguageSelector />
-                    <Link href={`/${language}/model/signup`} className="px-6 py-2.5 rounded-full bg-white text-black text-[10px] font-black uppercase tracking-[0.2em] hover:bg-neutral-200 transition-all shadow-xl">
+                    <Link href={`/${language}/elite/signup`} className="px-6 py-2.5 rounded-full bg-white text-black text-[10px] font-black uppercase tracking-[0.2em] hover:bg-neutral-200 transition-all shadow-xl">
                         {t('model.landing.nav_join')}
                     </Link>
                 </div>
@@ -82,7 +82,7 @@ export default function ModelLandingPage() {
                         </div>
 
                         <div className="pt-6 flex flex-col sm:flex-row items-center gap-4">
-                            <Link href={`/${language}/model/signup`} className="w-full sm:w-auto px-10 py-5 rounded-full bg-white text-black font-black text-base shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3">
+                            <Link href={`/${language}/elite/signup`} className="w-full sm:w-auto px-10 py-5 rounded-full bg-white text-black font-black text-base shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3">
                                 {t('model.landing.hero_cta_apply')}
                                 <ChevronRight size={20} />
                             </Link>
@@ -220,7 +220,7 @@ export default function ModelLandingPage() {
                     </div>
 
                     <div className="flex flex-col items-center gap-10">
-                        <Link href={`/${language}/model/signup`} className="group relative inline-flex items-center justify-center gap-4 px-12 py-6 rounded-full bg-white text-black font-black text-lg shadow-2xl transition-all duration-500 hover:scale-[1.05] active:scale-95">
+                        <Link href={`/${language}/elite/signup`} className="group relative inline-flex items-center justify-center gap-4 px-12 py-6 rounded-full bg-white text-black font-black text-lg shadow-2xl transition-all duration-500 hover:scale-[1.05] active:scale-95">
                             {t('model.landing.footer_cta')}
                             <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
                         </Link>
