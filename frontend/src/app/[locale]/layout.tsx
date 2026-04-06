@@ -17,6 +17,39 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Kinky.live | Premium Video Chat & High-End Networking",
   description: "Experience the ultimate luxury video chat platform. Connect with high-end models and users in a sophisticated, secure, and private environment. Kinky.live - Redefining premium online interactions.",
+  metadataBase: new URL('https://kinky.live'),
+  alternates: {
+    canonical: '/',
+    languages: {
+      'en': '/en',
+      'fr': '/fr',
+      'de': '/de',
+      'es': '/es',
+      'it': '/it',
+    },
+  },
+  openGraph: {
+    title: "Kinky.live | Premium Video Chat",
+    description: "Connect with high-end models in a secure, private environment. The future of premium video chat.",
+    url: 'https://kinky.live',
+    siteName: 'Kinky.live',
+    images: [
+      {
+        url: '/images/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Kinky.live Premium Preview',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Kinky.live | Premium Video Chat",
+    description: "The ultimate luxury video chat platform for private and secure interactions.",
+    images: ['/images/og-image.png'],
+  },
   icons: {
     icon: "/icon.svg",
   },
