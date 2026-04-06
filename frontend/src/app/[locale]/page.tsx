@@ -38,10 +38,10 @@ export default function Home() {
         }
 
         const role = localStorage.getItem('kinky_user_role');
+        const email = localStorage.getItem('kinky_user_email');
         setUserRole(role);
 
         if (role === 'model') {
-            const email = localStorage.getItem('kinky_user_email');
             if (email) {
                 fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/elite/${email}/stats`, {
                     headers: { 'Authorization': `Bearer model-token-${email}` }
@@ -54,6 +54,17 @@ export default function Home() {
                 })
                 .catch(console.error);
             }
+        } else if (email) {
+            // For regular users, sync credits from backend on mount
+            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/me?email=${email}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.credits !== undefined) {
+                        setUserCredits(data.credits);
+                        localStorage.setItem('kinky_credits', data.credits.toString());
+                    }
+                })
+                .catch(console.error);
         }
     }, [showPaywall]);
 

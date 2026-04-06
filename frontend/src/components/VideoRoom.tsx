@@ -120,6 +120,19 @@ export function VideoRoom({
             localStorage.setItem('kinky_credits', storedCredits);
         }
         setUserCredits(Number(storedCredits));
+
+        // Sync latest credits from backend
+        if (storedEmail) {
+            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/me?email=${storedEmail}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.credits !== undefined) {
+                        setUserCredits(data.credits);
+                        localStorage.setItem('kinky_credits', data.credits.toString());
+                    }
+                })
+                .catch(console.error);
+        }
     }, [role]);
 
     useEffect(() => {
