@@ -35,6 +35,8 @@ export default function AdminPage() {
     const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking');
     const [fetchError, setFetchError] = useState<string | null>(null);
     const [selectedImage, setSelectedImage] = useState<{ images: string[], index: number } | null>(null);
+    const [blockedKeywords, setBlockedKeywords] = useState<string[]>([]);
+    const [newKeyword, setNewKeyword] = useState("");
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -179,6 +181,31 @@ export default function AdminPage() {
         }
     };
 
+    const fetchBlocklist = async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/blocklist`, { headers: { Authorization: `Bearer ${token}` } });
+            const data = await res.json();
+            if (Array.isArray(data)) setBlockedKeywords(data);
+        } catch (err) {
+            console.error("Fetch Blocklist Error:", err);
+        }
+    };
+
+    const handleBlocklistAction = async (action: 'add' | 'remove', keyword: string) => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/blocklist`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ action, keyword })
+            });
+            const data = await res.json();
+            if (Array.isArray(data)) setBlockedKeywords(data);
+            if (action === 'add') setNewKeyword("");
+        } catch (err) {
+            console.error("Blocklist Action Error:", err);
+        }
+    };
+
     const checkConnectivity = async () => {
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/ping`);
@@ -226,6 +253,7 @@ export default function AdminPage() {
             if (activeTab === 'marketing_models') fetchMarketingModelsStats();
             if (activeTab === 'finances') fetchFinancesStats();
             if (activeTab === 'realtime') fetchRealtime();
+            if (activeTab === 'moderation') fetchBlocklist();
 
             if (activeTab === 'settings') {
                 fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/settings`, { headers: { Authorization: `Bearer ${token}` } })
@@ -302,6 +330,9 @@ export default function AdminPage() {
                     </button>
                     <button onClick={() => setActiveTab('realtime')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'realtime' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <Zap size={20} className={activeTab === 'realtime' ? 'animate-pulse text-indigo-400' : ''} /> {t('admin.nav.realtime')}
+                    </button>
+                    <button onClick={() => setActiveTab('moderation')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'moderation' ? 'bg-red-500/20 text-red-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                        <ShieldAlert size={20} /> {t('admin.nav.moderation') || "Modération"}
                     </button>
                     <button onClick={() => setActiveTab('marketing_users')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'marketing_users' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <Globe size={20} /> {t('admin.nav.marketing_users')}
@@ -1421,6 +1452,87 @@ export default function AdminPage() {
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                )}
+                {activeTab === 'moderation' && (
+                    <div className="space-y-8 max-w-4xl animate-in fade-in duration-500 pb-20">
+                        <div className="flex flex-col gap-2">
+                            <h2 className="text-3xl font-light">Modération du Chat</h2>
+                            <p className="text-neutral-500 text-sm tracking-wide">
+                                Les emails, numéros de téléphone et URLs sont bloqués automatiquement. 
+                                Vous pouvez ajouter ici des mots-clés spécifiques à censurer.
+                            </p>
+                        </div>
+
+                        {/* Add Keyword */}
+                        <div className="bg-neutral-900 border border-white/5 p-8 rounded-3xl shadow-2xl space-y-6">
+                            <h3 className="text-xl font-medium text-red-400 border-b border-white/5 pb-4">Ajouter un mot-clé</h3>
+                            <div className="flex gap-4">
+                                <input 
+                                    type="text" 
+                                    placeholder="Ex: paypal, skype, direct..." 
+                                    className="flex-1 bg-black/50 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-red-500 transition-colors"
+                                    value={newKeyword}
+                                    onChange={(e) => setNewKeyword(e.target.value)}
+                                    onKeyDown={(e) => e.key === 'Enter' && handleBlocklistAction('add', newKeyword)}
+                                />
+                                <button 
+                                    onClick={() => handleBlocklistAction('add', newKeyword)}
+                                    className="bg-red-500 hover:bg-red-400 text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg shadow-red-500/20 active:scale-95"
+                                >
+                                    Bloquer
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Current Blocklist */}
+                        <div className="bg-neutral-900 border border-white/5 rounded-3xl overflow-hidden shadow-2xl">
+                            <div className="p-6 bg-white/[0.02] border-b border-white/5 flex items-center justify-between">
+                                <h3 className="text-sm font-bold uppercase tracking-widest text-neutral-400">Mots-clés bloqués ({blockedKeywords.length})</h3>
+                                <div className="text-[10px] font-black text-red-500 uppercase tracking-tighter animate-pulse flex items-center gap-2">
+                                    <ShieldAlert size={12} /> Filtre actif
+                                </div>
+                            </div>
+                            <div className="p-8">
+                                {blockedKeywords.length === 0 ? (
+                                    <div className="text-center py-12 text-neutral-600 italic">Aucun mot-clé personnalisé.</div>
+                                ) : (
+                                    <div className="flex flex-wrap gap-3">
+                                        {blockedKeywords.sort().map((word) => (
+                                            <div key={word} className="group flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full hover:border-red-500/50 transition-all">
+                                                <span className="text-sm font-medium text-neutral-300">{word}</span>
+                                                <button 
+                                                    onClick={() => handleBlocklistAction('remove', word)}
+                                                    className="text-neutral-600 hover:text-red-500 transition-colors"
+                                                    title="Supprimer"
+                                                >
+                                                    <XCircle size={16} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Auto-filters info */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="bg-neutral-900/40 border border-white/5 p-6 rounded-2xl">
+                                <div className="text-indigo-400 mb-2"><Mail size={18} /></div>
+                                <div className="text-sm font-bold text-white mb-1">Emails</div>
+                                <p className="text-xs text-neutral-500">Détection automatique des formats @ email.</p>
+                            </div>
+                            <div className="bg-neutral-900/40 border border-white/5 p-6 rounded-2xl">
+                                <div className="text-pink-400 mb-2"><CheckCircle size={18} /></div>
+                                <div className="text-sm font-bold text-white mb-1">Téléphones</div>
+                                <p className="text-xs text-neutral-500">Blocage des numéros français et internationaux.</p>
+                            </div>
+                            <div className="bg-neutral-900/40 border border-white/5 p-6 rounded-2xl">
+                                <div className="text-amber-400 mb-2"><Globe size={18} /></div>
+                                <div className="text-sm font-bold text-white mb-1">URLs / Liens</div>
+                                <p className="text-xs text-neutral-500">Blocage des liens http, https et www.</p>
+                            </div>
                         </div>
                     </div>
                 )}

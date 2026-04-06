@@ -9,6 +9,16 @@ module.exports = (io) => {
     const redis = getRedisClient();
     const QUEUE_MODELS = 'queue:models';
     const QUEUE_USERS = 'queue:users';
+    const BLOCKLIST_KEYWORDS = 'admin:blocklist:keywords';
+
+    // Initialize blocklist if empty
+    (async () => {
+        const count = await redis.scard(BLOCKLIST_KEYWORDS);
+        if (count === 0) {
+            await redis.sadd(BLOCKLIST_KEYWORDS, 'paypal');
+            console.log('[Admin] Blocking keyword initialized: paypal');
+        }
+    })();
 
 // Minimal mock authentication for demonstration
 const ADMIN_USER = 'admin';
@@ -119,6 +129,38 @@ router.post('/settings', requireAuth, async (req, res) => {
             io.emit('maintenance_active');
         }
         res.json(updated);
+    } catch (err) {
+        res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+// Admin Blocklist (Chat Moderation)
+router.get('/blocklist', requireAuth, async (req, res) => {
+    try {
+        const { getRedisClient } = require('./redis');
+        const redis = getRedisClient();
+        const keywords = await redis.smembers(BLOCKLIST_KEYWORDS);
+        res.json(keywords);
+    } catch (err) {
+        res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+
+router.post('/blocklist', requireAuth, async (req, res) => {
+    try {
+        const { getRedisClient } = require('./redis');
+        const redis = getRedisClient();
+        const { action, keyword } = req.body;
+
+        if (!keyword) return res.status(400).json({ error: 'Missing keyword' });
+
+        if (action === 'add') {
+            await redis.sadd(BLOCKLIST_KEYWORDS, keyword.toLowerCase().trim());
+        } else if (action === 'remove') {
+            await redis.srem(BLOCKLIST_KEYWORDS, keyword.toLowerCase().trim());
+        }
+
+        const keywords = await redis.smembers(BLOCKLIST_KEYWORDS);
+        res.json(keywords);
     } catch (err) {
         res.status(500).json({ error: 'api.error.internal_server_error' });
     }
