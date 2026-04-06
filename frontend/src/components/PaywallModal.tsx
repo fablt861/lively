@@ -131,29 +131,34 @@ export function PaywallModal({ onClose, onPurchase, packs: propPacks = [] }: Pay
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-8">
                         {[pack1, pack2, pack3].filter(Boolean).map((pack, idx) => {
                             const isSelected = selectedPack === pack.credits;
-                            const isPremium = idx === 1;
-                            const isPrivilege = idx === 2;
+                            const isPopular = idx === 1;
+                            const isElite = idx === 2;
                             return (
                                 <div
                                     key={idx}
                                     onClick={() => setSelectedPack(pack.credits)}
-                                    className={`relative group cursor-pointer rounded-2xl md:rounded-3xl p-4 md:p-6 transition-all duration-300 border overflow-hidden ${isSelected
-                                        ? 'bg-neutral-800/80 border-indigo-500/50 shadow-2xl scale-[1.02] md:scale-105 z-10'
-                                        : 'bg-white/[0.03] border-white/5 hover:border-white/10'
+                                    className={`relative group cursor-pointer rounded-2xl md:rounded-3xl p-5 md:p-7 transition-all duration-500 border overflow-hidden ${isSelected
+                                        ? 'bg-indigo-500/10 border-indigo-500 shadow-[0_0_40px_rgba(99,102,241,0.2)] scale-[1.02] md:scale-105 z-10'
+                                        : 'bg-white/[0.02] border-white/5 hover:border-white/10 hover:bg-white/[0.05]'
                                         }`}
                                 >
-                                    {isPremium && (
-                                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-600" />
+                                    {isPopular && !isSelected && (
+                                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500/20 to-purple-600/20" />
+                                    )}
+                                    {isSelected && (
+                                        <div className="absolute top-3 right-3 w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center animate-in zoom-in duration-300">
+                                            <Check size={12} className="text-white fill-white" />
+                                        </div>
                                     )}
                                     <div className="flex flex-col items-center gap-1 text-center">
-                                        <span className={`text-[8px] md:text-[10px] font-black uppercase tracking-widest mb-2 ${isPremium ? 'text-indigo-400' : isPrivilege ? 'text-pink-400' : 'text-white/40'}`}>
+                                        <span className={`text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] mb-2 ${isSelected ? 'text-indigo-400' : isPopular ? 'text-indigo-400/50' : isElite ? 'text-pink-400/50' : 'text-white/20'}`}>
                                             {idx === 0 ? t('paywall.pack_essential') : idx === 1 ? t('paywall.pack_popular') : t('paywall.pack_elite')}
                                         </span>
                                         <div className="flex items-center gap-1.5 md:gap-2 mb-1">
-                                            <span className="text-2xl md:text-3xl font-black text-white">{pack.credits}</span>
-                                            <Coins size={20} className="text-yellow-400 md:w-6 md:h-6" />
+                                            <span className={`text-2xl md:text-3xl font-black transition-colors ${isSelected ? 'text-white' : 'text-white/60'}`}>{pack.credits}</span>
+                                            <Coins size={20} className={`${isSelected ? 'text-yellow-400' : 'text-yellow-400/40'} md:w-6 md:h-6 transition-colors`} />
                                         </div>
-                                        <span className="text-white/40 font-bold text-xs md:text-sm">${pack.priceUsd.toFixed(2)}</span>
+                                        <span className={`font-bold text-xs md:text-sm transition-colors ${isSelected ? 'text-white/80' : 'text-white/20'}`}>${pack.priceUsd.toFixed(2)}</span>
                                     </div>
                                 </div>
                             );

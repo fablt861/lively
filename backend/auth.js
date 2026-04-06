@@ -97,6 +97,7 @@ router.post('/add-credits', async (req, res) => {
         return res.status(400).json({ error: 'auth.error.missing_fields' });
     }
 
+    const { priceUsd } = req.body;
     const { trackMarketingRevenue } = require('./stats');
 
     const userData = await redis.get(`user:active:${email}`);

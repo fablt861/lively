@@ -328,9 +328,8 @@ export function VideoRoom({
 
             <div className="flex-1 relative flex items-center justify-center overflow-hidden h-[100dvh]">
 
-                {/* LOGO */}
                 <div className="absolute top-6 left-6 z-40 pointer-events-none">
-                    <span className="text-xl md:text-3xl font-black tracking-tighter text-white drop-shadow-md">KINKY<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">.</span></span>
+                    <span className="text-xl md:text-3xl font-black tracking-tighter text-white drop-shadow-[0_4px_15px_rgba(0,0,0,1)]">KINKY<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">.</span></span>
                 </div>
 
                 {showAuthModal && (
