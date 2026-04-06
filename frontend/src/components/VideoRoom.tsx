@@ -103,6 +103,7 @@ export function VideoRoom({
     const [reportSuccess, setReportSuccess] = useState(false);
     const [reportError, setReportError] = useState("");
     const [payoutInfo, setPayoutInfo] = useState({ rate: 0, earned: 0 });
+    const [showExitConfirm, setShowExitConfirm] = useState(false);
 
     // Load state from localStorage on mount
     useEffect(() => {
@@ -497,7 +498,7 @@ export function VideoRoom({
                         <ShieldAlert size={20} />
                     </button>
                     <button
-                        onClick={() => window.location.href = `/${language}`}
+                        onClick={() => setShowExitConfirm(true)}
                         className="w-12 h-12 flex items-center justify-center rounded-2xl bg-red-600/80 border border-red-500/50 text-white backdrop-blur-md"
                     >
                         <PhoneOff size={20} />
@@ -526,7 +527,7 @@ export function VideoRoom({
                     <button onClick={() => setIsReportModalOpen(true)} className="p-4 rounded-full bg-orange-600/80 hover:bg-orange-500 transition-colors border border-orange-400/30">
                         <ShieldAlert size={24} />
                     </button>
-                    <button onClick={() => window.location.href = `/${language}`} className="p-4 rounded-full bg-red-600"><PhoneOff size={24} /></button>
+                    <button onClick={() => setShowExitConfirm(true)} className="p-4 rounded-full bg-red-600 hover:bg-red-500 transition-colors shadow-lg"><PhoneOff size={24} /></button>
                 </div>
             </div>
 
@@ -642,6 +643,37 @@ export function VideoRoom({
                                     </button>
                                 </div>
                             )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* EXIT CONFIRMATION MODAL */}
+            {showExitConfirm && (
+                <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="w-full max-w-sm bg-neutral-900 border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl p-8 relative">
+                        <div className="w-16 h-16 bg-red-500/20 rounded-2xl flex items-center justify-center mb-6 border border-red-500/30 mx-auto">
+                            <PhoneOff size={32} className="text-red-500" />
+                        </div>
+
+                        <h2 className="text-2xl font-black mb-2 text-center">{t('room.exit_confirm_title') || "Quitter l'appel ?"}</h2>
+                        <p className="text-white/60 text-sm mb-8 leading-relaxed text-center">
+                            {t('room.exit_confirm_desc') || "Êtes-vous sûr de vouloir mettre fin à cette session ?"}
+                        </p>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <button
+                                onClick={() => setShowExitConfirm(false)}
+                                className="py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition-all active:scale-95"
+                            >
+                                {t('common.cancel') || "Annuler"}
+                            </button>
+                            <button
+                                onClick={() => window.location.href = `/${language}`}
+                                className="py-4 rounded-2xl bg-red-600 text-white font-black uppercase tracking-widest text-sm hover:bg-red-500 transition-all active:scale-95 shadow-xl shadow-red-600/20"
+                            >
+                                {t('room.exit_confirm_action') || "Quitter"}
+                            </button>
                         </div>
                     </div>
                 </div>
