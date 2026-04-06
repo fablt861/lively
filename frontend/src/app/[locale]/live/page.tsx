@@ -17,7 +17,7 @@ export default function LivePage({ params }: { params: { locale: string } }) {
         setRole(storedRole || "user");
 
         // Check maintenance & launch mode
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/settings`)
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/settings`)
             .then(res => res.json())
             .then(data => {
                 setSettings(data);

@@ -50,7 +50,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
             .catch((err) => console.error("Error accessing media devices.", err));
 
         // 3. Initialize Socket
-        const newSocket = io(process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001");
+        const newSocket = io(process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live");
         setSocket(newSocket);
 
         return () => {

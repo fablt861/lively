@@ -279,7 +279,7 @@ export function VideoRoom({
             // Let's check if we can get the peer info. 
             // The backend report.js expects reportedEmail.
             
-            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live";
             const response = await fetch(`${backendUrl}/api/report`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -366,7 +366,7 @@ export function VideoRoom({
                             const email = localStorage.getItem('kinky_user_email');
                             if (email) {
                                 try {
-                                    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/auth/add-credits`, {
+                                    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/add-credits`, {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
                                         body: JSON.stringify({ email, amount: credits, priceUsd })

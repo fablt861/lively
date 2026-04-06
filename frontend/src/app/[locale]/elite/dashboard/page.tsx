@@ -43,7 +43,7 @@ export default function DashboardPage() {
 
     const fetchStats = () => {
         if (!id) return;
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/elite/${id}/stats`)
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/elite/${id}/stats`)
             .then((res) => res.json())
             .then((data) => {
                 setStats(data);
@@ -54,7 +54,7 @@ export default function DashboardPage() {
 
     const fetchPayouts = () => {
         if (!id) return;
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/elite/${id}/payouts`, {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/elite/${id}/payouts`, {
             headers: { 'Authorization': `Bearer model-token-${id}` }
         })
             .then((res) => res.json())
@@ -84,7 +84,7 @@ export default function DashboardPage() {
         setPayoutMessage(null);
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/elite/${id}/payout-request`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/elite/${id}/payout-request`, {
                 method: 'POST',
                 headers: { 
                     'Authorization': `Bearer model-token-${id}`,

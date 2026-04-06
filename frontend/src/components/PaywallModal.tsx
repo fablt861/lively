@@ -19,15 +19,16 @@ const PROFILES = [
 
 export function PaywallModal({ onClose, onPurchase, packs: propPacks = [] }: PaywallModalProps) {
     const { t } = useTranslation();
-    const [selectedPack, setSelectedPack] = useState(300);
+    const [selectedPack, setSelectedPack] = useState(0);
     const [internalPacks, setInternalPacks] = useState<any[]>([]);
+    const [isInitialSet, setIsInitialSet] = useState(false);
 
     const packs = propPacks.length > 0 ? propPacks : internalPacks;
 
     useEffect(() => {
         // Fallback fetch if propPacks is empty
         if (propPacks.length === 0) {
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/settings`)
+            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/settings`)
                 .then(res => res.json())
                 .then(data => {
                     if (data && data.packs) {
@@ -39,10 +40,11 @@ export function PaywallModal({ onClose, onPurchase, packs: propPacks = [] }: Pay
     }, [propPacks]);
 
     useEffect(() => {
-        if (packs.length > 0) {
-            setSelectedPack(packs[1]?.credits || packs[0]?.credits || 300);
+        if (packs.length > 0 && !isInitialSet) {
+            setSelectedPack(packs[1]?.credits || packs[0]?.credits || 350);
+            setIsInitialSet(true);
         }
-    }, [packs]);
+    }, [packs, isInitialSet]);
 
     if (!packs || packs.length === 0) {
         return (

@@ -43,7 +43,7 @@ export default function Home() {
         if (role === 'model') {
             const email = localStorage.getItem('kinky_user_email');
             if (email) {
-                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/elite/${email}/stats`, {
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/elite/${email}/stats`, {
                     headers: { 'Authorization': `Bearer model-token-${email}` }
                 })
                 .then(res => res.json())
@@ -296,7 +296,7 @@ export default function Home() {
                         const email = localStorage.getItem('kinky_user_email');
                         if (email) {
                             try {
-                                const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/auth/add-credits`, {
+                                const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/add-credits`, {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({ email, amount: credits, priceUsd })

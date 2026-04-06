@@ -41,7 +41,7 @@ export default function AdminPage() {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/login`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password })
@@ -61,14 +61,14 @@ export default function AdminPage() {
     };
 
     const fetchStats = () => {
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/stats`, { headers: { Authorization: `Bearer ${token}` } })
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/stats`, { headers: { Authorization: `Bearer ${token}` } })
             .then(res => res.json())
             .then(setStats);
     };
 
     const fetchUsers = async () => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/users`, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/users`, { headers: { Authorization: `Bearer ${token}` } });
             if (!res.ok) throw new Error(`Server returned ${res.status}`);
             const data = await res.json();
             if (Array.isArray(data)) {
@@ -85,7 +85,7 @@ export default function AdminPage() {
 
     const fetchModels = async () => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/elite`, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite`, { headers: { Authorization: `Bearer ${token}` } });
             if (!res.ok) throw new Error(`Server returned ${res.status}`);
             const data = await res.json();
             if (Array.isArray(data)) {
@@ -102,7 +102,7 @@ export default function AdminPage() {
 
     const fetchPayoutRequests = async () => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/payouts/pending`, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/payouts/pending`, { headers: { Authorization: `Bearer ${token}` } });
             const data = await res.json();
             if (Array.isArray(data)) setPayoutRequests(data);
         } catch (err) {
@@ -112,7 +112,7 @@ export default function AdminPage() {
 
     const fetchReports = async () => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/report/admin/list`, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/report/admin/list`, { headers: { Authorization: `Bearer ${token}` } });
             const data = await res.json();
             if (Array.isArray(data)) setReports(data);
         } catch (err) {
@@ -122,7 +122,7 @@ export default function AdminPage() {
 
     const fetchMarketingUsersStats = async () => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/marketing?type=user`, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/marketing?type=user`, { headers: { Authorization: `Bearer ${token}` } });
             const data = await res.json();
             if (Array.isArray(data)) setMarketingUsersStats(data);
         } catch (err) {
@@ -132,7 +132,7 @@ export default function AdminPage() {
 
     const fetchMarketingModelsStats = async () => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/marketing?type=model`, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/marketing?type=model`, { headers: { Authorization: `Bearer ${token}` } });
             const data = await res.json();
             if (Array.isArray(data)) setMarketingModelsStats(data);
         } catch (err) {
@@ -142,7 +142,7 @@ export default function AdminPage() {
 
     const fetchFinancesStats = async () => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/finances`, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/finances`, { headers: { Authorization: `Bearer ${token}` } });
             const data = await res.json();
             setFinancesStats(data);
         } catch (err) {
@@ -157,7 +157,7 @@ export default function AdminPage() {
         if (isNaN(amount)) return;
 
         try {
-            await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/finances/marketing-expense`, {
+            await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/finances/marketing-expense`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -173,7 +173,7 @@ export default function AdminPage() {
 
     const fetchRealtime = async () => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/realtime`, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/realtime`, { headers: { Authorization: `Bearer ${token}` } });
             const data = await res.json();
             setRealtimeStats(data);
         } catch (err) {
@@ -183,7 +183,7 @@ export default function AdminPage() {
 
     const fetchBlocklist = async () => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/blocklist`, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/blocklist`, { headers: { Authorization: `Bearer ${token}` } });
             const data = await res.json();
             if (Array.isArray(data)) setBlockedKeywords(data);
         } catch (err) {
@@ -193,7 +193,7 @@ export default function AdminPage() {
 
     const handleBlocklistAction = async (action: 'add' | 'remove', keyword: string) => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/blocklist`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/blocklist`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ action, keyword })
@@ -208,7 +208,7 @@ export default function AdminPage() {
 
     const checkConnectivity = async () => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/ping`);
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/ping`);
             if (res.ok) setBackendStatus('online');
             else setBackendStatus('offline');
         } catch {
@@ -256,12 +256,12 @@ export default function AdminPage() {
             if (activeTab === 'moderation') fetchBlocklist();
 
             if (activeTab === 'settings') {
-                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/settings`, { headers: { Authorization: `Bearer ${token}` } })
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/settings`, { headers: { Authorization: `Bearer ${token}` } })
                     .then(res => res.json())
                     .then(setSettings);
             }
 
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/elite/pending`, { headers: { Authorization: `Bearer ${token}` } })
+            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite/pending`, { headers: { Authorization: `Bearer ${token}` } })
                 .then(res => res.json())
                 .then(setPendingModels);
         }
@@ -269,7 +269,7 @@ export default function AdminPage() {
 
     const saveSettings = async () => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/settings`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/settings`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 body: JSON.stringify(settings)
@@ -764,7 +764,7 @@ export default function AdminPage() {
                                     if (confirm(t('admin.danger.confirm1')) &&
                                         confirm(t('admin.danger.confirm2'))) {
                                         try {
-                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/maintenance/reset`, {
+                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/maintenance/reset`, {
                                                 method: "POST",
                                                 headers: { Authorization: `Bearer ${token}` }
                                             });
@@ -856,7 +856,7 @@ export default function AdminPage() {
                                         <div className="flex gap-4 mt-2">
                                             <button
                                                 onClick={async () => {
-                                                    await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/elite/${encodeURIComponent(model.email)}/reject`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+                                                    await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite/${encodeURIComponent(model.email)}/reject`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
                                                     setPendingModels(prev => prev.filter(m => m.email !== model.email));
                                                 }}
                                                 className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 rounded-xl py-4 font-bold transition-all flex items-center justify-center gap-2"
@@ -865,7 +865,7 @@ export default function AdminPage() {
                                             </button>
                                             <button
                                                 onClick={async () => {
-                                                    await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/elite/${encodeURIComponent(model.email)}/validate`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+                                                    await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite/${encodeURIComponent(model.email)}/validate`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
                                                     setPendingModels(prev => prev.filter(m => m.email !== model.email));
                                                 }}
                                                 className="flex-1 bg-green-500 hover:bg-green-400 text-white shadow-lg shadow-green-500/20 rounded-xl py-4 font-bold transition-all flex items-center justify-center gap-2"
@@ -934,7 +934,7 @@ export default function AdminPage() {
                                                     onClick={async () => {
                                                         const amount = prompt(t('admin.users.edit_credits_prompt', { pseudo: u.pseudo }), u.credits || 0);
                                                         if (amount !== null && !isNaN(parseFloat(amount))) {
-                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/users/${encodeURIComponent(u.email)}/credits`, {
+                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/users/${encodeURIComponent(u.email)}/credits`, {
                                                                 method: "POST",
                                                                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                                                                 body: JSON.stringify({ credits: parseFloat(amount) })
@@ -994,7 +994,7 @@ export default function AdminPage() {
                                                     onClick={async () => {
                                                         const amount = prompt(t('admin.models.payout_prompt', { name: m.pseudo, balance: m.balance.toFixed(2) }));
                                                         if (amount && parseFloat(amount) > 0) {
-                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/elite/${encodeURIComponent(m.email)}/payout`, {
+                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite/${encodeURIComponent(m.email)}/payout`, {
                                                                 method: "POST",
                                                                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                                                                 body: JSON.stringify({ amount: parseFloat(amount) })
@@ -1011,7 +1011,7 @@ export default function AdminPage() {
                                                     onClick={async () => {
                                                         const amount = prompt(t('admin.models.reset_balance_prompt', { name: m.pseudo }));
                                                         if (amount !== null) {
-                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/elite/${encodeURIComponent(m.email)}/reset-balance`, {
+                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite/${encodeURIComponent(m.email)}/reset-balance`, {
                                                                 method: "POST",
                                                                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                                                                 body: JSON.stringify({ amount: parseFloat(amount) })
@@ -1093,7 +1093,7 @@ export default function AdminPage() {
                                                     <button
                                                         onClick={async () => {
                                                             if (confirm("Reject this payout and refund the balance?")) {
-                                                                await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/payouts/${p.id}/reject`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+                                                                await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/payouts/${p.id}/reject`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
                                                                 fetchPayoutRequests();
                                                             }
                                                         }}
@@ -1104,7 +1104,7 @@ export default function AdminPage() {
                                                     <button
                                                         onClick={async () => {
                                                             if (confirm("Confirm that this payout has been processed and paid?")) {
-                                                                await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/payouts/${p.id}/approve`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+                                                                await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/payouts/${p.id}/approve`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
                                                                 fetchPayoutRequests();
                                                             }
                                                         }}

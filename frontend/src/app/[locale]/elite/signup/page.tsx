@@ -184,7 +184,7 @@ export default function ModelSignupPage() {
     const handleSubmit = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/auth/elite/register`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/elite/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ lang: language, country, phone: `${phonePrefix}${phone}`, firstName, lastName, pseudo, dob, email, password, photoProfile, photoId, photoIdSelfie })

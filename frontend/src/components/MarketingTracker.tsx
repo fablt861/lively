@@ -35,7 +35,7 @@ export function MarketingTracker() {
 
             // 2. Track visit once per landing
             hasTracked.current = true;
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/stats/track-visit`, {
+            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/stats/track-visit`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(params)
@@ -47,7 +47,7 @@ export function MarketingTracker() {
             if (!saved && !alreadyTrackedDirect) {
                 hasTracked.current = true;
                 sessionStorage.setItem("kinky_tracked_direct", "true");
-                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/api/admin/stats/track-visit`, {
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/stats/track-visit`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ src: "", camp: "", ad: "", type })
