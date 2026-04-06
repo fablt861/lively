@@ -536,5 +536,8 @@
   "admin.models.reset_balance_error": "Error resetting balance",
   "admin.models.reset_balance_success": "Balance reset successfully",
   "model.stat.best_market": "Highest Market Payouts",
-  "gauge.matchmaking": "Direct ♀ ↔ ♂ Matching"
+  "gauge.matchmaking": "Direct ♀ ↔ ♂ Matching",
+  "room.exit_confirm_title": "¿Salir de la llamada?",
+  "room.exit_confirm_desc": "¿Estás seguro de que quieres finalizar esta sesión?",
+  "room.exit_confirm_action": "Salir"
 }

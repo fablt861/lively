@@ -664,7 +664,7 @@ export function VideoRoom({
                         <div className="grid grid-cols-2 gap-4">
                             <button
                                 onClick={() => setShowExitConfirm(false)}
-                                className="py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition-all active:scale-95"
+                                className="py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-black uppercase tracking-widest text-sm hover:bg-white/10 transition-all active:scale-95"
                             >
                                 {t('common.cancel') || "Annuler"}
                             </button>

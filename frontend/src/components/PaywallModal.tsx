@@ -22,6 +22,7 @@ export function PaywallModal({ onClose, onPurchase, packs: propPacks = [] }: Pay
     const [selectedPack, setSelectedPack] = useState(0);
     const [internalPacks, setInternalPacks] = useState<any[]>([]);
     const [isInitialSet, setIsInitialSet] = useState(false);
+    const [isPurchasing, setIsPurchasing] = useState(false);
 
     const packs = propPacks.length > 0 ? propPacks : internalPacks;
 
@@ -170,13 +171,24 @@ export function PaywallModal({ onClose, onPurchase, packs: propPacks = [] }: Pay
                     {/* Unified CTA */}
                     <div className="mt-auto space-y-4 max-w-sm w-full mx-auto md:mx-0">
                         <button
-                            onClick={() => {
-                                const pack = packs.find(p => p.credits === selectedPack);
-                                onPurchase(selectedPack, pack?.priceUsd || 0);
+                            onClick={async () => {
+                                if (isPurchasing) return;
+                                setIsPurchasing(true);
+                                try {
+                                    const pack = packs.find(p => p.credits === selectedPack);
+                                    await onPurchase(selectedPack, pack?.priceUsd || 0);
+                                } finally {
+                                    setIsPurchasing(false);
+                                }
                             }}
-                            className="w-full py-4 md:py-5 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 text-white font-black text-lg hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_30px_rgba(99,102,241,0.4)] flex items-center justify-center group"
+                            disabled={isPurchasing}
+                            className="w-full py-4 md:py-5 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 text-white font-black text-lg hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_30px_rgba(99,102,241,0.4)] flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {t('paywall.cta')}
+                            {isPurchasing ? (
+                                <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                            ) : (
+                                t('paywall.cta')
+                            )}
                         </button>
 
                         <p className="text-[8px] md:text-[9px] text-center text-white/20 font-bold uppercase tracking-widest mt-4">
