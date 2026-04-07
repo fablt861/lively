@@ -243,7 +243,7 @@ export function VideoRoom({
             setIsBlocked(false);
             setBlockEndTime(null);
             if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
-            handleNext(); // INSTANT TRANSITION
+            // handleNext(); // REMOVED: Server now handles re-queueing both parties automatically
         };
 
         socket.on('out_of_credits', handleOutOfCredits);

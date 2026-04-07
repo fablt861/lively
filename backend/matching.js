@@ -67,7 +67,7 @@ function setupMatching(io, socket) {
 
             const isNew = await redis.set(`has_joined:${socket.id}`, '1', 'NX', 'EX', 86400);
             await redis.lrem(role === 'model' ? QUEUE_MODELS : QUEUE_USERS, 0, socket.id);
-            await disconnectFromRoom(socket);
+            await disconnectFromRoom(io, socket);
             await handleJoinQueue(io, socket);
             await updateQueuePositions(io, role);
         } finally {
@@ -78,7 +78,7 @@ function setupMatching(io, socket) {
     socket.on('out_of_credits', async () => {
         console.log(`Socket ${socket.id} ran out of credits`);
         await redis.lrem(QUEUE_USERS, 0, socket.id);
-        await disconnectFromRoom(socket);
+        await disconnectFromRoom(io, socket);
         await updateQueuePositions(io, 'user');
     });
 
@@ -99,7 +99,7 @@ function setupMatching(io, socket) {
             } else if (socket.role === 'user') {
                 await redis.lrem(QUEUE_USERS, 0, socket.id);
             }
-            await disconnectFromRoom(socket);
+            await disconnectFromRoom(io, socket);
             await handleJoinQueue(io, socket);
             await updateQueuePositions(io, socket.role);
         } finally {
@@ -208,8 +208,8 @@ async function handleJoinQueue(io, socket) {
              const cSocket = io.sockets.sockets.get(cId);
              if (!cSocket) continue;
 
-             const cIdentifier = cSocket.userEmail || cSocket.userIp;
-             const alreadySeen = await redis.get(`seen:${myIdentifier}:${cIdentifier}`);
+             const cIdentifier = (cSocket.userEmail || cSocket.userIp)?.toLowerCase();
+             const alreadySeen = await redis.get(`seen:${myIdentifier.toLowerCase()}:${cIdentifier}`);
              
              if (!alreadySeen) {
                  targetIndex = i;
@@ -303,16 +303,37 @@ async function handleJoinQueue(io, socket) {
     }
 }
 
-async function disconnectFromRoom(socket) {
+async function disconnectFromRoom(io, socket) {
     if (socket.currentRoom) {
-        // Notify the room that a partner left, so they can cleanly close the WebRTC connection
-        socket.to(socket.currentRoom).emit('partner_left');
+        const roomId = socket.currentRoom;
+        
+        // Find partner socket ID before we clear anything
+        const roomDataStr = await redis.hget('billing:active_rooms', roomId);
+        let partnerSocket = null;
+        if (roomDataStr) {
+            const roomData = JSON.parse(roomDataStr);
+            const partnerSocketId = socket.id === roomData.userSocketId ? roomData.modelSocketId : roomData.userSocketId;
+            if (partnerSocketId) {
+                partnerSocket = io.sockets.sockets.get(partnerSocketId);
+            }
+        }
+
+        // Notify the room that a partner left
+        socket.to(roomId).emit('partner_left');
 
         // Stop billing for this room
-        await stopBilling(socket.currentRoom);
+        await stopBilling(roomId);
 
-        socket.leave(socket.currentRoom);
+        socket.leave(roomId);
         socket.currentRoom = null;
+
+        // --- NEW: Automatically put the partner back in the queue ---
+        if (partnerSocket) {
+            console.log(`[Auto-Next] Re-queueing partner ${partnerSocket.id} after disconnect by ${socket.id}`);
+            partnerSocket.leave(roomId);
+            partnerSocket.currentRoom = null;
+            await handleJoinQueue(io, partnerSocket);
+        }
     }
 }
 
