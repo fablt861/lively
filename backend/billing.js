@@ -216,6 +216,10 @@ async function stopBilling(roomId) {
     const modelId = String(session.modelId).toLowerCase();
     const userId = String(session.userId).toLowerCase();
 
+    // --- NEW: Cleanup Recovery Pointers ---
+    await redis.del(`user_active_room:${userId}`);
+    await redis.del(`user_active_room:${modelId}`);
+
     // We use the EXACT accumulated value from the session ticks
     const modelEarned = (session.earnedUsd || 0);
     const userSpentCredits = (session.spentCredits || 0);

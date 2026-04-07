@@ -114,6 +114,7 @@ export function VideoRoom({
         setIsBlocked(false);
         setBlockEndTime(null);
         sessionStorage.removeItem('kinky_session_active');
+        if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
         if (onNext) onNext();
         else nextPartner();
     };
@@ -241,6 +242,7 @@ export function VideoRoom({
             setIsBlocked(false);
             setBlockEndTime(null);
             sessionStorage.removeItem('kinky_session_active');
+            if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
             handleNext(); // INSTANT TRANSITION
         };
 
