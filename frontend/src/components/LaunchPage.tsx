@@ -30,7 +30,7 @@ export function LaunchPage() {
                 <div className="space-y-6">
                     <h1 className="text-5xl md:text-8xl font-black text-white tracking-tight leading-[0.9] uppercase italic group">
                         <span className="block">{t('launch.title_1')}</span>
-                        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 pr-2">
+                        <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 px-4 overflow-visible">
                              {t('launch.title_2')}
                          </span>
                     </h1>
