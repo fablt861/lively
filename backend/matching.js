@@ -2,6 +2,7 @@ const Redis = require('ioredis');
 const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
 const { startBilling, stopBilling } = require('./billing');
 const { getSettings } = require('./settings');
+const { markAsSeen } = require('./moderation');
 
 redis.on('error', (err) => {
     console.error('[Redis Error] Could not connect. Is Redis running?', err.message);
@@ -256,14 +257,4 @@ async function disconnectFromRoom(socket) {
     }
 }
 
-async function markAsSeen(id1, id2) {
-    if (!id1 || !id2) return;
-    const key1 = `seen:${id1.toLowerCase()}:${id2.toLowerCase()}`;
-    const key2 = `seen:${id2.toLowerCase()}:${id1.toLowerCase()}`;
-    // Cool down for 1 hour (3600 seconds)
-    await redis.set(key1, '1', 'EX', 3600);
-    await redis.set(key2, '1', 'EX', 3600);
-    console.log(`[Cooldown] Marked ${id1} and ${id2} as seen for 1h.`);
-}
-
-module.exports = { setupMatching, handleJoinQueue, disconnectFromRoom, markAsSeen };
+module.exports = { setupMatching, handleJoinQueue, disconnectFromRoom };

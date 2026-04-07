@@ -41,4 +41,24 @@ function filterMessage(text, keywords = []) {
     return filtered;
 }
 
-module.exports = { filterMessage };
+/**
+ * Mark two users as "seen" to prevent immediate rematching (Anti-Rebound).
+ */
+async function markAsSeen(id1, id2) {
+    if (!id1 || !id2) return;
+    const { getRedisClient } = require('./redis');
+    const redis = getRedisClient();
+    
+    const key1 = `seen:${id1.toLowerCase()}:${id2.toLowerCase()}`;
+    const key2 = `seen:${id2.toLowerCase()}:${id1.toLowerCase()}`;
+    
+    // Cool down for 1 hour (3600 seconds)
+    // If they are identical (local test), we skip or use shorter TTL
+    const ttl = (id1.toLowerCase() === id2.toLowerCase()) ? 5 : 3600;
+    
+    await redis.set(key1, '1', 'EX', ttl);
+    await redis.set(key2, '1', 'EX', ttl);
+    console.log(`[Cooldown] Marked ${id1} and ${id2} as seen for ${ttl}s.`);
+}
+
+module.exports = { filterMessage, markAsSeen };

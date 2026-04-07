@@ -2,6 +2,7 @@ const Redis = require('ioredis');
 const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
 
 const { getSettings } = require('./settings');
+const { markAsSeen } = require('./moderation');
 const { logRevenue, logModelPayout } = require('./stats');
 
 redis.on('error', (err) => {
@@ -193,7 +194,6 @@ async function startBilling(roomId, userId, modelId, userSocketId, modelSocketId
 }
 
 async function stopBilling(roomId) {
-    const { markAsSeen } = require('./matching'); // Circular dependency safe
     const sessionStr = await redis.hget(ACTIVE_ROOMS_KEY, roomId);
     if (!sessionStr) return;
 
