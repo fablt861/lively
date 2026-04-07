@@ -113,7 +113,6 @@ export function VideoRoom({
     const handleNext = () => {
         setIsBlocked(false);
         setBlockEndTime(null);
-        sessionStorage.removeItem('kinky_session_active');
         if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
         if (onNext) onNext();
         else nextPartner();
@@ -157,11 +156,15 @@ export function VideoRoom({
         if (role !== "user") return;
     }, [role]);
 
-    // AUTO-RECONNECT TRIGGER (only when stream is ready)
+    // AUTO-RECONNECT TRIGGER (only on page reload)
     useEffect(() => {
-        const wasInCall = sessionStorage.getItem('kinky_session_active') === 'true';
-        if (wasInCall && localStream && !hasStartedMatch) {
-            console.log("[VideoRoom] Media stream ready, auto-resuming session...");
+        if (typeof window === 'undefined') return;
+        
+        const navEntries = window.performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+        const isReload = navEntries.length > 0 && navEntries[0].type === 'reload';
+
+        if (isReload && localStream && !hasStartedMatch) {
+            console.log("[VideoRoom] Page reload detected, auto-resuming session...");
             handleStartMatch();
         }
     }, [localStream, hasStartedMatch]);
@@ -173,7 +176,6 @@ export function VideoRoom({
             if (role === 'user') {
                 setIsBlocked(false);
                 setBlockEndTime(null);
-                sessionStorage.removeItem('kinky_session_active');
                 if (onCallEnd) onCallEnd();
                 if (accountStatus === 'guest') setShowAuthModal(true);
                 else setShowPaywall(true);
@@ -196,7 +198,6 @@ export function VideoRoom({
                 if (newCredits <= 0) {
                     setIsBlocked(false);
                     setBlockEndTime(null);
-                    sessionStorage.removeItem('kinky_session_active');
                     if (onCallEnd) onCallEnd();
                     if (accountStatus === 'guest') setShowAuthModal(true);
                     else setShowPaywall(true);
@@ -241,7 +242,6 @@ export function VideoRoom({
             console.log("[Socket] Partner left, resetting block state and transitioning...");
             setIsBlocked(false);
             setBlockEndTime(null);
-            sessionStorage.removeItem('kinky_session_active');
             if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
             handleNext(); // INSTANT TRANSITION
         };
@@ -255,7 +255,7 @@ export function VideoRoom({
         socket.on('block_session_started', handleBlockSessionStarted);
         socket.on('block_session_ended', handleBlockSessionEnded);
         socket.on('matched', () => {
-            sessionStorage.setItem('kinky_session_active', 'true');
+            // No longer using sessionStorage flag, relying on reload type
         });
         socket.on('partner_left', handlePartnerLeft);
 
