@@ -30,9 +30,9 @@ export function LaunchPage() {
                 <div className="space-y-6">
                     <h1 className="text-5xl md:text-8xl font-black text-white tracking-tight leading-[0.9] uppercase italic group">
                         <span className="block">{t('launch.title_1')}</span>
-                        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
-                            {t('launch.title_2')}
-                        </span>
+                        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 pr-2">
+                             {t('launch.title_2')}
+                         </span>
                     </h1>
                     
                     <p className="text-lg md:text-2xl text-white/40 font-medium max-w-2xl mx-auto leading-relaxed">
