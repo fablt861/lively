@@ -964,6 +964,7 @@ export default function AdminPage() {
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.last_login')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.total_spent')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.credits')}</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Type</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.status')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase text-right">{t('admin.table.action')}</th>
                                     </tr>
@@ -979,7 +980,7 @@ export default function AdminPage() {
                                             <td className="p-5 text-neutral-400 text-sm">{new Date(u.lastLogin).toLocaleString()}</td>
                                             <td className="p-5 font-mono text-indigo-400 font-bold">${u.totalSpent.toFixed(2)}</td>
                                             <td className="p-5 font-mono text-white font-bold">{u.credits ? u.credits.toFixed(0) : 0}</td>
-                                            <td className="p-5 text-right space-x-2">
+                                            <td className="p-5">
                                                 {u.isBuyer ?
                                                     <span className="bg-green-500/10 text-green-400 text-[10px] font-black uppercase px-2 py-1 rounded-md border border-green-500/20">{t('admin.status.buyer')}</span>
                                                     : <span className="bg-neutral-500/10 text-neutral-500 text-[10px] font-black uppercase px-2 py-1 rounded-md text-white">{t('admin.status.free')}</span>
@@ -991,6 +992,7 @@ export default function AdminPage() {
                                                 </span>
                                             </td>
                                             <td className="p-5 text-right space-x-2">
+                                                <button
                                                     onClick={async () => {
                                                         const amount = prompt(t('admin.users.edit_credits_prompt', { pseudo: u.pseudo }), u.credits || 0);
                                                         if (amount !== null && !isNaN(parseFloat(amount))) {
@@ -1006,7 +1008,7 @@ export default function AdminPage() {
                                                             }
                                                         }
                                                     }}
-                                                    className="bg-white/10 hover:bg-white/20 text-white text-[10px] font-bold px-3 py-2 rounded-lg transition-colors ml-2"
+                                                    className="bg-white/10 hover:bg-white/20 text-white text-[10px] font-bold px-3 py-2 rounded-lg transition-colors"
                                                 >
                                                     {t('admin.users.edit_credits_cta')}
                                                 </button>
@@ -1022,7 +1024,7 @@ export default function AdminPage() {
                                                             }
                                                         }
                                                     }}
-                                                    className={`text-[10px] font-bold px-3 py-2 rounded-lg transition-colors ml-2 ${u.status === 'disabled' ? 'bg-green-500 hover:bg-green-400 text-white' : 'bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20'}`}
+                                                    className={`text-[10px] font-bold px-3 py-2 rounded-lg transition-colors ${u.status === 'disabled' ? 'bg-green-500 hover:bg-green-400 text-white' : 'bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20'}`}
                                                 >
                                                     {u.status === 'disabled' ? t('admin.status.active') : t('admin.status.disabled')}
                                                 </button>
