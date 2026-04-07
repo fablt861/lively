@@ -212,7 +212,18 @@ async function stopBilling(roomId) {
     const userSpentCredits = (session.spentCredits || 0);
     const userSpentUsd = parseFloat(userSpentCredits) / 10.0;
     
-    if (parseFloat(modelEarned) > 0 || parseFloat(userSpentCredits) > 0) {
+    // Additional Payout for Blocked Sessions
+    if (session.isBlocked && session.blockGain) {
+        const now = Date.now();
+        // If the session ended naturally (after blockEnd) or if we want to credit it anyway
+        // For now, we credit it if the session is stopped and it was a blocked one.
+        await redis.incrbyfloat(`model:${modelId}:balance`, session.blockGain);
+        await redis.incrbyfloat(`model:${modelId}:total_gains`, session.blockGain);
+        // We don't update session.earnedUsd here as it's already finished, but we log it
+        console.log(`[Billing] Block session payout of $${session.blockGain} for model ${modelId}`);
+    }
+
+    if (parseFloat(modelEarned) > 0 || parseFloat(userSpentCredits) > 0 || session.isBlocked) {
         await logRevenue(userSpentUsd);
         await logModelPayout(parseFloat(modelEarned));
         await redis.incrbyfloat(`user:${userId}:total_spent`, userSpentUsd);
