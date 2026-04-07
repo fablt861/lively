@@ -235,7 +235,7 @@ export function VideoRoom({
         const handleBlockSessionEnded = () => {
             setIsBlocked(false);
             setBlockEndTime(null);
-            alert(t('room.block_ended') || "La session privée est terminée.");
+            // alert(t('room.block_ended') || "La session privée est terminée.");
         };
 
         const handlePartnerLeft = () => {

@@ -81,7 +81,13 @@ function initBillingLoop(io) {
                             delete session.blockCreditsCost;
                             delete session.blockDurationMin;
                             
+                            // IMMEDIATELY notify about the new payout total before ending the block
                             if (ioInstance) {
+                                ioInstance.to(roomId).emit('payout_update', { 
+                                    rate: activeRate, 
+                                    earned: session.earnedUsd || 0,
+                                    durationSec
+                                });
                                 ioInstance.to(roomId).emit('block_session_ended');
                             }
                             // Will proceed with normal rates below
@@ -115,7 +121,8 @@ function initBillingLoop(io) {
                         }
                     }
                     
-                    const rateModelUsdPerSec = isBlockedActive ? 0 : parseFloat((activeRate / 60.0).toFixed(6));
+                    const isActuallyBlocked = isBlockedActive || session.isBlocked === true || session.isBlocked === "true";
+                    const rateModelUsdPerSec = isActuallyBlocked ? 0 : parseFloat((activeRate / 60.0).toFixed(6));
 
                     // 2. Decrement User Credits
                     let remaining = 0;
