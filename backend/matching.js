@@ -177,6 +177,10 @@ async function handleJoinQueue(io, socket) {
         }
     }
     // --- END RECOVERY ---
+    
+    let partnerId = null;
+    let foundPartner = false;
+    let maxRetries = 10;
 
     while (maxRetries > 0) {
         // Anti-Rebound Search: get all candidates (limit to first 30 for performance)
