@@ -113,8 +113,8 @@ export function VideoRoom({
     const handleNext = () => {
         setIsBlocked(false);
         setBlockEndTime(null);
-        localStorage.removeItem('kinky_session_active');
-        if (onNext) onNext(); // Or nextPartner()
+        sessionStorage.removeItem('kinky_session_active');
+        if (onNext) onNext();
         else nextPartner();
     };
 
@@ -158,7 +158,7 @@ export function VideoRoom({
 
     // AUTO-RECONNECT TRIGGER (only when stream is ready)
     useEffect(() => {
-        const wasInCall = localStorage.getItem('kinky_session_active') === 'true';
+        const wasInCall = sessionStorage.getItem('kinky_session_active') === 'true';
         if (wasInCall && localStream && !hasStartedMatch) {
             console.log("[VideoRoom] Media stream ready, auto-resuming session...");
             handleStartMatch();
@@ -172,7 +172,7 @@ export function VideoRoom({
             if (role === 'user') {
                 setIsBlocked(false);
                 setBlockEndTime(null);
-                localStorage.removeItem('kinky_session_active');
+                sessionStorage.removeItem('kinky_session_active');
                 if (onCallEnd) onCallEnd();
                 if (accountStatus === 'guest') setShowAuthModal(true);
                 else setShowPaywall(true);
@@ -195,7 +195,7 @@ export function VideoRoom({
                 if (newCredits <= 0) {
                     setIsBlocked(false);
                     setBlockEndTime(null);
-                    localStorage.removeItem('kinky_session_active');
+                    sessionStorage.removeItem('kinky_session_active');
                     if (onCallEnd) onCallEnd();
                     if (accountStatus === 'guest') setShowAuthModal(true);
                     else setShowPaywall(true);
@@ -237,10 +237,11 @@ export function VideoRoom({
         };
 
         const handlePartnerLeft = () => {
-            console.log("[Socket] Partner left, resetting block state");
+            console.log("[Socket] Partner left, resetting block state and transitioning...");
             setIsBlocked(false);
             setBlockEndTime(null);
-            localStorage.removeItem('kinky_session_active');
+            sessionStorage.removeItem('kinky_session_active');
+            handleNext(); // INSTANT TRANSITION
         };
 
         socket.on('out_of_credits', handleOutOfCredits);
@@ -252,7 +253,7 @@ export function VideoRoom({
         socket.on('block_session_started', handleBlockSessionStarted);
         socket.on('block_session_ended', handleBlockSessionEnded);
         socket.on('matched', () => {
-            localStorage.setItem('kinky_session_active', 'true');
+            sessionStorage.setItem('kinky_session_active', 'true');
         });
         socket.on('partner_left', handlePartnerLeft);
 
