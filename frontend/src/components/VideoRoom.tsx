@@ -592,7 +592,7 @@ export function VideoRoom({
 
                 {/* Block Session Timer (Overlaid on Video) */}
                 {isBlocked && (
-                    <div className="absolute top-20 left-1/2 -translate-x-1/2 md:top-40 md:right-6 md:left-auto md:translate-x-0 z-40 bg-black/60 backdrop-blur-md px-6 py-3 rounded-2xl border border-pink-500/30 flex items-center gap-3 animate-pulse shadow-xl shadow-pink-500/10">
+                    <div className="absolute top-20 left-1/2 -translate-x-1/2 md:top-[110px] md:right-6 md:left-auto md:translate-x-0 z-40 bg-black/60 backdrop-blur-md px-6 py-3 rounded-2xl border border-pink-500/30 flex items-center gap-3 shadow-xl shadow-pink-500/10 transition-all duration-500">
                         <Timer className="text-pink-500" size={20} />
                         <span className="text-xl font-mono font-black text-white tracking-widest">{blockTimeLeft}</span>
                         <div className="flex flex-col">
