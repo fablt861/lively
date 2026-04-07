@@ -155,7 +155,7 @@ export function VideoRoom({
 
         // AUTO-RECONNECT LOGIC
         const wasInCall = localStorage.getItem('kinky_session_active') === 'true';
-        if (wasInCall || role === 'model') {
+        if (wasInCall) {
             console.log("[VideoRoom] Auto-resuming session...");
             setTimeout(() => handleStartMatch(), 200);
         }
