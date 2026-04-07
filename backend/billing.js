@@ -67,7 +67,7 @@ function initBillingLoop(io) {
                             // Block ended naturally!
                             console.log(`[Billing] Block session in room ${roomId} ended naturally.`);
                             
-                            const bonus = parseFloat(session.blockGain || 25);
+                            const bonus = parseFloat(session.blockGain || settings.blockModelGain || 25);
                             await redis.incrbyfloat(`model:${session.modelId}:balance`, bonus);
                             await redis.incrbyfloat(`model:${session.modelId}:total_gains`, bonus);
                             session.earnedUsd = (session.earnedUsd || 0) + bonus;
@@ -88,10 +88,12 @@ function initBillingLoop(io) {
                         } else {
                             isBlockedActive = true;
                             // Fixed rate: totalCredits / totalSeconds
-                            const totalCredits = parseFloat(session.blockCreditsCost || 600);
-                            const totalSecs = (parseInt(session.blockDurationMin) || 30) * 60;
-                            // Ensure the rate is at least 0.333 (20 tokens/min)
-                            rateUserCreditsPerSec = Math.max(0.333, totalCredits / totalSecs);
+                            const totalCredits = parseFloat(session.blockCreditsCost || settings.blockCreditsCost || 600);
+                            const durationMin = parseInt(session.blockDurationMin || settings.blockDurationMin || 30);
+                            const totalSecs = durationMin * 60;
+                            
+                            // Ensure the rate is calculated dynamically from settings
+                            rateUserCreditsPerSec = totalCredits / totalSecs;
                             
                             // FORCE model rate to 0
                             activeRate = 0;
@@ -228,8 +230,10 @@ async function stopBilling(roomId) {
     let totalModelEarned = parseFloat(session.earnedUsd || 0);
     let privateEarned = 0;
 
-    if (session.isBlocked && session.blockGain) {
-        privateEarned = parseFloat(session.blockGain);
+    if (session.isBlocked) {
+        const { getSettings } = require('./settings');
+        const settings = await getSettings();
+        privateEarned = parseFloat(session.blockGain || settings.blockModelGain || 25);
         console.log(`[Billing] Applying blockGain $${privateEarned} for intentional stop in room ${roomId}`);
         await redis.incrbyfloat(`model:${modelId}:balance`, privateEarned);
         await redis.incrbyfloat(`model:${modelId}:total_gains`, privateEarned);

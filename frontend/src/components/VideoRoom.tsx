@@ -148,7 +148,7 @@ export function VideoRoom({
                 .catch(console.error);
         }
 
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/settings`)
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/settings`)
             .then(res => res.json())
             .then(setSettings)
             .catch(console.error);
