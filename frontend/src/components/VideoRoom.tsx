@@ -24,11 +24,6 @@ function EarningsCounter({ hasVideo, currentRate, totalEarned }: { hasVideo: boo
                     ${totalEarned.toFixed(2)}
                 </span>
             </div>
-            {currentRate > 0 && (
-                <div className="px-3 py-1 bg-indigo-500/80 backdrop-blur-md rounded-full border border-indigo-400/30 text-[10px] font-black uppercase tracking-tighter shadow-lg animate-in slide-in-from-right-4 duration-500">
-                    {t('room.current_rate', { rate: currentRate.toFixed(2) })}
-                </div>
-            )}
         </div>
     );
 }
