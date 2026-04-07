@@ -156,6 +156,8 @@ export function VideoRoom({
 
         const handleOutOfCredits = () => {
             if (role === 'user') {
+                setIsBlocked(false);
+                setBlockEndTime(null);
                 if (onCallEnd) onCallEnd();
                 if (accountStatus === 'guest') setShowAuthModal(true);
                 else setShowPaywall(true);
@@ -165,7 +167,7 @@ export function VideoRoom({
         const handlePartnerOutOfCredits = () => {
             if (role === 'model') {
                 console.log("[Auto-Next] Partner out of credits, re-joining queue");
-                onNext();
+                handleNext();
             }
         };
 
@@ -176,6 +178,8 @@ export function VideoRoom({
                 localStorage.setItem('kinky_credits', String(newCredits));
                 
                 if (newCredits <= 0) {
+                    setIsBlocked(false);
+                    setBlockEndTime(null);
                     if (onCallEnd) onCallEnd();
                     if (accountStatus === 'guest') setShowAuthModal(true);
                     else setShowPaywall(true);
@@ -216,6 +220,12 @@ export function VideoRoom({
             alert(t('room.block_ended') || "La session privée est terminée.");
         };
 
+        const handlePartnerLeft = () => {
+            console.log("[Socket] Partner left, resetting block state");
+            setIsBlocked(false);
+            setBlockEndTime(null);
+        };
+
         socket.on('out_of_credits', handleOutOfCredits);
         socket.on('partner_out_of_credits', handlePartnerOutOfCredits);
         socket.on('credits_update', handleCreditsUpdate);
@@ -224,6 +234,7 @@ export function VideoRoom({
         socket.on('respond_block_session', handleRespondBlockSession);
         socket.on('block_session_started', handleBlockSessionStarted);
         socket.on('block_session_ended', handleBlockSessionEnded);
+        socket.on('partner_left', handlePartnerLeft);
 
         return () => {
             socket.off('out_of_credits', handleOutOfCredits);
@@ -234,6 +245,7 @@ export function VideoRoom({
             socket.off('respond_block_session', handleRespondBlockSession);
             socket.off('block_session_started', handleBlockSessionStarted);
             socket.off('block_session_ended', handleBlockSessionEnded);
+            socket.off('partner_left', handlePartnerLeft);
         };
     }, [socket, role, accountStatus, onNext, onCallEnd]);
 
@@ -426,6 +438,12 @@ export function VideoRoom({
         } finally {
             setIsReporting(false);
         }
+    };
+
+    const handleNext = () => {
+        setIsBlocked(false);
+        setBlockEndTime(null);
+        nextPartner();
     };
 
     const handleStartMatch = () => {
@@ -644,7 +662,7 @@ export function VideoRoom({
                 {/* NEXT Button (Above Input on mobile, Bottom Center on desktop) */}
                 <div className="absolute bottom-[100px] right-4 md:bottom-8 md:right-auto md:left-1/2 md:-translate-x-1/2 z-40 flex flex-col items-center gap-3">
                     <button
-                        onClick={nextPartner}
+                        onClick={handleNext}
                         disabled={isBlocked && role === 'model'}
                         className={`group relative flex items-center justify-center px-6 py-3 md:px-12 md:py-5 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 hover:opacity-90 shadow-[0_0_30px_rgba(99,102,241,0.4)] transition-all duration-300 hover:scale-105 active:scale-95 ${isBlocked && role === 'model' ? 'opacity-50 grayscale cursor-not-allowed scale-95' : ''}`}
                     >
