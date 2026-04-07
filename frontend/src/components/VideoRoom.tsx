@@ -110,23 +110,32 @@ export function VideoRoom({
     const [isWaitingForBlockResponse, setIsWaitingForBlockResponse] = useState(false);
     const [blockTimeLeft, setBlockTimeLeft] = useState("");
 
+    const handleNext = () => {
+        setIsBlocked(false);
+        setBlockEndTime(null);
+        localStorage.removeItem('kinky_session_active');
+        if (onNext) onNext(); // Or nextPartner()
+        else nextPartner();
+    };
+
+    const handleStartMatch = () => {
+        setHasStartedMatch(true);
+        joinQueue();
+    };
+
     // Load state from localStorage on mount
     useEffect(() => {
-        if (role !== "user") return;
         const storedStatus = (localStorage.getItem('kinky_account_status') as any) || 'guest';
         const storedEmail = localStorage.getItem('kinky_user_email');
-        console.log(`[VideoRoom] Init - Status: ${storedStatus}, Email: ${storedEmail}`);
         setAccountStatus(storedStatus);
 
         let storedCredits = localStorage.getItem('kinky_credits');
         if (storedCredits === null) {
-            // New guest starts with 5 credits (which is 30s at $1/min)
             storedCredits = "5";
             localStorage.setItem('kinky_credits', storedCredits);
         }
         setUserCredits(Number(storedCredits));
 
-        // Sync latest credits from backend
         if (storedEmail) {
             fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/me?email=${storedEmail}`)
                 .then(res => res.json())
@@ -139,11 +148,19 @@ export function VideoRoom({
                 .catch(console.error);
         }
 
-        // Fetch Settings
         fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/settings`)
             .then(res => res.json())
             .then(setSettings)
             .catch(console.error);
+
+        // AUTO-RECONNECT LOGIC
+        const wasInCall = localStorage.getItem('kinky_session_active') === 'true';
+        if (wasInCall || role === 'model') {
+            console.log("[VideoRoom] Auto-resuming session...");
+            setTimeout(() => handleStartMatch(), 200);
+        }
+
+        if (role !== "user") return;
     }, [role]);
 
     useEffect(() => {
@@ -153,6 +170,7 @@ export function VideoRoom({
             if (role === 'user') {
                 setIsBlocked(false);
                 setBlockEndTime(null);
+                localStorage.removeItem('kinky_session_active');
                 if (onCallEnd) onCallEnd();
                 if (accountStatus === 'guest') setShowAuthModal(true);
                 else setShowPaywall(true);
@@ -175,6 +193,7 @@ export function VideoRoom({
                 if (newCredits <= 0) {
                     setIsBlocked(false);
                     setBlockEndTime(null);
+                    localStorage.removeItem('kinky_session_active');
                     if (onCallEnd) onCallEnd();
                     if (accountStatus === 'guest') setShowAuthModal(true);
                     else setShowPaywall(true);
@@ -219,6 +238,7 @@ export function VideoRoom({
             console.log("[Socket] Partner left, resetting block state");
             setIsBlocked(false);
             setBlockEndTime(null);
+            localStorage.removeItem('kinky_session_active');
         };
 
         socket.on('out_of_credits', handleOutOfCredits);
@@ -229,6 +249,9 @@ export function VideoRoom({
         socket.on('respond_block_session', handleRespondBlockSession);
         socket.on('block_session_started', handleBlockSessionStarted);
         socket.on('block_session_ended', handleBlockSessionEnded);
+        socket.on('matched', () => {
+            localStorage.setItem('kinky_session_active', 'true');
+        });
         socket.on('partner_left', handlePartnerLeft);
 
         return () => {
@@ -435,16 +458,6 @@ export function VideoRoom({
         }
     };
 
-    const handleNext = () => {
-        setIsBlocked(false);
-        setBlockEndTime(null);
-        nextPartner();
-    };
-
-    const handleStartMatch = () => {
-        setHasStartedMatch(true);
-        joinQueue();
-    };
 
     return (
         <div className="flex flex-col md:flex-row h-[100dvh] w-full bg-neutral-950 text-white font-sans overflow-hidden no-scroll overscroll-none touch-none">
