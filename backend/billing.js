@@ -62,7 +62,7 @@ function initBillingLoop(io) {
                     const durationSec = Math.floor((Date.now() - session.startTime) / 1000);
 
                     // Handle Blocked Session Logic
-                    if (session.isBlocked) {
+                    if (session.isBlocked === true || session.isBlocked === "true") {
                         if (Date.now() >= session.blockEnd) {
                             // Block ended naturally!
                             console.log(`[Billing] Block session in room ${roomId} ended naturally.`);
@@ -88,9 +88,13 @@ function initBillingLoop(io) {
                         } else {
                             isBlockedActive = true;
                             // Fixed rate: totalCredits / totalSeconds
-                            const totalCredits = session.blockCreditsCost || 600;
-                            const totalSecs = (session.blockDurationMin || 30) * 60;
-                            rateUserCreditsPerSec = totalCredits / totalSecs;
+                            const totalCredits = parseFloat(session.blockCreditsCost || 600);
+                            const totalSecs = (parseInt(session.blockDurationMin) || 30) * 60;
+                            // Ensure the rate is at least 0.333 (20 tokens/min)
+                            rateUserCreditsPerSec = Math.max(0.333, totalCredits / totalSecs);
+                            
+                            // FORCE model rate to 0
+                            activeRate = 0;
                         }
                     }
 
