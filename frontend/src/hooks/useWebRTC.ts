@@ -27,6 +27,18 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
     // Sync ref with state
     useEffect(() => {
         localStreamRef.current = localStream;
+        
+        // Safety: If PC already exists but lacks tracks, add them now
+        if (localStream && peerConnectionRef.current) {
+            const pc = peerConnectionRef.current;
+            const senders = pc.getSenders();
+            localStream.getTracks().forEach((track) => {
+                if (!senders.find((s) => s.track === track)) {
+                    console.log('Synchronizing late-arriving track:', track.kind);
+                    pc.addTrack(track, localStream!);
+                }
+            });
+        }
     }, [localStream]);
 
     useEffect(() => {

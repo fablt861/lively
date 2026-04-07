@@ -153,15 +153,17 @@ export function VideoRoom({
             .then(setSettings)
             .catch(console.error);
 
-        // AUTO-RECONNECT LOGIC
-        const wasInCall = localStorage.getItem('kinky_session_active') === 'true';
-        if (wasInCall) {
-            console.log("[VideoRoom] Auto-resuming session...");
-            setTimeout(() => handleStartMatch(), 200);
-        }
-
         if (role !== "user") return;
     }, [role]);
+
+    // AUTO-RECONNECT TRIGGER (only when stream is ready)
+    useEffect(() => {
+        const wasInCall = localStorage.getItem('kinky_session_active') === 'true';
+        if (wasInCall && localStream && !hasStartedMatch) {
+            console.log("[VideoRoom] Media stream ready, auto-resuming session...");
+            handleStartMatch();
+        }
+    }, [localStream, hasStartedMatch]);
 
     useEffect(() => {
         if (!socket) return;
