@@ -500,8 +500,8 @@ router.get('/realtime', requireAuth, async (req, res) => {
                 roomDetails
             },
             queue: {
-                modelsCount: waitingModelsIds.length,
-                usersCount: waitingUsersIds.length,
+                modelsCount: queueDetails.models.length,
+                usersCount: queueDetails.users.length,
                 details: queueDetails
             },
             timestamp: Date.now()

@@ -139,13 +139,24 @@ function setupMatching(io, socket) {
 async function updateQueuePositions(io, role) {
     if (!role) return;
     const queueKey = role === 'model' ? QUEUE_MODELS : QUEUE_USERS;
-    const socketIds = await redis.lrange(queueKey, 0, -1);
-    // Redis list [head ... tail]. Tail (last) is position 1.
-    for (let i = 0; i < socketIds.length; i++) {
-        const sId = socketIds[i];
-        const s = io.sockets.sockets.get(sId);
+    const rawSocketIds = await redis.lrange(queueKey, 0, -1);
+    
+    // Filter out stale sockets and clean Redis
+    const activeSocketIds = [];
+    for (const sId of rawSocketIds) {
+        if (io.sockets.sockets.has(sId)) {
+            activeSocketIds.push(sId);
+        } else {
+            console.log(`[Queue Cleanup] Removing stale socket ${sId} from ${queueKey}`);
+            await redis.lrem(queueKey, 0, sId);
+        }
+    }
+
+    // Emit corrected positions [tail = pos 1, head = pos len]
+    for (let i = 0; i < activeSocketIds.length; i++) {
+        const s = io.sockets.sockets.get(activeSocketIds[i]);
         if (s) {
-            s.emit('queue_update', { position: socketIds.length - i });
+            s.emit('queue_update', { position: activeSocketIds.length - i });
         }
     }
 }
@@ -236,6 +247,16 @@ async function handleJoinQueue(io, socket) {
 
         if (targetIndex !== -1) {
             const chosenId = candidates[targetIndex];
+
+            // Validate that the chosen partner is still online before removing
+            const pSocket = io.sockets.sockets.get(chosenId);
+            if (!pSocket) {
+                console.log(`[Match Cleanup] Removing stale candidate ${chosenId} from ${targetQueue}`);
+                await redis.lrem(targetQueue, 0, chosenId);
+                maxRetries--;
+                continue;
+            }
+
             // Remove exactly this ID from the queue
             const removedCount = await redis.lrem(targetQueue, 1, chosenId);
             if (removedCount > 0) {
@@ -306,11 +327,14 @@ async function handleJoinQueue(io, socket) {
     }
 
     if (!foundPartner) {
+        // ENSURE UNIQUENESS: Remove existing instances of this socket before pushing
+        await redis.lrem(myQueue, 0, socket.id);
         await redis.lpush(myQueue, socket.id);
+        
         const modelsCount = await redis.llen(QUEUE_MODELS);
         const usersCount = await redis.llen(QUEUE_USERS);
         console.log(`[Queue Status] Models: ${modelsCount}, Users: ${usersCount}. Socket ${socket.id} is waiting.`);
-        socket.emit('waiting', { status: 'waiting for partner', position: modelsCount || usersCount }); // Approximate
+        socket.emit('waiting', { status: 'waiting for partner', position: isModel ? modelsCount : usersCount }); 
     }
 }
 
