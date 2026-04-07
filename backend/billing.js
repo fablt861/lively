@@ -58,6 +58,7 @@ function initBillingLoop(io) {
                     let rateUserCreditsPerSec;
                     let activeRate = settings.modelPayoutPerMinute || 0.40; // Default fallback
                     let isBlockedActive = false;
+                    const durationSec = Math.floor((Date.now() - session.startTime) / 1000);
 
                     // Handle Blocked Session Logic
                     if (session.isBlocked) {
@@ -96,7 +97,6 @@ function initBillingLoop(io) {
                         rateUserCreditsPerSec = (settings.pricePerMinute * 10) / 60.0;
                         
                         // Calculate dynamic Model Payout Tier
-                        const durationSec = Math.floor((Date.now() - session.startTime) / 1000);
                         const durationMin = durationSec / 60.0;
                         
                         if (settings.payoutTiers && settings.payoutTiers.length > 0) {
