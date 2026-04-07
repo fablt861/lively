@@ -66,6 +66,13 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
         setSocket(newSocket);
 
         return () => {
+            console.log('[WebRTC Cleanup] Stopping local stream and disconnecting socket');
+            if (localStreamRef.current) {
+                localStreamRef.current.getTracks().forEach(track => {
+                    track.stop();
+                    console.log(`[WebRTC Cleanup] Stopped track: ${track.kind}`);
+                });
+            }
             newSocket.disconnect();
         };
     }, [isEnabled]);
