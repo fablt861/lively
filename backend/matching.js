@@ -250,6 +250,15 @@ async function handleJoinQueue(io, socket) {
             await partnerSocket.join(roomId);
             partnerSocket.currentRoom = roomId;
 
+            // --- NEW: Mark as seen to avoid immediate rematching after hangup ---
+            const myIdentifier = (socket.userEmail || socket.userIp)?.toLowerCase();
+            const partnerIdentifier = (partnerSocket.userEmail || partnerSocket.userIp)?.toLowerCase();
+            if (myIdentifier && partnerIdentifier) {
+                // 60s cooldown should be enough to avoid the "next" loop
+                await redis.set(`seen:${myIdentifier}:${partnerIdentifier}`, '1', 'EX', 60);
+                await redis.set(`seen:${partnerIdentifier}:${myIdentifier}`, '1', 'EX', 60);
+            }
+
             const userId = isModel ? partnerId : socket.id;
             const modelId = isModel ? socket.id : partnerId;
 
