@@ -125,8 +125,13 @@ export default function DashboardPage() {
             }
             groups[dateStr].durationSec += h.durationSec;
             groups[dateStr].modelEarned += h.modelEarned;
-            groups[dateStr].normalEarned += h.normalEarned || 0;
-            groups[dateStr].privateEarned += h.privateEarned || 0;
+
+            // Legacy Fallback: if granular fields are missing, assume it's all Normal
+            const hNormal = h.normalEarned !== undefined ? h.normalEarned : (h.isPrivate ? 0 : h.modelEarned);
+            const hPrivate = h.privateEarned !== undefined ? h.privateEarned : (h.isPrivate ? h.modelEarned : 0);
+
+            groups[dateStr].normalEarned += hNormal;
+            groups[dateStr].privateEarned += hPrivate;
             groups[dateStr].calls += 1;
         });
 
