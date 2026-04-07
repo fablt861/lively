@@ -113,11 +113,14 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
         });
 
         socket.on("matched", async (data: any) => {
-            const { initiator, partnerEmail, partnerRole, partnerName } = data;
-            console.log('[WebRTC] Matched event received. Initiator:', initiator);
+            const { initiator, partnerEmail, partnerRole, partnerName, isRecovery } = data;
+            console.log('[WebRTC] Matched event received. Initiator:', initiator, 'Recovery:', !!isRecovery);
             setIsMatching(false);
             setIsConnected(true);
-            setMessages([]);
+            
+            if (!isRecovery) {
+                setMessages([]);
+            }
 
             if (partnerEmail) {
                 setPartnerInfo({
@@ -130,7 +133,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
             const pc = createPeerConnection();
 
             if (socket.id === initiator) {
-                const offer = await pc.createOffer();
+                const offer = await pc.createOffer({ iceRestart: !!isRecovery });
                 await pc.setLocalDescription(offer);
                 socket.emit("offer", offer);
             }
@@ -164,7 +167,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
         });
 
         socket.on("partner_left", () => {
-            console.log('[WebRTC] Partner left');
+            console.log('[WebRTC] Partner left (permanent)');
             setIsConnected(false);
             setRemoteStream(null);
             if (peerConnectionRef.current) {
@@ -173,6 +176,23 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
             }
             // Instantly start matching again
             socket.emit("next");
+        });
+
+        socket.on("partner_disconnected", () => {
+            console.log('[WebRTC] Partner disconnected (temporary)');
+            // We keep the state but maybe show a UI indicator?
+            // For now just log it.
+        });
+
+        socket.on("partner_reconnected", async () => {
+            console.log('[WebRTC] Partner reconnected! Resuming signaling...');
+            // If I am the initiator, I should create a new offer
+            const pc = peerConnectionRef.current;
+            if (pc && pc.signalingState !== "closed") {
+                // Check if we are initiator (we don't have this in state directly, but we can check initiator from partnerInfo or logic)
+                // Actually, the simplest is to have the rejoining party always trigger matched.
+                // Which I already did in matching.js
+            }
         });
 
         socket.on("maintenance_active", () => {
@@ -212,6 +232,8 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
             socket.off("answer");
             socket.off("ice-candidate");
             socket.off("partner_left");
+            socket.off("partner_disconnected");
+            socket.off("partner_reconnected");
             socket.off("chat_message");
         };
     }, [socket]); // Only depends on socket

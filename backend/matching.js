@@ -109,12 +109,18 @@ function setupMatching(io, socket) {
 
     socket.on('disconnect', async () => {
         // Remove from queue
+        // NOTE: We do NOT call stopBilling here to allow for the 20s grace period recovery
         if (socket.role === 'model') {
             await redis.lrem(QUEUE_MODELS, 0, socket.id);
         } else if (socket.role === 'user') {
             await redis.lrem(QUEUE_USERS, 0, socket.id);
         }
-        await disconnectFromRoom(socket);
+        
+        if (socket.currentRoom) {
+            socket.to(socket.currentRoom).emit('partner_disconnected');
+            socket.leave(socket.currentRoom);
+            socket.currentRoom = null;
+        }
         await updateQueuePositions(io, socket.role);
     });
 }
@@ -140,11 +146,37 @@ async function handleJoinQueue(io, socket) {
 
     console.log(`[Match Attempt] Socket ${socket.id} (${socket.role}) searching in ${targetQueue}...`);
 
-    let partnerId = null;
-    let foundPartner = false;
-    let maxRetries = 10;
-
     const myIdentifier = socket.userEmail || socket.userIp;
+
+    // --- RECOVERY ATTEMPT ---
+    const existingRoomId = await redis.get(`user_active_room:${myIdentifier.toLowerCase()}`);
+    if (existingRoomId) {
+        const roomDataStr = await redis.hget('billing:active_rooms', existingRoomId);
+        if (roomDataStr) {
+            const roomData = JSON.parse(roomDataStr);
+            console.log(`[Recovery] Found active room ${existingRoomId} for ${myIdentifier}. Reconnecting...`);
+            
+            await socket.join(existingRoomId);
+            socket.currentRoom = existingRoomId;
+            
+            const isModel = socket.role === 'model';
+            const partnerEmail = isModel ? roomData.userId : roomData.modelId;
+
+            socket.emit('matched', {
+                roomId: existingRoomId,
+                initiator: roomData.userSocketId, // Keep original initiator for WebRTC logic
+                partnerEmail: partnerEmail,
+                partnerRole: isModel ? 'user' : 'model',
+                partnerName: partnerEmail.includes('@') ? partnerEmail.split('@')[0] : 'Partner',
+                isRecovery: true
+            });
+            
+            // Notify the partner in the room
+            socket.to(existingRoomId).emit('partner_reconnected');
+            return;
+        }
+    }
+    // --- END RECOVERY ---
 
     while (maxRetries > 0) {
         // Anti-Rebound Search: get all candidates (limit to first 30 for performance)

@@ -35,11 +35,11 @@ function initBillingLoop(io) {
                     if (ioInstance) {
                         const activeRoom = ioInstance.sockets.adapter.rooms.get(roomId);
                         if (!activeRoom || activeRoom.size === 0) {
-                            // Give it a 5-second grace period before closing
+                            // Give it a 20-second grace period before closing
                             session.emptyTicks = (session.emptyTicks || 0) + 1;
-                            console.log(`[Billing] Room ${roomId} is empty (Tick ${session.emptyTicks}/5).`);
+                            console.log(`[Billing] Room ${roomId} is empty (Tick ${session.emptyTicks}/20).`);
                             
-                            if (session.emptyTicks >= 5) {
+                            if (session.emptyTicks >= 20) {
                                 console.log(`[Billing] Room ${roomId} exceeded grace period. Auto-closing.`);
                                 await stopBilling(roomId);
                                 continue;
@@ -192,6 +192,11 @@ async function startBilling(roomId, userId, modelId, userSocketId, modelSocketId
         spentCredits: 0
     });
     await redis.hset(ACTIVE_ROOMS_KEY, roomId, sessionData);
+    
+    // Map User identifier to current Room ID for reconnection
+    await redis.set(`user_active_room:${String(userId).toLowerCase()}`, roomId, 'EX', 3600);
+    await redis.set(`user_active_room:${String(modelId).toLowerCase()}`, roomId, 'EX', 3600);
+
     await redis.lpush('debug:billing', JSON.stringify({ event: 'start', roomId, userId, modelId, timestamp: Date.now() }));
     console.log(`[Billing] Started for room ${roomId}. User: ${userId}, Model: ${modelId}`);
     // Loop is already running globally if initialized via server.js
@@ -249,6 +254,10 @@ async function stopBilling(roomId) {
         if (durationSec > 15) {
             await markAsSeen(userId, modelId);
         }
+
+        // Clean up reconnection mappings
+        await redis.del(`user_active_room:${userId}`);
+        await redis.del(`user_active_room:${modelId}`);
     }
 
     await redis.lpush('debug:billing', JSON.stringify({ event: 'stop', roomId, userId, modelId, durationSec, modelEarned, timestamp: Date.now() }));
