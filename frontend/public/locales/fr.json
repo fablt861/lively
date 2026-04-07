@@ -564,5 +564,11 @@
   "room.block_accept": "Accepter",
   "room.block_refuse": "Refuser",
   "room.block_timer_label": "Session Privée",
-  "room.block_locked_label": "Verrouillé"
+  "room.block_locked_label": "Verrouillé",
+  "admin.nav.moderation": "Modération",
+  "admin.status.active": "Actif",
+  "admin.status.disabled": "Désactivé",
+  "admin.users.toggle_status_cta": "Statut",
+  "admin.models.toggle_status_cta": "Statut",
+  "admin.status.update_success": "Statut mis à jour."
 }

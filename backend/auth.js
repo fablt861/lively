@@ -14,7 +14,7 @@ router.post('/login', async (req, res) => {
     const modelData = await redis.get(`model:active:${email}`);
     if (modelData) {
         const model = JSON.parse(modelData);
-        if (model.status === 'banned') {
+        if (model.status === 'banned' || model.status === 'disabled') {
             return res.status(403).json({ error: 'auth.error.banned' });
         }
         if (model.password === password) {
@@ -32,7 +32,7 @@ router.post('/login', async (req, res) => {
     const userData = await redis.get(`user:active:${email}`);
     if (userData) {
         const user = JSON.parse(userData);
-        if (user.status === 'banned') {
+        if (user.status === 'banned' || user.status === 'disabled') {
             return res.status(403).json({ error: 'auth.error.banned' });
         }
         if (user.password === password) {

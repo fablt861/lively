@@ -564,5 +564,11 @@
   "room.block_accept": "Accept",
   "room.block_refuse": "Decline",
   "room.block_timer_label": "Private Session",
-  "room.block_locked_label": "Locked"
+  "room.block_locked_label": "Locked",
+  "admin.nav.moderation": "Moderation",
+  "admin.status.active": "Active",
+  "admin.status.disabled": "Disabled",
+  "admin.users.toggle_status_cta": "Status",
+  "admin.models.toggle_status_cta": "Status",
+  "admin.status.update_success": "Status updated."
 }

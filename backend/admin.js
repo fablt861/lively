@@ -209,7 +209,8 @@ router.get('/users', requireAuth, async (req, res) => {
                     lastLogin,
                     totalSpent: parseFloat(totalSpent),
                     credits: parseFloat(credits),
-                    isBuyer: parseFloat(totalSpent) > 0 || parseFloat(credits) > 5 // Mock check: spent or has recharged
+                    isBuyer: parseFloat(totalSpent) > 0 || parseFloat(credits) > 5,
+                    status: u.status || 'active'
                 });
             }
         }
@@ -228,6 +229,23 @@ router.post('/users/:email/credits', requireAuth, async (req, res) => {
         if (credits === undefined || credits < 0) return res.status(400).json({ error: 'admin.error.invalid_amount' });
         await redis.set(`user:${email.toLowerCase()}:credits`, credits.toString());
         res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+
+router.post('/users/:email/toggle-status', requireAuth, async (req, res) => {
+    try {
+        const { getRedisClient } = require('./redis');
+        const redis = getRedisClient();
+        const email = req.params.email.toLowerCase();
+        const userData = await redis.get(`user:active:${email}`);
+        if (!userData) return res.status(404).json({ error: 'admin.error.user_not_found' });
+
+        const user = JSON.parse(userData);
+        user.status = user.status === 'disabled' ? 'active' : 'disabled';
+        await redis.set(`user:active:${email}`, JSON.stringify(user));
+        res.json({ success: true, status: user.status });
     } catch (err) {
         res.status(500).json({ error: 'api.error.internal_server_error' });
     }
@@ -259,7 +277,8 @@ router.get('/elite', requireAuth, async (req, res) => {
                     lastLogin,
                     balance: parseFloat(balance),
                     totalGains: parseFloat(totalGains),
-                    totalPayouts: parseFloat(totalPayouts)
+                    totalPayouts: parseFloat(totalPayouts),
+                    status: m.status || 'active'
                 });
             }
         }
@@ -508,6 +527,23 @@ router.get('/realtime', requireAuth, async (req, res) => {
         });
     } catch (err) {
         console.error('[Realtime Stats Error]', err);
+        res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+
+router.post('/elite/:email/toggle-status', requireAuth, async (req, res) => {
+    try {
+        const { getRedisClient } = require('./redis');
+        const redis = getRedisClient();
+        const email = req.params.email.toLowerCase();
+        const modelData = await redis.get(`model:active:${email}`);
+        if (!modelData) return res.status(404).json({ error: 'admin.error.model_not_found' });
+
+        const model = JSON.parse(modelData);
+        model.status = model.status === 'disabled' ? 'active' : 'disabled';
+        await redis.set(`model:active:${email}`, JSON.stringify(model));
+        res.json({ success: true, status: model.status });
+    } catch (err) {
         res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });

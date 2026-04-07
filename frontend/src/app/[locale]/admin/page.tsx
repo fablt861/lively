@@ -332,7 +332,7 @@ export default function AdminPage() {
                         <Zap size={20} className={activeTab === 'realtime' ? 'animate-pulse text-indigo-400' : ''} /> {t('admin.nav.realtime')}
                     </button>
                     <button onClick={() => setActiveTab('moderation')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'moderation' ? 'bg-red-500/20 text-red-300' : 'hover:bg-white/5 text-neutral-400'}`}>
-                        <ShieldAlert size={20} /> {t('admin.nav.moderation') || "Modération"}
+                        <ShieldAlert size={20} /> {t('admin.nav.moderation')}
                     </button>
                     <button onClick={() => setActiveTab('marketing_users')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'marketing_users' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <Globe size={20} /> {t('admin.nav.marketing_users')}
@@ -964,7 +964,8 @@ export default function AdminPage() {
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.last_login')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.total_spent')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.credits')}</th>
-                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase text-right">{t('admin.table.status')}</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.status')}</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase text-right">{t('admin.table.action')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
@@ -983,7 +984,13 @@ export default function AdminPage() {
                                                     <span className="bg-green-500/10 text-green-400 text-[10px] font-black uppercase px-2 py-1 rounded-md border border-green-500/20">{t('admin.status.buyer')}</span>
                                                     : <span className="bg-neutral-500/10 text-neutral-500 text-[10px] font-black uppercase px-2 py-1 rounded-md text-white">{t('admin.status.free')}</span>
                                                 }
-                                                <button
+                                            </td>
+                                            <td className="p-5">
+                                                <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-md border ${u.status === 'disabled' ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-green-500/10 text-green-400 border-green-500/20'}`}>
+                                                    {u.status === 'disabled' ? t('admin.status.disabled') : t('admin.status.active')}
+                                                </span>
+                                            </td>
+                                            <td className="p-5 text-right space-x-2">
                                                     onClick={async () => {
                                                         const amount = prompt(t('admin.users.edit_credits_prompt', { pseudo: u.pseudo }), u.credits || 0);
                                                         if (amount !== null && !isNaN(parseFloat(amount))) {
@@ -1002,6 +1009,22 @@ export default function AdminPage() {
                                                     className="bg-white/10 hover:bg-white/20 text-white text-[10px] font-bold px-3 py-2 rounded-lg transition-colors ml-2"
                                                 >
                                                     {t('admin.users.edit_credits_cta')}
+                                                </button>
+                                                <button
+                                                    onClick={async () => {
+                                                        if (confirm(t('common.confirm_action'))) {
+                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/users/${encodeURIComponent(u.email)}/toggle-status`, {
+                                                                method: "POST",
+                                                                headers: { Authorization: `Bearer ${token}` }
+                                                            });
+                                                            if (res.ok) {
+                                                                fetchUsers();
+                                                            }
+                                                        }
+                                                    }}
+                                                    className={`text-[10px] font-bold px-3 py-2 rounded-lg transition-colors ml-2 ${u.status === 'disabled' ? 'bg-green-500 hover:bg-green-400 text-white' : 'bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20'}`}
+                                                >
+                                                    {u.status === 'disabled' ? t('admin.status.active') : t('admin.status.disabled')}
                                                 </button>
                                             </td>
                                         </tr>
@@ -1025,6 +1048,7 @@ export default function AdminPage() {
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.total_earnings')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.paid_out')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.unpaid_balance')}</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.status')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase text-right">{t('admin.table.action')}</th>
                                     </tr>
                                 </thead>
@@ -1042,6 +1066,11 @@ export default function AdminPage() {
                                             <td className="p-5 font-mono text-white">${m.totalGains.toFixed(2)}</td>
                                             <td className="p-5 font-mono text-neutral-400">-${m.totalPayouts.toFixed(2)}</td>
                                             <td className="p-5 font-mono text-green-400 font-bold">${m.balance.toFixed(2)}</td>
+                                            <td className="p-5">
+                                                <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-md border ${m.status === 'disabled' ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-green-500/10 text-green-400 border-green-500/20'}`}>
+                                                    {m.status === 'disabled' ? t('admin.status.disabled') : t('admin.status.active')}
+                                                </span>
+                                            </td>
                                             <td className="p-5 text-right space-x-2">
                                                 <button
                                                     onClick={async () => {
@@ -1080,6 +1109,22 @@ export default function AdminPage() {
                                                     className="bg-white/10 hover:bg-white/20 text-white text-[10px] font-bold px-3 py-2 rounded-lg transition-colors"
                                                 >
                                                     {t('admin.models.reset_balance_cta')}
+                                                </button>
+                                                <button
+                                                    onClick={async () => {
+                                                        if (confirm(t('common.confirm_action'))) {
+                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite/${encodeURIComponent(m.email)}/toggle-status`, {
+                                                                method: "POST",
+                                                                headers: { Authorization: `Bearer ${token}` }
+                                                            });
+                                                            if (res.ok) {
+                                                                fetchModels();
+                                                            }
+                                                        }
+                                                    }}
+                                                    className={`text-[10px] font-bold px-3 py-2 rounded-lg transition-colors ml-2 ${m.status === 'disabled' ? 'bg-green-500 hover:bg-green-400 text-white' : 'bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20'}`}
+                                                >
+                                                    {m.status === 'disabled' ? t('admin.status.active') : t('admin.status.disabled')}
                                                 </button>
                                             </td>
                                         </tr>
