@@ -15,6 +15,9 @@ interface Stats {
         roomId: string;
         durationSec: number;
         modelEarned: number;
+        normalEarned?: number;
+        privateEarned?: number;
+        isPrivate?: boolean;
         timestamp: number;
     }>;
 }
@@ -113,15 +116,17 @@ export default function DashboardPage() {
     const dailyStats = useMemo(() => {
         if (!stats?.history) return [];
 
-        const groups: Record<string, { date: string; durationSec: number; modelEarned: number; calls: number }> = {};
+        const groups: Record<string, { date: string; durationSec: number; modelEarned: number; normalEarned: number; privateEarned: number; calls: number }> = {};
 
         stats.history.forEach(h => {
             const dateStr = new Date(h.timestamp).toLocaleDateString();
             if (!groups[dateStr]) {
-                groups[dateStr] = { date: dateStr, durationSec: 0, modelEarned: 0, calls: 0 };
+                groups[dateStr] = { date: dateStr, durationSec: 0, modelEarned: 0, normalEarned: 0, privateEarned: 0, calls: 0 };
             }
             groups[dateStr].durationSec += h.durationSec;
             groups[dateStr].modelEarned += h.modelEarned;
+            groups[dateStr].normalEarned += h.normalEarned || 0;
+            groups[dateStr].privateEarned += h.privateEarned || 0;
             groups[dateStr].calls += 1;
         });
 
@@ -279,6 +284,8 @@ export default function DashboardPage() {
                                             <th className="p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_date')}</th>
                                             <th className="p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_calls')}</th>
                                             <th className="p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_duration')}</th>
+                                            <th className="p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_normal')}</th>
+                                            <th className="p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_private')}</th>
                                             <th className="p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] text-right">{t('dashboard.table_earned')}</th>
                                         </tr>
                                     </thead>
@@ -293,6 +300,12 @@ export default function DashboardPage() {
                                                 </td>
                                                 <td className="p-8 text-neutral-300 font-medium">
                                                     {Math.floor(day.durationSec / 60)}m {day.durationSec % 60}s
+                                                </td>
+                                                <td className="p-8 text-neutral-400 font-mono text-sm">
+                                                    ${day.normalEarned.toFixed(2)}
+                                                </td>
+                                                <td className="p-8 text-indigo-400 font-mono text-sm font-bold">
+                                                    ${day.privateEarned.toFixed(2)}
                                                 </td>
                                                 <td className="p-8 text-right font-mono text-green-400 font-bold text-lg">
                                                     +${day.modelEarned.toFixed(2)}

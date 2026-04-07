@@ -445,6 +445,8 @@
   "dashboard.table_date": "Date",
   "dashboard.table_calls": "Calls",
   "dashboard.table_duration": "Duration",
+  "dashboard.table_normal": "Normal",
+  "dashboard.table_private": "Private Session",
   "dashboard.table_earned": "Earned",
   "dashboard.sessions_title": "TOTAL SESSIONS",
   "dashboard.sessions_count": "{{count}} sessions",
