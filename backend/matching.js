@@ -162,17 +162,31 @@ async function handleJoinQueue(io, socket) {
             const isModel = socket.role === 'model';
             const partnerEmail = isModel ? roomData.userId : roomData.modelId;
 
+            // --- IMPORTANT: Update roomData with new socket ID and set as initiator ---
+            if (isModel) {
+                roomData.modelSocketId = socket.id;
+            } else {
+                roomData.userSocketId = socket.id;
+            }
+            // Update Redis with the new socket mapping
+            await redis.hset('billing:active_rooms', existingRoomId, JSON.stringify(roomData));
+
             socket.emit('matched', {
                 roomId: existingRoomId,
-                initiator: roomData.userSocketId, // Keep original initiator for WebRTC logic
+                initiator: socket.id, // Current socket is the one re-joining, let them initiate offer
+                isRecovery: true,
                 partnerEmail: partnerEmail,
                 partnerRole: isModel ? 'user' : 'model',
                 partnerName: partnerEmail.includes('@') ? partnerEmail.split('@')[0] : 'Partner',
-                isRecovery: true
+                isBlocked: !!roomData.blockEnd,
+                blockEndTime: roomData.blockEnd || null
             });
             
             // Notify the partner in the room
-            socket.to(existingRoomId).emit('partner_reconnected');
+            socket.to(existingRoomId).emit('partner_reconnected', {
+                socketId: socket.id,
+                role: socket.role
+            });
             return;
         }
     }
