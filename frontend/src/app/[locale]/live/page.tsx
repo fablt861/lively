@@ -33,11 +33,26 @@ export default function LivePage({ params }: { params: { locale: string } }) {
     const activeMaintenance = isMaintenance || webRTC.isMaintenance;
     const activeLaunch = isLaunch || webRTC.isLaunch;
     
+    const handlePurchase = async (credits: number, priceUsd: number) => {
+        const email = localStorage.getItem('kinky_user_email');
+        if (!email) return;
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/add-credits`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, amount: credits, priceUsd })
+            });
+            if (!res.ok) console.error('[Purchase] Error:', await res.text());
+        } catch (err) {
+            console.error('[Purchase] Network Error:', err);
+        }
+    };
+
     if (activeMaintenance) return <MaintenanceGuard />;
-    if (activeLaunch) return <VideoRoom {...webRTC} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={webRTC.endCall} onNext={webRTC.nextPartner} isLaunchOverride={true} packs={settings?.packs} />;
+    if (activeLaunch) return <VideoRoom {...webRTC} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={webRTC.endCall} onNext={webRTC.nextPartner} onPurchase={handlePurchase} isLaunchOverride={true} packs={settings?.packs} />;
     if (isChecking || !role) return <div className="min-h-screen bg-[#050505]"></div>;
 
-    return <VideoRoom {...webRTC} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={webRTC.endCall} onNext={webRTC.nextPartner} packs={settings?.packs} />;
+    return <VideoRoom {...webRTC} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={webRTC.endCall} onNext={webRTC.nextPartner} onPurchase={handlePurchase} packs={settings?.packs} />;
 }
 
 

@@ -50,6 +50,50 @@ function setupSignaling(io, socket) {
             timestamp: Date.now()
         });
     });
+
+    socket.on('request_block_session', (payload) => {
+        if (!socket.currentRoom) return;
+        socket.to(socket.currentRoom).emit('request_block_session', {
+            senderId: socket.id,
+            ...payload
+        });
+    });
+
+    socket.on('respond_block_session', async (payload) => {
+        if (!socket.currentRoom) return;
+        
+        const { getRedisClient } = require('./redis');
+        const redis = getRedisClient();
+        
+        if (payload.accepted) {
+            const roomDataRaw = await redis.hget('billing:active_rooms', socket.currentRoom);
+            if (roomDataRaw) {
+                const roomData = JSON.parse(roomDataRaw);
+                const { getSettings } = require('./settings');
+                const settings = await getSettings();
+                
+                roomData.isBlocked = true;
+                const duration = payload.durationMin || settings.blockDurationMin || 30;
+                roomData.blockEnd = Date.now() + duration * 60 * 1000;
+                roomData.blockGain = settings.blockModelGain || 25;
+                roomData.blockCreditsCost = payload.creditsCost || settings.blockCreditsCost || 600;
+                roomData.blockDurationMin = duration;
+                
+                await redis.hset('billing:active_rooms', socket.currentRoom, JSON.stringify(roomData));
+                
+                // Notify both that the block has started officially
+                io.in(socket.currentRoom).emit('block_session_started', {
+                    blockEnd: roomData.blockEnd,
+                    durationMin: duration
+                });
+            }
+        }
+        
+        socket.to(payload.requestorId).emit('respond_block_session', {
+            senderId: socket.id,
+            accepted: payload.accepted
+        });
+    });
 }
 
 module.exports = { setupSignaling };

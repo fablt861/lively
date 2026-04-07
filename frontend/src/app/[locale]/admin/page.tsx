@@ -693,6 +693,59 @@ export default function AdminPage() {
                                 </div>
                             ))}
                         </div>
+                        
+                        <div className="bg-neutral-900 border border-white/5 p-8 rounded-3xl space-y-6 shadow-2xl">
+                            <h3 className="text-xl font-medium text-pink-400 border-b border-white/5 pb-4 uppercase tracking-tighter">Session Privée (Blocage {settings.blockDurationMin || 30} min)</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-1">
+                                    <label className="block text-[10px] text-neutral-500 font-bold uppercase tracking-widest mb-2">Durée de la session (Minutes)</label>
+                                    <input type="number" 
+                                        value={settings.blockDurationMin || 30} 
+                                        onChange={e => setSettings({ ...settings, blockDurationMin: parseInt(e.target.value) })}
+                                        className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-pink-500 transition-colors font-mono" 
+                                    />
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="block text-[10px] text-neutral-500 font-bold uppercase tracking-widest mb-2">Coût pour l'utilisateur (Total Crédits)</label>
+                                    <input type="number" 
+                                        value={settings.blockCreditsCost || 600} 
+                                        onChange={e => setSettings({ ...settings, blockCreditsCost: parseInt(e.target.value) })}
+                                        className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-pink-500 transition-colors font-mono" 
+                                    />
+                                    <div className="flex justify-between items-center mt-2">
+                                        <p className="text-[10px] text-indigo-400 font-black uppercase">Débit Auto</p>
+                                        <p className="text-[10px] text-neutral-400 font-mono tracking-tighter">
+                                            {((settings.blockCreditsCost || 600) / (settings.blockDurationMin || 30)).toFixed(2)} CREDITS / MIN
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="block text-[10px] text-neutral-500 font-bold uppercase tracking-widest mb-2">Paiement Modèle ($ Net à la fin)</label>
+                                    <div className="relative">
+                                        <span className="absolute left-3 top-3.5 text-white/30">$</span>
+                                        <input type="number" 
+                                            step="0.01"
+                                            value={settings.blockModelGain || 25} 
+                                            onChange={e => setSettings({ ...settings, blockModelGain: parseFloat(e.target.value) })}
+                                            className="w-full bg-black/50 border border-white/10 rounded-xl p-3 pl-8 text-white focus:outline-none focus:border-pink-500 transition-colors font-mono" 
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="block text-[10px] text-neutral-500 font-bold uppercase tracking-widest mb-2">Prix Pack Spécial ($ de recharge)</label>
+                                    <div className="relative">
+                                        <span className="absolute left-3 top-3.5 text-white/30">$</span>
+                                        <input type="number" 
+                                            step="0.01"
+                                            value={settings.blockSpecialPackPrice || 59} 
+                                            onChange={e => setSettings({ ...settings, blockSpecialPackPrice: parseFloat(e.target.value) })}
+                                            className="w-full bg-black/50 border border-white/10 rounded-xl p-3 pl-8 text-white focus:outline-none focus:border-pink-500 transition-colors font-mono" 
+                                        />
+                                    </div>
+                                    <p className="text-[10px] text-neutral-500 mt-2 font-medium italic">Pack proposé automatiquement si le solde est insuffisant.</p>
+                                </div>
+                            </div>
+                        </div>
 
                         <div className="bg-neutral-900 border border-white/5 p-8 rounded-3xl space-y-6 shadow-2xl relative overflow-hidden group">
                             <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -mr-16 -mt-16 transition-colors ${settings.maintenanceMode ? 'bg-red-500/20' : 'bg-green-500/10'}`} />

@@ -55,47 +55,72 @@ function initBillingLoop(io) {
                     }
 
                     const settings = await getSettings();
-                    const rateUserCreditsPerSec = (settings.pricePerMinute * 10) / 60.0;
-                    
-                    // Calculate dynamic Model Payout Tier
-                    const durationSec = Math.floor((Date.now() - session.startTime) / 1000);
-                    const durationMin = durationSec / 60.0;
-                    
-                    // Default fallback rate if tiers are missing
-                    let activeRate = settings.modelPayoutPerMinute || 0.40;
-                    
-                    if (settings.payoutTiers && settings.payoutTiers.length > 0) {
-                        // Find the highest minMinutes tier that is <= current duration
-                        const tiers = [...settings.payoutTiers].sort((a, b) => b.minMinutes - a.minMinutes);
-                        const activeTier = tiers.find(t => durationMin >= t.minMinutes);
-                        if (activeTier) {
-                            activeRate = activeTier.rate;
+                    let rateUserCreditsPerSec;
+                    let activeRate = settings.modelPayoutPerMinute || 0.40; // Default fallback
+                    let isBlockedActive = false;
+
+                    // Handle Blocked Session Logic
+                    if (session.isBlocked) {
+                        if (Date.now() >= session.blockEnd) {
+                            // Block ended naturally!
+                            console.log(`[Billing] Block session in room ${roomId} ended naturally.`);
+                            
+                            const bonus = parseFloat(session.blockGain || 25);
+                            await redis.incrbyfloat(`model:${session.modelId}:balance`, bonus);
+                            await redis.incrbyfloat(`model:${session.modelId}:total_gains`, bonus);
+                            session.earnedUsd = (session.earnedUsd || 0) + bonus;
+                            
+                            await logModelPayout(bonus);
+                            
+                            // Reset block status
+                            session.isBlocked = false;
+                            delete session.blockEnd;
+                            delete session.blockGain;
+                            delete session.blockCreditsCost;
+                            delete session.blockDurationMin;
+                            
+                            if (ioInstance) {
+                                ioInstance.to(roomId).emit('block_session_ended');
+                            }
+                            // Will proceed with normal rates below
+                        } else {
+                            isBlockedActive = true;
+                            // Fixed rate: totalCredits / totalSeconds
+                            const totalCredits = session.blockCreditsCost || 600;
+                            const totalSecs = (session.blockDurationMin || 30) * 60;
+                            rateUserCreditsPerSec = totalCredits / totalSecs;
+                        }
+                    }
+
+                    if (!isBlockedActive) {
+                        rateUserCreditsPerSec = (settings.pricePerMinute * 10) / 60.0;
+                        
+                        // Calculate dynamic Model Payout Tier
+                        const durationSec = Math.floor((Date.now() - session.startTime) / 1000);
+                        const durationMin = durationSec / 60.0;
+                        
+                        if (settings.payoutTiers && settings.payoutTiers.length > 0) {
+                            const tiers = [...settings.payoutTiers].sort((a, b) => b.minMinutes - a.minMinutes);
+                            const activeTier = tiers.find(t => durationMin >= t.minMinutes);
+                            if (activeTier) {
+                                activeRate = activeTier.rate;
+                            }
                         }
                     }
                     
-                    const rateModelUsdPerSec = parseFloat((activeRate / 60.0).toFixed(6));
+                    const rateModelUsdPerSec = isBlockedActive ? 0 : parseFloat((activeRate / 60.0).toFixed(6));
 
                     // 2. Decrement User Credits
                     let remaining = 0;
                     if (session.userId.includes('@')) {
-                        // Registered user: decrement in Redis
                         remaining = await redis.incrbyfloat(`user:${session.userId}:credits`, -rateUserCreditsPerSec);
                         
-                        console.log(`[Billing Loop] User ${session.userId} | Remaining: ${remaining} | Room: ${roomId}`);
-
-                        // Sync to room (User will pick it up)
                         if (ioInstance) {
                             ioInstance.to(roomId).emit('credits_update', Math.max(0, remaining));
                         }
 
                         if (remaining <= 0) {
-                            console.log(`[Billing] User ${session.userId} out of credits.`);
-                            
-                            // Prevent negative balance bleed
-                            if (remaining < 0) {
-                                await redis.set(`user:${session.userId}:credits`, 0);
-                            }
-
+                            if (remaining < 0) await redis.set(`user:${session.userId}:credits`, 0);
                             if (ioInstance) {
                                 ioInstance.to(roomId).emit('out_of_credits', { reason: 'balance_exhausted' });
                                 ioInstance.to(roomId).emit('partner_out_of_credits');
@@ -104,22 +129,13 @@ function initBillingLoop(io) {
                             continue;
                         }
                     } else {
-                        // Guest user: increment time used
+                        // Guest user: increment time used (no block logic for guests usually, but we keep it safe)
                         const used = await redis.incrby(`free_secs:${session.userId}`, 1);
                         remaining = 30 - used;
-                        
-                        // Sync to room (User will pick it up)
                         if (ioInstance) {
                             ioInstance.to(roomId).emit('credits_update', Math.max(0, remaining));
                         }
-
                         if (used >= 30) {
-                            console.log(`[Billing] Guest ${session.userId} reached time limit.`);
-                            
-                            if (used > 30) {
-                                await redis.set(`free_secs:${session.userId}`, 30);
-                            }
-
                             if (ioInstance) {
                                 ioInstance.to(roomId).emit('out_of_credits', { reason: 'guest_limit_reached' });
                                 ioInstance.to(roomId).emit('partner_out_of_credits');
@@ -130,12 +146,11 @@ function initBillingLoop(io) {
                     }
                     session.spentCredits = (session.spentCredits || 0) + rateUserCreditsPerSec;
 
-                    // 3. Increment Model Earnings
-                    if (durationSec > settings.antiFraudDelaySec) {
-                        const preciseRate = parseFloat((activeRate / 60.0).toFixed(6));
-                        await redis.incrbyfloat(`model:${session.modelId}:balance`, preciseRate);
-                        await redis.incrbyfloat(`model:${session.modelId}:total_gains`, preciseRate);
-                        session.earnedUsd = (session.earnedUsd || 0) + preciseRate;
+                    // 3. Increment Model Earnings (Only if not blocked)
+                    if (!isBlockedActive && durationSec > settings.antiFraudDelaySec) {
+                        await redis.incrbyfloat(`model:${session.modelId}:balance`, rateModelUsdPerSec);
+                        await redis.incrbyfloat(`model:${session.modelId}:total_gains`, rateModelUsdPerSec);
+                        session.earnedUsd = (session.earnedUsd || 0) + rateModelUsdPerSec;
                     }
 
                     // Update session state in Redis

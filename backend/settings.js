@@ -17,7 +17,11 @@ const DEFAULT_SETTINGS = {
         { id: 'privilege', name: 'Privilege', credits: 1300, priceUsd: 99.99 }
     ],
     maintenanceMode: false,
-    launchMode: false
+    launchMode: false,
+    blockDurationMin: 30,
+    blockCreditsCost: 600,
+    blockModelGain: 25,
+    blockSpecialPackPrice: 59
 };
 
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles } from "lucide-react";
+import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles, Lock, Timer, Check } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 import { MaintenanceGuard } from "./MaintenanceGuard";
 import { LaunchPage } from "./LaunchPage";
@@ -57,6 +57,7 @@ interface VideoRoomProps {
     isLaunch?: boolean;
     isLaunchOverride?: boolean;
     packs?: any[];
+    onPurchase?: (credits: number, priceUsd: number) => Promise<void>;
 }
 
 export function VideoRoom({
@@ -80,7 +81,8 @@ export function VideoRoom({
     queuePosition,
     isLaunch,
     isLaunchOverride,
-    packs
+    packs,
+    onPurchase
 }: VideoRoomProps) {
     const { t, language } = useTranslation();
     const router = useRouter();
@@ -104,6 +106,14 @@ export function VideoRoom({
     const [reportError, setReportError] = useState("");
     const [payoutInfo, setPayoutInfo] = useState({ rate: 0, earned: 0 });
     const [showExitConfirm, setShowExitConfirm] = useState(false);
+    const [settings, setSettings] = useState<any>(null);
+    const [isBlocked, setIsBlocked] = useState(false);
+    const [blockEndTime, setBlockEndTime] = useState<number | null>(null);
+    const [showBlockRequestModal, setShowBlockRequestModal] = useState(false);
+    const [showSpecialPackModal, setShowSpecialPackModal] = useState(false);
+    const [incomingBlockRequest, setIncomingBlockRequest] = useState<any>(null);
+    const [isWaitingForBlockResponse, setIsWaitingForBlockResponse] = useState(false);
+    const [blockTimeLeft, setBlockTimeLeft] = useState("");
 
     // Load state from localStorage on mount
     useEffect(() => {
@@ -133,6 +143,12 @@ export function VideoRoom({
                 })
                 .catch(console.error);
         }
+
+        // Fetch Settings
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/settings`)
+            .then(res => res.json())
+            .then(setSettings)
+            .catch(console.error);
     }, [role]);
 
     useEffect(() => {
@@ -173,18 +189,104 @@ export function VideoRoom({
             }
         };
 
+        const handleRequestBlockSession = (payload: any) => {
+            if (role === 'model') {
+                setIncomingBlockRequest(payload);
+            }
+        };
+
+        const handleRespondBlockSession = (payload: any) => {
+            if (role === 'user') {
+                setIsWaitingForBlockResponse(false);
+                if (!payload.accepted) {
+                    alert(t('room.block_refused') || "La modèle a décliné la session privée.");
+                }
+            }
+        };
+
+        const handleBlockSessionStarted = (payload: { blockEnd: number; durationMin: number }) => {
+            setIsBlocked(true);
+            setBlockEndTime(payload.blockEnd);
+            setIncomingBlockRequest(null);
+        };
+
+        const handleBlockSessionEnded = () => {
+            setIsBlocked(false);
+            setBlockEndTime(null);
+            alert(t('room.block_ended') || "La session privée est terminée.");
+        };
+
         socket.on('out_of_credits', handleOutOfCredits);
         socket.on('partner_out_of_credits', handlePartnerOutOfCredits);
         socket.on('credits_update', handleCreditsUpdate);
         socket.on('payout_update', handlePayoutUpdate);
+        socket.on('request_block_session', handleRequestBlockSession);
+        socket.on('respond_block_session', handleRespondBlockSession);
+        socket.on('block_session_started', handleBlockSessionStarted);
+        socket.on('block_session_ended', handleBlockSessionEnded);
 
         return () => {
             socket.off('out_of_credits', handleOutOfCredits);
             socket.off('partner_out_of_credits', handlePartnerOutOfCredits);
             socket.off('credits_update', handleCreditsUpdate);
             socket.off('payout_update', handlePayoutUpdate);
+            socket.off('request_block_session', handleRequestBlockSession);
+            socket.off('respond_block_session', handleRespondBlockSession);
+            socket.off('block_session_started', handleBlockSessionStarted);
+            socket.off('block_session_ended', handleBlockSessionEnded);
         };
     }, [socket, role, accountStatus, onNext, onCallEnd]);
+
+    const handleSendBlockRequest = () => {
+        if (!socket) return;
+        const cost = settings?.blockCreditsCost || 600;
+        
+        if ((userCredits || 0) < cost) {
+            setShowSpecialPackModal(true);
+            return;
+        }
+        
+        setIsWaitingForBlockResponse(true);
+        socket.emit('request_block_session', {
+            durationMin: settings?.blockDurationMin || 30,
+            creditsCost: cost
+        });
+        setShowBlockRequestModal(false);
+    };
+
+    const handleRespondToBlock = (accepted: boolean) => {
+        if (!socket || !incomingBlockRequest) return;
+        
+        socket.emit('respond_block_session', {
+            accepted,
+            requestorId: incomingBlockRequest.senderId,
+            durationMin: incomingBlockRequest.durationMin,
+            creditsCost: incomingBlockRequest.creditsCost
+        });
+        setIncomingBlockRequest(null);
+    };
+
+    useEffect(() => {
+        if (!isBlocked || !blockEndTime) {
+            setBlockTimeLeft("");
+            return;
+        }
+
+        const interval = setInterval(() => {
+            const now = Date.now();
+            const diff = blockEndTime - now;
+            if (diff <= 0) {
+                setBlockTimeLeft("00:00");
+                clearInterval(interval);
+                return;
+            }
+            const mins = Math.floor(diff / 60000);
+            const secs = Math.floor((diff % 60000) / 1000);
+            setBlockTimeLeft(`${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`);
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [isBlocked, blockEndTime]);
 
     if (isLaunch || isLaunchOverride) {
         return <LaunchPage />;
@@ -488,6 +590,18 @@ export function VideoRoom({
                     )}
                 </div>
 
+                {/* Block Session Timer (Overlaid on Video) */}
+                {isBlocked && (
+                    <div className="absolute top-20 left-1/2 -translate-x-1/2 z-40 bg-black/60 backdrop-blur-md px-6 py-3 rounded-2xl border border-pink-500/30 flex items-center gap-3 animate-pulse">
+                        <Timer className="text-pink-500" size={20} />
+                        <span className="text-xl font-mono font-black text-white tracking-widest">{blockTimeLeft}</span>
+                        <div className="flex flex-col">
+                            <span className="text-[10px] font-bold text-pink-400 uppercase tracking-tighter">{t('room.block_timer_label')}</span>
+                            <span className="text-[8px] text-white/50 uppercase leading-none">{t('room.block_locked_label') || "Locked"}</span>
+                        </div>
+                    </div>
+                )}
+
                 {/* Mobile Right Sidebar Controls */}
                 <div className="flex md:hidden absolute top-1/2 -translate-y-[40%] right-4 z-40 flex-col gap-4">
                     <button
@@ -516,13 +630,23 @@ export function VideoRoom({
                     >
                         <PhoneOff size={20} />
                     </button>
+                    {/* User Block Button */}
+                    {role === 'user' && isConnected && !isBlocked && (
+                        <button
+                            onClick={() => setShowBlockRequestModal(true)}
+                            className="w-12 h-12 flex items-center justify-center rounded-2xl bg-pink-600/80 border border-pink-500/50 text-white backdrop-blur-md animate-pulse shadow-lg shadow-pink-500/20"
+                        >
+                            <Lock size={20} />
+                        </button>
+                    )}
                 </div>
 
                 {/* NEXT Button (Above Input on mobile, Bottom Center on desktop) */}
                 <div className="absolute bottom-[100px] right-4 md:bottom-8 md:right-auto md:left-1/2 md:-translate-x-1/2 z-40 flex flex-col items-center gap-3">
                     <button
                         onClick={nextPartner}
-                        className="group relative flex items-center justify-center px-6 py-3 md:px-12 md:py-5 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 hover:opacity-90 shadow-[0_0_30px_rgba(99,102,241,0.4)] transition-all duration-300 hover:scale-105 active:scale-95"
+                        disabled={isBlocked && role === 'model'}
+                        className={`group relative flex items-center justify-center px-6 py-3 md:px-12 md:py-5 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 hover:opacity-90 shadow-[0_0_30px_rgba(99,102,241,0.4)] transition-all duration-300 hover:scale-105 active:scale-95 ${isBlocked && role === 'model' ? 'opacity-50 grayscale cursor-not-allowed scale-95' : ''}`}
                     >
                         <div className="flex items-center gap-2 relative z-10">
                             <SkipForward className="w-5 h-5 md:w-6 md:h-6 text-white fill-white" />
@@ -541,6 +665,16 @@ export function VideoRoom({
                         <ShieldAlert size={24} />
                     </button>
                     <button onClick={() => setShowExitConfirm(true)} className="p-4 rounded-full bg-red-600 hover:bg-red-500 transition-colors shadow-lg"><PhoneOff size={24} /></button>
+                    {/* User Block Button Desktop */}
+                    {role === 'user' && isConnected && !isBlocked && (
+                        <button
+                            onClick={() => setShowBlockRequestModal(true)}
+                            className="p-4 rounded-full bg-pink-600 hover:bg-pink-500 text-white transition-all shadow-lg shadow-pink-500/20 active:scale-95 animate-pulse"
+                            title="Bloquer la modèle pour 30 min"
+                        >
+                            <Lock size={24} />
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -686,6 +820,154 @@ export function VideoRoom({
                                 className="py-4 rounded-2xl bg-red-600 text-white font-black uppercase tracking-widest text-sm hover:bg-red-500 transition-all active:scale-95 shadow-xl shadow-red-600/20"
                             >
                                 {t('room.exit_confirm_action') || "Quitter"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* BLOCK REQUEST MODAL (USER SIDE) */}
+            {showBlockRequestModal && (
+                <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl transition-all">
+                    <div className="w-full max-w-sm bg-neutral-900 border border-white/10 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-pink-500/10 rounded-full blur-3xl -mr-16 -mt-16" />
+                        
+                        <div className="w-16 h-16 bg-pink-500/20 rounded-2xl flex items-center justify-center mb-6 border border-pink-500/30">
+                            <Lock size={32} className="text-pink-500" />
+                        </div>
+
+                        <h2 className="text-2xl font-black mb-4">{t('room.block_request_title', { duration: settings?.blockDurationMin || 30 })}</h2>
+                        <p className="text-white/60 text-sm mb-8 leading-relaxed">
+                            {t('room.block_request_desc', { duration: settings?.blockDurationMin || 30 })}
+                        </p>
+
+                        <div className="bg-white/5 rounded-2xl p-4 mb-8 flex items-center justify-between border border-white/5">
+                            <div className="flex flex-col">
+                                <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">{t('room.block_cost_label')}</span>
+                                <span className="text-xl font-black text-white">{settings?.blockCreditsCost || 600} CREDITS</span>
+                            </div>
+                            <div className="flex flex-col items-end">
+                                <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">{t('common.premium') || "Premium"}</span>
+                                <span className="text-xs text-pink-400 font-bold uppercase tracking-widest">{t('room.block_premium_label') || "Premium"}</span>
+                            </div>
+                        </div>
+
+                        <div className="space-y-3">
+                            <button
+                                onClick={handleSendBlockRequest}
+                                disabled={isWaitingForBlockResponse}
+                                className="w-full py-4 bg-white text-black font-black uppercase tracking-widest text-sm rounded-2xl hover:bg-neutral-200 transition-all active:scale-95 flex items-center justify-center gap-2"
+                            >
+                                {isWaitingForBlockResponse ? <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" /> : <Check size={18} />}
+                                {isWaitingForBlockResponse ? t('room.block_request_sent') : t('room.block_send_request')}
+                            </button>
+                            <button
+                                onClick={() => setShowBlockRequestModal(false)}
+                                className="w-full py-4 text-white/40 font-bold uppercase tracking-widest text-xs hover:text-white transition-colors"
+                            >
+                                {t('room.block_cancel')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* SPECIAL PACK MODAL (USER SIDE) */}
+            {showSpecialPackModal && (
+                <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl">
+                    <div className="w-full max-w-sm bg-[#0a0a0a] border-2 border-indigo-500/30 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/10 rounded-full blur-[80px] -mr-24 -mt-24" />
+                        
+                        <div className="w-16 h-16 bg-indigo-500/20 rounded-2xl flex items-center justify-center mb-6 border border-indigo-500/30">
+                            <Sparkles size={32} className="text-indigo-400" />
+                        </div>
+
+                        <h2 className="text-2xl font-black mb-4">{t('room.block_insufficient_credits')}</h2>
+                        <p className="text-white/60 text-sm mb-8 leading-relaxed">
+                            {t('room.block_special_offer_desc', { duration: settings?.blockDurationMin || 30 })}
+                        </p>
+
+                        <div className="bg-indigo-500/10 rounded-3xl p-6 mb-8 border border-indigo-500/20 relative">
+                            <div className="absolute -top-3 -right-3 bg-pink-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg animate-bounce">{t('room.block_best_deal')}</div>
+                            <div className="flex items-center justify-between">
+                                <div className="flex flex-col">
+                                    <span className="text-3xl font-black text-white">{settings?.blockCreditsCost || 600}</span>
+                                    <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em]">Credits Pack</span>
+                                </div>
+                                <div className="text-4xl font-light text-white/20">/</div>
+                                <div className="flex flex-col items-end">
+                                    <span className="text-3xl font-black text-white">${settings?.blockSpecialPackPrice || 59}</span>
+                                    <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em]">{t('room.block_one_time_offer')}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-3">
+                            <button
+                                onClick={async () => {
+                                    const cost = settings?.blockCreditsCost || 600;
+                                    const price = settings?.blockSpecialPackPrice || 59;
+                                    if (onPurchase) {
+                                        await onPurchase(cost, price);
+                                        setShowSpecialPackModal(false);
+                                        // Auto-request block after purchase
+                                        setTimeout(() => {
+                                            socket?.emit('request_block_session', {
+                                                durationMin: settings?.blockDurationMin || 30,
+                                                creditsCost: cost
+                                            });
+                                            setIsWaitingForBlockResponse(true);
+                                        }, 1000);
+                                    }
+                                }}
+                                className="w-full py-5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-black uppercase tracking-widest text-sm rounded-2xl hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-3 shadow-xl shadow-indigo-500/20"
+                            >
+                                <Coins size={20} />
+                                {t('room.block_buy_and_continue')}
+                            </button>
+                            <button
+                                onClick={() => setShowSpecialPackModal(false)}
+                                className="w-full py-4 text-white/40 font-bold uppercase tracking-widest text-xs hover:text-white transition-colors"
+                            >
+                                {t('room.block_no_thanks')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* INCOMING REQUEST MODAL (MODEL SIDE) */}
+            {incomingBlockRequest && (
+                <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+                    <div className="w-full max-w-sm bg-neutral-900 border-2 border-pink-500/30 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden animate-in zoom-in duration-300">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-pink-500/20 rounded-full blur-3xl -mr-16 -mt-16" />
+                        
+                        <div className="w-16 h-16 bg-pink-500/20 rounded-2xl flex items-center justify-center mb-6 border border-pink-500/30">
+                            <Sparkles size={32} className="text-pink-500" />
+                        </div>
+
+                        <h2 className="text-2xl font-black mb-4">{t('room.block_incoming_title')}</h2>
+                        <p className="text-white/60 text-sm mb-8 leading-relaxed">
+                            {t('room.block_incoming_desc', { duration: incomingBlockRequest.durationMin || 30 })}
+                        </p>
+
+                        <div className="bg-pink-500/10 rounded-2xl p-6 mb-8 border border-pink-500/20 flex flex-col items-center gap-1">
+                            <span className="text-[10px] font-black text-pink-400 uppercase tracking-widest">{t('room.block_bonus_label')}</span>
+                            <span className="text-4xl font-black text-white">${settings?.blockModelGain || 25}</span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                            <button
+                                onClick={() => handleRespondToBlock(true)}
+                                className="py-4 bg-green-500 text-white font-black uppercase tracking-widest text-sm rounded-2xl hover:bg-green-400 transition-all active:scale-95"
+                            >
+                                {t('room.block_accept')}
+                            </button>
+                            <button
+                                onClick={() => handleRespondToBlock(false)}
+                                className="py-4 bg-white/10 text-white/50 font-black uppercase tracking-widest text-sm rounded-2xl hover:bg-white/20 transition-all active:scale-95"
+                            >
+                                {t('room.block_refuse')}
                             </button>
                         </div>
                     </div>
