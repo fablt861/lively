@@ -847,7 +847,10 @@ export function VideoRoom({
                                 {t('common.cancel') || "Annuler"}
                             </button>
                             <button
-                                onClick={() => window.location.href = `/${language}`}
+                                onClick={() => {
+                                    if (socket) socket.emit('stop');
+                                    window.location.href = `/${language}`;
+                                }}
                                 className="py-4 rounded-2xl bg-red-600 text-white font-black uppercase tracking-widest text-sm hover:bg-red-500 transition-all active:scale-95 shadow-xl shadow-red-600/20"
                             >
                                 {t('room.exit_confirm_action') || "Quitter"}

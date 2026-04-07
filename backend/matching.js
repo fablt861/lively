@@ -107,6 +107,17 @@ function setupMatching(io, socket) {
         }
     });
 
+    socket.on('stop', async () => {
+        if (isProcessing) return;
+        isProcessing = true;
+        try {
+            console.log(`Socket ${socket.id} called stop`);
+            await disconnectFromRoom(io, socket);
+        } finally {
+            isProcessing = false;
+        }
+    });
+
     socket.on('disconnect', async () => {
         // Remove from queue
         // NOTE: We do NOT call stopBilling here to allow for the 20s grace period recovery
