@@ -66,27 +66,25 @@ function setupSignaling(io, socket) {
         const redis = getRedisClient();
         
         if (payload.accepted) {
-            const roomDataRaw = await redis.hget('billing:active_rooms', socket.currentRoom);
-            if (roomDataRaw) {
-                const roomData = JSON.parse(roomDataRaw);
-                const { getSettings } = require('./settings');
-                const settings = await getSettings();
-                
-                roomData.isBlocked = true;
-                const duration = payload.durationMin || settings.blockDurationMin || 30;
-                roomData.blockEnd = Date.now() + duration * 60 * 1000;
-                roomData.blockGain = settings.blockModelGain || 25;
-                roomData.blockCreditsCost = payload.creditsCost || settings.blockCreditsCost || 600;
-                roomData.blockDurationMin = duration;
-                
-                await redis.hset('billing:active_rooms', socket.currentRoom, JSON.stringify(roomData));
-                
-                // Notify both that the block has started officially
-                io.in(socket.currentRoom).emit('block_session_started', {
-                    blockEnd: roomData.blockEnd,
-                    durationMin: duration
-                });
-            }
+            const { getSettings } = require('./settings');
+            const settings = await getSettings();
+            
+            const duration = payload.durationMin || settings.blockDurationMin || 30;
+            const blockData = {
+                blockEnd: Date.now() + duration * 60 * 1000,
+                blockGain: settings.blockModelGain || 25,
+                blockCreditsCost: payload.creditsCost || settings.blockCreditsCost || 600,
+                blockDurationMin: duration,
+                isBlocked: true
+            };
+            
+            await redis.set(`billing:is_blocked:${socket.currentRoom}`, JSON.stringify(blockData), 'EX', 3600);
+            
+            // Notify both that the block has started officially
+            io.in(socket.currentRoom).emit('block_session_started', {
+                blockEnd: blockData.blockEnd,
+                durationMin: duration
+            });
         }
         
         socket.to(payload.requestorId).emit('respond_block_session', {

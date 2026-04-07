@@ -61,25 +61,41 @@ function initBillingLoop(io) {
                     let isBlockedActive = false;
                     const durationSec = Math.floor((Date.now() - session.startTime) / 1000);
 
+                    // CHECK SEPARATE BLOCK KEY (Race condition relief)
+                    const blockDataRaw = await redis.get(`billing:is_blocked:${roomId}`);
+                    let blockData = blockDataRaw ? JSON.parse(blockDataRaw) : null;
+                    
+                    // Fallback to session check if separate key is missing (for legacy or just-in-case)
+                    if (!blockData && (session.isBlocked === true || session.isBlocked === "true")) {
+                        blockData = {
+                            blockEnd: session.blockEnd,
+                            blockGain: session.blockGain,
+                            blockCreditsCost: session.blockCreditsCost,
+                            blockDurationMin: session.blockDurationMin
+                        };
+                    }
+
                     // Handle Blocked Session Logic
-                    if (session.isBlocked === true || session.isBlocked === "true") {
-                        if (Date.now() >= session.blockEnd) {
+                    if (blockData) {
+                        const blockEndNum = Number(blockData.blockEnd);
+                        if (Date.now() >= blockEndNum) {
                             // Block ended naturally!
                             console.log(`[Billing] Block session in room ${roomId} ended naturally.`);
                             
-                            const bonus = parseFloat(session.blockGain || settings.blockModelGain || 25);
+                            const bonus = parseFloat(blockData.blockGain || settings.blockModelGain || 25);
                             await redis.incrbyfloat(`model:${session.modelId}:balance`, bonus);
                             await redis.incrbyfloat(`model:${session.modelId}:total_gains`, bonus);
                             session.earnedUsd = (session.earnedUsd || 0) + bonus;
                             
                             await logModelPayout(bonus);
                             
-                            // Reset block status
-                            session.isBlocked = false;
+                            // Reset block status in session and delete dedicated key
+                            delete session.isBlocked;
                             delete session.blockEnd;
                             delete session.blockGain;
                             delete session.blockCreditsCost;
                             delete session.blockDurationMin;
+                            await redis.del(`billing:is_blocked:${roomId}`);
                             
                             // IMMEDIATELY notify about the new payout total before ending the block
                             if (ioInstance) {
@@ -94,8 +110,8 @@ function initBillingLoop(io) {
                         } else {
                             isBlockedActive = true;
                             // Fixed rate: totalCredits / totalSeconds
-                            const totalCredits = parseFloat(session.blockCreditsCost || settings.blockCreditsCost || 600);
-                            const durationMin = parseInt(session.blockDurationMin || settings.blockDurationMin || 30);
+                            const totalCredits = parseFloat(blockData.blockCreditsCost || settings.blockCreditsCost || 600);
+                            const durationMin = parseInt(blockData.blockDurationMin || settings.blockDurationMin || 30);
                             const totalSecs = durationMin * 60;
                             
                             // Ensure the rate is calculated dynamically from settings
@@ -121,7 +137,7 @@ function initBillingLoop(io) {
                         }
                     }
                     
-                    const isActuallyBlocked = isBlockedActive || session.isBlocked === true || session.isBlocked === "true";
+                    const isActuallyBlocked = isBlockedActive || !!blockData;
                     const rateModelUsdPerSec = isActuallyBlocked ? 0 : parseFloat((activeRate / 60.0).toFixed(6));
 
                     // 2. Decrement User Credits
@@ -237,15 +253,20 @@ async function stopBilling(roomId) {
     let totalModelEarned = parseFloat(session.earnedUsd || 0);
     let privateEarned = 0;
 
-    if (session.isBlocked) {
+    const blockDataRaw = await redis.get(`billing:is_blocked:${roomId}`);
+    const blockData = blockDataRaw ? JSON.parse(blockDataRaw) : null;
+
+    if (blockData || session.isBlocked) {
         const { getSettings } = require('./settings');
         const settings = await getSettings();
-        privateEarned = parseFloat(session.blockGain || settings.blockModelGain || 25);
+        const gain = blockData ? blockData.blockGain : session.blockGain;
+        privateEarned = parseFloat(gain || settings.blockModelGain || 25);
         console.log(`[Billing] Applying blockGain $${privateEarned} for intentional stop in room ${roomId}`);
         await redis.incrbyfloat(`model:${modelId}:balance`, privateEarned);
         await redis.incrbyfloat(`model:${modelId}:total_gains`, privateEarned);
         await logModelPayout(privateEarned);
         totalModelEarned += privateEarned;
+        await redis.del(`billing:is_blocked:${roomId}`);
     }
     
     const normalEarned = totalModelEarned - privateEarned;

@@ -313,6 +313,20 @@ export function VideoRoom({
             if (diff <= 0) {
                 setBlockTimeLeft("00:00");
                 clearInterval(interval);
+                
+                // --- Safe-Cleanup Fallback ---
+                // If the server is late with the 'block_session_ended' event, 
+                // we clean up locally after a 3s grace period to unblock the UI.
+                setTimeout(() => {
+                    setIsBlocked(current => {
+                        if (current) {
+                            console.log("[Block Timer] Server event late, cleaning up locally.");
+                            setBlockEndTime(null);
+                            return false;
+                        }
+                        return current;
+                    });
+                }, 3000);
                 return;
             }
             const mins = Math.floor(diff / 60000);
