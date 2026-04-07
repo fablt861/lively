@@ -99,7 +99,7 @@ function initBillingLoop(io) {
                     }
 
                     if (!isBlockedActive) {
-                        rateUserCreditsPerSec = (settings.pricePerMinute * 10) / 60.0;
+                        rateUserCreditsPerSec = 10 / 60.0;
                         
                         // Calculate dynamic Model Payout Tier
                         const durationMin = durationSec / 60.0;
