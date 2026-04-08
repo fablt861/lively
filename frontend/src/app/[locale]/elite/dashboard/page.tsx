@@ -147,18 +147,20 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="min-h-screen bg-neutral-950 text-white font-sans p-8 md:p-16">
+        <div className="min-h-screen bg-neutral-950 text-white font-sans p-4 sm:p-8 md:p-16">
             {/* Header */}
-            <header className="flex items-center justify-between mb-16">
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 md:mb-16">
                 <div>
-                    <h1 className="text-4xl font-light tracking-tight text-white mb-2">{t('dashboard.title')}</h1>
-                    <p className="text-neutral-500">{t('dashboard.subtitle')}</p>
+                    <h1 className="text-3xl md:text-4xl font-light tracking-tight text-white mb-2">{t('dashboard.title')}</h1>
+                    <p className="text-sm md:text-base text-neutral-500">{t('dashboard.subtitle')}</p>
                 </div>
-                <div className="flex items-center gap-6">
-                    <LanguageSelector />
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto">
+                    <div className="self-end sm:self-auto flex-shrink-0">
+                        <LanguageSelector />
+                    </div>
                     <Link
                         href={`/${language}/live`}
-                        className="px-8 py-3 bg-pink-500 hover:bg-pink-400 border border-pink-400/50 shadow-lg shadow-pink-500/20 text-white rounded-full transition-all duration-300 text-sm font-bold flex items-center gap-2"
+                        className="px-6 md:px-8 py-3 bg-pink-500 hover:bg-pink-400 border border-pink-400/50 shadow-lg shadow-pink-500/20 text-white rounded-full transition-all duration-300 text-sm font-bold flex items-center justify-center gap-2 w-full sm:w-auto text-center"
                     >
                         <Video size={18} /> {t('dashboard.launch_live')}
                     </Link>
@@ -166,21 +168,21 @@ export default function DashboardPage() {
             </header>
             
             {/* Telegram Community Banner */}
-            <div className="mb-12 relative overflow-hidden rounded-[2rem] bg-gradient-to-r from-cyan-600/20 to-blue-600/10 border border-cyan-500/20 p-8 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl backdrop-blur-md">
-                <div className="flex items-center gap-6">
-                    <div className="w-16 h-16 rounded-2xl bg-cyan-500/20 flex items-center justify-center text-cyan-400">
-                        <Activity size={32} />
+            <div className="mb-12 relative overflow-hidden rounded-[1.5rem] md:rounded-[2rem] bg-gradient-to-r from-cyan-600/20 to-blue-600/10 border border-cyan-500/20 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl backdrop-blur-md text-center md:text-left">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
+                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-cyan-500/20 flex items-center justify-center text-cyan-400 flex-shrink-0">
+                        <Activity className="w-6 h-6 md:w-8 md:h-8" />
                     </div>
                     <div>
-                        <h2 className="text-2xl font-bold text-white mb-1">{t('dashboard.telegram_title')}</h2>
-                        <p className="text-cyan-100/60 max-w-xl">{t('dashboard.telegram_desc')}</p>
+                        <h2 className="text-xl md:text-2xl font-bold text-white mb-1">{t('dashboard.telegram_title')}</h2>
+                        <p className="text-sm md:text-base text-cyan-100/60 max-w-xl">{t('dashboard.telegram_desc')}</p>
                     </div>
                 </div>
                 <a 
                     href="https://t.me/+__YgonRl2681ODA0" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="whitespace-nowrap px-8 py-4 bg-cyan-500 hover:bg-cyan-400 text-white rounded-full font-bold transition-all duration-300 shadow-lg shadow-cyan-500/20 hover:scale-105"
+                    className="w-full md:w-auto text-center whitespace-nowrap px-6 md:px-8 py-3 md:py-4 bg-cyan-500 hover:bg-cyan-400 text-white rounded-full font-bold transition-all duration-300 shadow-lg shadow-cyan-500/20 hover:scale-105"
                 >
                     {t('dashboard.telegram_cta')}
                 </a>
@@ -189,28 +191,28 @@ export default function DashboardPage() {
             {/* Main Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
                 {/* Total Balance Card */}
-                <div className="col-span-1 md:col-span-2 relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-900/40 via-purple-900/20 to-neutral-900 border border-indigo-500/20 p-8 shadow-2xl flex items-center">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl" />
+                <div className="col-span-1 md:col-span-2 relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-900/40 via-purple-900/20 to-neutral-900 border border-indigo-500/20 p-6 md:p-8 shadow-2xl flex items-center">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl opacity-50 md:opacity-100" />
 
                     <div className="flex-1">
                         <div className="flex items-center gap-3 text-indigo-300 mb-4">
                             <Wallet size={20} />
-                            <span className="font-medium tracking-wide uppercase text-sm">{t('dashboard.balance_title')}</span>
+                            <span className="font-medium tracking-wide uppercase text-xs md:text-sm">{t('dashboard.balance_title')}</span>
                         </div>
-                        <div className="text-7xl font-extralight text-white mb-6 font-mono">
+                        <div className="text-5xl md:text-7xl font-extralight text-white mb-6 font-mono">
                             ${loading ? "..." : stats?.balance.toFixed(2)}
                         </div>
-                        <div className="flex flex-wrap gap-4 items-center">
+                        <div className="flex flex-col sm:flex-row flex-wrap gap-4 items-stretch sm:items-center">
                             <button 
                                 onClick={handlePayoutRequest}
                                 disabled={payoutLoading}
-                                className="group flex items-center gap-2 bg-indigo-500 hover:bg-indigo-400 disabled:opacity-50 disabled:translate-y-0 text-white px-8 py-4 rounded-full font-medium transition-all duration-300 shadow-lg shadow-indigo-500/25 hover:-translate-y-1"
+                                className="group flex items-center justify-center gap-2 bg-indigo-500 hover:bg-indigo-400 disabled:opacity-50 disabled:translate-y-0 text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-medium transition-all duration-300 shadow-lg shadow-indigo-500/25 hover:-translate-y-1"
                             >
                                 {payoutLoading ? t('auth.loading') : t('dashboard.payout_cta')} <ArrowUpRight size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                             </button>
                             <button 
                                 onClick={() => setIsBillingOpen(true)}
-                                className="group flex items-center gap-2 bg-white/5 hover:bg-white/10 text-white px-8 py-4 rounded-full font-medium transition-all duration-300 border border-white/10"
+                                className="group flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-medium transition-all duration-300 border border-white/10"
                             >
                                 <Settings size={18} /> {t('dashboard.billing_cta')}
                             </button>
@@ -224,12 +226,12 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Mini Stat Card */}
-                <div className="rounded-3xl bg-neutral-900 border border-white/5 p-8 flex flex-col justify-center">
+                <div className="rounded-3xl bg-neutral-900 border border-white/5 p-6 md:p-8 flex flex-col justify-center">
                     <div className="flex items-center gap-3 text-pink-400 mb-4">
                         <Activity size={20} />
-                        <span className="font-medium tracking-wide uppercase text-sm">{t('dashboard.sessions_title')}</span>
+                        <span className="font-medium tracking-wide uppercase text-xs md:text-sm">{t('dashboard.sessions_title')}</span>
                     </div>
-                    <div className="text-5xl font-light text-white">
+                    <div className="text-4xl md:text-5xl font-light text-white">
                         {loading ? "..." : stats?.history.length || 0}
                     </div>
                 </div>
@@ -239,14 +241,14 @@ export default function DashboardPage() {
             <div>
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
                     <div className="flex items-center gap-3 text-white/90">
-                        <History size={28} className="text-indigo-400" />
-                        <h2 className="text-3xl font-light tracking-tight">{t('dashboard.history_title')}</h2>
+                        <History className="w-6 h-6 md:w-7 md:h-7 text-indigo-400" />
+                        <h2 className="text-2xl md:text-3xl font-light tracking-tight">{t('dashboard.history_title')}</h2>
                     </div>
 
-                    <div className="flex p-1 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 w-fit">
+                    <div className="flex w-full md:w-fit p-1 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 overflow-x-auto">
                         <button
                             onClick={() => setActiveTab('earnings')}
-                            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
+                            className={`flex-1 md:flex-none flex justify-center items-center gap-2 px-4 md:px-6 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all duration-300 whitespace-nowrap ${
                                 activeTab === 'earnings' 
                                 ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20' 
                                 : 'text-neutral-500 hover:text-white'
@@ -257,7 +259,7 @@ export default function DashboardPage() {
                         </button>
                         <button
                             onClick={() => setActiveTab('payouts')}
-                            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
+                            className={`flex-1 md:flex-none flex justify-center items-center gap-2 px-4 md:px-6 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all duration-300 whitespace-nowrap ${
                                 activeTab === 'payouts' 
                                 ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20' 
                                 : 'text-neutral-500 hover:text-white'
@@ -286,33 +288,33 @@ export default function DashboardPage() {
                                 <table className="w-full text-left">
                                     <thead>
                                         <tr className="border-b border-white/5 bg-white/[0.02]">
-                                            <th className="p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_date')}</th>
-                                            <th className="p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_calls')}</th>
-                                            <th className="p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_duration')}</th>
-                                            <th className="p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_normal')}</th>
-                                            <th className="p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_private')}</th>
-                                            <th className="p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] text-right">{t('dashboard.table_earned')}</th>
+                                            <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_date')}</th>
+                                            <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_calls')}</th>
+                                            <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_duration')}</th>
+                                            <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_normal')}</th>
+                                            <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_private')}</th>
+                                            <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] text-right">{t('dashboard.table_earned')}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-white/5">
                                         {dailyStats.map((day, i) => (
                                             <tr key={i} className="hover:bg-white/[0.02] transition-colors group">
-                                                <td className="p-8 text-neutral-300 font-semibold tracking-tight">
+                                                <td className="p-4 md:p-8 text-neutral-300 font-semibold tracking-tight">
                                                     {day.date}
                                                 </td>
-                                                <td className="p-8 text-neutral-500 font-mono text-sm">
+                                                <td className="p-4 md:p-8 text-neutral-500 font-mono text-sm">
                                                     {t('dashboard.sessions_count', { count: day.calls })}
                                                 </td>
-                                                <td className="p-8 text-neutral-300 font-medium">
+                                                <td className="p-4 md:p-8 text-neutral-300 font-medium">
                                                     {Math.floor(day.durationSec / 60)}m {day.durationSec % 60}s
                                                 </td>
-                                                <td className="p-8 text-neutral-400 font-mono text-sm">
+                                                <td className="p-4 md:p-8 text-neutral-400 font-mono text-sm">
                                                     ${day.normalEarned.toFixed(2)}
                                                 </td>
-                                                <td className="p-8 text-indigo-400 font-mono text-sm font-bold">
+                                                <td className="p-4 md:p-8 text-indigo-400 font-mono text-sm font-bold">
                                                     ${day.privateEarned.toFixed(2)}
                                                 </td>
-                                                <td className="p-8 text-right font-mono text-green-400 font-bold text-lg">
+                                                <td className="p-4 md:p-8 text-right font-mono text-green-400 font-bold text-lg">
                                                     +${day.modelEarned.toFixed(2)}
                                                 </td>
                                             </tr>
@@ -337,25 +339,25 @@ export default function DashboardPage() {
                                 <table className="w-full text-left">
                                     <thead>
                                         <tr className="border-b border-white/5 bg-white/[0.02]">
-                                            <th className="p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_date')}</th>
-                                            <th className="p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('admin.payouts.table_amount')}</th>
-                                            <th className="p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('admin.payouts.table_method')}</th>
-                                            <th className="p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] text-right">{t('admin.table.status')}</th>
+                                            <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_date')}</th>
+                                            <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('admin.payouts.table_amount')}</th>
+                                            <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('admin.payouts.table_method')}</th>
+                                            <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] text-right">{t('admin.table.status')}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-white/5">
                                         {payoutHistory.map((p, i) => (
                                             <tr key={i} className="hover:bg-white/[0.02] transition-colors group">
-                                                <td className="p-8 text-neutral-300 font-semibold tracking-tight">
+                                                <td className="p-4 md:p-8 text-neutral-300 font-semibold tracking-tight">
                                                     {new Date(p.timestamp).toLocaleDateString()}
                                                 </td>
-                                                <td className="p-8 text-neutral-300 font-mono font-bold text-lg">
+                                                <td className="p-4 md:p-8 text-neutral-300 font-mono font-bold text-lg">
                                                     ${p.amount.toFixed(2)}
                                                 </td>
-                                                <td className="p-8 text-neutral-500 text-sm font-medium">
+                                                <td className="p-4 md:p-8 text-neutral-500 text-sm font-medium">
                                                     {p.billingInfo?.method || 'N/A'}
                                                 </td>
-                                                <td className="p-8 text-right">
+                                                <td className="p-4 md:p-8 text-right">
                                                     <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.1em] ${
                                                         p.status === 'paid' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
                                                         p.status === 'rejected' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
