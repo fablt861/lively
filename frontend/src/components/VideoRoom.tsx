@@ -498,7 +498,7 @@ export function VideoRoom({
                         onClose={() => {
                             setShowAuthModal(false);
                             if (role === 'user' && (userCredits === null || userCredits <= 0)) {
-                                router.push('/');
+                                router.push(`/${language}`);
                             }
                         }}
                         onSuccess={(email, userRole, name, credits) => {

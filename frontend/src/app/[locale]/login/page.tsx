@@ -95,7 +95,7 @@ export default function LoginPage() {
 
             <main className="relative z-10 flex-1 flex flex-col items-center justify-center p-6 w-full max-w-sm mx-auto">
                 <div className="w-full bg-neutral-900 border border-white/10 p-8 rounded-[2.5rem] shadow-2xl relative">
-                    <Link href={`/${language}/elite`} className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors">
+                    <Link href={`/${language}`} className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors">
                         <X size={24} />
                     </Link>
 
