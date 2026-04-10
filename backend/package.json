@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
+    "start:staging": "node -r dotenv/config server.js dotenv_config_path=.env.staging",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

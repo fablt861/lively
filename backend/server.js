@@ -6,10 +6,12 @@ require('dotenv').config();
 
 const allowedOrigins = [
   'https://livelyapp.vercel.app',
+  process.env.STAGING_ORIGIN, // Support dynamic staging origin
   'https://www.kinky.live',
   'https://kinky.live',
-  'http://localhost:3000'
-];
+  'http://localhost:3000',
+  'http://localhost:3001'
+].filter(Boolean); // Remove undefined/null values
 
 const corsOptions = {
   origin: (origin, callback) => {
