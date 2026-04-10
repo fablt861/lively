@@ -169,13 +169,30 @@ export default function DashboardPage() {
             
             {/* Telegram Community Banner */}
             <div className="mb-12 relative overflow-hidden rounded-[1.5rem] md:rounded-[2rem] bg-gradient-to-r from-cyan-600/20 to-blue-600/10 border border-cyan-500/20 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl backdrop-blur-md text-center md:text-left">
-                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
-                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-cyan-500/20 flex items-center justify-center text-cyan-400 flex-shrink-0">
-                        <Activity className="w-6 h-6 md:w-8 md:h-8" />
+                <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
+                    {/* Avatar Group */}
+                    <div className="flex -space-x-3 overflow-hidden">
+                        {[1, 2, 3, 4].map((i) => (
+                            <img
+                                key={i}
+                                className="inline-block h-10 w-10 md:h-12 md:w-12 rounded-full ring-2 ring-neutral-900 object-cover"
+                                src={`/images/avatars/model_${i}.png`}
+                                alt={`Model ${i}`}
+                            />
+                        ))}
+                        <div className="flex items-center justify-center h-10 w-10 md:h-12 md:w-12 rounded-full border-2 border-dashed border-cyan-500/50 bg-cyan-500/10 text-[10px] font-bold text-cyan-400 ring-2 ring-neutral-900">
+                            +14
+                        </div>
                     </div>
-                    <div>
-                        <h2 className="text-xl md:text-2xl font-bold text-white mb-1">{t('dashboard.telegram_title')}</h2>
-                        <p className="text-sm md:text-base text-cyan-100/60 max-w-xl">{t('dashboard.telegram_desc')}</p>
+
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
+                        <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-cyan-500/20 flex items-center justify-center text-cyan-400 flex-shrink-0">
+                            <Activity className="w-6 h-6 md:w-8 md:h-8" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl md:text-2xl font-bold text-white mb-1">{t('dashboard.telegram_title')}</h2>
+                            <p className="text-sm md:text-base text-cyan-100/60 max-w-xl">{t('dashboard.telegram_desc')}</p>
+                        </div>
                     </div>
                 </div>
                 <a 
