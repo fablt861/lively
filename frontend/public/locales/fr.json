@@ -51,7 +51,7 @@
   "login.email_placeholder": "Email",
   "login.password_placeholder": "Mot de passe",
   "login.confirm_password_placeholder": "Confirmer mot de passe",
-  "login.accept_cgv": "J'accepte les Conditions Générales de Vente",
+  "login.accept_cgv": "Je certifie avoir plus de 18 ans et j'accepte les {{terms}}",
   "login.cta_login": "Se connecter",
   "login.cta_signup": "S'inscrire",
   "login.cta_loading": "Traitement...",

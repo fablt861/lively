@@ -68,7 +68,7 @@
   "login.email_placeholder": "Email",
   "login.password_placeholder": "Password",
   "login.confirm_password_placeholder": "Confirm password",
-  "login.accept_cgv": "I accept the Terms and Conditions",
+  "login.accept_cgv": "I certify that I am over 18 and I accept the {{terms}}",
   "login.cta_login": "Log in",
   "login.cta_signup": "Sign up",
   "login.cta_loading": "Processing...",

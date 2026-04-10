@@ -180,7 +180,23 @@ export default function LoginPage() {
                                         <div onClick={() => setAcceptCGV(!acceptCGV)} className="text-white/20 group-hover:text-white/40 transition-colors">
                                             {acceptCGV ? <CheckSquare className="text-pink-500" size={20} /> : <Square size={20} />}
                                         </div>
-                                        <span className="text-[10px] text-neutral-500 font-medium">{t('login.accept_cgv')}</span>
+                                        <span className="text-[10px] text-neutral-500 font-medium">
+                                            {t('login.accept_cgv').split('{{terms}}').map((part, index, array) => (
+                                                <span key={index}>
+                                                    {part}
+                                                    {index < array.length - 1 && (
+                                                        <Link 
+                                                            href={`/${language}/terms`} 
+                                                            target="_blank"
+                                                            className="text-pink-500 hover:text-pink-400 underline transition-colors mx-0.5"
+                                                            onClick={(e) => e.stopPropagation()}
+                                                        >
+                                                            {t('auth.terms_link')}
+                                                        </Link>
+                                                    )}
+                                                </span>
+                                            ))}
+                                        </span>
                                     </label>
                                 </div>
                             </>
