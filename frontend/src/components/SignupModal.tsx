@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { ArrowRight, ShieldCheck, Mail, Lock, User } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
+import Link from "next/link";
 
 interface SignupModalProps {
     onSignup: (email: string) => void;
 }
 
 export function SignupModal({ onSignup }: SignupModalProps) {
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
     const [email, setEmail] = useState("");
     const [pseudo, setPseudo] = useState("");
     const [password, setPassword] = useState("");
@@ -50,7 +51,20 @@ export function SignupModal({ onSignup }: SignupModalProps) {
                     <div className="flex items-start gap-3 pt-2">
                         <input type="checkbox" id="tos" required checked={agreed} onChange={e => setAgreed(e.target.checked)} className="mt-1 w-5 h-5 rounded border-white/20 bg-black/50 checked:bg-indigo-500 focus:ring-indigo-500 focus:ring-offset-neutral-900" />
                         <label htmlFor="tos" className="text-xs text-white/60 leading-tight">
-                            {t('signup.tos')}
+                            {t('signup.tos').split('{{terms}}').map((part, index, array) => (
+                                <span key={index}>
+                                    {part}
+                                    {index < array.length - 1 && (
+                                        <Link 
+                                            href={`/${language}/terms`} 
+                                            target="_blank"
+                                            className="text-pink-500 hover:text-pink-400 underline transition-colors mx-0.5"
+                                        >
+                                            {t('auth.terms_link')}
+                                        </Link>
+                                    )}
+                                </span>
+                            ))}
                         </label>
                     </div>
 

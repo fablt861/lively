@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowRight, User, Lock, Mail, ShieldCheck, X, CheckSquare, Square } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
+import Link from "next/link";
 
 interface UnifiedAuthModalProps {
     onSuccess: (email: string, role: string, pseudo: string, credits: number) => void;
@@ -10,7 +11,7 @@ interface UnifiedAuthModalProps {
 }
 
 export function UnifiedAuthModal({ onSuccess, onClose }: UnifiedAuthModalProps) {
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
     const [mode, setMode] = useState<"login" | "signup">("login");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -131,7 +132,23 @@ export function UnifiedAuthModal({ onSuccess, onClose }: UnifiedAuthModalProps) 
                                     <div onClick={() => setAcceptCGV(!acceptCGV)} className="text-white/20 group-hover:text-white/40 transition-colors">
                                         {acceptCGV ? <CheckSquare className="text-pink-500" size={20} /> : <Square size={20} />}
                                     </div>
-                                    <span className="text-[10px] text-white/50 font-medium">{t('auth.accept_cgv')}</span>
+                                    <span className="text-[10px] text-white/50 font-medium">
+                                        {t('auth.accept_cgv').split('{{terms}}').map((part, index, array) => (
+                                            <span key={index}>
+                                                {part}
+                                                {index < array.length - 1 && (
+                                                    <Link 
+                                                        href={`/${language}/terms`} 
+                                                        target="_blank"
+                                                        className="text-pink-500 hover:text-pink-400 underline transition-colors mx-0.5"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        {t('auth.terms_link')}
+                                                    </Link>
+                                                )}
+                                            </span>
+                                        ))}
+                                    </span>
                                 </label>
                             </div>
                         </>
