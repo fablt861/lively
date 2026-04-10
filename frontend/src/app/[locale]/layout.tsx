@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { Footer } from "@/components/Footer";
+import { StagingBanner } from "@/components/StagingBanner";
 import "../globals.css";
 
 const geistSans = Geist({
@@ -80,6 +81,7 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased scroll-smooth overflow-x-hidden`}
     >
       <body className="min-h-screen flex flex-col bg-[#050505] antialiased overflow-x-hidden">
+        <StagingBanner />
         <LanguageProvider>
           <Suspense fallback={null}>
             <MarketingTracker />
