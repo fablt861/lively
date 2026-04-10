@@ -28,6 +28,7 @@ export function ProfileSettingsModal({ isOpen, onClose, modelEmail, onProfileUpd
     });
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [compressing, setCompressing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
 
@@ -58,6 +59,57 @@ export function ProfileSettingsModal({ isOpen, onClose, modelEmail, onProfileUpd
                 });
         }
     }, [isOpen, modelEmail, t]);
+
+    const compressImage = (file: File): Promise<string> => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (e) => {
+                const img = new Image();
+                img.src = e.target?.result as string;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 800;
+                    const MAX_HEIGHT = 800;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx?.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.6));
+                };
+            };
+        });
+    };
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setCompressing(true);
+        try {
+            const compressed = await compressImage(file);
+            setInfo(prev => ({ ...prev, photoProfile: compressed }));
+        } catch (err) {
+            console.error("Compression failed", err);
+        } finally {
+            setCompressing(false);
+        }
+    };
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -132,30 +184,36 @@ export function ProfileSettingsModal({ isOpen, onClose, modelEmail, onProfileUpd
                     ) : (
                         <div className="space-y-6">
                             {/* Profile Image Section */}
-                            <div className="flex flex-col items-center gap-4 mb-8">
-                                <div className="relative group">
-                                    <div className="w-24 h-24 rounded-3xl bg-neutral-800 border-2 border-white/10 overflow-hidden ring-4 ring-pink-500/10 ring-offset-4 ring-offset-neutral-900">
+                            <div className="flex flex-col items-center gap-6 mb-8">
+                                <div className="relative group cursor-pointer" onClick={() => document.getElementById('profile-photo-upload')?.click()}>
+                                    <div className="w-32 h-32 rounded-[2.5rem] bg-neutral-800 border-2 border-white/10 overflow-hidden ring-4 ring-pink-500/10 ring-offset-4 ring-offset-neutral-900 group-hover:ring-pink-500/30 transition-all duration-500 shadow-2xl">
+                                        <div className={`absolute inset-0 z-10 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${compressing ? 'opacity-100' : ''}`}>
+                                            {compressing ? (
+                                                <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                            ) : (
+                                                <Camera size={24} className="text-white" />
+                                            )}
+                                        </div>
                                         <img 
                                             src={info.photoProfile || "/images/avatars/model_1.png"} 
                                             alt="Profile" 
-                                            className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                         />
                                     </div>
-                                    <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-xl bg-pink-500 flex items-center justify-center text-white shadow-lg shadow-pink-500/30">
-                                        <Camera size={14} />
+                                    <div className="absolute -bottom-1 -right-1 w-10 h-10 rounded-2xl bg-pink-500 flex items-center justify-center text-white shadow-lg shadow-pink-500/40 border-2 border-neutral-900 group-hover:scale-110 transition-transform">
+                                        <Camera size={18} />
                                     </div>
-                                </div>
-                                <div className="w-full space-y-2">
-                                    <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
-                                        <Camera size={12} /> {t('dashboard.photo_url') || "Photo URL"}
-                                    </label>
                                     <input 
-                                        type="text"
-                                        value={info.photoProfile}
-                                        onChange={e => setInfo({...info, photoProfile: e.target.value})}
-                                        placeholder="https://..."
-                                        className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3 text-white focus:outline-none focus:border-pink-500 transition-all text-sm font-mono"
+                                        type="file"
+                                        id="profile-photo-upload"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={handleFileChange}
                                     />
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-white font-medium text-sm mb-1">{t('model.signup.step4_change') || "Change Photo"}</p>
+                                    <p className="text-neutral-500 text-[10px] uppercase tracking-widest font-black">{t('model.signup.step4_upload') || "Upload"}</p>
                                 </div>
                             </div>
 
