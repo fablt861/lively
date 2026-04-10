@@ -560,5 +560,12 @@
   "room.block_accept": "Hyväksy",
   "room.block_refuse": "Hylkää",
   "room.block_timer_label": "Yksityinen istunto",
-  "room.block_locked_label": "Lukittu"
+  "room.block_locked_label": "Lukittu",
+  "dashboard.profile_settings_title": "Profile Settings",
+  "dashboard.photo_url": "Photo URL",
+  "dashboard.email_change_warning": "Note: Changing your email will update your login credentials.",
+  "dashboard.profile_saved_success": "Profile updated successfully!",
+  "dashboard.save_changes": "Save Changes",
+  "dashboard.profile_load_error": "Failed to load profile settings.",
+  "dashboard.profile_cta": "Profile Settings"
 }

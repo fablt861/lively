@@ -7,7 +7,8 @@ import Link from "next/link";
 import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { ModelBillingModal } from "@/components/ModelBillingModal";
-import { Settings } from "lucide-react";
+import { ProfileSettingsModal } from "@/components/ProfileSettingsModal";
+import { Settings, User } from "lucide-react";
 
 interface Stats {
     balance: number;
@@ -41,6 +42,7 @@ export default function DashboardPage() {
     const [loadingPayouts, setLoadingPayouts] = useState(true);
     const [activeTab, setActiveTab] = useState<'earnings' | 'payouts'>('earnings');
     const [isBillingOpen, setIsBillingOpen] = useState(false);
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [payoutLoading, setPayoutLoading] = useState(false);
     const [payoutMessage, setPayoutMessage] = useState<{ text: string, type: 'error' | 'success' } | null>(null);
 
@@ -110,6 +112,27 @@ export default function DashboardPage() {
             setPayoutMessage({ text: "Network error", type: 'error' });
         } finally {
             setPayoutLoading(false);
+        }
+    };
+
+    const handleProfileUpdate = (newEmail: string, newPseudo: string) => {
+        // Update localStorage
+        localStorage.setItem('kinky_user_email', newEmail);
+        
+        // Update user object if it exists in localStorage
+        const userJson = localStorage.getItem('user');
+        if (userJson) {
+            const userData = JSON.parse(userJson);
+            userData.email = newEmail;
+            userData.name = newPseudo;
+            localStorage.setItem('user', JSON.stringify(userData));
+        }
+        
+        if (newEmail !== id) {
+            setId(newEmail);
+            window.location.reload();
+        } else {
+            fetchStats();
         }
     };
 
@@ -232,6 +255,13 @@ export default function DashboardPage() {
                                 className="group flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-medium transition-all duration-300 border border-white/10"
                             >
                                 <Settings size={18} /> {t('dashboard.billing_cta')}
+                            </button>
+
+                            <button 
+                                onClick={() => setIsProfileOpen(true)}
+                                className="group flex items-center justify-center gap-2 bg-pink-500/10 hover:bg-pink-500/20 text-pink-400 px-6 md:px-8 py-3 md:py-4 rounded-full font-medium transition-all duration-300 border border-pink-500/20"
+                            >
+                                <User size={18} /> {t('dashboard.profile_cta')}
                             </button>
                         </div>
                         {payoutMessage && (
@@ -397,6 +427,13 @@ export default function DashboardPage() {
                 isOpen={isBillingOpen} 
                 onClose={() => setIsBillingOpen(false)} 
                 modelEmail={id} 
+            />
+
+            <ProfileSettingsModal 
+                isOpen={isProfileOpen}
+                onClose={() => setIsProfileOpen(false)}
+                modelEmail={id}
+                onProfileUpdate={handleProfileUpdate}
             />
         </div>
     );

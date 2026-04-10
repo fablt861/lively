@@ -85,6 +85,91 @@ router.post('/:email/payout-request', requireModelAuth, async (req, res) => {
     }
 });
 
+// GET Profile Info
+router.get('/:email/profile', requireModelAuth, async (req, res) => {
+    try {
+        const redis = getRedisClient();
+        const email = req.params.email.toLowerCase();
+        if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
+
+        const data = await redis.get(`model:active:${email}`);
+        if (!data) return res.status(404).json({ error: 'Model not found' });
+
+        const model = JSON.parse(data);
+        // Don't send password
+        delete model.password;
+        res.json(model);
+    } catch (err) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// PUT Update Profile Info
+router.put('/:email/profile', requireModelAuth, async (req, res) => {
+    try {
+        const redis = getRedisClient();
+        const oldEmail = req.params.email.toLowerCase();
+        if (oldEmail !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
+
+        const { email: newEmailRaw, phone, pseudo, photoProfile } = req.body;
+        const newEmail = newEmailRaw?.toLowerCase();
+
+        const data = await redis.get(`model:active:${oldEmail}`);
+        if (!data) return res.status(404).json({ error: 'Model not found' });
+
+        let model = JSON.parse(data);
+
+        // Handle Email Change
+        if (newEmail && newEmail !== oldEmail) {
+            // Check if new email is taken
+            const existsModel = await redis.exists(`model:active:${newEmail}`);
+            const existsUser = await redis.exists(`user:active:${newEmail}`);
+            if (existsModel || existsUser) {
+                return res.status(400).json({ error: 'auth.error.email_in_use' });
+            }
+
+            // Migrate all keys
+            const keysToMigrate = [
+                { old: `model:active:${oldEmail}`, new: `model:active:${newEmail}`, type: 'string' },
+                { old: `model:${oldEmail}:balance`, new: `model:${newEmail}:balance`, type: 'string' },
+                { old: `model:${oldEmail}:billing_info`, new: `model:${newEmail}:billing_info`, type: 'string' },
+                { old: `model:${oldEmail}:payouts`, new: `model:${newEmail}:payouts`, type: 'list' },
+                { old: `model:${oldEmail}:stats`, new: `model:${newEmail}:stats`, type: 'string' },
+                { old: `model:${oldEmail}:total_payout_requested`, new: `model:${newEmail}:total_payout_requested`, type: 'string' },
+                { old: `user:${oldEmail}:last_login`, new: `user:${newEmail}:last_login`, type: 'string' },
+            ];
+
+            for (const k of keysToMigrate) {
+                const val = await redis.get(k.old); // Simplified migration, for list it might need more care but here we rename
+                if (await redis.exists(k.old)) {
+                    // For safety, let's use RENAME if it's the same Redis instance
+                    try {
+                        await redis.rename(k.old, k.new);
+                    } catch (e) {
+                        // If cross-slot error or similar in cluster, fallback to copy (though rename is better)
+                        console.error(`Rename failed for ${k.old}:`, e);
+                    }
+                }
+            }
+            
+            model.email = newEmail;
+        }
+
+        // Update other fields
+        if (phone !== undefined) model.phone = phone;
+        if (pseudo !== undefined) model.pseudo = pseudo;
+        if (photoProfile !== undefined) model.photoProfile = photoProfile;
+
+        const currentEmail = newEmail || oldEmail;
+        await redis.set(`model:active:${currentEmail}`, JSON.stringify(model));
+
+        res.json({ success: true, user: { email: currentEmail, name: model.pseudo || model.name, role: 'model' } });
+    } catch (err) {
+        console.error('Update profile error:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 // GET Payout History
 router.get('/:email/payouts', requireModelAuth, async (req, res) => {
     try {

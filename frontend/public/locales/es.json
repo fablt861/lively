@@ -560,5 +560,12 @@
   "room.block_accept": "Aceptar",
   "room.block_refuse": "Rechazar",
   "room.block_timer_label": "Sesión privada",
-  "room.block_locked_label": "Bloqueado"
+  "room.block_locked_label": "Bloqueado",
+  "dashboard.profile_settings_title": "Profile Settings",
+  "dashboard.photo_url": "Photo URL",
+  "dashboard.email_change_warning": "Note: Changing your email will update your login credentials.",
+  "dashboard.profile_saved_success": "Profile updated successfully!",
+  "dashboard.save_changes": "Save Changes",
+  "dashboard.profile_load_error": "Failed to load profile settings.",
+  "dashboard.profile_cta": "Profile Settings"
 }
