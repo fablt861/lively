@@ -1281,7 +1281,7 @@ export default function AdminPage() {
                                             {payoutHistory.map((p, i) => (
                                                 <tr key={i} className="hover:bg-white/[0.01] transition-colors">
                                                     <td className="p-5 text-sm">
-                                                        <div className="font-bold text-white">{p.billingInfo?.name || 'N/A'}</div>
+                                                        <div className="font-bold text-white">{p.invoiceNumber || p.id}</div>
                                                         <div className="text-[10px] text-neutral-500 font-mono italic">{p.modelEmail}</div>
                                                     </td>
                                                     <td className="p-5 font-mono text-green-400 font-bold">${p.amount.toFixed(2)}</td>

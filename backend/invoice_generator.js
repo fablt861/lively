@@ -16,7 +16,8 @@ const PLATFORM_INFO = {
  */
 async function generateInvoice(payout, billingInfo) {
     return new Promise((resolve, reject) => {
-        const invoiceId = payout.id.replace(/[^a-z0-2-]/gi, '_'); // Sanitize for filename
+        // Use professional invoice number if available, fallback to sanitized ID
+        const invoiceId = payout.invoiceNumber || payout.id.replace(/[^a-z0-2-]/gi, '_');
         const filename = `invoice_${invoiceId}.pdf`;
         
         // Use /tmp for broader compatibility on Render Free tier

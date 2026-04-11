@@ -431,6 +431,22 @@ router.post('/payouts/:id/approve', requireAuth, async (req, res) => {
         const billingData = await redis.get(`model:${payout.modelEmail}:billing_info`);
         const billingInfo = billingData ? JSON.parse(billingData) : {};
 
+        // 1. Get or Generate Model Numeric ID
+        const email = payout.modelEmail.toLowerCase();
+        let modelNumericId = await redis.get(`model:${email}:numeric_id`);
+        if (!modelNumericId) {
+            const nextId = await redis.incr('models:global_id_counter');
+            modelNumericId = `M${String(nextId).padStart(3, '0')}`;
+            await redis.set(`model:${email}:numeric_id`, modelNumericId);
+        }
+
+        // 2. Generate Sequential Invoice Number
+        const invoiceSeq = await redis.incr('invoices:global_sequence');
+        const year = new Date().getFullYear();
+        const invoiceNumber = `PAY-${year}-${modelNumericId}-${String(invoiceSeq).padStart(3, '0')}`;
+        
+        payout.invoiceNumber = invoiceNumber;
+
         // GENERATE INVOICE - Essential step
         try {
             const invoiceFile = await generateInvoice(payout, billingInfo);

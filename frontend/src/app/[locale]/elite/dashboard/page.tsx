@@ -31,6 +31,7 @@ interface PayoutRecord {
     amount: number;
     transferFee?: number;
     netAmount?: number;
+    invoiceNumber?: string;
     status: 'pending' | 'paid' | 'rejected';
     timestamp: number;
     processedAt?: number;
@@ -429,6 +430,9 @@ export default function DashboardPage() {
                                             <tr key={i} className="hover:bg-white/[0.02] transition-colors group">
                                                 <td className="p-4 md:p-8 text-neutral-300 font-semibold tracking-tight">
                                                     {new Date(p.timestamp).toLocaleDateString()}
+                                                </td>
+                                                <td className="p-4 text-xs font-mono text-neutral-400">
+                                                    {p.invoiceNumber || p.id}
                                                 </td>
                                                 <td className="p-4 md:p-8 text-neutral-300 font-mono font-bold text-lg">
                                                     ${p.amount.toFixed(2)}
