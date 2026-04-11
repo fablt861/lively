@@ -16,12 +16,25 @@ const PLATFORM_INFO = {
  */
 async function generateInvoice(payout, billingInfo) {
     return new Promise((resolve, reject) => {
-        const invoiceId = payout.id;
+        const invoiceId = payout.id.replace(/[^a-z0-2-]/gi, '_'); // Sanitize for filename
         const filename = `invoice_${invoiceId}.pdf`;
-        const filePath = path.join(__dirname, 'invoices', filename);
+        const invoicesDir = path.join(__dirname, 'invoices');
         
-        const doc = new PDFDocument({ margin: 50 });
-        const stream = fs.createWriteStream(filePath);
+        // Ensure directory exists
+        if (!fs.existsSync(invoicesDir)) {
+            try {
+                fs.mkdirSync(invoicesDir, { recursive: true });
+            } catch (err) {
+                console.error('[Invoice Generator] Failed to create directory:', err);
+                return reject(err);
+            }
+        }
+
+        const filePath = path.join(invoicesDir, filename);
+        
+        try {
+            const doc = new PDFDocument({ margin: 50 });
+            const stream = fs.createWriteStream(filePath);
 
         doc.pipe(stream);
 
@@ -89,6 +102,11 @@ async function generateInvoice(payout, billingInfo) {
 
         // --- Footer ---
         doc.end();
+
+        } catch (docErr) {
+            console.error('[Invoice Generator] Error initializing PDF:', docErr);
+            return reject(docErr);
+        }
 
         stream.on('finish', () => resolve(filename));
         stream.on('error', reject);
