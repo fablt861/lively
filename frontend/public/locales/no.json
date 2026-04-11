@@ -567,5 +567,10 @@
   "dashboard.profile_saved_success": "Profile updated successfully!",
   "dashboard.save_changes": "Save Changes",
   "dashboard.profile_load_error": "Failed to load profile settings.",
-  "dashboard.profile_cta": "Profile Settings"
+  "dashboard.profile_cta": "Profile Settings",
+  "live.camera_required_title": "Kameratilgang påkrevd",
+  "live.camera_required_desc": "For å sikre en trygg og gjensidig opplevelse, må kameraet ditt være aktivert for å gå inn i videochatten.",
+  "live.camera_instruction": "Klikk på hengelåsikonet i nettleserens adresselinje og angi kameratillatelsene til 'Tillat', klikk deretter på knappen nedenfor.",
+  "live.camera_retry_btn": "Jeg har aktivert kameraet mitt",
+  "live.camera_home_btn": "Tilbake til hjem"
 }

@@ -567,5 +567,10 @@
   "dashboard.profile_saved_success": "Profile updated successfully!",
   "dashboard.save_changes": "Save Changes",
   "dashboard.profile_load_error": "Failed to load profile settings.",
-  "dashboard.profile_cta": "Profile Settings"
+  "dashboard.profile_cta": "Profile Settings",
+  "live.camera_required_title": "Потрібен доступ до камери",
+  "live.camera_required_desc": "Для забезпечення безпечного та взаємного досвіду ваша камера повинна бути ввімкнена для входу у відеочат.",
+  "live.camera_instruction": "Натисніть на значок замка в адресному рядку браузера та встановіть дозволи для камери на 'Дозволити', потім натисніть кнопку нижче.",
+  "live.camera_retry_btn": "Я ввімкнув камеру",
+  "live.camera_home_btn": "На головну"
 }

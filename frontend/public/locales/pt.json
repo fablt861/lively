@@ -567,5 +567,10 @@
   "dashboard.profile_saved_success": "Profile updated successfully!",
   "dashboard.save_changes": "Save Changes",
   "dashboard.profile_load_error": "Failed to load profile settings.",
-  "dashboard.profile_cta": "Profile Settings"
+  "dashboard.profile_cta": "Profile Settings",
+  "live.camera_required_title": "Acesso à câmara necessário",
+  "live.camera_required_desc": "Para garantir uma experiência segura e mútua, a sua câmara deve estar ativada para entrar no chat de vídeo.",
+  "live.camera_instruction": "Clique no ícone do cadeado na barra de endereços do seu navegador e defina as permissões da câmara para 'Permitir' e, em seguida, clique no botão abaixo.",
+  "live.camera_retry_btn": "Ativei a minha câmara",
+  "live.camera_home_btn": "Voltar ao início"
 }

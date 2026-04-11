@@ -567,5 +567,10 @@
   "dashboard.profile_saved_success": "Profile updated successfully!",
   "dashboard.save_changes": "Save Changes",
   "dashboard.profile_load_error": "Failed to load profile settings.",
-  "dashboard.profile_cta": "Profile Settings"
+  "dashboard.profile_cta": "Profile Settings",
+  "live.camera_required_title": "Accesso alla fotocamera richiesto",
+  "live.camera_required_desc": "Per garantire un'esperienza sicura e reciproca, la fotocamera deve essere abilitata per accedere alla video chat.",
+  "live.camera_instruction": "Fare clic sull'icona del lucchetto nella barra degli indirizzi del browser e impostare le autorizzazioni della fotocamera su 'Consenti', quindi fare clic sul pulsante qui sotto.",
+  "live.camera_retry_btn": "Ho attivato la mia fotocamera",
+  "live.camera_home_btn": "Torna alla Home"
 }

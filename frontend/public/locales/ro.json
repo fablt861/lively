@@ -567,5 +567,10 @@
   "dashboard.profile_saved_success": "Profile updated successfully!",
   "dashboard.save_changes": "Save Changes",
   "dashboard.profile_load_error": "Failed to load profile settings.",
-  "dashboard.profile_cta": "Profile Settings"
+  "dashboard.profile_cta": "Profile Settings",
+  "live.camera_required_title": "Acces camera necesar",
+  "live.camera_required_desc": "Pentru a asigura o experiență sigură și reciprocă, camera trebuie să fie activată pentru a intra în chatul video.",
+  "live.camera_instruction": "Faceți clic pe pictograma lacăt din bara de adrese a browserului și setați permisiunile camerei la 'Permite', apoi faceți clic pe butonul de mai jos.",
+  "live.camera_retry_btn": "Am activat camera",
+  "live.camera_home_btn": "Înapoi la prima pagină"
 }

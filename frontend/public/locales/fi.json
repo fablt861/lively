@@ -567,5 +567,10 @@
   "dashboard.profile_saved_success": "Profile updated successfully!",
   "dashboard.save_changes": "Save Changes",
   "dashboard.profile_load_error": "Failed to load profile settings.",
-  "dashboard.profile_cta": "Profile Settings"
+  "dashboard.profile_cta": "Profile Settings",
+  "live.camera_required_title": "Kameran käyttö vaaditaan",
+  "live.camera_required_desc": "Turvallisen ja molemminpuolisen kokemuksen varmistamiseksi kameran on oltava käytössä videokeskusteluun pääsemiseksi.",
+  "live.camera_instruction": "Napsauta selaimen osoitepalkissa olevaa lukkosymbolia ja aseta kameran käyttöoikeudet tilaan 'Salli', ja napsauta sitten alla olevaa painiketta.",
+  "live.camera_retry_btn": "Olen ottanut kameran käyttöön",
+  "live.camera_home_btn": "Takaisin etusivulle"
 }

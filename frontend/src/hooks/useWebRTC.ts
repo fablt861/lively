@@ -18,6 +18,8 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
     const [partnerInfo, setPartnerInfo] = useState<{ email: string; role: string; name: string } | null>(null);
     const [isMaintenance, setIsMaintenance] = useState(false);
     const [isLaunch, setIsLaunch] = useState(false);
+    const [cameraPermissionError, setCameraPermissionError] = useState(false);
+    const [retryCount, setRetryCount] = useState(0);
 
 
     const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
@@ -58,8 +60,16 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
         // 2. Initialize Media Stream
         navigator.mediaDevices
             .getUserMedia({ video: true, audio: true })
-            .then((stream) => setLocalStream(stream))
-            .catch((err) => console.error("Error accessing media devices.", err));
+            .then((stream) => {
+                setLocalStream(stream);
+                setCameraPermissionError(false);
+            })
+            .catch((err) => {
+                console.error("Error accessing media devices.", err);
+                if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                    setCameraPermissionError(true);
+                }
+            });
 
         // 3. Initialize Socket
         const newSocket = io(process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live");
@@ -75,7 +85,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
             }
             newSocket.disconnect();
         };
-    }, [isEnabled]);
+    }, [isEnabled, retryCount]);
 
 
     // Manual join triggered by UI
@@ -321,7 +331,9 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
         socketId: socket?.id,
         endCall,
         isMaintenance,
-        isLaunch
+        isLaunch,
+        cameraPermissionError,
+        retryCamera: () => setRetryCount(prev => prev + 1)
     };
 }
 

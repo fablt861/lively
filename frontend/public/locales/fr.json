@@ -578,5 +578,10 @@
   "admin.status.disabled": "Désactivé",
   "admin.users.toggle_status_cta": "Statut",
   "admin.models.toggle_status_cta": "Statut",
-  "admin.status.update_success": "Statut mis à jour."
+  "admin.status.update_success": "Statut mis à jour.",
+  "live.camera_required_title": "Accès caméra requis",
+  "live.camera_required_desc": "Pour garantir une expérience sécurisée et mutuelle, votre caméra doit être activée pour entrer dans le chat vidéo.",
+  "live.camera_instruction": "Veuillez cliquer sur l'icône de cadenas dans la barre d'adresse de votre navigateur et régler les autorisations de la caméra sur 'Autoriser', puis cliquez sur le bouton ci-dessous.",
+  "live.camera_retry_btn": "J'ai activé ma caméra",
+  "live.camera_home_btn": "Retour à l'accueil"
 }

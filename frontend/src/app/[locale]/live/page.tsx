@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { VideoRoom } from "@/components/VideoRoom";
 import { useWebRTC } from "@/hooks/useWebRTC";
 import { MaintenanceGuard } from "@/components/MaintenanceGuard";
+import { CameraPermissionGuard } from "@/components/CameraPermissionGuard";
 
 export default function LivePage({ params }: { params: { locale: string } }) {
     const [role, setRole] = useState<"user" | "model" | null>(null);
@@ -49,6 +50,7 @@ export default function LivePage({ params }: { params: { locale: string } }) {
     };
 
     if (activeMaintenance) return <MaintenanceGuard />;
+    if (webRTC.cameraPermissionError) return <CameraPermissionGuard onRetry={webRTC.retryCamera} />;
     if (activeLaunch) return <VideoRoom {...webRTC} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={webRTC.endCall} onNext={webRTC.nextPartner} onPurchase={handlePurchase} isLaunchOverride={true} packs={settings?.packs} />;
     if (isChecking || !role) return <div className="min-h-screen bg-[#050505]"></div>;
 
