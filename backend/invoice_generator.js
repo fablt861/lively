@@ -18,7 +18,10 @@ async function generateInvoice(payout, billingInfo) {
     return new Promise((resolve, reject) => {
         const invoiceId = payout.id.replace(/[^a-z0-2-]/gi, '_'); // Sanitize for filename
         const filename = `invoice_${invoiceId}.pdf`;
-        const invoicesDir = path.join(__dirname, 'invoices');
+        // Use /tmp for broader compatibility on Render Free tier
+        const invoicesDir = '/tmp/lively_invoices';
+        
+        console.log('[Invoice Generator] Starting for', payout.id);
         
         // Ensure directory exists
         if (!fs.existsSync(invoicesDir)) {
@@ -31,6 +34,7 @@ async function generateInvoice(payout, billingInfo) {
         }
 
         const filePath = path.join(invoicesDir, filename);
+        console.log('[Invoice Generator] Writing to', filePath);
         
         try {
             const doc = new PDFDocument({ margin: 50 });

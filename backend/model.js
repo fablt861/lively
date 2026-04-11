@@ -227,7 +227,7 @@ router.get('/:email/payouts/:id/invoice', requireModelAuth, async (req, res) => 
         if (payout.modelEmail.toLowerCase() !== email) return res.status(403).send('Forbidden');
         if (!payout.invoiceFile) return res.status(404).send('Invoice metadata not found');
         
-        const filePath = path.join(__dirname, 'invoices', payout.invoiceFile);
+        const filePath = path.join('/tmp/lively_invoices', payout.invoiceFile);
         if (fs.existsSync(filePath)) {
             res.download(filePath);
         } else {

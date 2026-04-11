@@ -486,7 +486,7 @@ router.get('/payouts/invoice/:id', requireAuth, async (req, res) => {
         const payout = JSON.parse(data);
         if (!payout.invoiceFile) return res.status(404).send('Invoice file not generated');
         
-        const filePath = path.join(__dirname, 'invoices', payout.invoiceFile);
+        const filePath = path.join('/tmp/lively_invoices', payout.invoiceFile);
         if (fs.existsSync(filePath)) {
             res.download(filePath);
         } else {

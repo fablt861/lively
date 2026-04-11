@@ -1218,9 +1218,19 @@ export default function AdminPage() {
                                                     <button
                                                         onClick={async () => {
                                                             if (confirm("Confirm that this payout has been processed and paid?")) {
-                                                                await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/payouts/${p.id}/approve`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
-                                                                fetchPayoutRequests();
-                                                                fetchPayoutHistory();
+                                                                const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/payouts/${p.id}/approve`, { 
+                                                                    method: "POST", 
+                                                                    headers: { Authorization: `Bearer ${token}` } 
+                                                                });
+                                                                
+                                                                if (response.ok) {
+                                                                    fetchPayoutRequests();
+                                                                    fetchPayoutHistory();
+                                                                    alert("Payout approved and invoice generated successfully.");
+                                                                } else {
+                                                                    const err = await response.json();
+                                                                    alert(`Error: ${err.error || "Failed to approve payout"}`);
+                                                                }
                                                             }
                                                         }}
                                                         className="bg-green-500 hover:bg-green-400 text-white text-[10px] font-bold px-3 py-2 rounded-lg transition-all shadow-lg shadow-green-500/20"
