@@ -156,19 +156,6 @@ export function VideoRoom({
         if (role !== "user") return;
     }, [role]);
 
-    // AUTO-RECONNECT TRIGGER (only on page reload)
-    useEffect(() => {
-        if (typeof window === 'undefined') return;
-        
-        const navEntries = window.performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
-        const isReload = navEntries.length > 0 && navEntries[0].type === 'reload';
-
-        if (isReload && localStream && !hasStartedMatch) {
-            console.log("[VideoRoom] Page reload detected, auto-resuming session...");
-            handleStartMatch();
-        }
-    }, [localStream, hasStartedMatch]);
-
     useEffect(() => {
         if (!socket) return;
 
