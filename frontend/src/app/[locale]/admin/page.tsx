@@ -1228,8 +1228,13 @@ export default function AdminPage() {
                                                                     fetchPayoutHistory();
                                                                     alert("Payout approved and invoice generated successfully.");
                                                                 } else {
-                                                                    const err = await response.json();
-                                                                    alert(`Error: ${err.error || "Failed to approve payout"}`);
+                                                                    try {
+                                                                        const err = await response.json();
+                                                                        alert(`Error: ${err.error || "Failed to approve payout"}`);
+                                                                    } catch (jsonErr) {
+                                                                        const raw = await response.text();
+                                                                        alert(`Server Error (Status ${response.status}): ${raw.substring(0, 100)}`);
+                                                                    }
                                                                 }
                                                             }
                                                         }}

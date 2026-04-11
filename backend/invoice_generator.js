@@ -37,83 +37,30 @@ async function generateInvoice(payout, billingInfo) {
         console.log('[Invoice Generator] Writing to', filePath);
         
         try {
+            console.log('[Invoice Generator] Initializing PDF Kit doc...');
             const doc = new PDFDocument({ margin: 50 });
             const stream = fs.createWriteStream(filePath);
 
-        doc.pipe(stream);
+            doc.pipe(stream);
+            doc.fontSize(25).text('TEST INVOICE', 100, 100);
+            doc.fontSize(12).text(`ID: ${payout.id}`, 100, 150);
+            doc.text(`Amount: $${payout.amount}`, 100, 170);
+            doc.end();
 
-        // --- Header ---
-        doc.fillColor('#000000')
-           .fontSize(20)
-           .text('FACTURE / INVOICE', { align: 'right' });
-        
-        doc.fontSize(10)
-           .text(`N°: ${invoiceId}`, { align: 'right' })
-           .text(`Date: ${new Date(payout.processedAt || Date.now()).toLocaleDateString()}`, { align: 'right' });
-
-        doc.moveDown(2);
-
-        // --- Parties ---
-        const startY = doc.y;
-        
-        // From (Model)
-        doc.fontSize(12).font('Helvetica-Bold').text('ÉMETTEUR / FROM:', 50, startY);
-        doc.fontSize(10).font('Helvetica')
-           .text(billingInfo.name || billingInfo.entity || payout.modelEmail)
-           .text(billingInfo.address || '')
-           .text(billingInfo.country || '');
-        
-        // To (Platform)
-        doc.fontSize(12).font('Helvetica-Bold').text('DESTINATAIRE / TO:', 300, startY);
-        doc.fontSize(10).font('Helvetica')
-           .text(PLATFORM_INFO.name)
-           .text(PLATFORM_INFO.address)
-           .text(`TVA: ${PLATFORM_INFO.tva}`);
-
-        doc.moveDown(4);
-
-        // --- Table Header ---
-        const tableTop = doc.y;
-        doc.rect(50, tableTop, 500, 20).fill('#f0f0f0');
-        doc.fillColor('#000000').font('Helvetica-Bold');
-        doc.text('DESCRIPTION', 60, tableTop + 5);
-        doc.text('AMOUNT (USD)', 450, tableTop + 5, { width: 90, align: 'right' });
-
-        // --- Table Body ---
-        doc.font('Helvetica').fontSize(10);
-        let itemY = tableTop + 30;
-        doc.text(`Prestation de création de contenu numérique / Digital content creation services`, 60, itemY);
-        doc.text(`$${parseFloat(payout.amount || 0).toFixed(2)}`, 450, itemY, { width: 90, align: 'right' });
-
-        itemY += 20;
-        doc.fillColor('#ff4444');
-        doc.text(`Frais de transfert / Transfer fees`, 60, itemY);
-        doc.text(`-$${parseFloat(payout.transferFee || 5).toFixed(2)}`, 450, itemY, { width: 90, align: 'right' });
-        doc.fillColor('#000000');
-
-        doc.moveTo(50, itemY + 20).lineTo(550, itemY + 20).stroke('#eeeeee');
-
-        // --- Totals ---
-        doc.moveDown(2);
-        const totalY = doc.y;
-        const netAmount = (payout.netAmount || (parseFloat(payout.amount) - 5)).toFixed(2);
-        doc.fontSize(12).font('Helvetica-Bold').text('TOTAL À PAYER / TOTAL DUE:', 300, totalY);
-        doc.fontSize(14).text(`$${netAmount}`, 450, totalY, { width: 90, align: 'right' });
-
-        doc.moveDown(2);
-        doc.fontSize(8).font('Helvetica-Oblique').fillColor('#666666')
-           .text('TVA non applicable, art. 259-1 du CGI (exportation de services). / VAT not applicable (export of services).', 50, doc.y + 20);
-
-        // --- Footer ---
-        doc.end();
-
+            stream.on('finish', () => {
+                console.log('[Invoice Generator] Stream finished successfully');
+                resolve(filename);
+            });
+            stream.on('error', (err) => {
+                console.error('[Invoice Generator] Stream error:', err);
+                reject(err);
+            });
         } catch (docErr) {
-            console.error('[Invoice Generator] Error initializing PDF:', docErr);
-            return reject(docErr);
+            console.error('[Invoice Generator] Catch block error:', docErr);
+            reject(docErr);
         }
-
-        stream.on('finish', () => resolve(filename));
-        stream.on('error', reject);
+    });
+}
     });
 }
 
