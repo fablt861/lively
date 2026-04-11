@@ -311,10 +311,14 @@ async function getModelStats(modelId) {
     const normalizedId = modelId.toLowerCase();
     const balanceStr = await redis.get(`model:${normalizedId}:balance`);
     const historyStrs = await redis.lrange(`model:${normalizedId}:history`, 0, 50);
+    const profileRaw = await redis.get(`model:active:${normalizedId}`);
+    const profile = profileRaw ? JSON.parse(profileRaw) : {};
 
     return {
         balance: parseFloat(balanceStr || '0'),
-        history: historyStrs.map(h => JSON.parse(h))
+        history: historyStrs.map(h => JSON.parse(h)),
+        pseudo: profile.pseudo || 'Model',
+        photoProfile: profile.photoProfile || ''
     };
 }
 

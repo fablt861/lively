@@ -12,6 +12,8 @@ import { Settings, User } from "lucide-react";
 
 interface Stats {
     balance: number;
+    pseudo?: string;
+    photoProfile?: string;
     history: Array<{
         roomId: string;
         durationSec: number;
@@ -172,20 +174,46 @@ export default function DashboardPage() {
     return (
         <div className="min-h-screen bg-neutral-950 text-white font-sans p-4 sm:p-8 md:p-16">
             {/* Header */}
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 md:mb-16">
-                <div>
-                    <h1 className="text-3xl md:text-4xl font-light tracking-tight text-white mb-2">{t('dashboard.title')}</h1>
-                    <p className="text-sm md:text-base text-neutral-500">{t('dashboard.subtitle')}</p>
+            <header className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12 md:mb-16">
+                <div className="flex flex-col md:flex-row items-center md:items-end gap-6 md:gap-8 text-center md:text-left">
+                    <div className="relative group">
+                        <div className="w-24 h-24 md:w-32 md:h-32 rounded-[2.5rem] bg-neutral-900 border-2 border-white/10 overflow-hidden ring-4 ring-pink-500/10 ring-offset-4 ring-offset-neutral-950 group-hover:ring-pink-500/30 transition-all duration-500 shadow-2xl">
+                            <img 
+                                src={stats?.photoProfile || "/images/avatars/model_1.png"} 
+                                alt="Profile" 
+                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            />
+                        </div>
+                        <button 
+                            onClick={() => setIsProfileOpen(true)}
+                            className="absolute -bottom-1 -right-1 w-10 h-10 rounded-2xl bg-pink-500 flex items-center justify-center text-white shadow-lg shadow-pink-500/40 border-2 border-neutral-950 hover:scale-110 transition-transform active:scale-95 z-20"
+                        >
+                            <Settings size={18} />
+                        </button>
+                    </div>
+                    
+                    <div className="space-y-1">
+                        <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
+                            <span className="px-3 py-1 bg-pink-500/10 border border-pink-500/20 text-pink-400 text-[10px] font-black uppercase tracking-[0.2em] rounded-full">Elite Member</span>
+                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
+                        </div>
+                        <h2 className="text-3xl md:text-5xl font-extralight text-white/50 leading-none">Hello, <span className="font-black text-white">{stats?.pseudo || "..."}</span></h2>
+                        <div className="pt-2">
+                            <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-white to-white/40 bg-clip-text text-transparent">{t('dashboard.title')}</h1>
+                            <p className="text-xs md:text-sm text-neutral-500 font-medium">{t('dashboard.subtitle')}</p>
+                        </div>
+                    </div>
                 </div>
+
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto">
-                    <div className="self-end sm:self-auto flex-shrink-0">
+                    <div className="self-center sm:self-auto">
                         <LanguageSelector />
                     </div>
                     <Link
                         href={`/${language}/live`}
-                        className="px-6 md:px-8 py-3 bg-pink-500 hover:bg-pink-400 border border-pink-400/50 shadow-lg shadow-pink-500/20 text-white rounded-full transition-all duration-300 text-sm font-bold flex items-center justify-center gap-2 w-full sm:w-auto text-center"
+                        className="px-8 py-4 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-400 hover:to-rose-500 shadow-[0_10px_20px_-5px_rgba(236,72,153,0.4)] text-white rounded-full transition-all duration-300 text-sm font-black uppercase tracking-widest flex items-center justify-center gap-3 w-full sm:w-auto text-center active:scale-[0.98]"
                     >
-                        <Video size={18} /> {t('dashboard.launch_live')}
+                        <Video size={20} className="animate-pulse" /> {t('dashboard.launch_live')}
                     </Link>
                 </div>
             </header>
