@@ -33,22 +33,8 @@ router.get('/ping', (req, res) => {
     res.json({ success: true, timestamp: Date.now() });
 });
 
-// Diagnostic: Test PDF generation
-router.get('/diag/pdf-test', async (req, res) => {
-    try {
-        const { generateInvoice } = require('./invoice_generator');
-        const filename = await generateInvoice({ id: 'diag-test', amount: 100 }, {});
-        res.json({ success: true, message: 'PDF generated successfully', filename });
-    } catch (err) {
-        console.error('[DIAG FAIL]', err);
-        res.status(500).json({ 
-            success: false, 
-            error: err.message, 
-            stack: err.stack,
-            cwd: process.cwd(),
-            dirname: __dirname
-        });
-    }
+router.get('/ping', (req, res) => {
+    res.json({ success: true, timestamp: Date.now() });
 });
 
 const requireAuth = (req, res, next) => {
