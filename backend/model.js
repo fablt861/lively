@@ -67,10 +67,15 @@ router.post('/:email/payout-request', requireModelAuth, async (req, res) => {
         }
 
         const payoutId = `payout-${Date.now()}-${email}`;
+        const transferFee = 5.0;
+        const netAmount = balance - transferFee;
+
         const payoutRequest = {
             id: payoutId,
             modelEmail: email,
-            amount: balance,
+            amount: balance, // Gross amount
+            transferFee: transferFee,
+            netAmount: netAmount,
             billingInfo: JSON.parse(billingInfoStr),
             status: 'pending',
             timestamp: Date.now()

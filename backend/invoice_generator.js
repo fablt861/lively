@@ -64,17 +64,24 @@ async function generateInvoice(payout, billingInfo) {
 
         // --- Table Body ---
         doc.font('Helvetica').fontSize(10);
-        const itemY = tableTop + 30;
+        let itemY = tableTop + 30;
         doc.text(`Prestation de création de contenu numérique / Digital content creation services`, 60, itemY);
-        doc.text(`$${parseFloat(payout.amount).toFixed(2)}`, 450, itemY, { width: 90, align: 'right' });
+        doc.text(`$${parseFloat(payout.amount || 0).toFixed(2)}`, 450, itemY, { width: 90, align: 'right' });
+
+        itemY += 20;
+        doc.fillColor('#ff4444');
+        doc.text(`Frais de transfert / Transfer fees`, 60, itemY);
+        doc.text(`-$${parseFloat(payout.transferFee || 5).toFixed(2)}`, 450, itemY, { width: 90, align: 'right' });
+        doc.fillColor('#000000');
 
         doc.moveTo(50, itemY + 20).lineTo(550, itemY + 20).stroke('#eeeeee');
 
         // --- Totals ---
         doc.moveDown(2);
         const totalY = doc.y;
+        const netAmount = (payout.netAmount || (parseFloat(payout.amount) - 5)).toFixed(2);
         doc.fontSize(12).font('Helvetica-Bold').text('TOTAL À PAYER / TOTAL DUE:', 300, totalY);
-        doc.fontSize(14).text(`$${parseFloat(payout.amount).toFixed(2)}`, 450, totalY, { width: 90, align: 'right' });
+        doc.fontSize(14).text(`$${netAmount}`, 450, totalY, { width: 90, align: 'right' });
 
         doc.moveDown(2);
         doc.fontSize(8).font('Helvetica-Oblique').fillColor('#666666')

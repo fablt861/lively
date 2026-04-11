@@ -29,6 +29,8 @@ interface PayoutRecord {
     id: string;
     modelEmail: string;
     amount: number;
+    transferFee?: number;
+    netAmount?: number;
     status: 'pending' | 'paid' | 'rejected';
     timestamp: number;
     processedAt?: number;
@@ -103,6 +105,7 @@ export default function DashboardPage() {
             if (res.ok) {
                 setPayoutMessage({ text: t('dashboard.payout_request_success'), type: 'success' });
                 fetchStats(); // Refresh balance (should be 0)
+                fetchPayouts(); // Refresh history (show pending)
             } else {
                 if (data.error === 'payout.error.missing_billing_info') {
                     setPayoutMessage({ text: t('dashboard.payout_error_billing'), type: 'error' });
@@ -416,6 +419,7 @@ export default function DashboardPage() {
                                         <tr className="border-b border-white/5 bg-white/[0.02]">
                                             <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_date')}</th>
                                             <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('admin.payouts.table_amount')}</th>
+                                            <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">Fees</th>
                                             <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('admin.payouts.table_method')}</th>
                                             <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] text-right">{t('admin.table.status')}</th>
                                         </tr>
@@ -428,6 +432,9 @@ export default function DashboardPage() {
                                                 </td>
                                                 <td className="p-4 md:p-8 text-neutral-300 font-mono font-bold text-lg">
                                                     ${p.amount.toFixed(2)}
+                                                </td>
+                                                <td className="p-4 md:p-8 text-red-500/50 font-mono text-sm">
+                                                    -${(p.transferFee || 0).toFixed(2)}
                                                 </td>
                                                 <td className="p-4 md:p-8 text-neutral-500 text-sm font-medium">
                                                     {p.billingInfo?.method || 'N/A'}
