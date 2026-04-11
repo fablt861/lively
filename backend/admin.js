@@ -34,8 +34,12 @@ router.get('/ping', (req, res) => {
 });
 
 const requireAuth = (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (authHeader === `Bearer ${MOCK_TOKEN}`) {
+    let token = req.headers.authorization;
+    if (!token && req.query.token) {
+        token = `Bearer ${req.query.token}`;
+    }
+
+    if (token === `Bearer ${MOCK_TOKEN}`) {
         next();
     } else {
         res.status(401).json({ error: 'admin.error.unauthorized' });
@@ -423,14 +427,17 @@ router.post('/payouts/:id/approve', requireAuth, async (req, res) => {
         const billingData = await redis.get(`model:${payout.modelEmail}:billing_info`);
         const billingInfo = billingData ? JSON.parse(billingData) : {};
 
-        // GENERATE INVOICE
+        // GENERATE INVOICE - Essential step
         try {
             const invoiceFile = await generateInvoice(payout, billingInfo);
+            if (!invoiceFile) throw new Error('Invoice file name is empty');
             payout.invoiceFile = invoiceFile;
         } catch (pdfErr) {
-            console.error('[Invoice Error]', pdfErr);
+            console.error('[Invoice Generation Critical Error]', pdfErr);
+            return res.status(500).json({ error: 'Failed to generate invoice PDF. Payout not processed.' });
         }
 
+        // Only move to history if invoice succeeded
         await redis.hdel('payouts:pending', id);
         await redis.set(`payout:history:${id}`, JSON.stringify(payout));
         await redis.incrbyfloat(`model:${payout.modelEmail}:total_payouts`, payout.amount);
