@@ -1,6 +1,9 @@
 const express = require('express');
 const { getSettings, updateSettings } = require('./settings');
 const { getGlobalStats, getDailyStats, logNewModel } = require('./stats');
+const { generateInvoice } = require('./invoice_generator');
+const fs = require('fs');
+const path = require('path');
 
 const router = express.Router();
 
@@ -384,6 +387,25 @@ router.get('/payouts/pending', requireAuth, async (req, res) => {
     }
 });
 
+// Admin Payout History List
+router.get('/payouts/history', requireAuth, async (req, res) => {
+    try {
+        const { getRedisClient } = require('./redis');
+        const redis = getRedisClient();
+        const keys = await redis.keys('payout:history:*');
+        const list = [];
+        for (const key of keys) {
+            const data = await redis.get(key);
+            if (data) list.push(JSON.parse(data));
+        }
+        // Sort by processed date desc
+        list.sort((a, b) => (b.processedAt || 0) - (a.processedAt || 0));
+        res.json(list);
+    } catch (err) {
+        res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+
 // Admin Payout Approve (Mark as Paid)
 router.post('/payouts/:id/approve', requireAuth, async (req, res) => {
     try {
@@ -397,11 +419,23 @@ router.post('/payouts/:id/approve', requireAuth, async (req, res) => {
         payout.status = 'paid';
         payout.processedAt = Date.now();
 
+        // Fetch billing info for the invoice
+        const billingData = await redis.get(`model:${payout.modelEmail}:billing_info`);
+        const billingInfo = billingData ? JSON.parse(billingData) : {};
+
+        // GENERATE INVOICE
+        try {
+            const invoiceFile = await generateInvoice(payout, billingInfo);
+            payout.invoiceFile = invoiceFile;
+        } catch (pdfErr) {
+            console.error('[Invoice Error]', pdfErr);
+        }
+
         await redis.hdel('payouts:pending', id);
         await redis.set(`payout:history:${id}`, JSON.stringify(payout));
         await redis.incrbyfloat(`model:${payout.modelEmail}:total_payouts`, payout.amount);
 
-        res.json({ success: true });
+        res.json({ success: true, invoiceFile: payout.invoiceFile });
     } catch (err) {
         res.status(500).json({ error: 'api.error.internal_server_error' });
     }
@@ -429,6 +463,30 @@ router.post('/payouts/:id/reject', requireAuth, async (req, res) => {
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+
+// Admin Download Invoice
+router.get('/payouts/invoice/:id', requireAuth, async (req, res) => {
+    try {
+        const { getRedisClient } = require('./redis');
+        const redis = getRedisClient();
+        const id = req.params.id;
+        
+        const data = await redis.get(`payout:history:${id}`);
+        if (!data) return res.status(404).send('Invoice not found');
+        
+        const payout = JSON.parse(data);
+        if (!payout.invoiceFile) return res.status(404).send('Invoice file not generated');
+        
+        const filePath = path.join(__dirname, 'invoices', payout.invoiceFile);
+        if (fs.existsSync(filePath)) {
+            res.download(filePath);
+        } else {
+            res.status(404).send('File missing on server');
+        }
+    } catch (err) {
+        res.status(500).send('Error downloading invoice');
     }
 });
 

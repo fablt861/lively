@@ -1,12 +1,18 @@
 const express = require('express');
 const { getRedisClient } = require('./redis');
+const fs = require('fs');
+const path = require('path');
 const router = express.Router();
 
 // Middleware to mock model authentication (simplified for this context)
 const requireModelAuth = async (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith('Bearer model-token-')) {
-        req.modelEmail = authHeader.replace('Bearer model-token-', '');
+    let auth = req.headers.authorization;
+    if (!auth && req.query.token) {
+        auth = `Bearer ${req.query.token}`;
+    }
+
+    if (auth && auth.startsWith('Bearer model-token-')) {
+        req.modelEmail = auth.replace('Bearer model-token-', '');
         next();
     } else {
         res.status(401).json({ error: 'model.error.unauthorized' });
@@ -197,6 +203,35 @@ router.get('/:email/payouts', requireModelAuth, async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// Model Download Invoice
+router.get('/:email/payouts/:id/invoice', requireModelAuth, async (req, res) => {
+    try {
+        const redis = getRedisClient();
+        const email = req.params.email.toLowerCase();
+        const id = req.params.id;
+        
+        if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
+
+        const data = await redis.get(`payout:history:${id}`);
+        if (!data) return res.status(404).send('Invoice not found');
+        
+        const payout = JSON.parse(data);
+        if (payout.modelEmail.toLowerCase() !== email) return res.status(403).send('Forbidden');
+        if (!payout.invoiceFile) return res.status(404).send('Invoice metadata not found');
+        
+        const filePath = path.join(__dirname, 'invoices', payout.invoiceFile);
+        if (fs.existsSync(filePath)) {
+            res.download(filePath);
+        } else {
+            // Logically impossible if DB says it exists, so maybe filesystem issue or cleanup
+            res.status(404).send('File missing on server');
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error downloading invoice');
     }
 });
 

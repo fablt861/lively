@@ -2,13 +2,13 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { Wallet, History, ArrowUpRight, DollarSign, Activity, Video } from "lucide-react";
+import { Wallet, History, ArrowUpRight, DollarSign, Activity, Video, Download } from "lucide-react";
 import Link from "next/link";
 import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { ModelBillingModal } from "@/components/ModelBillingModal";
 import { ProfileSettingsModal } from "@/components/ProfileSettingsModal";
-import { Settings, User } from "lucide-react";
+import { Settings, User, FileText } from "lucide-react";
 
 interface Stats {
     balance: number;
@@ -433,13 +433,24 @@ export default function DashboardPage() {
                                                     {p.billingInfo?.method || 'N/A'}
                                                 </td>
                                                 <td className="p-4 md:p-8 text-right">
-                                                    <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.1em] ${
-                                                        p.status === 'paid' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
-                                                        p.status === 'rejected' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
-                                                        'bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow-lg shadow-amber-500/5'
-                                                    }`}>
-                                                        {t(`payout.status.${p.status}`)}
-                                                    </span>
+                                                    <div className="flex items-center justify-end gap-3">
+                                                        {p.status === 'paid' && (
+                                                            <button 
+                                                                onClick={() => window.open(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.kinky.live'}/api/elite/${id}/payouts/${p.id}/invoice?token=model-token-${id}`, '_blank')}
+                                                                className="p-2 text-neutral-500 hover:text-indigo-400 transition-colors bg-white/5 rounded-lg border border-white/5 hover:border-indigo-500/30"
+                                                                title="Download Invoice"
+                                                            >
+                                                                <FileText size={16} />
+                                                            </button>
+                                                        )}
+                                                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.1em] ${
+                                                            p.status === 'paid' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
+                                                            p.status === 'rejected' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
+                                                            'bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow-lg shadow-amber-500/5'
+                                                        }`}>
+                                                            {t(`payout.status.${p.status}`)}
+                                                        </span>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, Video, DollarSign, Activity, Settings, Lock, CheckCircle, XCircle, Clock, Globe, Mail, Zap, UserCheck, ShieldCheck, ChevronLeft, ChevronRight, AlertCircle, ShieldAlert, Sparkles } from "lucide-react";
+import { Users, Video, DollarSign, Activity, Settings, Lock, CheckCircle, XCircle, Clock, Globe, Mail, Zap, UserCheck, ShieldCheck, ChevronLeft, ChevronRight, AlertCircle, ShieldAlert, Sparkles, FileText, History as HistoryIcon } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
 
@@ -26,6 +26,7 @@ export default function AdminPage() {
     const [users, setUsers] = useState<any[]>([]);
     const [models, setModels] = useState<any[]>([]);
     const [payoutRequests, setPayoutRequests] = useState<any[]>([]);
+    const [payoutHistory, setPayoutHistory] = useState<any[]>([]);
     const [reports, setReports] = useState<any[]>([]);
     const [financesStats, setFinancesStats] = useState<any>(null);
     const [marketingUsersStats, setMarketingUsersStats] = useState<any[]>([]);
@@ -107,6 +108,16 @@ export default function AdminPage() {
             if (Array.isArray(data)) setPayoutRequests(data);
         } catch (err) {
             console.error("Fetch Payouts Error:", err);
+        }
+    };
+
+    const fetchPayoutHistory = async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/payouts/history`, { headers: { Authorization: `Bearer ${token}` } });
+            const data = await res.json();
+            if (Array.isArray(data)) setPayoutHistory(data);
+        } catch (err) {
+            console.error("Fetch Payout History Error:", err);
         }
     };
 
@@ -247,7 +258,10 @@ export default function AdminPage() {
             if (activeTab === 'stats') fetchStats();
             if (activeTab === 'users') fetchUsers();
             if (activeTab === 'models') fetchModels();
-            if (activeTab === 'payouts') fetchPayoutRequests();
+            if (activeTab === 'payouts') {
+                fetchPayoutRequests();
+                fetchPayoutHistory();
+            }
             if (activeTab === 'reports') fetchReports();
             if (activeTab === 'marketing_users') fetchMarketingUsersStats();
             if (activeTab === 'marketing_models') fetchMarketingModelsStats();
@@ -1206,6 +1220,7 @@ export default function AdminPage() {
                                                             if (confirm("Confirm that this payout has been processed and paid?")) {
                                                                 await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/payouts/${p.id}/approve`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
                                                                 fetchPayoutRequests();
+                                                                fetchPayoutHistory();
                                                             }
                                                         }}
                                                         className="bg-green-500 hover:bg-green-400 text-white text-[10px] font-bold px-3 py-2 rounded-lg transition-all shadow-lg shadow-green-500/20"
@@ -1219,6 +1234,60 @@ export default function AdminPage() {
                                 </table>
                             </div>
                         )}
+
+                        {/* Processed Payouts History */}
+                        <div className="pt-12">
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="text-xl font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-3">
+                                    <HistoryIcon size={20} className="text-indigo-500" />
+                                    Factures & Historique
+                                </h3>
+                                <div className="text-[10px] font-black text-neutral-500 uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/5">
+                                    {payoutHistory.length} Factures Générées
+                                </div>
+                            </div>
+                            
+                            {payoutHistory.length === 0 ? (
+                                <div className="bg-neutral-900 border border-white/5 rounded-3xl p-12 text-center text-neutral-500 italic">
+                                    Aucun historique de paiement disponible.
+                                </div>
+                            ) : (
+                                <div className="bg-neutral-900 border border-white/5 rounded-3xl overflow-hidden shadow-2xl opacity-80 hover:opacity-100 transition-opacity">
+                                    <table className="w-full text-left">
+                                        <thead className="bg-white/[0.02] border-b border-white/5">
+                                            <tr>
+                                                <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Model / Info</th>
+                                                <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Montant</th>
+                                                <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Traité le</th>
+                                                <th className="p-5 text-neutral-400 font-medium text-xs uppercase text-right">Facture</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-white/5">
+                                            {payoutHistory.map((p, i) => (
+                                                <tr key={i} className="hover:bg-white/[0.01] transition-colors">
+                                                    <td className="p-5 text-sm">
+                                                        <div className="font-bold text-white">{p.billingInfo?.name || 'N/A'}</div>
+                                                        <div className="text-[10px] text-neutral-500 font-mono italic">{p.modelEmail}</div>
+                                                    </td>
+                                                    <td className="p-5 font-mono text-green-400 font-bold">${p.amount.toFixed(2)}</td>
+                                                    <td className="p-5 text-neutral-500 text-xs">
+                                                        {new Date(p.processedAt).toLocaleString()}
+                                                    </td>
+                                                    <td className="p-5 text-right">
+                                                        <button 
+                                                            onClick={() => window.open(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.kinky.live'}/api/admin/payouts/invoice/${p.id}?token=${token}`, '_blank')}
+                                                            className="inline-flex items-center gap-2 bg-indigo-500/10 hover:bg-indigo-500 text-indigo-400 hover:text-white px-4 py-2 rounded-xl border border-indigo-500/20 transition-all font-bold text-[10px] uppercase tracking-widest"
+                                                        >
+                                                            <FileText size={14} /> TÉLÉCHARGER
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 )}
 
