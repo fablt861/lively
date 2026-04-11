@@ -419,6 +419,7 @@ export default function DashboardPage() {
                                     <thead>
                                         <tr className="border-b border-white/5 bg-white/[0.02]">
                                             <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_date')}</th>
+                                            <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">Invoice</th>
                                             <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('admin.payouts.table_amount')}</th>
                                             <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">Fees</th>
                                             <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('admin.payouts.table_method')}</th>
@@ -431,7 +432,7 @@ export default function DashboardPage() {
                                                 <td className="p-4 md:p-8 text-neutral-300 font-semibold tracking-tight">
                                                     {new Date(p.timestamp).toLocaleDateString()}
                                                 </td>
-                                                <td className="p-4 text-xs font-mono text-neutral-400">
+                                                <td className="p-4 md:p-8 text-xs font-mono text-neutral-400">
                                                     {p.invoiceNumber || p.id}
                                                 </td>
                                                 <td className="p-4 md:p-8 text-neutral-300 font-mono font-bold text-lg">
