@@ -568,9 +568,9 @@
   "dashboard.save_changes": "Save Changes",
   "dashboard.profile_load_error": "Failed to load profile settings.",
   "dashboard.profile_cta": "Profile Settings",
-  "live.camera_required_title": "Требуется доступ к камере",
-  "live.camera_required_desc": "Для обеспечения безопасного и взаимного опыта ваша камера должна быть включена для входа в видеочат.",
-  "live.camera_instruction": "Нажмите на значок замка в адресной строке браузера и установите разрешения для камеры на 'Разрешить', затем нажмите кнопку ниже.",
-  "live.camera_retry_btn": "Я включил камеру",
+  "live.camera_required_title": "Требуется доступ к камере и микрофону",
+  "live.camera_required_desc": "Для обеспечения безопасного и взаимного опыта ваша камера и микрофон должны быть включены для входа в видеочат.",
+  "live.camera_instruction": "Нажмите на значок замка в адресной строке браузера и установите разрешения для камеры и микрофона на 'Разрешить', затем нажмите кнопку ниже.",
+  "live.camera_retry_btn": "Я включил устройства",
   "live.camera_home_btn": "На главную"
 }

@@ -579,9 +579,9 @@
   "admin.users.toggle_status_cta": "Status",
   "admin.models.toggle_status_cta": "Status",
   "admin.status.update_success": "Status updated.",
-  "live.camera_required_title": "Camera Access Required",
-  "live.camera_required_desc": "To ensure a safe and mutual experience, your camera must be enabled to enter the video chat.",
-  "live.camera_instruction": "Please click the lock icon in your browser's address bar and set camera permissions to 'Allow', then click the button below.",
-  "live.camera_retry_btn": "I've enabled my camera",
+  "live.camera_required_title": "Device Access Required",
+  "live.camera_required_desc": "To ensure a safe and mutual experience, your camera and microphone must be enabled to enter the video chat.",
+  "live.camera_instruction": "Please click the lock icon in your browser's address bar and set camera and microphone permissions to 'Allow', then click the button below.",
+  "live.camera_retry_btn": "I've enabled my devices",
   "live.camera_home_btn": "Back to Home"
 }

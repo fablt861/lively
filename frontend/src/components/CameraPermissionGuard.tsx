@@ -1,6 +1,6 @@
 "use client";
 
-import { VideoOff, Lock, RefreshCw, Home, ShieldAlert } from "lucide-react";
+import { VideoOff, Lock, RefreshCw, Home, ShieldAlert, MicOff } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 import Link from "next/link";
 
@@ -21,8 +21,9 @@ export function CameraPermissionGuard({ onRetry }: CameraPermissionGuardProps) {
                 {/* Icon Section */}
                 <div className="relative mx-auto w-24 h-24 mb-10">
                     <div className="absolute inset-0 bg-red-500/20 rounded-3xl blur-2xl animate-pulse" />
-                    <div className="relative w-full h-full bg-neutral-900 border-2 border-red-500/30 rounded-3xl flex items-center justify-center text-red-500 shadow-xl">
-                        <VideoOff size={40} />
+                    <div className="relative w-full h-full bg-neutral-900 border-2 border-red-500/30 rounded-3xl flex items-center justify-center text-red-500 shadow-xl gap-2">
+                        <VideoOff size={32} />
+                        <MicOff size={32} />
                         <div className="absolute -top-2 -right-2 bg-red-500 text-white p-1.5 rounded-xl shadow-lg">
                             <ShieldAlert size={14} />
                         </div>
@@ -31,21 +32,21 @@ export function CameraPermissionGuard({ onRetry }: CameraPermissionGuardProps) {
 
                 {/* Content Section */}
                 <h1 className="text-3xl font-black mb-4 tracking-tight leading-tight">
-                    {t('live.camera_required_title') || "Camera Access Required"}
+                    {t('live.camera_required_title') || "Device Access Required"}
                 </h1>
                 <p className="text-neutral-400 text-sm leading-relaxed mb-10">
-                    {t('live.camera_required_desc') || "To ensure a safe and mutual experience, your camera must be enabled to enter the video chat."}
+                    {t('live.camera_required_desc') || "To ensure a safe and mutual experience, your camera and microphone must be enabled to enter the video chat."}
                 </p>
 
                 {/* Instruction Box */}
-                <div className="bg-white/5 border border-white/10 rounded-3xl p-6 mb-10 text-left relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-3 text-white/10 group-hover:text-white/20 transition-colors">
-                        <Lock size={40} />
+                <div className="bg-white/5 border border-white/10 rounded-3xl p-6 mb-10 text-left relative overflow-hidden group flex items-start gap-4">
+                    <div className="hidden sm:flex w-12 h-12 rounded-2xl bg-white/5 items-center justify-center text-white/20 shrink-0">
+                        <Lock size={24} />
                     </div>
                     <div className="relative z-10 flex gap-4">
                         <div className="w-10 h-10 rounded-2xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 shrink-0 font-black text-sm">!</div>
                         <p className="text-xs text-white/70 leading-relaxed font-medium">
-                            {t('live.camera_instruction') || "Please click the lock icon in your browser's address bar and set camera permissions to 'Allow', then click the button below."}
+                            {t('live.camera_instruction') || "Please click the lock icon in your browser's address bar and set camera and microphone permissions to 'Allow', then click the button below."}
                         </p>
                     </div>
                 </div>

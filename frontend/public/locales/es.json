@@ -568,9 +568,9 @@
   "dashboard.save_changes": "Save Changes",
   "dashboard.profile_load_error": "Failed to load profile settings.",
   "dashboard.profile_cta": "Profile Settings",
-  "live.camera_required_title": "Acceso a la cámara requerido",
-  "live.camera_required_desc": "Para garantizar una experiencia segura y mutua, su cámara debe estar habilitada para entrar al video chat.",
-  "live.camera_instruction": "Haga clic en el icono del candado en la barra de direcciones de su navegador y establezca los permisos de la cámara en 'Permitir', luego haga clic en el botón de abajo.",
-  "live.camera_retry_btn": "He activado mi cámara",
+  "live.camera_required_title": "Acceso a cámara y micrófono requerido",
+  "live.camera_required_desc": "Para garantizar una experiencia segura y mutua, su cámara y micrófono deben estar habilitados para entrar al video chat.",
+  "live.camera_instruction": "Haga clic en el icono del candado en la barre de direcciones de su navegador y establezca los permisos de cámara y micrófono en 'Permitir', luego haga clic en el botón de abajo.",
+  "live.camera_retry_btn": "He activado mis dispositivos",
   "live.camera_home_btn": "Volver al inicio"
 }

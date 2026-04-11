@@ -568,9 +568,9 @@
   "dashboard.save_changes": "Save Changes",
   "dashboard.profile_load_error": "Failed to load profile settings.",
   "dashboard.profile_cta": "Profile Settings",
-  "live.camera_required_title": "Cameratoegang vereist",
-  "live.camera_required_desc": "Om een veilige en wederzijdse ervaring te garanderen, moet uw camera zijn ingeschakeld om de videochat te betreden.",
-  "live.camera_instruction": "Klik op het hangslotpictogram in de adresbalk van uw browser en stel de cameramachtigingen in op 'Toestaan', en klik vervolgens op de onderstaande knop.",
-  "live.camera_retry_btn": "Ik heb mijn camera ingeschakeld",
+  "live.camera_required_title": "Toegang tot camera en microfoon vereist",
+  "live.camera_required_desc": "Om een veilige en wederzijdse ervaring te garanderen, moeten uw camera en microfoon zijn ingeschakeld om de videochat te betreden.",
+  "live.camera_instruction": "Klik op het hangslotpictogram in de adresbalk van uw browser en stel de machtigingen voor camera en microfoon in op 'Toestaan', en klik vervolgens op de onderstaande knop.",
+  "live.camera_retry_btn": "Ik heb mijn apparaten ingeschakeld",
   "live.camera_home_btn": "Terug naar Home"
 }

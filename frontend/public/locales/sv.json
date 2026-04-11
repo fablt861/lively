@@ -568,9 +568,9 @@
   "dashboard.save_changes": "Save Changes",
   "dashboard.profile_load_error": "Failed to load profile settings.",
   "dashboard.profile_cta": "Profile Settings",
-  "live.camera_required_title": "Kameratillgång krävs",
-  "live.camera_required_desc": "För att säkerställa en säker och ömsesidig upplevelse måste din kamera vara aktiverad för att komma in i videochatten.",
-  "live.camera_instruction": "Klicka på hänglåssymbolen i webbläsarens adressfält och ställ in kameratillstånden till 'Tillåt', klicka sedan på knappen nedan.",
-  "live.camera_retry_btn": "Jag har aktiverat min kamera",
+  "live.camera_required_title": "Tillgång till kamera och mikrofon krävs",
+  "live.camera_required_desc": "För att säkerställa en säker och ömsesidig upplevelse måste din kamera och mikrofon vara aktiverade för att komma in i videochatten.",
+  "live.camera_instruction": "Klicka på hänglåssymbolen i webbläsarens adressfält och ställ in tillstånden för kamera och mikrofon till 'Tillåt', klicka sedan på knappen nedan.",
+  "live.camera_retry_btn": "Jag har aktiverat mina enheter",
   "live.camera_home_btn": "Tillbaka till hem"
 }
