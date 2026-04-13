@@ -573,27 +573,15 @@
   "live.camera_instruction": "Нажмите на значок замка в адресной строке браузера и установите разрешения для камеры и микрофона на 'Разрешить', затем нажмите кнопку ниже.",
   "live.camera_retry_btn": "Я включил устройства",
   "live.camera_home_btn": "На главную",
-  "dashboard": {
-    "table_normal": "Нормальный",
-    "table_private": "Приватная сессия",
-    "telegram_title": "Присоединяйтесь к сообществу Elite Telegram",
-    "telegram_desc": "Будьте в курсе бонусов, технических обновлений и общайтесь с командой.",
-    "telegram_cta": "Вступить сейчас"
-  },
-  "admin": {
-    "nav": {
-      "moderation": "Модерация"
-    },
-    "status": {
-      "active": "Активен",
-      "disabled": "Отключено",
-      "update_success": "Статус обновлен."
-    },
-    "users": {
-      "toggle_status_cta": "Статус"
-    },
-    "models": {
-      "toggle_status_cta": "Статус"
-    }
-  }
+  "dashboard.table_normal": "Нормальный",
+  "dashboard.table_private": "Приватная сессия",
+  "dashboard.telegram_title": "Присоединяйтесь к сообществу Elite Telegram",
+  "dashboard.telegram_desc": "Будьте в курсе бонусов, технических обновлений и общайтесь с командой.",
+  "dashboard.telegram_cta": "Вступить сейчас",
+  "admin.nav.moderation": "Модерация",
+  "admin.status.active": "Активен",
+  "admin.status.disabled": "Отключено",
+  "admin.users.toggle_status_cta": "Статус",
+  "admin.models.toggle_status_cta": "Статус",
+  "admin.status.update_success": "Статус обновлен."
 }

@@ -573,27 +573,15 @@
   "live.camera_instruction": "Clique no ícone do cadeado na barra de endereços do seu navegador e defina as permissões da câmara e do microfone para 'Permitir' e, em seguida, clique no botão abaixo.",
   "live.camera_retry_btn": "Ativei os meus dispositivos",
   "live.camera_home_btn": "Voltar ao início",
-  "dashboard": {
-    "table_normal": "Normal",
-    "table_private": "Sessão privada",
-    "telegram_title": "Junte-se à comunidade Elite do Telegram",
-    "telegram_desc": "Fique por dentro de bônus, atualizações técnicas e converse com a equipe.",
-    "telegram_cta": "Entrar agora"
-  },
-  "admin": {
-    "nav": {
-      "moderation": "Moderação"
-    },
-    "status": {
-      "active": "Ativo",
-      "disabled": "Desativado",
-      "update_success": "Status atualizado."
-    },
-    "users": {
-      "toggle_status_cta": "Status"
-    },
-    "models": {
-      "toggle_status_cta": "Status"
-    }
-  }
+  "dashboard.table_normal": "Normal",
+  "dashboard.table_private": "Sessão privada",
+  "dashboard.telegram_title": "Junte-se à comunidade Elite do Telegram",
+  "dashboard.telegram_desc": "Fique por dentro de bônus, actualizaciones técnicas e converse com a equipe.",
+  "dashboard.telegram_cta": "Entrar agora",
+  "admin.nav.moderation": "Moderação",
+  "admin.status.active": "Ativo",
+  "admin.status.disabled": "Desativado",
+  "admin.users.toggle_status_cta": "Status",
+  "admin.models.toggle_status_cta": "Status",
+  "admin.status.update_success": "Status atualizado."
 }

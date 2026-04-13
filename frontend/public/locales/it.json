@@ -573,27 +573,15 @@
   "live.camera_instruction": "Fare clic sull'icona del lucchetto nella barra degli indirizzi del browser e impostare le autorizzazioni di fotocamera e microfono su 'Consenti', quindi fare clic sul pulsante qui sotto.",
   "live.camera_retry_btn": "Ho attivato i miei dispositivi",
   "live.camera_home_btn": "Torna alla Home",
-  "dashboard": {
-    "table_normal": "Normale",
-    "table_private": "Sessione privata",
-    "telegram_title": "Unisciti alla comunità Elite di Telegram",
-    "telegram_desc": "Rimani aggiornato su bonus, aggiornamenti tecnici e chatta con il team.",
-    "telegram_cta": "Iscriviti ora"
-  },
-  "admin": {
-    "nav": {
-      "moderation": "Moderazione"
-    },
-    "status": {
-      "active": "Attivo",
-      "disabled": "Disabilitato",
-      "update_success": "Stato aggiornato."
-    },
-    "users": {
-      "toggle_status_cta": "Stato"
-    },
-    "models": {
-      "toggle_status_cta": "Stato"
-    }
-  }
+  "dashboard.table_normal": "Normale",
+  "dashboard.table_private": "Sessione privata",
+  "dashboard.telegram_title": "Unisciti alla comunità Elite di Telegram",
+  "dashboard.telegram_desc": "Rimani aggiornato su bonus, aggiornamenti tecnici e chatta con il team.",
+  "dashboard.telegram_cta": "Iscriviti ora",
+  "admin.nav.moderation": "Moderazione",
+  "admin.status.active": "Attivo",
+  "admin.status.disabled": "Disabilitato",
+  "admin.users.toggle_status_cta": "Stato",
+  "admin.models.toggle_status_cta": "Stato",
+  "admin.status.update_success": "Stato aggiornato."
 }

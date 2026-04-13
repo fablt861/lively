@@ -573,27 +573,15 @@
   "live.camera_instruction": "Faceți clic pe pictograma lacăt din bara de adrese a browserului și setați permisiunile camerei și microfonului la 'Permite', apoi faceți clic pe butonul de mai jos.",
   "live.camera_retry_btn": "Am activat dispozitivele",
   "live.camera_home_btn": "Înapoi la prima pagină",
-  "dashboard": {
-    "table_normal": "Normal",
-    "table_private": "Sesiune privată",
-    "telegram_title": "Alăturați-vă comunității Elite Telegram",
-    "telegram_desc": "Rămâneți la curent cu bonusurile, actualizările tehnice și discutați cu echipa.",
-    "telegram_cta": "Alăturați-vă acum"
-  },
-  "admin": {
-    "nav": {
-      "moderation": "Moderare"
-    },
-    "status": {
-      "active": "Activ",
-      "disabled": "Dezactivat",
-      "update_success": "Statut actualizat."
-    },
-    "users": {
-      "toggle_status_cta": "Status"
-    },
-    "models": {
-      "toggle_status_cta": "Status"
-    }
-  }
+  "dashboard.table_normal": "Normal",
+  "dashboard.table_private": "Sesiune privată",
+  "dashboard.telegram_title": "Alăturați-vă comunității Elite Telegram",
+  "dashboard.telegram_desc": "Rămâneți la curent cu bonusurile, actualizările tehnice și discutați cu echipa.",
+  "dashboard.telegram_cta": "Alăturați-vă acum",
+  "admin.nav.moderation": "Moderare",
+  "admin.status.active": "Activ",
+  "admin.status.disabled": "Dezactivat",
+  "admin.users.toggle_status_cta": "Status",
+  "admin.models.toggle_status_cta": "Status",
+  "admin.status.update_success": "Statut actualizat."
 }
