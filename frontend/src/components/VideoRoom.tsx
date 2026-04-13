@@ -32,7 +32,7 @@ interface VideoRoomProps {
     localStream: MediaStream | null;
     remoteStream: MediaStream | null;
     isMatching: boolean;
-    isConnected: boolean;
+    isConnected: boolean; // Keep prop name same for compatibility with useWebRTC destructuring, but internal usage will be clearer
     joinQueue: () => void;
     nextPartner: () => void;
     toggleAudio: () => void;
@@ -109,6 +109,8 @@ export function VideoRoom({
     const [incomingBlockRequest, setIncomingBlockRequest] = useState<any>(null);
     const [isWaitingForBlockResponse, setIsWaitingForBlockResponse] = useState(false);
     const [blockTimeLeft, setBlockTimeLeft] = useState("");
+
+    console.log(`[VideoRoom Render] isConnected: ${isConnected}, isMatching: ${isMatching}, remoteStream (bool): ${!!remoteStream}`);
 
     const handleNext = () => {
         setIsBlocked(false);

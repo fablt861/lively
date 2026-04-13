@@ -12,7 +12,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
     const [localStream, setLocalStream] = useState<MediaStream | null>(null);
     const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
     const [isMatching, setIsMatching] = useState(false);
-    const [isConnected, setIsConnected] = useState(false);
+    const [isCallConnected, setIsCallConnected] = useState(false);
     const [messages, setMessages] = useState<{ senderId: string; text: string; originalText?: string; timestamp: number }[]>([]);
     const [queuePosition, setQueuePosition] = useState<number | null>(null);
     const [partnerInfo, setPartnerInfo] = useState<{ email: string; role: string; name: string } | null>(null);
@@ -118,7 +118,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
 
         pc.oniceconnectionstatechange = () => {
             if (pc.iceConnectionState === "disconnected" || pc.iceConnectionState === "failed") {
-                setIsConnected(false);
+                setIsCallConnected(false);
                 setRemoteStream(null);
             }
         };
@@ -131,7 +131,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
 
         socket.on("waiting", ({ position }) => {
             setIsMatching(true);
-            setIsConnected(false);
+            setIsCallConnected(false);
             setRemoteStream(null);
             setMessages([]);
             if (position) setQueuePosition(position);
@@ -144,9 +144,9 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
         socket.on("matched", async (data: any) => {
             const { initiator, partnerEmail, partnerRole, partnerName, isRecovery } = data;
             console.log('[WebRTC] Matched event received. Initiator:', initiator, 'Recovery:', !!isRecovery);
-            console.log('[WebRTC] Matched -> setting isMatching: false, isConnected: true');
+            console.log('[WebRTC] Matched -> setting isMatching: false, isCallConnected: true');
             setIsMatching(false);
-            setIsConnected(true);
+            setIsCallConnected(true);
             
             if (!isRecovery) {
                 setMessages([]);
@@ -198,7 +198,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
 
         socket.on("partner_left", () => {
             console.log('[WebRTC] Partner left (permanent)');
-            setIsConnected(false);
+            setIsCallConnected(false);
             setRemoteStream(null);
             if (peerConnectionRef.current) {
                 peerConnectionRef.current.close();
@@ -228,7 +228,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
         socket.on("maintenance_active", () => {
             console.log('[WebRTC] Maintenance Mode Activated');
             setIsMaintenance(true);
-            setIsConnected(false);
+            setIsCallConnected(false);
             setRemoteStream(null);
             if (peerConnectionRef.current) {
                 peerConnectionRef.current.close();
@@ -239,7 +239,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
         socket.on("launch_active", () => {
             console.log('[WebRTC] Launch Mode Activated');
             setIsLaunch(true);
-            setIsConnected(false);
+            setIsCallConnected(false);
             setRemoteStream(null);
             if (peerConnectionRef.current) {
                 peerConnectionRef.current.close();
@@ -274,7 +274,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
             peerConnectionRef.current.close();
             peerConnectionRef.current = null;
         }
-        setIsConnected(false);
+        setIsCallConnected(false);
         setRemoteStream(null);
         socket?.emit("out_of_credits");
     };
@@ -284,7 +284,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
             peerConnectionRef.current.close();
             peerConnectionRef.current = null;
         }
-        setIsConnected(false);
+        setIsCallConnected(false);
         setRemoteStream(null);
         setPartnerInfo(null);
         socket?.emit("next"); // This unmatches but we won't follow with join_queue in the UI
@@ -317,7 +317,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
         localStream,
         remoteStream,
         isMatching,
-        isConnected,
+        isConnected: isCallConnected,
         joinQueue,
         nextPartner,
         toggleAudio,
