@@ -13,8 +13,10 @@ const QUEUE_USERS = 'queue:users';
 const RATE_LIMIT_COOLDOWN = 1.5; // seconds
 
 async function checkRateLimit(identifier) {
-    // Disabled for Staging debugging
-    return false;
+    if (!identifier) return false;
+    const key = `ratelimit:matching:${identifier.toLowerCase()}`;
+    const result = await redis.set(key, '1', 'NX', 'EX', Math.ceil(RATE_LIMIT_COOLDOWN));
+    return result === null; // true if rate limited (key already existed)
 }
 
 function setupMatching(io, socket) {
@@ -27,9 +29,7 @@ function setupMatching(io, socket) {
         isProcessing = true;
         try {
             // Check Maintenance & Launch Mode
-            console.log(`[Queue Trace] Fetching settings for ${socket.id}...`);
             const settings = await getSettings();
-            console.log(`[Queue Trace] Settings retrieved. Maintenance: ${settings.maintenanceMode}, Launch: ${settings.launchMode}`);
             
             if (settings.maintenanceMode) {
                 console.log(`[Maintenance] Blocking join_queue for ${socket.id} (${role})`);
@@ -165,28 +165,52 @@ async function updateQueuePositions(io, role) {
 
 async function handleJoinQueue(io, socket) {
     const myIdentifier = (socket.userEmail || `${socket.role}:${socket.userIp || 'unknown'}`).toLowerCase();
-    try {
-        if (socket.currentRoom) {
-            console.log(`[Match Guard] Socket ${socket.id} already in a room (${socket.currentRoom}). Skipping.`);
-            return;
-        }
-        
-        console.log(`[Queue Trace] Entering handleJoinQueue for ${socket.id}. Ident: ${myIdentifier}`);
-
     const isModel = socket.role === 'model';
     const myQueue = isModel ? QUEUE_MODELS : QUEUE_USERS;
     const targetQueue = isModel ? QUEUE_USERS : QUEUE_MODELS;
 
-    console.log(`[Match Attempt] Socket ${socket.id} (${socket.role}) searching in ${targetQueue}...`);
+    try {
+        if (socket.currentRoom) return;
 
-    /* 
-    // --- RECOVERY ATTEMPT DISABLED FOR DEBUGGING ---
-    const existingRoomId = await redis.get(`user_active_room:${myIdentifier.toLowerCase()}`);
-    if (existingRoomId) {
-        ...
-    }
-    */
-    console.log(`[Queue] Proceeding to search for partner for ${socket.id} (${socket.role})`);
+        // --- RECOVERY ATTEMPT ---
+        const existingRoomId = await redis.get(`user_active_room:${myIdentifier}`);
+        if (existingRoomId) {
+            const roomDataStr = await redis.hget('billing:active_rooms', existingRoomId);
+            if (roomDataStr) {
+                const roomData = JSON.parse(roomDataStr);
+                console.log(`[Recovery] Found active room ${existingRoomId} for ${myIdentifier}. Reconnecting...`);
+                
+                await socket.join(existingRoomId);
+                socket.currentRoom = existingRoomId;
+                
+                const isModel = socket.role === 'model';
+                const partnerEmail = isModel ? roomData.userId : roomData.modelId;
+
+                if (isModel) {
+                    roomData.modelSocketId = socket.id;
+                } else {
+                    roomData.userSocketId = socket.id;
+                }
+                await redis.hset('billing:active_rooms', existingRoomId, JSON.stringify(roomData));
+
+                socket.emit('matched', {
+                    roomId: existingRoomId,
+                    initiator: socket.id,
+                    isRecovery: true,
+                    partnerEmail: partnerEmail,
+                    partnerRole: isModel ? 'user' : 'model',
+                    partnerName: partnerEmail.includes('@') ? partnerEmail.split('@')[0] : 'Partner'
+                });
+                
+                socket.to(existingRoomId).emit('partner_reconnected', {
+                    socketId: socket.id,
+                    role: socket.role
+                });
+                return;
+            }
+        }
+
+        console.log(`[Queue] ${socket.id} (${socket.role}) searching for partner in ${targetQueue}...`);
     
     let partnerId = null;
     let foundPartner = false;
