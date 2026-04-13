@@ -539,7 +539,7 @@
   "model.stat.best_market": "Highest Market Payouts",
   "gauge.matchmaking": "Direct ♀ ↔ ♂ Matching",
   "room.exit_confirm_title": "¿Salir de la llamada?",
-  "room.exit_confirm_desc": "¿Estás seguro de que quieres finalizar esta sesión?",
+  "room.exit_confirm_desc": "¿Estás seguro de que quieres terminar esta sesión?",
   "room.exit_confirm_action": "Salir",
   "room.block_request_title": "¿Sesión privada de {{duration}} min?",
   "room.block_request_desc": "Pídele a la modelo que se quede contigo durante {{duration}} minutos sin interrupción. Ella puede aceptar o rechazar tu solicitud.",
@@ -592,5 +592,17 @@
   "billing.select_bank_country": "Seleccionar país del banco",
   "profile.manage_desc": "Gestiona tu información pública",
   "profile.encrypted_footer": "Gestión de perfil cifrada de extremo a extremo",
-  "profile.save_error": "Error al guardar la información del perfil."
+  "profile.save_error": "Error al guardar la información del perfil.",
+  "room.block_refused": "La modelo ha declinado la sesión privada.",
+  "room.block_cta_tooltip": "Bloquea a la modelo por 30 min",
+  "room.block_credits_unit": "CRÉDITOS",
+  "room.block_credits_pack": "Pack de Créditos",
+  "common.cancel": "Cancelar",
+  "common.premium": "Premium",
+  "prematch.range_1": "0 - 5 min",
+  "prematch.rate_1": "$0.40 / min",
+  "prematch.range_2": "5 - 10 min",
+  "prematch.rate_2": "$0.50 / min",
+  "prematch.range_3": "+ 10 min",
+  "prematch.rate_3": "$0.55 / min"
 }

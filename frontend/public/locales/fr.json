@@ -592,5 +592,17 @@
   "billing.select_bank_country": "Sélectionner le pays de la banque",
   "profile.manage_desc": "Gérez vos informations publiques",
   "profile.encrypted_footer": "Gestion de profil chiffrée de bout en bout",
-  "profile.save_error": "Échec de l'enregistrement des informations du profil."
+  "profile.save_error": "Échec de l'enregistrement des informations du profil.",
+  "room.block_refused": "La modèle a décliné la session privée.",
+  "room.block_cta_tooltip": "Bloquer la modèle pour 30 min",
+  "room.block_credits_unit": "CRÉDITS",
+  "room.block_credits_pack": "Pack de Crédits",
+  "common.cancel": "Annuler",
+  "common.premium": "Premium",
+  "prematch.range_1": "0 - 5 min",
+  "prematch.rate_1": "$0.40 / min",
+  "prematch.range_2": "5 - 10 min",
+  "prematch.rate_2": "$0.50 / min",
+  "prematch.range_3": "+ 10 min",
+  "prematch.rate_3": "$0.55 / min"
 }

@@ -208,7 +208,7 @@ export function VideoRoom({
             if (role === 'user') {
                 setIsWaitingForBlockResponse(false);
                 if (!payload.accepted) {
-                    alert(t('room.block_refused') || "La modèle a décliné la session privée.");
+                    alert(t('room.block_refused'));
                 }
             }
         };
@@ -629,7 +629,7 @@ export function VideoRoom({
                         <span className="text-xl font-mono font-black text-white tracking-widest">{blockTimeLeft}</span>
                         <div className="flex flex-col">
                             <span className="text-[10px] font-bold text-pink-400 uppercase tracking-tighter">{t('room.block_timer_label')}</span>
-                            <span className="text-[8px] text-white/50 uppercase leading-none">{t('room.block_locked_label') || "Locked"}</span>
+                            <span className="text-[8px] text-white/50 uppercase leading-none">{t('room.block_locked_label')}</span>
                         </div>
                     </div>
                 )}
@@ -702,7 +702,7 @@ export function VideoRoom({
                         <button
                             onClick={() => setShowBlockRequestModal(true)}
                             className="p-4 rounded-full bg-pink-600 hover:bg-pink-500 text-white transition-all shadow-lg shadow-pink-500/20 active:scale-95 animate-pulse"
-                            title="Bloquer la modèle pour 30 min"
+                            title={t('room.block_cta_tooltip')}
                         >
                             <Lock size={24} />
                         </button>
@@ -835,9 +835,9 @@ export function VideoRoom({
                             <PhoneOff size={32} className="text-red-500" />
                         </div>
 
-                        <h2 className="text-2xl font-black mb-2 text-center">{t('room.exit_confirm_title') || "Quitter l'appel ?"}</h2>
+                        <h2 className="text-2xl font-black mb-2 text-center">{t('room.exit_confirm_title')}</h2>
                         <p className="text-white/60 text-sm mb-8 leading-relaxed text-center">
-                            {t('room.exit_confirm_desc') || "Êtes-vous sûr de vouloir mettre fin à cette session ?"}
+                            {t('room.exit_confirm_desc')}
                         </p>
 
                         <div className="grid grid-cols-2 gap-4">
@@ -845,7 +845,7 @@ export function VideoRoom({
                                 onClick={() => setShowExitConfirm(false)}
                                 className="py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-black uppercase tracking-widest text-sm hover:bg-white/10 transition-all active:scale-95"
                             >
-                                {t('common.cancel') || "Annuler"}
+                                {t('common.cancel')}
                             </button>
                             <button
                                 onClick={() => {
@@ -854,7 +854,7 @@ export function VideoRoom({
                                 }}
                                 className="py-4 rounded-2xl bg-red-600 text-white font-black uppercase tracking-widest text-sm hover:bg-red-500 transition-all active:scale-95 shadow-xl shadow-red-600/20"
                             >
-                                {t('room.exit_confirm_action') || "Quitter"}
+                                {t('room.exit_confirm_action')}
                             </button>
                         </div>
                     </div>
@@ -879,11 +879,11 @@ export function VideoRoom({
                         <div className="bg-white/5 rounded-2xl p-4 mb-8 flex items-center justify-between border border-white/5">
                             <div className="flex flex-col">
                                 <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">{t('room.block_cost_label')}</span>
-                                <span className="text-xl font-black text-white">{settings?.blockCreditsCost || 600} CREDITS</span>
+                                <span className="text-xl font-black text-white">{settings?.blockCreditsCost || 600} {t('room.block_credits_unit')}</span>
                             </div>
                             <div className="flex flex-col items-end">
-                                <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">{t('common.premium') || "Premium"}</span>
-                                <span className="text-xs text-pink-400 font-bold uppercase tracking-widest">{t('room.block_premium_label') || "Premium"}</span>
+                                <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">{t('common.premium')}</span>
+                                <span className="text-xs text-pink-400 font-bold uppercase tracking-widest">{t('room.block_premium_label')}</span>
                             </div>
                         </div>
 
@@ -927,7 +927,7 @@ export function VideoRoom({
                             <div className="flex items-center justify-between">
                                 <div className="flex flex-col">
                                     <span className="text-3xl font-black text-white">{settings?.blockCreditsCost || 600}</span>
-                                    <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em]">Credits Pack</span>
+                                    <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em]">{t('room.block_credits_pack')}</span>
                                 </div>
                                 <div className="text-4xl font-light text-white/20">/</div>
                                 <div className="flex flex-col items-end">

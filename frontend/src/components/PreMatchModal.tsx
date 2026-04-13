@@ -77,23 +77,23 @@ export function PreMatchModal({ localStream, onJoin, role = "user" }: PreMatchMo
                             <div className="flex justify-between items-center p-3.5 md:p-4 bg-white/5 rounded-2xl md:rounded-3xl border border-white/10 transition-colors hover:bg-white/10">
                                 <div className="flex items-center gap-3">
                                     <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-indigo-400" />
-                                    <span className="text-white/90 text-xs md:text-sm font-semibold tracking-wide">0 - 5 min</span>
+                                    <span className="text-white/90 text-xs md:text-sm font-semibold tracking-wide">{t('prematch.range_1')}</span>
                                 </div>
-                                <span className="text-indigo-400 font-black text-base md:text-lg">$0.40 / min</span>
+                                <span className="text-indigo-400 font-black text-base md:text-lg">{t('prematch.rate_1')}</span>
                             </div>
                             <div className="flex justify-between items-center p-3.5 md:p-4 bg-indigo-500/10 rounded-2xl md:rounded-3xl border border-indigo-500/20 transition-colors hover:bg-indigo-500/20">
                                 <div className="flex items-center gap-3">
                                     <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-indigo-500" />
-                                    <span className="text-white/90 text-xs md:text-sm font-semibold tracking-wide">5 - 10 min</span>
+                                    <span className="text-white/90 text-xs md:text-sm font-semibold tracking-wide">{t('prematch.range_2')}</span>
                                 </div>
-                                <span className="text-indigo-400 font-black text-base md:text-lg">$0.50 / min</span>
+                                <span className="text-indigo-400 font-black text-base md:text-lg">{t('prematch.rate_2')}</span>
                             </div>
                             <div className="flex justify-between items-center p-3.5 md:p-4 bg-pink-500/10 rounded-2xl md:rounded-3xl border border-pink-500/20 transition-colors hover:bg-pink-500/20">
                                 <div className="flex items-center gap-3">
                                     <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-pink-500" />
-                                    <span className="text-white/90 text-xs md:text-sm font-semibold tracking-wide">+ 10 min</span>
+                                    <span className="text-white/90 text-xs md:text-sm font-semibold tracking-wide">{t('prematch.range_3')}</span>
                                 </div>
-                                <span className="text-pink-400 font-black text-base md:text-lg">$0.55 / min</span>
+                                <span className="text-pink-400 font-black text-base md:text-lg">{t('prematch.rate_3')}</span>
                             </div>
                         </div>
 
