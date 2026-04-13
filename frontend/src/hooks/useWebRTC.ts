@@ -161,6 +161,11 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
                 });
             }
 
+            if (peerConnectionRef.current) {
+                console.log('[WebRTC] Closing existing PeerConnection before new match');
+                peerConnectionRef.current.close();
+                peerConnectionRef.current = null;
+            }
             const pc = createPeerConnection();
 
             if (socket.id === initiator) {
@@ -173,7 +178,11 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
         socket.on("offer", async (offer) => {
             console.log('[WebRTC] Offer received');
             let pc = peerConnectionRef.current;
-            if (!pc || pc.signalingState === "closed") {
+            if (pc && pc.signalingState !== "closed") {
+                console.log('[WebRTC] Reusing existing PC for offer');
+            } else {
+                console.log('[WebRTC] Creating new PC for incoming offer');
+                if (pc) pc.close();
                 pc = createPeerConnection();
             }
             await pc.setRemoteDescription(new RTCSessionDescription(offer));

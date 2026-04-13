@@ -277,8 +277,11 @@ async function handleJoinQueue(io, socket) {
 
         const partnerSocket = io.sockets.sockets.get(partnerId);
         if (partnerSocket) {
-            const roomId = `room_${[socket.id, partnerId].sort().join('_')}`;
-            console.log(`[Match SUCCESS] ${socket.id} <-> ${partnerId}. Joining room ${roomId}`);
+            const pIdentifier = (partnerSocket.userEmail || partnerSocket.userIp || partnerSocket.id).toLowerCase();
+            const myIdentifierSorted = [myIdentifier.toLowerCase(), pIdentifier].sort();
+            const roomId = `room_${myIdentifierSorted[0]}_${myIdentifierSorted[1]}`;
+            
+            console.log(`[Match SUCCESS] ${socket.id} <-> ${partnerId}. Deterministic Room ${roomId}`);
 
             await socket.join(roomId);
             socket.currentRoom = roomId;
