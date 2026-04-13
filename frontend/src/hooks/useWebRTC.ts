@@ -144,6 +144,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
         socket.on("matched", async (data: any) => {
             const { initiator, partnerEmail, partnerRole, partnerName, isRecovery } = data;
             console.log('[WebRTC] Matched event received. Initiator:', initiator, 'Recovery:', !!isRecovery);
+            setRemoteStream(null); // Clear previous stream to avoid stale visuals
             console.log('[WebRTC] Matched -> setting isMatching: false, isCallConnected: true');
             setIsMatching(false);
             setIsCallConnected(true);
