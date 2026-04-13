@@ -176,49 +176,14 @@ async function handleJoinQueue(io, socket) {
 
     const myIdentifier = socket.userEmail || `${socket.role}:${socket.userIp}`;
 
-    // --- RECOVERY ATTEMPT ---
+    /* 
+    // --- RECOVERY ATTEMPT DISABLED FOR DEBUGGING ---
     const existingRoomId = await redis.get(`user_active_room:${myIdentifier.toLowerCase()}`);
     if (existingRoomId) {
-        const roomDataStr = await redis.hget('billing:active_rooms', existingRoomId);
-        if (roomDataStr) {
-            const roomData = JSON.parse(roomDataStr);
-            console.log(`[Recovery] Found active room ${existingRoomId} for ${myIdentifier}. Reconnecting...`);
-            
-            await socket.join(existingRoomId);
-            socket.currentRoom = existingRoomId;
-            
-            const isModel = socket.role === 'model';
-            const partnerEmail = isModel ? roomData.userId : roomData.modelId;
-
-            // --- IMPORTANT: Update roomData with new socket ID and set as initiator ---
-            if (isModel) {
-                roomData.modelSocketId = socket.id;
-            } else {
-                roomData.userSocketId = socket.id;
-            }
-            // Update Redis with the new socket mapping
-            await redis.hset('billing:active_rooms', existingRoomId, JSON.stringify(roomData));
-
-            socket.emit('matched', {
-                roomId: existingRoomId,
-                initiator: socket.id, // Current socket is the one re-joining, let them initiate offer
-                isRecovery: true,
-                partnerEmail: partnerEmail,
-                partnerRole: isModel ? 'user' : 'model',
-                partnerName: partnerEmail.includes('@') ? partnerEmail.split('@')[0] : 'Partner',
-                isBlocked: !!roomData.blockEnd,
-                blockEndTime: roomData.blockEnd || null
-            });
-            
-            // Notify the partner in the room
-            socket.to(existingRoomId).emit('partner_reconnected', {
-                socketId: socket.id,
-                role: socket.role
-            });
-            return;
-        }
+        ...
     }
-    // --- END RECOVERY ---
+    */
+    console.log(`[Queue] Proceeding to search for partner for ${socket.id} (${socket.role})`);
     
     let partnerId = null;
     let foundPartner = false;
@@ -233,10 +198,16 @@ async function handleJoinQueue(io, socket) {
         for (let i = candidates.length - 1; i >= 0; i--) {
              const cId = candidates[i];
              const cSocket = io.sockets.sockets.get(cId);
-             if (!cSocket) continue;
+             if (!cSocket) {
+                 console.log(`[Queue Trace] Candidate ${cId} is offline. Skipping.`);
+                 continue;
+             }
 
-             const cIdentifier = cSocket.userEmail || `${cSocket.role}:${cSocket.userIp}`;
+             const cRole = cSocket.role || (targetQueue === QUEUE_MODELS ? 'model' : 'user');
+             const cIdentifier = (cSocket.userEmail || `${cRole}:${cSocket.userIp || 'unknown'}`).toLowerCase();
              const alreadySeen = await redis.get(`seen:${myIdentifier.toLowerCase()}:${cIdentifier.toLowerCase()}`);
+             
+             console.log(`[Queue Trace] Checking candidate ${cId} (${cIdentifier}). Seen: ${!!alreadySeen}`);
              
              if (!alreadySeen) {
                  console.log(`[Matching] Found candidate ${cId} (${cIdentifier}). Not seen yet.`);
