@@ -101,6 +101,7 @@
   "admin.pack.credits": "Krediter",
   "admin.pack.name": "Namn",
   "admin.pack.price": "Pris ($)",
+  "admin.pagination.page": "Sida {{current}} av {{total}}",
   "admin.payouts.approve": "Godkänn",
   "admin.payouts.approve_success": "Betalning godkänd och faktura skapad.",
   "admin.payouts.confirm_approve": "Godkänna denna betalning?",

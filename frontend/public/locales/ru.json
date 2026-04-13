@@ -101,6 +101,7 @@
   "admin.pack.credits": "Кредиты",
   "admin.pack.name": "Название",
   "admin.pack.price": "Цена ($)",
+  "admin.pagination.page": "Страница {{current}} из {{total}}",
   "admin.payouts.approve": "Одобрить",
   "admin.payouts.approve_success": "Платеж одобрен, счет сформирован.",
   "admin.payouts.confirm_approve": "Одобрить этот платеж?",

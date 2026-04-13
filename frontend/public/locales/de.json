@@ -101,6 +101,7 @@
   "admin.pack.credits": "Guthaben",
   "admin.pack.name": "Name",
   "admin.pack.price": "Preis ($)",
+  "admin.pagination.page": "Seite {{current}} von {{total}}",
   "admin.payouts.approve": "Genehmigen",
   "admin.payouts.approve_success": "Zahlung genehmigt und Rechnung erstellt.",
   "admin.payouts.confirm_approve": "Diese Zahlung genehmigen?",

@@ -101,6 +101,7 @@
   "admin.pack.credits": "Creditos",
   "admin.pack.name": "Nome",
   "admin.pack.price": "Preço ($)",
+  "admin.pagination.page": "Página {{current}} de {{total}}",
   "admin.payouts.approve": "Aprovar",
   "admin.payouts.approve_success": "Pagamento aprovado e fatura gerada.",
   "admin.payouts.confirm_approve": "Aprovar este pagamento?",

@@ -2,6 +2,7 @@ const express = require('express');
 const { getSettings, updateSettings } = require('./settings');
 const { getGlobalStats, getDailyStats, logNewModel } = require('./stats');
 const { generateInvoice } = require('./invoice_generator');
+const { query } = require('./db');
 const fs = require('fs');
 const path = require('path');
 
@@ -29,10 +30,6 @@ const ADMIN_PASS = 'admin123';
 const MOCK_TOKEN = 'secret-admin-token-xyz';
 
 // Admin Ping (Connectivity Check)
-router.get('/ping', (req, res) => {
-    res.json({ success: true, timestamp: Date.now() });
-});
-
 router.get('/ping', (req, res) => {
     res.json({ success: true, timestamp: Date.now() });
 });
@@ -109,20 +106,6 @@ router.post('/finances/marketing-expense', requireAuth, async (req, res) => {
     }
 });
 
-// Public Tracking Endpoint
-router.post('/stats/track-visit', async (req, res) => {
-    try {
-        const { src, camp, ad, type } = req.body;
-        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-        const { trackMarketingVisit } = require('./stats');
-        await trackMarketingVisit(type || 'user', src, camp, ad, ip);
-        res.json({ success: true });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'api.error.internal_server_error' });
-    }
-});
-
 // Admin Settings
 router.get('/settings', requireAuth, async (req, res) => {
     try {
@@ -144,11 +127,10 @@ router.post('/settings', requireAuth, async (req, res) => {
         res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });
-// Admin Blocklist (Chat Moderation)
+
+// Admin Blocklist
 router.get('/blocklist', requireAuth, async (req, res) => {
     try {
-        const { getRedisClient } = require('./redis');
-        const redis = getRedisClient();
         const keywords = await redis.smembers(BLOCKLIST_KEYWORDS);
         res.json(keywords);
     } catch (err) {
@@ -158,18 +140,13 @@ router.get('/blocklist', requireAuth, async (req, res) => {
 
 router.post('/blocklist', requireAuth, async (req, res) => {
     try {
-        const { getRedisClient } = require('./redis');
-        const redis = getRedisClient();
         const { action, keyword } = req.body;
-
         if (!keyword) return res.status(400).json({ error: 'Missing keyword' });
-
         if (action === 'add') {
             await redis.sadd(BLOCKLIST_KEYWORDS, keyword.toLowerCase().trim());
         } else if (action === 'remove') {
             await redis.srem(BLOCKLIST_KEYWORDS, keyword.toLowerCase().trim());
         }
-
         const keywords = await redis.smembers(BLOCKLIST_KEYWORDS);
         res.json(keywords);
     } catch (err) {
@@ -178,17 +155,26 @@ router.post('/blocklist', requireAuth, async (req, res) => {
 });
 
 
-// Admin Model Validations
+// Admin Model Validations (Pending)
 router.get('/elite/pending', requireAuth, async (req, res) => {
     try {
-        const { getRedisClient } = require('./redis');
-        const redis = getRedisClient();
-        const keys = await redis.keys('model:pending:*');
-        const models = [];
-        for (const key of keys) {
-            const data = await redis.get(key);
-            if (data) models.push(JSON.parse(data));
-        }
+        const modelRes = await query('SELECT * FROM models WHERE status = $1 ORDER BY registered_at DESC', ['pending']);
+        // Map to expected frontend format
+        const models = modelRes.rows.map(m => ({
+            id: m.id,
+            email: m.email,
+            firstName: m.first_name,
+            lastName: m.last_name,
+            pseudo: m.pseudo,
+            dob: m.dob,
+            country: m.country,
+            phone: m.phone,
+            photoProfile: m.photo_profile,
+            photoId: m.photo_id,
+            photoIdSelfie: m.photo_id_selfie,
+            registeredAt: m.registered_at,
+            marketing: { src: m.marketing_src, camp: m.marketing_camp, ad: m.marketing_ad }
+        }));
         res.json(models);
     } catch (err) {
         console.error(err);
@@ -196,49 +182,49 @@ router.get('/elite/pending', requireAuth, async (req, res) => {
     }
 });
 
-// Admin Users List
+// Admin Users List (With Pagination)
 router.get('/users', requireAuth, async (req, res) => {
     try {
-        const { getRedisClient } = require('./redis');
-        const redis = getRedisClient();
-        const keys = await redis.keys('user:active:*');
-        const users = [];
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 100;
+        const offset = (page - 1) * limit;
 
-        for (const key of keys) {
-            const email = key.replace('user:active:', '');
-            const data = await redis.get(key);
-            if (data) {
-                const u = JSON.parse(data);
-                const totalSpent = await redis.get(`user:${email}:total_spent`) || '0';
-                const lastLogin = await redis.get(`user:${email}:last_login`) || u.registeredAt;
-                const credits = await redis.get(`user:${email}:credits`) || '0';
+        const countRes = await query('SELECT COUNT(*) FROM users');
+        const total = parseInt(countRes.rows[0].count);
 
-                users.push({
-                    email,
-                    pseudo: u.pseudo,
-                    registeredAt: u.registeredAt,
-                    lastLogin,
-                    totalSpent: parseFloat(totalSpent),
-                    credits: parseFloat(credits),
-                    isBuyer: parseFloat(totalSpent) > 0 || parseFloat(credits) > 5,
-                    status: u.status || 'active'
-                });
-            }
-        }
-        res.json(users);
+        const userRes = await query(`
+            SELECT * FROM users 
+            ORDER BY registered_at DESC 
+            LIMIT $1 OFFSET $2
+        `, [limit, offset]);
+
+        const users = userRes.rows.map(u => ({
+            email: u.email,
+            pseudo: u.pseudo,
+            registeredAt: u.registered_at,
+            lastLogin: u.last_login || u.registered_at,
+            totalSpent: parseFloat(u.total_spent),
+            credits: parseFloat(u.credits),
+            isBuyer: parseFloat(u.total_spent) > 0 || parseFloat(u.credits) > 5,
+            status: u.status
+        }));
+
+        res.json({ users, total, page, totalPages: Math.ceil(total / limit) });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });
 
 router.post('/users/:email/credits', requireAuth, async (req, res) => {
     try {
-        const { getRedisClient } = require('./redis');
-        const redis = getRedisClient();
-        const email = req.params.email;
+        const email = req.params.email.toLowerCase();
         const { credits } = req.body;
         if (credits === undefined || credits < 0) return res.status(400).json({ error: 'admin.error.invalid_amount' });
-        await redis.set(`user:${email.toLowerCase()}:credits`, credits.toString());
+        
+        await query('UPDATE users SET credits = $1 WHERE email = $2', [credits, email]);
+        await redis.set(`user:${email}:credits`, credits.toString());
+        
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: 'api.error.internal_server_error' });
@@ -247,72 +233,67 @@ router.post('/users/:email/credits', requireAuth, async (req, res) => {
 
 router.post('/users/:email/toggle-status', requireAuth, async (req, res) => {
     try {
-        const { getRedisClient } = require('./redis');
-        const redis = getRedisClient();
         const email = req.params.email.toLowerCase();
-        const userData = await redis.get(`user:active:${email}`);
-        if (!userData) return res.status(404).json({ error: 'admin.error.user_not_found' });
+        const userRes = await query('SELECT status FROM users WHERE email = $1', [email]);
+        if (userRes.rows.length === 0) return res.status(404).json({ error: 'admin.error.user_not_found' });
 
-        const user = JSON.parse(userData);
-        user.status = user.status === 'disabled' ? 'active' : 'disabled';
-        await redis.set(`user:active:${email}`, JSON.stringify(user));
-        res.json({ success: true, status: user.status });
+        const currentStatus = userRes.rows[0].status;
+        const newStatus = currentStatus === 'disabled' ? 'active' : 'disabled';
+        
+        await query('UPDATE users SET status = $1 WHERE email = $2', [newStatus, email]);
+        res.json({ success: true, status: newStatus });
     } catch (err) {
         res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });
 
-// Admin Models List
+// Admin Models List (With Pagination)
 router.get('/elite', requireAuth, async (req, res) => {
     try {
-        const { getRedisClient } = require('./redis');
-        const redis = getRedisClient();
-        const keys = await redis.keys('model:active:*');
-        const models = [];
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 100;
+        const offset = (page - 1) * limit;
 
-        for (const key of keys) {
-            const email = key.replace('model:active:', '');
-            const data = await redis.get(key);
-            if (data) {
-                const m = JSON.parse(data);
-                const balance = await redis.get(`model:${email}:balance`) || '0';
-                const totalGains = await redis.get(`model:${email}:total_gains`) || '0';
-                const totalPayouts = await redis.get(`model:${email}:total_payouts`) || '0';
-                const lastLogin = await redis.get(`user:${email}:last_login`) || m.registeredAt; // Shared key pattern
+        const countRes = await query('SELECT COUNT(*) FROM models WHERE status != $1', ['pending']);
+        const total = parseInt(countRes.rows[0].count);
 
-                models.push({
-                    email,
-                    pseudo: m.pseudo || m.name || m.firstName,
-                    phone: m.phone,
-                    registeredAt: m.registeredAt,
-                    lastLogin,
-                    balance: parseFloat(balance),
-                    totalGains: parseFloat(totalGains),
-                    totalPayouts: parseFloat(totalPayouts),
-                    status: m.status || 'active'
-                });
-            }
-        }
-        res.json(models);
+        const modelRes = await query(`
+            SELECT * FROM models 
+            WHERE status != $1
+            ORDER BY registered_at DESC 
+            LIMIT $2 OFFSET $3
+        `, ['pending', limit, offset]);
+
+        const models = modelRes.rows.map(m => ({
+            email: m.email,
+            pseudo: m.pseudo || m.first_name,
+            phone: m.phone,
+            registeredAt: m.registered_at,
+            lastLogin: m.last_login || m.registered_at,
+            balance: parseFloat(m.balance),
+            totalGains: parseFloat(m.total_gains),
+            totalPayouts: parseFloat(m.total_payouts),
+            status: m.status
+        }));
+
+        res.json({ models, total, page, totalPages: Math.ceil(total / limit) });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });
 
 router.post('/elite/:email/payout', requireAuth, async (req, res) => {
     try {
-        const { getRedisClient } = require('./redis');
-        const redis = getRedisClient();
-        const email = req.params.email;
+        const email = req.params.email.toLowerCase();
         const { amount } = req.body;
-
         if (!amount || amount <= 0) return res.status(400).json({ error: 'admin.error.invalid_amount' });
 
         const balance = parseFloat(await redis.get(`model:${email}:balance`) || '0');
         if (amount > balance) return res.status(400).json({ error: 'admin.error.insufficient_balance' });
 
         await redis.incrbyfloat(`model:${email}:balance`, -amount);
-        await redis.incrbyfloat(`model:${email}:total_payouts`, amount);
+        await query('UPDATE models SET balance = balance - $1, total_payouts = total_payouts + $1 WHERE email = $2', [amount, email]);
 
         res.json({ success: true });
     } catch (err) {
@@ -322,29 +303,24 @@ router.post('/elite/:email/payout', requireAuth, async (req, res) => {
 
 router.post('/elite/:email/validate', requireAuth, async (req, res) => {
     try {
-        const { getRedisClient } = require('./redis');
-        const redis = getRedisClient();
-        const email = req.params.email;
-        const data = await redis.get(`model:pending:${email}`);
-        if (!data) return res.status(404).json({ error: 'api.error.not_found' });
+        const email = req.params.email.toLowerCase();
+        const modelRes = await query('SELECT * FROM models WHERE email = $1', [email]);
+        if (modelRes.rows.length === 0) return res.status(404).json({ error: 'api.error.not_found' });
 
-        const model = JSON.parse(data);
-        model.validatedAt = new Date().toISOString();
-
-        await redis.set(`model:active:${email}`, JSON.stringify(model));
-        await redis.del(`model:pending:${email}`);
+        const model = modelRes.rows[0];
+        await query('UPDATE models SET status = $1, validated_at = CURRENT_TIMESTAMP WHERE email = $2', ['active', email]);
+        
         await logNewModel();
         
         // Track marketing validation
         const { trackModelValidation } = require('./stats');
-        const { src, camp, ad } = model.marketing || {};
-        await trackModelValidation(src, camp, ad);
+        await trackModelValidation(model.marketing_src, model.marketing_camp, model.marketing_ad);
 
-        // Real Email Notification via Brevo
+        // Real Email Notification
         const { sendWelcomeEmail } = require('./mail');
-        await sendWelcomeEmail(email, model.pseudo || model.firstName, model.lang || 'en', {
-            FIRSTNAME: model.firstName,
-            LASTNAME: model.lastName,
+        await sendWelcomeEmail(email, model.pseudo || model.first_name, model.lang || 'en', {
+            FIRSTNAME: model.first_name,
+            LASTNAME: model.last_name,
             COUNTRY: model.country,
             SMS: model.phone,
             PSEUDO: model.pseudo
@@ -352,16 +328,15 @@ router.post('/elite/:email/validate', requireAuth, async (req, res) => {
 
         res.json({ success: true });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });
 
 router.post('/elite/:email/reject', requireAuth, async (req, res) => {
     try {
-        const { getRedisClient } = require('./redis');
-        const redis = getRedisClient();
-        const email = req.params.email;
-        await redis.del(`model:pending:${email}`);
+        const email = req.params.email.toLowerCase();
+        await query('DELETE FROM models WHERE email = $1 AND status = $2', [email, 'pending']);
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: 'api.error.internal_server_error' });
@@ -370,27 +345,39 @@ router.post('/elite/:email/reject', requireAuth, async (req, res) => {
 
 router.post('/elite/:email/reset-balance', requireAuth, async (req, res) => {
     try {
-        const { getRedisClient } = require('./redis');
-        const redis = getRedisClient();
-        const email = req.params.email;
+        const email = req.params.email.toLowerCase();
         const { amount } = req.body;
         if (amount === undefined || amount < 0) return res.status(400).json({ error: 'admin.error.invalid_amount' });
-        await redis.set(`model:${email.toLowerCase()}:balance`, amount.toString());
+        
+        await query('UPDATE models SET balance = $1 WHERE email = $2', [amount, email]);
+        await redis.set(`model:${email}:balance`, amount.toString());
+        
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });
 
-// Admin Payouts List
+// Admin Payouts List (Pending)
 router.get('/payouts/pending', requireAuth, async (req, res) => {
     try {
-        const { getRedisClient } = require('./redis');
-        const redis = getRedisClient();
-        const payouts = await redis.hgetall('payouts:pending');
-        const list = Object.values(payouts).map(p => JSON.parse(p));
+        const payoutRes = await query('SELECT * FROM payouts WHERE status = $1 ORDER BY created_at DESC', ['pending']);
+        // Compatibility with frontend format (requires billing_info)
+        const list = [];
+        for (const p of payoutRes.rows) {
+            const modelRes = await query('SELECT billing_info FROM models WHERE email = $1', [p.model_email]);
+            list.push({
+                id: p.id,
+                modelEmail: p.model_email,
+                amount: parseFloat(p.amount),
+                status: p.status,
+                billingInfo: modelRes.rows[0]?.billing_info || {},
+                createdAt: p.created_at
+            });
+        }
         res.json(list);
     } catch (err) {
+        console.error(err);
         res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });
@@ -398,18 +385,19 @@ router.get('/payouts/pending', requireAuth, async (req, res) => {
 // Admin Payout History List
 router.get('/payouts/history', requireAuth, async (req, res) => {
     try {
-        const { getRedisClient } = require('./redis');
-        const redis = getRedisClient();
-        const keys = await redis.keys('payout:history:*');
-        const list = [];
-        for (const key of keys) {
-            const data = await redis.get(key);
-            if (data) list.push(JSON.parse(data));
-        }
-        // Sort by processed date desc
-        list.sort((a, b) => (b.processedAt || 0) - (a.processedAt || 0));
-        res.json(list);
+        const payoutRes = await query('SELECT * FROM payouts WHERE status != $1 ORDER BY processed_at DESC NULLS LAST, created_at DESC', ['pending']);
+        res.json(payoutRes.rows.map(p => ({
+            id: p.id,
+            modelEmail: p.model_email,
+            amount: parseFloat(p.amount),
+            status: p.status,
+            invoiceNumber: p.invoice_number,
+            invoiceFile: p.invoice_file,
+            processedAt: p.processed_at,
+            createdAt: p.created_at
+        })));
     } catch (err) {
+        console.error(err);
         res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });
@@ -417,22 +405,18 @@ router.get('/payouts/history', requireAuth, async (req, res) => {
 // Admin Payout Approve (Mark as Paid)
 router.post('/payouts/:id/approve', requireAuth, async (req, res) => {
     try {
-        const { getRedisClient } = require('./redis');
-        const redis = getRedisClient();
         const id = req.params.id;
-        const data = await redis.hget('payouts:pending', id);
-        if (!data) return res.status(404).json({ error: 'api.error.not_found' });
+        const payoutRes = await query('SELECT * FROM payouts WHERE id = $1', [id]);
+        if (payoutRes.rows.length === 0) return res.status(404).json({ error: 'api.error.not_found' });
 
-        const payout = JSON.parse(data);
-        payout.status = 'paid';
-        payout.processedAt = Date.now();
+        const payout = payoutRes.rows[0];
+        const email = payout.model_email.toLowerCase();
+        
+        // Fetch billing info
+        const modelRes = await query('SELECT billing_info FROM models WHERE email = $1', [email]);
+        const billingInfo = modelRes.rows[0]?.billing_info || {};
 
-        // Fetch billing info for the invoice
-        const billingData = await redis.get(`model:${payout.modelEmail}:billing_info`);
-        const billingInfo = billingData ? JSON.parse(billingData) : {};
-
-        // 1. Get or Generate Model Numeric ID
-        const email = payout.modelEmail.toLowerCase();
+        // 1. Get or Generate Model Numeric ID (Use Redis for counters to avoid gaps)
         let modelNumericId = await redis.get(`model:${email}:numeric_id`);
         if (!modelNumericId) {
             const nextId = await redis.incr('models:global_id_counter');
@@ -444,95 +428,50 @@ router.post('/payouts/:id/approve', requireAuth, async (req, res) => {
         const invoiceSeq = await redis.incr('invoices:global_sequence');
         const year = new Date().getFullYear();
         const invoiceNumber = `PAY-${year}-${modelNumericId}-${String(invoiceSeq).padStart(3, '0')}`;
-        
-        payout.invoiceNumber = invoiceNumber;
 
-        // GENERATE INVOICE - Essential step
+        // Prepare object for generateInvoice (compat format)
+        const payoutCompat = {
+            id: payout.id,
+            modelEmail: email,
+            amount: parseFloat(payout.amount),
+            invoiceNumber
+        };
+
+        // GENERATE INVOICE
+        let invoiceFile;
         try {
-            const invoiceFile = await generateInvoice(payout, billingInfo);
-            if (!invoiceFile) throw new Error('Invoice file name is empty');
-            payout.invoiceFile = invoiceFile;
+            invoiceFile = await generateInvoice(payoutCompat, billingInfo);
+            if (!invoiceFile) throw new Error('Invoice file generation failed');
         } catch (pdfErr) {
             console.error('[Invoice Generation Critical Error]', pdfErr);
-            return res.status(500).json({ error: 'Failed to generate invoice PDF. Payout not processed.' });
+            return res.status(500).json({ error: 'Failed to generate invoice PDF.' });
         }
 
-        // Only move to history if invoice succeeded
-        await redis.hdel('payouts:pending', id);
-        await redis.set(`payout:history:${id}`, JSON.stringify(payout));
-        await redis.incrbyfloat(`model:${payout.modelEmail}:total_payouts`, payout.amount);
+        // Update SQL
+        await query(`
+            UPDATE payouts SET 
+                status = $1, processed_at = CURRENT_TIMESTAMP, invoice_number = $2, invoice_file = $3
+            WHERE id = $4
+        `, ['paid', invoiceNumber, invoiceFile, id]);
 
-        res.json({ success: true, invoiceFile: payout.invoiceFile });
+        res.json({ success: true, invoiceFile });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ error: 'api.error.internal_server_error' });
-    }
-});
-
-// Admin Payout Reject (Refund to Balance)
-router.post('/payouts/:id/reject', requireAuth, async (req, res) => {
-    try {
-        const { getRedisClient } = require('./redis');
-        const redis = getRedisClient();
-        const id = req.params.id;
-        const data = await redis.hget('payouts:pending', id);
-        if (!data) return res.status(404).json({ error: 'api.error.not_found' });
-
-        const payout = JSON.parse(data);
-        payout.status = 'rejected';
-        payout.processedAt = Date.now();
-
-        await redis.hdel('payouts:pending', id);
-        await redis.set(`payout:history:${id}`, JSON.stringify(payout));
-        
-        // Refund to model balance
-        await redis.incrbyfloat(`model:${payout.modelEmail}:balance`, payout.amount);
-
-        res.json({ success: true });
-    } catch (err) {
-        res.status(500).json({ error: 'api.error.internal_server_error' });
-    }
-});
-
-// Admin Download Invoice
-router.get('/payouts/invoice/:id', requireAuth, async (req, res) => {
-    try {
-        const { getRedisClient } = require('./redis');
-        const redis = getRedisClient();
-        const id = req.params.id;
-        
-        const data = await redis.get(`payout:history:${id}`);
-        if (!data) return res.status(404).send('Invoice not found');
-        
-        const payout = JSON.parse(data);
-        if (!payout.invoiceFile) return res.status(404).send('Invoice file not generated');
-        
-        const filePath = path.join('/tmp/lively_invoices', payout.invoiceFile);
-        if (fs.existsSync(filePath)) {
-            res.download(filePath);
-        } else {
-            res.status(404).send('File missing on server');
-        }
-    } catch (err) {
-        res.status(500).send('Error downloading invoice');
     }
 });
 
 // Admin Maintenance: Reset Database
 router.post('/maintenance/reset', requireAuth, async (req, res) => {
     try {
-        const { getRedisClient } = require('./redis');
         const { initSettings } = require('./settings');
-        const redis = getRedisClient();
-
-        console.log('[Maintenance] Full database reset requested via Admin.');
+        console.log('[Maintenance] Hybrid database reset requested.');
 
         await redis.flushall();
         await initSettings();
-
-        // Reset basic counters
-        await redis.set('global:total_users', '0');
-        await redis.set('global:total_models', '0');
-        await redis.set('global:total_clients', '0');
+        
+        // Reset SQL Tables (CAUTION)
+        await query('TRUNCATE TABLE payouts, users, models RESTART IDENTITY CASCADE');
 
         res.json({ success: true, message: 'admin.success.db_reset' });
     } catch (err) {
@@ -544,8 +483,6 @@ router.post('/maintenance/reset', requireAuth, async (req, res) => {
 router.get('/realtime', requireAuth, async (req, res) => {
     try {
         const sockets = await io.fetchSockets();
-        
-        // 1. Basic Stats
         const modelsOnline = sockets.filter(s => s.role === 'model').length;
         const usersOnline = sockets.filter(s => s.role === 'user').length;
         const rooms = await redis.hgetall('billing:active_rooms');
@@ -563,51 +500,22 @@ router.get('/realtime', requireAuth, async (req, res) => {
             });
         }
 
-        // 2. Queue Status (IDs from Redis)
         const waitingModelsIds = await redis.lrange(QUEUE_MODELS, 0, -1);
         const waitingUsersIds = await redis.lrange(QUEUE_USERS, 0, -1);
-
-        // 3. Detailed Queue Info
-        const queueDetails = {
-            models: [],
-            users: []
-        };
+        const queueDetails = { models: [], users: [] };
 
         for (const id of waitingModelsIds) {
             const s = sockets.find(s => s.id === id);
-            if (s) {
-                queueDetails.models.push({
-                    id,
-                    name: s.modelName || 'Model',
-                    email: s.userEmail
-                });
-            }
+            if (s) queueDetails.models.push({ id, name: s.modelName || 'Model', email: s.userEmail });
         }
-
         for (const id of waitingUsersIds) {
             const s = sockets.find(s => s.id === id);
-            if (s) {
-                queueDetails.users.push({
-                    id,
-                    type: s.userEmail ? 'registered' : 'guest',
-                    name: s.userName || (s.userEmail ? s.userEmail.split('@')[0] : 'Guest'),
-                    ip: s.userIp
-                });
-            }
+            if (s) queueDetails.users.push({ id, type: s.userEmail ? 'registered' : 'guest', name: s.userName || 'Guest', ip: s.userIp });
         }
 
         res.json({
-            online: {
-                totalModels: modelsOnline,
-                totalUsers: usersOnline,
-                activeCalls: activeCallsCount,
-                roomDetails
-            },
-            queue: {
-                modelsCount: queueDetails.models.length,
-                usersCount: queueDetails.users.length,
-                details: queueDetails
-            },
+            online: { totalModels: modelsOnline, totalUsers: usersOnline, activeCalls: activeCallsCount, roomDetails },
+            queue: { modelsCount: queueDetails.models.length, usersCount: queueDetails.users.length, details: queueDetails },
             timestamp: Date.now()
         });
     } catch (err) {
@@ -618,16 +526,14 @@ router.get('/realtime', requireAuth, async (req, res) => {
 
 router.post('/elite/:email/toggle-status', requireAuth, async (req, res) => {
     try {
-        const { getRedisClient } = require('./redis');
-        const redis = getRedisClient();
         const email = req.params.email.toLowerCase();
-        const modelData = await redis.get(`model:active:${email}`);
-        if (!modelData) return res.status(404).json({ error: 'admin.error.model_not_found' });
+        const modelRes = await query('SELECT status FROM models WHERE email = $1', [email]);
+        if (modelRes.rows.length === 0) return res.status(404).json({ error: 'admin.error.model_not_found' });
 
-        const model = JSON.parse(modelData);
-        model.status = model.status === 'disabled' ? 'active' : 'disabled';
-        await redis.set(`model:active:${email}`, JSON.stringify(model));
-        res.json({ success: true, status: model.status });
+        const currentStatus = modelRes.rows[0].status;
+        const newStatus = currentStatus === 'disabled' ? 'active' : 'disabled';
+        await query('UPDATE models SET status = $1 WHERE email = $2', [newStatus, email]);
+        res.json({ success: true, status: newStatus });
     } catch (err) {
         res.status(500).json({ error: 'api.error.internal_server_error' });
     }

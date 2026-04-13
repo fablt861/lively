@@ -101,6 +101,7 @@
   "admin.pack.credits": "Krediitit",
   "admin.pack.name": "Nimi",
   "admin.pack.price": "Hinta ($)",
+  "admin.pagination.page": "Sivu {{current}} / {{total}}",
   "admin.payouts.approve": "Hyväksy",
   "admin.payouts.approve_success": "Maksu hyväksytty ja lasku luotu.",
   "admin.payouts.confirm_approve": "Hyväksytäänkö tämä maksu?",

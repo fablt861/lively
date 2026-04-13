@@ -35,6 +35,10 @@ export default function AdminPage() {
     const [userFilter, setUserFilter] = useState<'all' | 'buyers'>('all');
     const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking');
     const [fetchError, setFetchError] = useState<string | null>(null);
+    const [userPage, setUserPage] = useState(1);
+    const [userTotalPages, setUserTotalPages] = useState(1);
+    const [modelPage, setModelPage] = useState(1);
+    const [modelTotalPages, setModelTotalPages] = useState(1);
     const [selectedImage, setSelectedImage] = useState<{ images: string[], index: number } | null>(null);
     const [blockedKeywords, setBlockedKeywords] = useState<string[]>([]);
     const [newKeyword, setNewKeyword] = useState("");
@@ -69,11 +73,16 @@ export default function AdminPage() {
 
     const fetchUsers = async () => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/users`, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/users?page=${userPage}&limit=100`, { headers: { Authorization: `Bearer ${token}` } });
             if (!res.ok) throw new Error(`Server returned ${res.status}`);
             const data = await res.json();
-            if (Array.isArray(data)) {
+            if (data && Array.isArray(data.users)) {
+                setUsers(data.users);
+                setUserTotalPages(data.totalPages || 1);
+                setFetchError(null);
+            } else if (Array.isArray(data)) {
                 setUsers(data);
+                setUserTotalPages(1);
                 setFetchError(null);
             } else {
                 throw new Error("Invalid data format received.");
@@ -86,11 +95,16 @@ export default function AdminPage() {
 
     const fetchModels = async () => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite`, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite?page=${modelPage}&limit=50`, { headers: { Authorization: `Bearer ${token}` } });
             if (!res.ok) throw new Error(`Server returned ${res.status}`);
             const data = await res.json();
-            if (Array.isArray(data)) {
+            if (data && Array.isArray(data.models)) {
+                setModels(data.models);
+                setModelTotalPages(data.totalPages || 1);
+                setFetchError(null);
+            } else if (Array.isArray(data)) {
                 setModels(data);
+                setModelTotalPages(1);
                 setFetchError(null);
             } else {
                 throw new Error("Invalid data format received.");
@@ -279,7 +293,7 @@ export default function AdminPage() {
                 .then(res => res.json())
                 .then(setPendingModels);
         }
-    }, [isLogged, token, activeTab]);
+    }, [isLogged, token, activeTab, userPage, modelPage]);
 
     const saveSettings = async () => {
         try {
@@ -1048,6 +1062,29 @@ export default function AdminPage() {
                                 </tbody>
                             </table>
                         </div>
+
+                        {/* Pagination for Users */}
+                        <div className="flex items-center justify-between bg-neutral-900 border border-white/5 border-t-0 p-4 rounded-b-3xl">
+                            <div className="text-sm text-neutral-500">
+                                {t('admin.pagination.page', { current: userPage, total: userTotalPages })}
+                            </div>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => setUserPage(p => Math.max(1, p - 1))}
+                                    disabled={userPage === 1}
+                                    className="p-2 bg-white/5 hover:bg-white/10 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                >
+                                    <ChevronLeft size={20} />
+                                </button>
+                                <button
+                                    onClick={() => setUserPage(p => Math.min(userTotalPages, p + 1))}
+                                    disabled={userPage === userTotalPages}
+                                    className="p-2 bg-white/5 hover:bg-white/10 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                >
+                                    <ChevronRight size={20} />
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 )}
 
@@ -1147,6 +1184,29 @@ export default function AdminPage() {
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
+
+                        {/* Pagination for Models */}
+                        <div className="flex items-center justify-between bg-neutral-900 border border-white/5 border-t-0 p-4 rounded-b-3xl">
+                            <div className="text-sm text-neutral-500">
+                                {t('admin.pagination.page', { current: modelPage, total: modelTotalPages })}
+                            </div>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => setModelPage(p => Math.max(1, p - 1))}
+                                    disabled={modelPage === 1}
+                                    className="p-2 bg-white/5 hover:bg-white/10 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                >
+                                    <ChevronLeft size={20} />
+                                </button>
+                                <button
+                                    onClick={() => setModelPage(p => Math.min(modelTotalPages, p + 1))}
+                                    disabled={modelPage === modelTotalPages}
+                                    className="p-2 bg-white/5 hover:bg-white/10 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                >
+                                    <ChevronRight size={20} />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}

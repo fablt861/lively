@@ -101,6 +101,7 @@
   "admin.pack.credits": "Credite",
   "admin.pack.name": "Nume",
   "admin.pack.price": "Preț ($)",
+  "admin.pagination.page": "Pagina {{current}} din {{total}}",
   "admin.payouts.approve": "Aprobă",
   "admin.payouts.approve_success": "Plată aprobată și factură generată.",
   "admin.payouts.confirm_approve": "Aprobați această plată ?",

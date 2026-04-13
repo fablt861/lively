@@ -1,43 +1,55 @@
-const Redis = require('ioredis');
-const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
-
-function getTodayKey() {
-    const d = new Date();
-    return `stats:${d.toISOString().split('T')[0]}`;
-}
+const { query } = require('./db');
+const { getRedisClient } = require('./redis');
+const redis = getRedisClient();
 
 async function logNewUser() {
-    await redis.hincrby(getTodayKey(), 'new_users', 1);
-    await redis.incr('global:total_users');
+    // Increment persistent SQL count via INSERT (done in auth.js)
+    // We can also increment a daily counter in Redis for fast access
+    const today = new Date().toISOString().split('T')[0];
+    await redis.hincrby(`stats:${today}`, 'new_users', 1);
 }
 
 async function logNewModel() {
-    await redis.incr('global:total_models');
+    const today = new Date().toISOString().split('T')[0];
+    await redis.hincrby(`stats:${today}`, 'new_models', 1);
 }
 
 async function logNewClient() {
-    await redis.hincrby(getTodayKey(), 'new_clients', 1);
-    await redis.incr('global:total_clients');
+    const today = new Date().toISOString().split('T')[0];
+    await redis.hincrby(`stats:${today}`, 'new_clients', 1);
 }
 
 async function logRevenue(usd) {
-    await redis.hincrbyfloat(getTodayKey(), 'revenue_usd', usd);
+    const today = new Date().toISOString().split('T')[0];
+    await redis.hincrbyfloat(`stats:${today}`, 'revenue_usd', usd);
 }
 
 async function logPurchase(usd) {
-    await redis.hincrbyfloat(getTodayKey(), 'purchases_usd', usd);
+    const today = new Date().toISOString().split('T')[0];
+    await redis.hincrbyfloat(`stats:${today}`, 'purchases_usd', usd);
 }
 
 async function logModelPayout(usd) {
-    await redis.hincrbyfloat(getTodayKey(), 'model_payout_usd', usd);
+    const today = new Date().toISOString().split('T')[0];
+    await redis.hincrbyfloat(`stats:${today}`, 'model_payout_usd', usd);
 }
 
 async function getGlobalStats() {
-    return {
-        totalUsers: parseInt(await redis.get('global:total_users') || '0'),
-        totalModels: parseInt(await redis.get('global:total_models') || '0'),
-        totalClients: parseInt(await redis.get('global:total_clients') || '0'),
-    };
+    try {
+        const res = await query(`
+            SELECT 
+                (SELECT COUNT(*) FROM users) as users,
+                (SELECT COUNT(*) FROM models WHERE status != 'pending') as models
+        `);
+        return {
+            totalUsers: parseInt(res.rows[0].users),
+            totalModels: parseInt(res.rows[0].models),
+            totalClients: 0 // Will implement client tracking in SQL later
+        };
+    } catch (err) {
+        console.error('Error getting global stats:', err);
+        return { totalUsers: 0, totalModels: 0, totalClients: 0 };
+    }
 }
 
 async function getDailyStats(daysBack = 30) {
@@ -49,14 +61,13 @@ async function getDailyStats(daysBack = 30) {
         const key = `stats:${dateStr}`;
         const data = await redis.hgetall(key);
 
-        // Only include if there is data (or we can return 0s)
         results.push({
             date: dateStr,
             newUsers: parseInt(data.new_users || '0'),
             newClients: parseInt(data.new_clients || '0'),
-            revenue: parseFloat(data.revenue_usd || '0'),
+            revenue: parseFloat(data.purchases_usd || '0'), // Switched to sales volume
             modelPayout: parseFloat(data.model_payout_usd || '0'),
-            profit: parseFloat(data.revenue_usd || '0') - parseFloat(data.model_payout_usd || '0')
+            profit: parseFloat(data.purchases_usd || '0') - parseFloat(data.model_payout_usd || '0')
         });
     }
     return results;
@@ -102,6 +113,10 @@ async function trackModelValidation(src, camp, ad) {
 }
 
 async function getMarketingStats(type) {
+    // For extreme scale, we could query the SQL tables directly:
+    // SELECT marketing_src, marketing_camp, marketing_ad, COUNT(*) FROM users GROUP BY ...
+    // But historical visits IPs are better kept in Redis or a dedicated events table.
+    // For now, continue using Redis for marketing counters but we know the Truth is in SQL signups.
     const role = type === 'model' ? 'models' : 'users';
     const keys = await redis.smembers(`marketing:${role}:active_keys`);
     const results = [];
@@ -128,11 +143,12 @@ async function getMarketingStats(type) {
 }
 
 async function getFinancialStats() {
-    // 1. Get all daily stats keys
+    // Historical financial stats in Redis are combined with SQL-powered insights if needed.
+    // At 4M users, we should summarize financial transactions into a daily_finances table.
+    // For now, keep the aggregation logic but ensure it uses the Redis client correctly.
     const rawKeys = await redis.keys('stats:????-??-??');
-    const sortedKeys = rawKeys.sort(); // Chronological
+    const sortedKeys = rawKeys.sort();
     
-    // 2. Get all marketing expenses
     const expKeys = await redis.keys('finances:marketing_expenses:????-??');
     const expenses = {};
     for (const k of expKeys) {
@@ -140,22 +156,21 @@ async function getFinancialStats() {
         expenses[m] = parseFloat(await redis.get(k) || '0');
     }
     
-    const monthlyGroups = {}; // { '2026-04': { ttc: 0, gains: 0 } }
+    const monthlyGroups = {};
     
     for (const key of sortedKeys) {
         const data = await redis.hgetall(key);
-        const month = key.split(':')[1].substring(0, 7); // '2026-04'
+        const parts = key.split(':');
+        if (parts.length < 2) continue;
+        const month = parts[1].substring(0, 7);
         
         if (!monthlyGroups[month]) {
             monthlyGroups[month] = { ttc: 0, gains: 0 };
         }
         
-        // Use purchases_usd (Sales) as primary, fallback to historical revenue_usd (Consumption)
         const purchases = parseFloat(data.purchases_usd || '0');
         const consumption = parseFloat(data.revenue_usd || '0');
         
-        // If it's a historical month where we didn't have purchases_usd yet, 
-        // we use consumption as a proxy for TTC Revenue.
         monthlyGroups[month].ttc += purchases > 0 ? purchases : consumption;
         monthlyGroups[month].gains += parseFloat(data.model_payout_usd || '0');
     }

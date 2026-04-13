@@ -101,6 +101,7 @@
   "admin.pack.credits": "Кредити",
   "admin.pack.name": "Назва",
   "admin.pack.price": "Ціна ($)",
+  "admin.pagination.page": "Сторінка {{current}} з {{total}}",
   "admin.payouts.approve": "Схвалити та позначити як оплачено",
   "admin.payouts.approve_success": "Виплату схвалено, інвойс успішно згенерований.",
   "admin.payouts.confirm_approve": "Підтвердити, що цю виплату було оброблено та оплачено?",

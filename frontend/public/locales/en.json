@@ -101,6 +101,7 @@
   "admin.pack.credits": "Credits",
   "admin.pack.name": "Name",
   "admin.pack.price": "Price ($)",
+  "admin.pagination.page": "Page {{current}} of {{total}}",
   "admin.payouts.approve": "Approve & Mark Paid",
   "admin.payouts.approve_success": "Payout approved and invoice generated successfully.",
   "admin.payouts.confirm_approve": "Confirm that this payout has been processed and paid?",

@@ -101,6 +101,7 @@
   "admin.pack.credits": "Credits",
   "admin.pack.name": "Naam",
   "admin.pack.price": "Prijs ($)",
+  "admin.pagination.page": "Pagina {{current}} van {{total}}",
   "admin.payouts.approve": "Goedkeuren",
   "admin.payouts.approve_success": "Betaling goedgekeurd en factuur gegenereerd.",
   "admin.payouts.confirm_approve": "Deze betaling goedkeuren?",

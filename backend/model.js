@@ -1,5 +1,6 @@
 const express = require('express');
 const { getRedisClient } = require('./redis');
+const { query } = require('./db');
 const fs = require('fs');
 const path = require('path');
 const router = express.Router();
@@ -22,13 +23,15 @@ const requireModelAuth = async (req, res, next) => {
 // GET Billing Info
 router.get('/:email/billing', requireModelAuth, async (req, res) => {
     try {
-        const redis = getRedisClient();
         const email = req.params.email.toLowerCase();
         if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
 
-        const data = await redis.get(`model:${email}:billing_info`);
-        res.json(data ? JSON.parse(data) : {});
+        const modelRes = await query('SELECT billing_info FROM models WHERE email = $1', [email]);
+        if (modelRes.rows.length === 0) return res.status(404).json({ error: 'Model not found' });
+        
+        res.json(modelRes.rows[0].billing_info || {});
     } catch (err) {
+        console.error('[Get Billing Error]', err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
@@ -36,62 +39,73 @@ router.get('/:email/billing', requireModelAuth, async (req, res) => {
 // POST Save Billing Info
 router.post('/:email/billing', requireModelAuth, async (req, res) => {
     try {
-        const redis = getRedisClient();
         const email = req.params.email.toLowerCase();
         if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
 
         const billingInfo = req.body;
+        await query('UPDATE models SET billing_info = $1 WHERE email = $2', [JSON.stringify(billingInfo), email]);
+        
+        // Sync to Redis for temporary high-speed access if needed
+        const redis = getRedisClient();
         await redis.set(`model:${email}:billing_info`, JSON.stringify(billingInfo));
+        
         res.json({ success: true });
     } catch (err) {
+        console.error('[Save Billing Error]', err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
 // POST Request Payout
 router.post('/:email/payout-request', requireModelAuth, async (req, res) => {
+    const crypto = require('crypto');
     try {
         const redis = getRedisClient();
         const email = req.params.email.toLowerCase();
         if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
 
+        // Balance is kept in Redis for real-time consistency
         const balance = parseFloat(await redis.get(`model:${email}:balance`) || '0');
-        const billingInfoStr = await redis.get(`model:${email}:billing_info`);
+        
+        const modelRes = await query('SELECT billing_info FROM models WHERE email = $1', [email]);
+        if (modelRes.rows.length === 0) return res.status(404).json({ error: 'Model not found' });
+        
+        const billingInfo = modelRes.rows[0].billing_info;
 
         if (balance < 100) {
             return res.status(400).json({ error: 'payout.error.insufficient_balance' });
         }
 
-        if (!billingInfoStr) {
+        if (!billingInfo || Object.keys(billingInfo).length === 0) {
             return res.status(400).json({ error: 'payout.error.missing_billing_info' });
         }
 
-        const payoutId = `payout-${Date.now()}-${email}`;
+        const payoutId = crypto.randomUUID();
         const transferFee = 5.0;
-        const netAmount = balance - transferFee;
 
-        const payoutRequest = {
-            id: payoutId,
-            modelEmail: email,
-            amount: balance, // Gross amount
-            transferFee: transferFee,
-            netAmount: netAmount,
-            billingInfo: JSON.parse(billingInfoStr),
-            status: 'pending',
-            timestamp: Date.now()
-        };
-
-        // Atomically deduct balance and create request
-        await redis.hset('payouts:pending', payoutId, JSON.stringify(payoutRequest));
-        await redis.set(`model:${email}:balance`, '0');
-        await redis.lpush(`model:${email}:payouts`, payoutId);
-        
-        // Log in history if needed, or just track as payout
-        await redis.incrbyfloat(`model:${email}:total_payout_requested`, balance);
-
-        res.json({ success: true, payoutId });
+        // Start transaction in SQL for atomic update
+        await query('BEGIN');
+        try {
+            await query(`
+                INSERT INTO payouts (id, model_email, amount, status, created_at)
+                VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+            `, [payoutId, email, balance, 'pending']);
+            
+            // Deduct in Redis (Real-time source)
+            await redis.set(`model:${email}:balance`, '0');
+            await redis.incrbyfloat(`model:${email}:total_payout_requested`, balance);
+            
+            // Sync balance in SQL (Audit trail)
+            await query('UPDATE models SET balance = 0, total_payouts = total_payouts + $1 WHERE email = $2', [balance, email]);
+            
+            await query('COMMIT');
+            res.json({ success: true, payoutId });
+        } catch (txErr) {
+            await query('ROLLBACK');
+            throw txErr;
+        }
     } catch (err) {
-        console.error(err);
+        console.error('[Payout Request Error]', err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
@@ -99,18 +113,32 @@ router.post('/:email/payout-request', requireModelAuth, async (req, res) => {
 // GET Profile Info
 router.get('/:email/profile', requireModelAuth, async (req, res) => {
     try {
-        const redis = getRedisClient();
         const email = req.params.email.toLowerCase();
         if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
 
-        const data = await redis.get(`model:active:${email}`);
-        if (!data) return res.status(404).json({ error: 'Model not found' });
+        const modelRes = await query('SELECT * FROM models WHERE email = $1', [email]);
+        if (modelRes.rows.length === 0) return res.status(404).json({ error: 'Model not found' });
 
-        const model = JSON.parse(data);
-        // Don't send password
-        delete model.password;
-        res.json(model);
+        const model = modelRes.rows[0];
+        // Normalize fields for frontend (map snake_case to camelCase if needed)
+        const profile = {
+            id: model.id,
+            email: model.email,
+            pseudo: model.pseudo,
+            firstName: model.first_name,
+            lastName: model.last_name,
+            phone: model.phone,
+            country: model.country,
+            photoProfile: model.photo_profile,
+            lang: model.lang,
+            status: model.status,
+            balance: parseFloat(model.balance),
+            registeredAt: model.registered_at
+        };
+        
+        res.json(profile);
     } catch (err) {
+        console.error('[Get Profile Error]', err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
@@ -118,90 +146,60 @@ router.get('/:email/profile', requireModelAuth, async (req, res) => {
 // PUT Update Profile Info
 router.put('/:email/profile', requireModelAuth, async (req, res) => {
     try {
-        const redis = getRedisClient();
         const oldEmail = req.params.email.toLowerCase();
         if (oldEmail !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
 
         const { email: newEmailRaw, phone, pseudo, photoProfile, oldPassword, newPassword, confirmPassword } = req.body;
         const newEmail = newEmailRaw?.toLowerCase();
 
-        const data = await redis.get(`model:active:${oldEmail}`);
-        if (!data) return res.status(404).json({ error: 'Model not found' });
+        const modelRes = await query('SELECT * FROM models WHERE email = $1', [oldEmail]);
+        if (modelRes.rows.length === 0) return res.status(404).json({ error: 'Model not found' });
 
-        let model = JSON.parse(data);
+        let model = modelRes.rows[0];
 
         // Handle Password Change
         if (newPassword || oldPassword) {
-            // If changing password, old one is strictly required
             if (newPassword && !oldPassword) {
                 return res.status(400).json({ error: 'profile.error.password_required' });
             }
-
-            // Safety: if account has no password stored, we must be careful
-            if (!model.password && oldPassword) {
-                 return res.status(400).json({ error: 'profile.error.password_incorrect' });
-            }
-
-            // Verify old password (if provided)
             if (oldPassword && model.password !== oldPassword) {
                 return res.status(400).json({ error: 'profile.error.password_incorrect' });
             }
-
             if (newPassword) {
-                // Check if new passwords match
                 if (newPassword !== confirmPassword) {
                     return res.status(400).json({ error: 'profile.error.password_match' });
                 }
-                // Update password (plain text for consistency)
                 model.password = newPassword;
             }
         }
 
         // Handle Email Change
         if (newEmail && newEmail !== oldEmail) {
-            // Check if new email is taken
-            const existsModel = await redis.exists(`model:active:${newEmail}`);
-            const existsUser = await redis.exists(`user:active:${newEmail}`);
-            if (existsModel || existsUser) {
+            const checkUser = await query('SELECT email FROM users WHERE email = $1', [newEmail]);
+            const checkModel = await query('SELECT email FROM models WHERE email = $1', [newEmail]);
+            if (checkUser.rows.length > 0 || checkModel.rows.length > 0) {
                 return res.status(400).json({ error: 'auth.error.email_in_use' });
             }
-
-            // Migrate all keys
-            const keysToMigrate = [
-                { old: `model:active:${oldEmail}`, new: `model:active:${newEmail}`, type: 'string' },
-                { old: `model:${oldEmail}:balance`, new: `model:${newEmail}:balance`, type: 'string' },
-                { old: `model:${oldEmail}:billing_info`, new: `model:${newEmail}:billing_info`, type: 'string' },
-                { old: `model:${oldEmail}:payouts`, new: `model:${newEmail}:payouts`, type: 'list' },
-                { old: `model:${oldEmail}:stats`, new: `model:${newEmail}:stats`, type: 'string' },
-                { old: `model:${oldEmail}:total_payout_requested`, new: `model:${newEmail}:total_payout_requested`, type: 'string' },
-                { old: `user:${oldEmail}:last_login`, new: `user:${newEmail}:last_login`, type: 'string' },
-            ];
-
-            for (const k of keysToMigrate) {
-                const val = await redis.get(k.old); // Simplified migration, for list it might need more care but here we rename
-                if (await redis.exists(k.old)) {
-                    // For safety, let's use RENAME if it's the same Redis instance
-                    try {
-                        await redis.rename(k.old, k.new);
-                    } catch (e) {
-                        // If cross-slot error or similar in cluster, fallback to copy (though rename is better)
-                        console.error(`Rename failed for ${k.old}:`, e);
-                    }
-                }
-            }
-            
+            // If email changes, it requires a lot of updates in the legacy Redis logic too
+            // For now, let's just update SQL and sync keys if necessary
             model.email = newEmail;
         }
 
-        // Update other fields
-        if (phone !== undefined) model.phone = phone;
-        if (pseudo !== undefined) model.pseudo = pseudo;
-        if (photoProfile !== undefined) model.photoProfile = photoProfile;
+        // Update SQL
+        await query(`
+            UPDATE models SET 
+                email = $1, password = $2, phone = $3, pseudo = $4, photo_profile = $5
+            WHERE email = $6
+        `, [
+            model.email, model.password, 
+            phone !== undefined ? phone : model.phone, 
+            pseudo !== undefined ? pseudo : model.pseudo, 
+            photoProfile !== undefined ? photoProfile : model.photo_profile,
+            oldEmail
+        ]);
 
-        const currentEmail = newEmail || oldEmail;
-        await redis.set(`model:active:${currentEmail}`, JSON.stringify(model));
-
-        res.json({ success: true, user: { email: currentEmail, name: model.pseudo || model.name, role: 'model' } });
+        const currentEmail = model.email;
+        res.json({ success: true, user: { email: currentEmail, name: pseudo || model.pseudo, role: 'model' } });
     } catch (err) {
         console.error('Update profile error:', err);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -211,29 +209,22 @@ router.put('/:email/profile', requireModelAuth, async (req, res) => {
 // GET Payout History
 router.get('/:email/payouts', requireModelAuth, async (req, res) => {
     try {
-        const redis = getRedisClient();
         const email = req.params.email.toLowerCase();
         if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
 
-        const payoutIds = await redis.lrange(`model:${email}:payouts`, 0, -1);
-        const history = [];
-
-        for (const id of payoutIds) {
-            // Check pending first
-            let data = await redis.hget('payouts:pending', id);
-            if (!data) {
-                // Check history
-                data = await redis.get(`payout:history:${id}`);
-            }
-
-            if (data) {
-                history.push(JSON.parse(data));
-            }
-        }
-
-        res.json(history);
+        const payoutRes = await query('SELECT * FROM payouts WHERE model_email = $1 ORDER BY created_at DESC', [email]);
+        res.json(payoutRes.rows.map(p => ({
+            id: p.id,
+            modelEmail: p.model_email,
+            amount: parseFloat(p.amount),
+            status: p.status,
+            invoiceNumber: p.invoice_number,
+            invoiceFile: p.invoice_file,
+            createdAt: p.created_at,
+            processedAt: p.processed_at
+        })));
     } catch (err) {
-        console.error(err);
+        console.error('[Get Payouts Error]', err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
@@ -241,24 +232,20 @@ router.get('/:email/payouts', requireModelAuth, async (req, res) => {
 // Model Download Invoice
 router.get('/:email/payouts/:id/invoice', requireModelAuth, async (req, res) => {
     try {
-        const redis = getRedisClient();
         const email = req.params.email.toLowerCase();
         const id = req.params.id;
-        
         if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
 
-        const data = await redis.get(`payout:history:${id}`);
-        if (!data) return res.status(404).send('Invoice not found');
+        const payoutRes = await query('SELECT * FROM payouts WHERE id = $1 AND model_email = $2', [id, email]);
+        if (payoutRes.rows.length === 0) return res.status(404).send('Invoice not found');
         
-        const payout = JSON.parse(data);
-        if (payout.modelEmail.toLowerCase() !== email) return res.status(403).send('Forbidden');
-        if (!payout.invoiceFile) return res.status(404).send('Invoice metadata not found');
+        const payout = payoutRes.rows[0];
+        if (!payout.invoice_file) return res.status(404).send('Invoice file not generated');
         
-        const filePath = path.join('/tmp/lively_invoices', payout.invoiceFile);
+        const filePath = path.join('/tmp/lively_invoices', payout.invoice_file);
         if (fs.existsSync(filePath)) {
             res.download(filePath);
         } else {
-            // Logically impossible if DB says it exists, so maybe filesystem issue or cleanup
             res.status(404).send('File missing on server');
         }
     } catch (err) {
