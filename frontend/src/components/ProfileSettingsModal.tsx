@@ -139,10 +139,10 @@ export function ProfileSettingsModal({ isOpen, onClose, modelEmail, onProfileUpd
                     onClose();
                 }, 2000);
             } else {
-                setError(t(data.error) || data.error || "Failed to save profile information.");
+                setError(t(data.error) || data.error || t('profile.save_error'));
             }
         } catch (err) {
-            setError("Network error.");
+            setError(t('billing.network_error'));
         } finally {
             setSaving(false);
         }
@@ -164,8 +164,8 @@ export function ProfileSettingsModal({ isOpen, onClose, modelEmail, onProfileUpd
                             <User size={28} />
                         </div>
                         <div>
-                            <h2 className="text-2xl font-light text-white leading-tight">{t('dashboard.profile_settings_title') || "Profile Settings"}</h2>
-                            <p className="text-neutral-500 text-[10px] font-black uppercase tracking-[0.2em] mt-1">Manage your public information</p>
+                            <h2 className="text-2xl font-light text-white leading-tight">{t('dashboard.profile_settings_title')}</h2>
+                            <p className="text-neutral-500 text-[10px] font-black uppercase tracking-[0.2em] mt-1">{t('profile.manage_desc')}</p>
                         </div>
                     </div>
                     <button onClick={onClose} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all">
@@ -212,8 +212,8 @@ export function ProfileSettingsModal({ isOpen, onClose, modelEmail, onProfileUpd
                                     />
                                 </div>
                                 <div className="text-center">
-                                    <p className="text-white font-medium text-sm mb-1">{t('model.signup.step4_change') || "Change Photo"}</p>
-                                    <p className="text-neutral-500 text-[10px] uppercase tracking-widest font-black">{t('model.signup.step4_upload') || "Upload"}</p>
+                                    <p className="text-white font-medium text-sm mb-1">{t('model.signup.step4_change')}</p>
+                                    <p className="text-neutral-500 text-[10px] uppercase tracking-widest font-black">{t('model.signup.step4_upload')}</p>
                                 </div>
                             </div>
 
@@ -249,7 +249,7 @@ export function ProfileSettingsModal({ isOpen, onClose, modelEmail, onProfileUpd
                                 {/* Email */}
                                 <div className="space-y-2 col-span-1 md:col-span-2">
                                     <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
-                                        <Mail size={12} /> Email
+                                        <Mail size={12} /> {t('auth.email_placeholder') || "Email"}
                                     </label>
                                     <input 
                                         type="email"
@@ -259,7 +259,7 @@ export function ProfileSettingsModal({ isOpen, onClose, modelEmail, onProfileUpd
                                         className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-pink-500 transition-all"
                                     />
                                     <p className="text-[10px] text-orange-400 font-bold uppercase tracking-widest ml-2 italic">
-                                        {t('dashboard.email_change_warning') || "Note: Changing your email will update your login credentials."}
+                                        {t('dashboard.email_change_warning')}
                                     </p>
                                 </div>
                             </div>
@@ -273,7 +273,7 @@ export function ProfileSettingsModal({ isOpen, onClose, modelEmail, onProfileUpd
                     {success && (
                         <div className="flex flex-col items-center gap-2 mb-4 animate-in zoom-in duration-300">
                             <CheckCircle2 size={24} className="text-green-400" />
-                            <p className="text-green-400 text-xs font-bold">{t('dashboard.profile_saved_success') || "Profile updated successfully!"}</p>
+                            <p className="text-green-400 text-xs font-bold">{t('dashboard.profile_saved_success')}</p>
                         </div>
                     )}
                     <button 
@@ -281,12 +281,12 @@ export function ProfileSettingsModal({ isOpen, onClose, modelEmail, onProfileUpd
                         onClick={handleSave}
                         className="w-full bg-gradient-to-r from-pink-500 to-indigo-600 hover:from-pink-400 hover:to-indigo-500 disabled:opacity-50 disabled:translate-y-0 text-white py-4 rounded-2xl font-bold tracking-widest uppercase text-sm transition-all active:scale-[0.98] shadow-xl shadow-pink-500/20"
                     >
-                        {saving ? t('auth.loading') : (t('dashboard.save_changes') || "Save Changes")}
+                        {saving ? t('auth.loading') : t('dashboard.save_changes')}
                     </button>
                     
                     <div className="mt-6 flex items-center justify-center gap-2 text-white/40 text-[9px] font-bold uppercase tracking-widest">
                         <ShieldCheck size={12} className="text-green-500" />
-                        End-to-end encrypted profile management
+                        {t('profile.encrypted_footer')}
                     </div>
                 </div>
             </div>

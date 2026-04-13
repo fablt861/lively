@@ -77,10 +77,10 @@ export function ModelBillingModal({ isOpen, onClose, modelEmail }: ModelBillingM
                 setSuccess(true);
                 setTimeout(() => setSuccess(false), 3000);
             } else {
-                setError("Failed to save billing information.");
+                setError(t('billing.save_error'));
             }
         } catch (err) {
-            setError("Network error.");
+            setError(t('billing.network_error'));
         } finally {
             setSaving(false);
         }
@@ -100,7 +100,7 @@ export function ModelBillingModal({ isOpen, onClose, modelEmail }: ModelBillingM
                         </div>
                         <div>
                             <h2 className="text-2xl font-light text-white leading-tight">{t('billing.title')}</h2>
-                            <p className="text-neutral-500 text-xs font-bold uppercase tracking-widest mt-1">Secure Financial Profile</p>
+                            <p className="text-neutral-500 text-xs font-bold uppercase tracking-widest mt-1">{t('billing.secure_desc')}</p>
                         </div>
                     </div>
                     <button onClick={onClose} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all">
@@ -140,9 +140,9 @@ export function ModelBillingModal({ isOpen, onClose, modelEmail }: ModelBillingM
                                             onChange={e => setInfo({...info, country: e.target.value})}
                                             className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all appearance-none cursor-pointer"
                                         >
-                                            <option value="" disabled>Select Country</option>
+                                            <option value="" disabled>{t('billing.select_country')}</option>
                                             {countries.map(c => (
-                                                <option key={c.code} value={c.code}>{c.nameFr} {c.flag}</option>
+                                                <option key={c.code} value={c.code}>{language === 'fr' ? c.nameFr : c.nameEn} {c.flag}</option>
                                             ))}
                                         </select>
                                         <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">
@@ -203,9 +203,9 @@ export function ModelBillingModal({ isOpen, onClose, modelEmail }: ModelBillingM
                                                     onChange={e => setInfo({...info, bankCountry: e.target.value})}
                                                     className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all appearance-none cursor-pointer"
                                                 >
-                                                    <option value="" disabled>Select Bank Country</option>
+                                                    <option value="" disabled>{t('billing.select_bank_country')}</option>
                                                     {countries.map(c => (
-                                                        <option key={c.code} value={c.code}>{c.nameFr} {c.flag}</option>
+                                                        <option key={c.code} value={c.code}>{language === 'fr' ? c.nameFr : c.nameEn} {c.flag}</option>
                                                     ))}
                                                 </select>
                                                 <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">
@@ -350,7 +350,7 @@ export function ModelBillingModal({ isOpen, onClose, modelEmail }: ModelBillingM
                 {/* Footer */}
                 <div className="p-8 border-t border-white/5 bg-white/[0.01]">
                     {error && <p className="text-red-400 text-xs font-bold mb-4 text-center">{error}</p>}
-                    {success && <p className="text-green-400 text-xs font-bold mb-4 text-center">Information saved successfully!</p>}
+                    {success && <p className="text-green-400 text-xs font-bold mb-4 text-center">{t('billing.save_success')}</p>}
                     <button 
                         disabled={saving || loading}
                         onClick={handleSave}

@@ -385,7 +385,7 @@
   "dashboard.payout_error_min": "Un solde minimum de 100$ est requis pour demander un paiement.",
   "dashboard.payout_error_billing": "Veuillez compléter vos informations de facturation avant de demander un paiement.",
   "dashboard.payout_request_success": "Demande de paiement envoyée ! Notre équipe la traitera prochainement.",
-  "dashboard.billing_cta": "Infos de Facturation",
+  "dashboard.billing_cta": "Paramètres de facturation",
   "billing.title": "Coordonnées de Paiement",
   "billing.name": "Nom Complet / Entité",
   "billing.address": "Adresse Full",
@@ -416,7 +416,7 @@
   "dashboard.profile_saved_success": "Profil mis à jour avec succès !",
   "dashboard.save_changes": "Enregistrer les modifications",
   "dashboard.profile_load_error": "Échec du chargement des paramètres du profil.",
-  "dashboard.profile_cta": "Paramètres Profil",
+  "dashboard.profile_cta": "Paramètres du profil",
   "dashboard.subtitle": "Suivez vos performances et gérez vos paiements.",
   "dashboard.launch_live": "LANCER SESSION LIVE",
   "dashboard.balance_title": "SOLDE DISPONIBLE",
@@ -583,5 +583,14 @@
   "live.camera_required_desc": "Pour garantir une expérience sécurisée et mutuelle, votre caméra et votre micro doivent être activés pour entrer dans le chat vidéo.",
   "live.camera_instruction": "Veuillez cliquer sur l'icône de cadenas dans la barre d'adresse de votre navigateur et régler les autorisations de la caméra et du micro sur 'Autoriser', puis cliquez sur le bouton ci-dessous.",
   "live.camera_retry_btn": "J'ai activé mes appareils",
-  "live.camera_home_btn": "Retour à l'accueil"
+  "live.camera_home_btn": "Retour à l'accueil",
+  "billing.secure_desc": "Profil financier sécurisé",
+  "billing.save_success": "Informations enregistrées avec succès !",
+  "billing.save_error": "Échec de l'enregistrement des informations.",
+  "billing.network_error": "Erreur réseau.",
+  "billing.select_country": "Sélectionner le pays",
+  "billing.select_bank_country": "Sélectionner le pays de la banque",
+  "profile.manage_desc": "Gérez vos informations publiques",
+  "profile.encrypted_footer": "Gestion de profil chiffrée de bout en bout",
+  "profile.save_error": "Échec de l'enregistrement des informations du profil."
 }

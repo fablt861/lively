@@ -493,7 +493,7 @@
   "dashboard.payout_error_min": "Minimum balance of $100 required for payout.",
   "dashboard.payout_error_billing": "Please complete your billing information before requesting a payout.",
   "dashboard.payout_request_success": "Payout request sent! Our team will process it soon.",
-  "dashboard.billing_cta": "Billing Settings",
+  "dashboard.billing_cta": "Ajustes de facturación",
   "billing.title": "Billing Information",
   "billing.name": "Full Name / Entity",
   "billing.address": "Address",
@@ -567,7 +567,7 @@
   "dashboard.profile_saved_success": "Profile updated successfully!",
   "dashboard.save_changes": "Save Changes",
   "dashboard.profile_load_error": "Failed to load profile settings.",
-  "dashboard.profile_cta": "Profile Settings",
+  "dashboard.profile_cta": "Ajustes del perfil",
   "live.camera_required_title": "Acceso a cámara y micrófono requerido",
   "live.camera_required_desc": "Para garantizar una experiencia segura y mutua, su cámara y micrófono deben estar habilitados para entrar al video chat.",
   "live.camera_instruction": "Haga clic en el icono del candado en la barre de direcciones de su navegador y establezca los permisos de cámara y micrófono en 'Permitir', luego haga clic en el botón de abajo.",
@@ -583,5 +583,14 @@
   "admin.status.disabled": "Desactivado",
   "admin.users.toggle_status_cta": "Estado",
   "admin.models.toggle_status_cta": "Estado",
-  "admin.status.update_success": "Estado actualizado."
+  "admin.status.update_success": "Estado actualizado.",
+  "billing.secure_desc": "Perfil financiero seguro",
+  "billing.save_success": "¡Información guardada con éxito!",
+  "billing.save_error": "Error al guardar la información de facturación.",
+  "billing.network_error": "Error de red.",
+  "billing.select_country": "Seleccionar país",
+  "billing.select_bank_country": "Seleccionar país del banco",
+  "profile.manage_desc": "Gestiona tu información pública",
+  "profile.encrypted_footer": "Gestión de perfil cifrada de extremo a extremo",
+  "profile.save_error": "Error al guardar la información del perfil."
 }

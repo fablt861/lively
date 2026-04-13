@@ -583,5 +583,14 @@
   "admin.status.disabled": "Disabilitato",
   "admin.users.toggle_status_cta": "Stato",
   "admin.models.toggle_status_cta": "Stato",
-  "admin.status.update_success": "Stato aggiornato."
+  "admin.status.update_success": "Stato aggiornato.",
+  "billing.secure_desc": "Secure Financial Profile",
+  "billing.save_success": "Information saved successfully!",
+  "billing.save_error": "Failed to save billing information.",
+  "billing.network_error": "Network error.",
+  "billing.select_country": "Select Country",
+  "billing.select_bank_country": "Select Bank Country",
+  "profile.manage_desc": "Manage your public information",
+  "profile.encrypted_footer": "End-to-end encrypted profile management",
+  "profile.save_error": "Failed to save profile information."
 }

@@ -583,5 +583,14 @@
   "live.camera_required_desc": "To ensure a safe and mutual experience, your camera and microphone must be enabled to enter the video chat.",
   "live.camera_instruction": "Please click the lock icon in your browser's address bar and set camera and microphone permissions to 'Allow', then click the button below.",
   "live.camera_retry_btn": "I've enabled my devices",
-  "live.camera_home_btn": "Back to Home"
+  "live.camera_home_btn": "Back to Home",
+  "billing.secure_desc": "Secure Financial Profile",
+  "billing.save_success": "Information saved successfully!",
+  "billing.save_error": "Failed to save billing information.",
+  "billing.network_error": "Network error.",
+  "billing.select_country": "Select Country",
+  "billing.select_bank_country": "Select Bank Country",
+  "profile.manage_desc": "Manage your public information",
+  "profile.encrypted_footer": "End-to-end encrypted profile management",
+  "profile.save_error": "Failed to save profile information."
 }
