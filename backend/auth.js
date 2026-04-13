@@ -94,9 +94,9 @@ router.post('/register', async (req, res) => {
         const id = crypto.randomUUID();
         await query(`
             INSERT INTO users (
-                id, email, password, pseudo, role, credits, marketing_src, marketing_camp, marketing_ad
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-        `, [id, email, password, pseudo, 'user', 5.00, src, camp, ad]);
+                id, email, password, pseudo, credits, marketing_src, marketing_camp, marketing_ad
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        `, [id, email, password, pseudo, 5.00, src, camp, ad]);
 
         // Sync initial credits to Redis for fast access in billing logic
         const redis = getRedisClient();
