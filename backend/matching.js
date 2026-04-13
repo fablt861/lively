@@ -162,6 +162,10 @@ async function updateQueuePositions(io, role) {
 }
 
 async function handleJoinQueue(io, socket) {
+    if (socket.currentRoom) {
+        console.log(`[Match Guard] Socket ${socket.id} already in a room. Skipping.`);
+        return;
+    }
     const isModel = socket.role === 'model';
     const myQueue = isModel ? QUEUE_MODELS : QUEUE_USERS;
     const targetQueue = isModel ? QUEUE_USERS : QUEUE_MODELS;

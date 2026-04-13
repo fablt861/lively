@@ -291,7 +291,6 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
 
     const nextPartner = () => {
         endCall();
-        joinQueue();
     };
 
     const toggleAudio = () => {
