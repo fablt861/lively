@@ -77,6 +77,15 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
             forceNew: true,
             reconnectionAttempts: 5
         });
+
+        newSocket.on('connect', () => {
+            console.log("[Socket] Connected! ID:", newSocket.id);
+        });
+
+        newSocket.on('connect_error', (err) => {
+            console.error("[Socket] Connection Error:", err.message, "Target:", process.env.NEXT_PUBLIC_BACKEND_URL);
+        });
+
         setSocket(newSocket);
 
         return () => {

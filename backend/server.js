@@ -141,7 +141,7 @@ app.get('/api/elite/:id/stats', async (req, res) => {
 });
 
 io.on('connection', (socket) => {
-  console.log('User connected:', socket.id);
+  console.log('[Socket] New connection attempt:', socket.id, 'Origins:', socket.handshake.headers.origin);
 
   setupMatching(io, socket);
   setupSignaling(io, socket);

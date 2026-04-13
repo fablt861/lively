@@ -24,6 +24,7 @@ function setupMatching(io, socket) {
 
     // Join role queue
     socket.on('join_queue', async ({ role, language, email }) => {
+        console.log(`[Queue] Received join_queue from ${socket.id}. Role: ${role}, Email: ${email}`);
         if (isProcessing) return;
         isProcessing = true;
         try {
