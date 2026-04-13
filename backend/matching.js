@@ -164,13 +164,13 @@ async function updateQueuePositions(io, role) {
 }
 
 async function handleJoinQueue(io, socket) {
+    const myIdentifier = (socket.userEmail || `${socket.role}:${socket.userIp || 'unknown'}`).toLowerCase();
     try {
         if (socket.currentRoom) {
             console.log(`[Match Guard] Socket ${socket.id} already in a room (${socket.currentRoom}). Skipping.`);
             return;
         }
         
-        const myIdentifier = socket.userEmail || `${socket.role}:${socket.userIp}`;
         console.log(`[Queue Trace] Entering handleJoinQueue for ${socket.id}. Ident: ${myIdentifier}`);
 
     const isModel = socket.role === 'model';
@@ -266,10 +266,10 @@ async function handleJoinQueue(io, socket) {
             partnerSocket.currentRoom = roomId;
 
             // --- NEW: Mark as seen to avoid immediate rematching after hangup ---
-            if (myIdentifier && partnerIdentifier) {
+            if (myIdentifier && pIdentifier) {
                 // Reduced cooldown to 5s for easier testing and staging use
-                await redis.set(`seen:${myIdentifier.toLowerCase()}:${partnerIdentifier.toLowerCase()}`, '1', 'EX', 5);
-                await redis.set(`seen:${partnerIdentifier.toLowerCase()}:${myIdentifier.toLowerCase()}`, '1', 'EX', 5);
+                await redis.set(`seen:${myIdentifier.toLowerCase()}:${pIdentifier.toLowerCase()}`, '1', 'EX', 5);
+                await redis.set(`seen:${pIdentifier.toLowerCase()}:${myIdentifier.toLowerCase()}`, '1', 'EX', 5);
             }
 
             const userId = isModel ? partnerId : socket.id;
