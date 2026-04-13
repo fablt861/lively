@@ -166,6 +166,8 @@ async function handleJoinQueue(io, socket) {
         console.log(`[Match Guard] Socket ${socket.id} already in a room. Skipping.`);
         return;
     }
+    console.log(`[Queue] ${socket.id} (${socket.role}) entering handleJoinQueue. Ident: ${myIdentifier}`);
+
     const isModel = socket.role === 'model';
     const myQueue = isModel ? QUEUE_MODELS : QUEUE_USERS;
     const targetQueue = isModel ? QUEUE_USERS : QUEUE_MODELS;
@@ -224,9 +226,8 @@ async function handleJoinQueue(io, socket) {
 
     while (maxRetries > 0) {
         // Anti-Rebound Search: get all candidates (limit to first 30 for performance)
-        const candidates = await redis.lrange(targetQueue, -30, -1); // FIFO order: tail is newest? No, LINDEX 0 is head. list is [head ... tail]. Tail is newest? No, lpush pushes to head.
-        // Let's use standard list order: LPUSH to head, RPOP from tail. 
-        // LINDEX tail (length -1) is the oldest.
+        const candidates = await redis.lrange(targetQueue, -30, -1);
+        console.log(`[Queue] Found ${candidates.length} candidates in ${targetQueue}`);
         
         let targetIndex = -1;
         for (let i = candidates.length - 1; i >= 0; i--) {
@@ -323,6 +324,7 @@ async function handleJoinQueue(io, socket) {
                 partnerName: socket.pseudo || socket.userEmail?.split('@')[0] || 'Partner'
             });
 
+            console.log(`[Match EMITTED] ${socket.id} <-> ${partnerId}`);
             foundPartner = true;
             // Update positions for the rest of the target queue
             await updateQueuePositions(io, isModel ? 'user' : 'model');

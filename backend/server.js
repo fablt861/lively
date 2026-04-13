@@ -58,6 +58,11 @@ const { setupMatching } = require('./matching');
 const { setupSignaling } = require('./signaling');
 const { initBillingLoop, getModelStats } = require('./billing');
 const { initSettings } = require('./settings');
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK', version: '2026-04-13_v10', timestamp: new Date().toISOString() });
+});
+
+// Load and mount routes
 const adminRoutes = require('./admin');
 const authRoutes = require('./auth');
 const modelRoutes = require('./model');
