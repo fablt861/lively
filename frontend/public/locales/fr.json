@@ -574,6 +574,7 @@
   "profile.encrypted_footer": "Toutes vos données sont cryptées de bout en bout.",
   "profile.error.password_incorrect": "Le mot de passe actuel est incorrect.",
   "profile.error.password_match": "Les nouveaux mots de passe ne correspondent pas.",
+  "profile.error.password_required": "Le mot de passe actuel est requis pour changer votre mot de passe.",
   "profile.manage_desc": "Gérez vos informations personnelles et votre photo.",
   "profile.new_password": "Nouveau mot de passe",
   "profile.old_password": "Mot de passe actuel",

@@ -574,6 +574,7 @@
   "profile.encrypted_footer": "Al uw gegevens zijn end-to-end beveiligd.",
   "profile.error.password_incorrect": "Huidig wachtwoord is onjuist.",
   "profile.error.password_match": "Nieuwe wachtwoorden komen niet overeen.",
+  "profile.error.password_required": "Huidig wachtwoord is vereist om het wachtwoord te wijzigen.",
   "profile.manage_desc": "Beheer uw persoonlijke informatie en foto.",
   "profile.new_password": "Nieuw wachtwoord",
   "profile.old_password": "Huidig wachtwoord",

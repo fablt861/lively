@@ -574,6 +574,7 @@
   "profile.encrypted_footer": "Все ваши данные зашифрованы сквозным шифрованием.",
   "profile.error.password_incorrect": "Текущий пароль неверен.",
   "profile.error.password_match": "Новые пароли не совпадают.",
+  "profile.error.password_required": "Для изменения пароля требуется текущий пароль.",
   "profile.manage_desc": "Управляйте личной информацией и фотографией.",
   "profile.new_password": "Новый пароль",
   "profile.old_password": "Текущий пароль",

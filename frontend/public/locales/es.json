@@ -574,6 +574,7 @@
   "profile.encrypted_footer": "Todos tus datos están cifrados de extremo a extremo.",
   "profile.error.password_incorrect": "La contraseña actual es incorrecta.",
   "profile.error.password_match": "Las nuevas contraseñas no coinciden.",
+  "profile.error.password_required": "Se requiere la contraseña actual para cambiar la contraseña.",
   "profile.manage_desc": "Gestiona tu información personal y foto.",
   "profile.new_password": "Nueva contraseña",
   "profile.old_password": "Contraseña actual",

@@ -131,17 +131,30 @@ router.put('/:email/profile', requireModelAuth, async (req, res) => {
         let model = JSON.parse(data);
 
         // Handle Password Change
-        if (newPassword) {
-            // Check if old password matches
-            if (model.password !== oldPassword) {
+        if (newPassword || oldPassword) {
+            // If changing password, old one is strictly required
+            if (newPassword && !oldPassword) {
+                return res.status(400).json({ error: 'profile.error.password_required' });
+            }
+
+            // Safety: if account has no password stored, we must be careful
+            if (!model.password && oldPassword) {
+                 return res.status(400).json({ error: 'profile.error.password_incorrect' });
+            }
+
+            // Verify old password (if provided)
+            if (oldPassword && model.password !== oldPassword) {
                 return res.status(400).json({ error: 'profile.error.password_incorrect' });
             }
-            // Check if new passwords match
-            if (newPassword !== confirmPassword) {
-                return res.status(400).json({ error: 'profile.error.password_match' });
+
+            if (newPassword) {
+                // Check if new passwords match
+                if (newPassword !== confirmPassword) {
+                    return res.status(400).json({ error: 'profile.error.password_match' });
+                }
+                // Update password (plain text for consistency)
+                model.password = newPassword;
             }
-            // Update password (plain text for consistency with current auth.js)
-            model.password = newPassword;
         }
 
         // Handle Email Change

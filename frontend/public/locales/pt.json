@@ -574,6 +574,7 @@
   "profile.encrypted_footer": "Todos os seus dados estão criptografados de ponta a ponta.",
   "profile.error.password_incorrect": "A senha atual está incorreta.",
   "profile.error.password_match": "As novas senhas não coincidem.",
+  "profile.error.password_required": "A senha atual é necessária para alterar a senha.",
   "profile.manage_desc": "Gerencie suas informações pessoais e foto.",
   "profile.new_password": "Nova senha",
   "profile.old_password": "Senha atual",

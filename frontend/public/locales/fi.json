@@ -574,6 +574,7 @@
   "profile.encrypted_footer": "Kaikki tietosi on suojattu päästä päähän -salauksella.",
   "profile.error.password_incorrect": "Nykyinen salasana on väärin.",
   "profile.error.password_match": "Uudet salasanat eivät täsmää.",
+  "profile.error.password_required": "Nykyinen salasana tarvitaan salasanan vaihtamiseen.",
   "profile.manage_desc": "Hallitse henkilötietojasi ja valokuvaasi.",
   "profile.new_password": "Uusi salasana",
   "profile.old_password": "Nykyinen salasana",

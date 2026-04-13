@@ -574,6 +574,7 @@
   "profile.encrypted_footer": "Alle dine data er ende-til-ende-kryptert.",
   "profile.error.password_incorrect": "Nåværende passord er feil.",
   "profile.error.password_match": "De nye passordene er ikke like.",
+  "profile.error.password_required": "Nåværende passord er nødvendig for å endre passord.",
   "profile.manage_desc": "Administrer personlig informasjon og bilde.",
   "profile.new_password": "Nytt passord",
   "profile.old_password": "Nåværende passord",

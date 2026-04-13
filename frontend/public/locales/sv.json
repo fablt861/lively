@@ -574,6 +574,7 @@
   "profile.encrypted_footer": "Alla dina data är krypterade från ände till ände.",
   "profile.error.password_incorrect": "Nuvarande lösenord är felaktigt.",
   "profile.error.password_match": "De nya lösenorden matchar inte.",
+  "profile.error.password_required": "Nuvarande lösenord krävs för att ändra lösenord.",
   "profile.manage_desc": "Hantera din personliga information och bild.",
   "profile.new_password": "Nytt lösenord",
   "profile.old_password": "Nuvarande lösenord",

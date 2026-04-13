@@ -574,6 +574,7 @@
   "profile.encrypted_footer": "Усі ваші дані зашифровані наскрізним шифруванням.",
   "profile.error.password_incorrect": "Поточний пароль неправильний.",
   "profile.error.password_match": "Нові паролі не збігаються.",
+  "profile.error.password_required": "Поточний пароль потрібен для зміни пароля.",
   "profile.manage_desc": "Керуйте особистою інформацією та фотографією.",
   "profile.new_password": "Новий пароль",
   "profile.old_password": "Поточний пароль",

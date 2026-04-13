@@ -574,6 +574,7 @@
   "profile.encrypted_footer": "Alle Ihre Daten sind Ende-zu-Ende verschlüsselt.",
   "profile.error.password_incorrect": "Das aktuelle Passwort ist falsch.",
   "profile.error.password_match": "Die neuen Passwörter stimmen nicht überein.",
+  "profile.error.password_required": "Das aktuelle Passwort ist erforderlich, um das Passwort zu ändern.",
   "profile.manage_desc": "Verwalten Sie Ihre persönlichen Informationen und Ihr Foto.",
   "profile.new_password": "Neues Passwort",
   "profile.old_password": "Aktuelles Passwort",
