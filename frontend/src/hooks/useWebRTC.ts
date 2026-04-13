@@ -144,6 +144,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
         socket.on("matched", async (data: any) => {
             const { initiator, partnerEmail, partnerRole, partnerName, isRecovery } = data;
             console.log('[WebRTC] Matched event received. Initiator:', initiator, 'Recovery:', !!isRecovery);
+            console.log('[WebRTC] Matched -> setting isMatching: false, isConnected: true');
             setIsMatching(false);
             setIsConnected(true);
             

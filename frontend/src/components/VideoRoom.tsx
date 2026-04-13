@@ -586,7 +586,7 @@ export function VideoRoom({
                         className={`w-full h-full object-cover transition-all duration-700 ease-in-out ${(!isConnected || isMatching || showPaywall) ? "blur-2xl opacity-40 scale-105" : "blur-0 opacity-100 scale-100"
                             }`}
                     />
-                    {(!isConnected || isMatching) && !showPaywall && (
+                    {((!isConnected && !remoteStream) || isMatching) && !showPaywall && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#050505]/95 backdrop-blur-2xl transition-all duration-1000 overflow-hidden">
                             {/* Glowing Orbs for Sexy Vibe */}
                             <div className="absolute w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none animate-pulse" />
