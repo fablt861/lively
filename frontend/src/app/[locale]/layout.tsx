@@ -81,8 +81,8 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased scroll-smooth overflow-x-hidden`}
     >
       <body className="min-h-screen flex flex-col bg-[#050505] antialiased overflow-x-hidden">
-        <StagingBanner />
         <LanguageProvider>
+          <StagingBanner />
           <Suspense fallback={null}>
             <MarketingTracker />
           </Suspense>
