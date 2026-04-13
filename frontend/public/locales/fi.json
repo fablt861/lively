@@ -572,5 +572,28 @@
   "live.camera_required_desc": "Turvallisen ja molemminpuolisen kokemuksen varmistamiseksi kameran ja mikrofonin on oltava käytössä videokeskusteluun pääsemiseksi.",
   "live.camera_instruction": "Napsauta selaimen osoitepalkissa olevaa lukkosymbolia ja aseta kameran ja mikrofonin käyttöoikeudet tilaan 'Salli', ja napsauta sitten alla olevaa painiketta.",
   "live.camera_retry_btn": "Olen ottanut laitteet käyttöön",
-  "live.camera_home_btn": "Takaisin etusivulle"
+  "live.camera_home_btn": "Takaisin etusivulle",
+  "dashboard": {
+    "table_normal": "Normaali",
+    "table_private": "Yksityisistunto",
+    "telegram_title": "Liity Elite Telegram -yhteisöön",
+    "telegram_desc": "Pysy ajan tasalla bonuksista, teknisistä päivityksistä ja keskustele tiimin kanssa.",
+    "telegram_cta": "Liity nyt"
+  },
+  "admin": {
+    "nav": {
+      "moderation": "Moderointi"
+    },
+    "status": {
+      "active": "Aktiivinen",
+      "disabled": "Poistettu käytöstä",
+      "update_success": "Tila päivitetty."
+    },
+    "users": {
+      "toggle_status_cta": "Tila"
+    },
+    "models": {
+      "toggle_status_cta": "Tila"
+    }
+  }
 }

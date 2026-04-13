@@ -572,5 +572,28 @@
   "live.camera_required_desc": "Om een veilige en wederzijdse ervaring te garanderen, moeten uw camera en microfoon zijn ingeschakeld om de videochat te betreden.",
   "live.camera_instruction": "Klik op het hangslotpictogram in de adresbalk van uw browser en stel de machtigingen voor camera en microfoon in op 'Toestaan', en klik vervolgens op de onderstaande knop.",
   "live.camera_retry_btn": "Ik heb mijn apparaten ingeschakeld",
-  "live.camera_home_btn": "Terug naar Home"
+  "live.camera_home_btn": "Terug naar Home",
+  "dashboard": {
+    "table_normal": "Normaal",
+    "table_private": "Privésessie",
+    "telegram_title": "Word lid de Elite Telegram-community",
+    "telegram_desc": "Blijf op de hoogte van bonussen, technische updates en chat met het team.",
+    "telegram_cta": "Nu lid worden"
+  },
+  "admin": {
+    "nav": {
+      "moderation": "Moderatie"
+    },
+    "status": {
+      "active": "Actief",
+      "disabled": "Uitgeschakeld",
+      "update_success": "Status bijgewerkt."
+    },
+    "users": {
+      "toggle_status_cta": "Status"
+    },
+    "models": {
+      "toggle_status_cta": "Status"
+    }
+  }
 }

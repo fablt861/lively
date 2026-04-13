@@ -572,5 +572,28 @@
   "live.camera_required_desc": "Um eine sichere und gegenseitige Erfahrung zu gewährleisten, müssen Kamera und Mikrofon aktiviert sein, um den Video-Chat zu betreten.",
   "live.camera_instruction": "Bitte klicken Sie auf das Schloss-Symbol in der Adressleiste Ihres Browsers und stellen Sie die Berechtigungen für Kamera und Mikrofon auf 'Zulassen', dann klicken Sie auf die Schaltfläche unten.",
   "live.camera_retry_btn": "Ich habe meine Geräte aktiviert",
-  "live.camera_home_btn": "Zurück zur Startseite"
+  "live.camera_home_btn": "Zurück zur Startseite",
+  "dashboard": {
+    "table_normal": "Normal",
+    "table_private": "Privatsitzung",
+    "telegram_title": "Treten Sie der Elite Telegram Community bei",
+    "telegram_desc": "Bleiben Sie über Boni, technische Updates informiert und chatten Sie mit dem Team.",
+    "telegram_cta": "Jetzt beitreten"
+  },
+  "admin": {
+    "nav": {
+      "moderation": "Moderation"
+    },
+    "status": {
+      "active": "Aktiv",
+      "disabled": "Deaktiviert",
+      "update_success": "Status aktualisiert."
+    },
+    "users": {
+      "toggle_status_cta": "Status"
+    },
+    "models": {
+      "toggle_status_cta": "Status"
+    }
+  }
 }

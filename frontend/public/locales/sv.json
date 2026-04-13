@@ -572,5 +572,28 @@
   "live.camera_required_desc": "För att säkerställa en säker och ömsesidig upplevelse måste din kamera och mikrofon vara aktiverade för att komma in i videochatten.",
   "live.camera_instruction": "Klicka på hänglåssymbolen i webbläsarens adressfält och ställ in tillstånden för kamera och mikrofon till 'Tillåt', klicka sedan på knappen nedan.",
   "live.camera_retry_btn": "Jag har aktiverat mina enheter",
-  "live.camera_home_btn": "Tillbaka till hem"
+  "live.camera_home_btn": "Tillbaka till hem",
+  "dashboard": {
+    "table_normal": "Normal",
+    "table_private": "Privatsession",
+    "telegram_title": "Gå med i Elite Telegram-communityn",
+    "telegram_desc": "Håll dig uppdaterad om bonusar, tekniska uppdateringar och chatta med teamet.",
+    "telegram_cta": "Gå med nu"
+  },
+  "admin": {
+    "nav": {
+      "moderation": "Moderering"
+    },
+    "status": {
+      "active": "Aktiv",
+      "disabled": "Inaktiverad",
+      "update_success": "Status uppdaterad."
+    },
+    "users": {
+      "toggle_status_cta": "Status"
+    },
+    "models": {
+      "toggle_status_cta": "Status"
+    }
+  }
 }

@@ -572,5 +572,28 @@
   "live.camera_required_desc": "For å sikre en trygg og gjensidig opplevelse, må kameraet og mikrofonen din være aktivert for å gå inn i videochatten.",
   "live.camera_instruction": "Klikk på hengelåsikonet i nettleserens adresselinje og angi tillatelsene for kamera og mikrofon til 'Tillat', klikk deretter på knappen nedenfor.",
   "live.camera_retry_btn": "Jeg har aktivert enhetene mine",
-  "live.camera_home_btn": "Tilbake til hjem"
+  "live.camera_home_btn": "Tilbake til hjem",
+  "dashboard": {
+    "table_normal": "Normal",
+    "table_private": "Privat sesjon",
+    "telegram_title": "Bli med i Elite Telegram-fellesskapet",
+    "telegram_desc": "Hold deg oppdatert på bonuser, tekniske oppdateringer og chat med teamet.",
+    "telegram_cta": "Bli med nå"
+  },
+  "admin": {
+    "nav": {
+      "moderation": "Moderering"
+    },
+    "status": {
+      "active": "Aktiv",
+      "disabled": "Deaktivert",
+      "update_success": "Status oppdatert."
+    },
+    "users": {
+      "toggle_status_cta": "Status"
+    },
+    "models": {
+      "toggle_status_cta": "Status"
+    }
+  }
 }

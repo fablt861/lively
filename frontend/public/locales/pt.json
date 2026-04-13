@@ -572,5 +572,28 @@
   "live.camera_required_desc": "Para garantir uma experiência segura e mútua, a sua câmara e o seu microfone devem estar ativados para entrar no chat de vídeo.",
   "live.camera_instruction": "Clique no ícone do cadeado na barra de endereços do seu navegador e defina as permissões da câmara e do microfone para 'Permitir' e, em seguida, clique no botão abaixo.",
   "live.camera_retry_btn": "Ativei os meus dispositivos",
-  "live.camera_home_btn": "Voltar ao início"
+  "live.camera_home_btn": "Voltar ao início",
+  "dashboard": {
+    "table_normal": "Normal",
+    "table_private": "Sessão privada",
+    "telegram_title": "Junte-se à comunidade Elite do Telegram",
+    "telegram_desc": "Fique por dentro de bônus, atualizações técnicas e converse com a equipe.",
+    "telegram_cta": "Entrar agora"
+  },
+  "admin": {
+    "nav": {
+      "moderation": "Moderação"
+    },
+    "status": {
+      "active": "Ativo",
+      "disabled": "Desativado",
+      "update_success": "Status atualizado."
+    },
+    "users": {
+      "toggle_status_cta": "Status"
+    },
+    "models": {
+      "toggle_status_cta": "Status"
+    }
+  }
 }
