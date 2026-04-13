@@ -3,6 +3,7 @@ const redis = getRedisClient();
 const { startBilling, stopBilling } = require('./billing');
 const { getSettings } = require('./settings');
 const { markAsSeen } = require('./moderation');
+const { hydrateUserCredits } = require('./balance');
 
 redis.on('error', (err) => {
     console.error('[Redis Error] Could not connect. Is Redis running?', err.message);
@@ -56,6 +57,15 @@ function setupMatching(io, socket) {
             if (await checkRateLimit(identifier)) {
                 console.log(`[RateLimit] Throttling join_queue for ${identifier}`);
                 return;
+            }
+
+            // Hydrate and Check Credits for Registered Users
+            if (role === 'user' && email) {
+                const credits = await hydrateUserCredits(email);
+                if (credits <= 0) {
+                    console.log(`[Limit] Registered User ${email} has 0 credits.`);
+                    return socket.emit('out_of_credits', { reason: 'balance_exhausted' });
+                }
             }
 
             // If Guest: check free limit (30s)

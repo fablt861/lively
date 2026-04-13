@@ -5,6 +5,7 @@ const { getSettings } = require('./settings');
 const { markAsSeen } = require('./moderation');
 const { logRevenue, logModelPayout } = require('./stats');
 const { query } = require('./db');
+const { flushSessionToPostgres } = require('./balance');
 
 redis.on('error', (err) => {
     console.error('[Billing Redis Error]', err.message);
@@ -245,7 +246,8 @@ async function startBilling(roomId, userId, modelId, userSocketId, modelSocketId
 }
 
 async function stopBilling(roomId) {
-    const sessionStr = await redis.hget(ACTIVE_ROOMS_KEY, roomId);
+    try {
+        const sessionStr = await redis.hget(ACTIVE_ROOMS_KEY, roomId);
     if (!sessionStr) return;
 
     // Atomically take ownership of this session to prevent double-billing
@@ -320,8 +322,14 @@ async function stopBilling(roomId) {
         await redis.del(`user_active_room:${modelId}`);
     }
 
-    await redis.lpush('debug:billing', JSON.stringify({ event: 'stop', roomId, userId, modelId, durationSec, modelEarned, timestamp: Date.now() }));
-    console.log(`[Billing] Stopped room ${roomId}. Duration: ${durationSec}s. Earned: $${modelEarned}`);
+        // Final Sync to Postgres (Source of Truth)
+        await flushSessionToPostgres(userId, modelId, userSpentCredits, totalModelEarned);
+
+        await redis.lpush('debug:billing', JSON.stringify({ event: 'stop', roomId, userId, modelId, durationSec, modelEarned: totalModelEarned, timestamp: Date.now() }));
+        console.log(`[Billing] Stopped room ${roomId}. Duration: ${durationSec}s. Earned: $${totalModelEarned.toFixed(2)}`);
+    } catch (err) {
+        console.error('[Billing Stop Error]', err.message);
+    }
 }
 
 async function getModelStats(modelId) {
