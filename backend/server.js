@@ -5,14 +5,23 @@ const cors = require('cors');
 require('dotenv').config();
 
 const allowedOrigins = [
+  'https://staging.kinky.live',
+  'https://www.staging.kinky.live',
   'https://livelyapp.vercel.app',
-  process.env.STAGING_ORIGIN, // Support dynamic staging origin
-  process.env.CORS_ORIGIN, // Added to support the standard CORS_ORIGIN env var
+  process.env.STAGING_ORIGIN,
+  process.env.CORS_ORIGIN,
   'https://www.kinky.live',
   'https://kinky.live',
   'http://localhost:3000',
   'http://localhost:3001'
-].filter(Boolean); // Remove undefined/null values
+].filter(Boolean);
+
+process.on('uncaughtException', (err) => {
+  console.error('[CRITICAL] Uncaught Exception:', err);
+});
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[CRITICAL] Unhandled Rejection at:', promise, 'reason:', reason);
+});
 
 const corsOptions = {
   origin: (origin, callback) => {
