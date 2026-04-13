@@ -42,10 +42,11 @@ function initBillingLoop(io) {
                             if (session.emptyTicks >= 20) {
                                 console.log(`[Billing] Room ${roomId} exceeded grace period. Auto-closing.`);
                                 await stopBilling(roomId);
-                                continue;
+                            } else {
+                                // Update session with new tick count
+                                await redis.hset(ACTIVE_ROOMS_KEY, roomId, JSON.stringify(session));
                             }
-                            // Update session with new tick count
-                            await redis.hset(ACTIVE_ROOMS_KEY, roomId, JSON.stringify(session));
+                            continue; // Stop processing billing for this empty room
                         } else {
                             // Reset grace period if sockets are found
                             if (session.emptyTicks) {
@@ -207,9 +208,24 @@ function initBillingLoop(io) {
 }
 
 async function startBilling(roomId, userId, modelId, userSocketId, modelSocketId) {
+    const normalizedUserId = String(userId).toLowerCase();
+    const normalizedModelId = String(modelId).toLowerCase();
+
+    // Kill any existing sessions for this user/model to prevent double-billing
+    const oldUserRoom = await redis.get(`user_active_room:${normalizedUserId}`);
+    if (oldUserRoom && oldUserRoom !== roomId) {
+        console.log(`[Billing Guard] Killing stray user session ${oldUserRoom} for ${normalizedUserId}`);
+        await stopBilling(oldUserRoom);
+    }
+    const oldModelRoom = await redis.get(`user_active_room:${normalizedModelId}`);
+    if (oldModelRoom && oldModelRoom !== roomId) {
+        console.log(`[Billing Guard] Killing stray model session ${oldModelRoom} for ${normalizedModelId}`);
+        await stopBilling(oldModelRoom);
+    }
+
     const sessionData = JSON.stringify({ 
-        userId: String(userId).toLowerCase(), 
-        modelId: String(modelId).toLowerCase(), 
+        userId: normalizedUserId, 
+        modelId: normalizedModelId, 
         userSocketId,
         modelSocketId,
         startTime: Date.now(),
