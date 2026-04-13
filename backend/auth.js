@@ -122,21 +122,36 @@ router.get('/me', async (req, res) => {
     if (!email) return res.status(400).json({ error: 'Missing email' });
 
     try {
+        // 1. Check in users table
         const userRes = await query('SELECT * FROM users WHERE email = $1', [email]);
-        if (userRes.rows.length === 0) return res.status(404).json({ error: 'User not found' });
+        if (userRes.rows.length > 0) {
+            const user = userRes.rows[0];
+            const redis = getRedisClient();
+            const credits = await redis.get(`user:${email}:credits`) || user.credits;
+            
+            return res.json({
+                email,
+                pseudo: user.pseudo,
+                role: 'user',
+                credits: parseFloat(credits)
+            });
+        }
 
-        const user = userRes.rows[0];
-        // Credits are also in SQL, but let's sync from Redis if available just in case of rapid updates
-        const redis = getRedisClient();
-        const credits = await redis.get(`user:${email}:credits`) || user.credits;
-        
-        res.json({
-            email,
-            pseudo: user.pseudo,
-            role: 'user',
-            credits: parseFloat(credits)
-        });
+        // 2. Check in models table
+        const modelRes = await query('SELECT * FROM models WHERE email = $1', [email]);
+        if (modelRes.rows.length > 0) {
+            const model = modelRes.rows[0];
+            return res.json({
+                email,
+                pseudo: model.pseudo || `${model.first_name} ${model.last_name}`,
+                role: 'model',
+                credits: 0 // Models don't have credits, but providing a value prevents frontend errors
+            });
+        }
+
+        return res.status(404).json({ error: 'User or model not found' });
     } catch (err) {
+        console.error('[Me Error]', err);
         res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });
