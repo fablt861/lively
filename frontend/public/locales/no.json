@@ -522,6 +522,7 @@
   "model.stat.secure_access": "Sikker tilgang",
   "model.stat.secure_access_val": "Toppnivå",
   "nav.back_home": "Tilbake til forsiden",
+  "nav.dashboard": "Dashbord",
   "nav.login": "Logg inn",
   "nav.logout": "Logg ut",
   "nav.menu.balance": "Saldo: {{amount}} kreditter",

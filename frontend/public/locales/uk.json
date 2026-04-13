@@ -522,6 +522,7 @@
   "model.stat.secure_access": "Захищений доступ",
   "model.stat.secure_access_val": "Топ рівень",
   "nav.back_home": "Назад на головну",
+  "nav.dashboard": "Панель приладів",
   "nav.login": "Увійти",
   "nav.logout": "Вийти",
   "nav.menu.balance": "Баланс: {{amount}} кредитів",

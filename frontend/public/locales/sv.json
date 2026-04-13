@@ -522,6 +522,7 @@
   "model.stat.secure_access": "Säker åtkomst",
   "model.stat.secure_access_val": "Toppskiktet",
   "nav.back_home": "Tillbaka till start",
+  "nav.dashboard": "Kontrollpanel",
   "nav.login": "Logga in",
   "nav.logout": "Logga ut",
   "nav.menu.balance": "Saldo: {{amount}} krediter",

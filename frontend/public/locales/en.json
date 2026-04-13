@@ -522,6 +522,7 @@
   "model.stat.secure_access": "Secure Access",
   "model.stat.secure_access_val": "Top Tier",
   "nav.back_home": "Back to Home",
+  "nav.dashboard": "Dashboard",
   "nav.login": "Login",
   "nav.logout": "Logout",
   "nav.menu.balance": "Balance: {{amount}} credits",

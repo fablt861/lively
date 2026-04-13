@@ -522,6 +522,7 @@
   "model.stat.secure_access": "Acesso Seguro",
   "model.stat.secure_access_val": "Nível Superior",
   "nav.back_home": "Voltar ao início",
+  "nav.dashboard": "Painel de controle",
   "nav.login": "Entrar",
   "nav.logout": "Sair",
   "nav.menu.balance": "Saldo: {{amount}} créditos",

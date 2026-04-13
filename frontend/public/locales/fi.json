@@ -522,6 +522,7 @@
   "model.stat.secure_access": "Suojattu pääsy",
   "model.stat.secure_access_val": "Huipputaso",
   "nav.back_home": "Takaisin etusivulle",
+  "nav.dashboard": "Hallintapaneeli",
   "nav.login": "Kirjaudu",
   "nav.logout": "Kirjaudu ulos",
   "nav.menu.balance": "Saldo: {{amount}} krediittiä",

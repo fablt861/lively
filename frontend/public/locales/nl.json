@@ -522,6 +522,7 @@
   "model.stat.secure_access": "Beveiligde Toegang",
   "model.stat.secure_access_val": "Topniveau",
   "nav.back_home": "Terug naar start",
+  "nav.dashboard": "Dashboard",
   "nav.login": "Inloggen",
   "nav.logout": "Uitloggen",
   "nav.menu.balance": "Saldo: {{amount}} credits",

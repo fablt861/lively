@@ -522,6 +522,7 @@
   "model.stat.secure_access": "Безопасный доступ",
   "model.stat.secure_access_val": "Топ уровень",
   "nav.back_home": "Назад на главную",
+  "nav.dashboard": "Панель управления",
   "nav.login": "Войти",
   "nav.logout": "Выйти",
   "nav.menu.balance": "Баланс: {{amount}} кредитов",

@@ -522,6 +522,7 @@
   "model.stat.secure_access": "Accès Sécurisé",
   "model.stat.secure_access_val": "Top Tier",
   "nav.back_home": "Retour à l'accueil",
+  "nav.dashboard": "Tableau de bord",
   "nav.login": "Connexion",
   "nav.logout": "Déconnexion",
   "nav.menu.balance": "Solde : {{amount}} crédits",
