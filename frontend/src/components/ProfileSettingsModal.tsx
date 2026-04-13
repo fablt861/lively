@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, User, Mail, Phone, Camera, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { X, User, Mail, Phone, Camera, ShieldCheck, CheckCircle2, Lock, Eye, EyeOff, ChevronDown, ChevronUp } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 
 interface ProfileInfo {
@@ -9,6 +9,9 @@ interface ProfileInfo {
     email: string;
     phone: string;
     photoProfile: string;
+    oldPassword?: string;
+    newPassword?: string;
+    confirmPassword?: string;
 }
 
 interface ProfileSettingsModalProps {
@@ -31,6 +34,10 @@ export function ProfileSettingsModal({ isOpen, onClose, modelEmail, onProfileUpd
     const [compressing, setCompressing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
+    const [showPasswordSection, setShowPasswordSection] = useState(false);
+    const [showOldPass, setShowOldPass] = useState(false);
+    const [showNewPass, setShowNewPass] = useState(false);
+    const [showConfirmPass, setShowConfirmPass] = useState(false);
 
     useEffect(() => {
         if (isOpen && modelEmail) {
@@ -136,6 +143,9 @@ export function ProfileSettingsModal({ isOpen, onClose, modelEmail, onProfileUpd
                 }
                 setTimeout(() => {
                     setSuccess(false);
+                    // Clear password fields if they were used
+                    setInfo(prev => ({ ...prev, oldPassword: "", newPassword: "", confirmPassword: "" }));
+                    setShowPasswordSection(false);
                     onClose();
                 }, 2000);
             } else {
@@ -261,6 +271,93 @@ export function ProfileSettingsModal({ isOpen, onClose, modelEmail, onProfileUpd
                                     <p className="text-[10px] text-orange-400 font-bold uppercase tracking-widest ml-2 italic">
                                         {t('dashboard.email_change_warning')}
                                     </p>
+                                </div>
+
+                                {/* Password Section Divider */}
+                                <div className="col-span-1 md:col-span-2 pt-4">
+                                    <button 
+                                        type="button"
+                                        onClick={() => setShowPasswordSection(!showPasswordSection)}
+                                        className="w-full flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all text-white/60 hover:text-white"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <Lock size={16} className="text-pink-500" />
+                                            <span className="text-[10px] uppercase font-black tracking-widest">{t('profile.password_section')}</span>
+                                        </div>
+                                        {showPasswordSection ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                                    </button>
+
+                                    {showPasswordSection && (
+                                        <div className="mt-6 space-y-6 animate-in slide-in-from-top-4 fade-in duration-300">
+                                            {/* Old Password */}
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
+                                                    <Lock size={12} /> {t('profile.old_password')}
+                                                </label>
+                                                <div className="relative">
+                                                    <input 
+                                                        type={showOldPass ? "text" : "password"}
+                                                        value={info.oldPassword || ""}
+                                                        onChange={e => setInfo({...info, oldPassword: e.target.value})}
+                                                        className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-pink-500 transition-all pr-12"
+                                                    />
+                                                    <button 
+                                                        type="button"
+                                                        onClick={() => setShowOldPass(!showOldPass)}
+                                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
+                                                    >
+                                                        {showOldPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                {/* New Password */}
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
+                                                        <Lock size={12} /> {t('profile.new_password')}
+                                                    </label>
+                                                    <div className="relative">
+                                                        <input 
+                                                            type={showNewPass ? "text" : "password"}
+                                                            value={info.newPassword || ""}
+                                                            onChange={e => setInfo({...info, newPassword: e.target.value})}
+                                                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-pink-500 transition-all pr-12"
+                                                        />
+                                                        <button 
+                                                            type="button"
+                                                            onClick={() => setShowNewPass(!showNewPass)}
+                                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
+                                                        >
+                                                            {showNewPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                {/* Confirm Password */}
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
+                                                        <Lock size={12} /> {t('profile.confirm_new_password')}
+                                                    </label>
+                                                    <div className="relative">
+                                                        <input 
+                                                            type={showConfirmPass ? "text" : "password"}
+                                                            value={info.confirmPassword || ""}
+                                                            onChange={e => setInfo({...info, confirmPassword: e.target.value})}
+                                                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-pink-500 transition-all pr-12"
+                                                        />
+                                                        <button 
+                                                            type="button"
+                                                            onClick={() => setShowConfirmPass(!showConfirmPass)}
+                                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
+                                                        >
+                                                            {showConfirmPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>

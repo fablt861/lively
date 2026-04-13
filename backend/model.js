@@ -122,13 +122,27 @@ router.put('/:email/profile', requireModelAuth, async (req, res) => {
         const oldEmail = req.params.email.toLowerCase();
         if (oldEmail !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
 
-        const { email: newEmailRaw, phone, pseudo, photoProfile } = req.body;
+        const { email: newEmailRaw, phone, pseudo, photoProfile, oldPassword, newPassword, confirmPassword } = req.body;
         const newEmail = newEmailRaw?.toLowerCase();
 
         const data = await redis.get(`model:active:${oldEmail}`);
         if (!data) return res.status(404).json({ error: 'Model not found' });
 
         let model = JSON.parse(data);
+
+        // Handle Password Change
+        if (newPassword) {
+            // Check if old password matches
+            if (model.password !== oldPassword) {
+                return res.status(400).json({ error: 'profile.error.password_incorrect' });
+            }
+            // Check if new passwords match
+            if (newPassword !== confirmPassword) {
+                return res.status(400).json({ error: 'profile.error.password_match' });
+            }
+            // Update password (plain text for consistency with current auth.js)
+            model.password = newPassword;
+        }
 
         // Handle Email Change
         if (newEmail && newEmail !== oldEmail) {
