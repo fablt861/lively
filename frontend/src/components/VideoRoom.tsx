@@ -376,10 +376,13 @@ export function VideoRoom({
         }
     }, [remoteStream]);
 
+    const userCreditsRef = useRef(userCredits);
+    useEffect(() => { userCreditsRef.current = userCredits; }, [userCredits]);
+
     // Visual Throttling: Sync displayedCredits with userCredits every 20 seconds
     useEffect(() => {
         if (role !== 'user' || !isConnected || isMatching || !remoteStream) {
-            // Not in an active call, keep sync or clear
+            // Not in an active call, keep sync
             if (userCredits !== null && (displayedCredits === null || Math.abs((displayedCredits || 0) - userCredits) > 5)) {
                 setDisplayedCredits(userCredits);
             }
@@ -387,11 +390,12 @@ export function VideoRoom({
         }
 
         const interval = setInterval(() => {
-            setDisplayedCredits(userCredits);
+            console.log(`[Throttle] Syncing displayed credits to latest: ${userCreditsRef.current}`);
+            setDisplayedCredits(userCreditsRef.current);
         }, 20000);
 
         return () => clearInterval(interval);
-    }, [role, isConnected, isMatching, !!remoteStream, userCredits, displayedCredits]);
+    }, [role, isConnected, isMatching, !!remoteStream]);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
