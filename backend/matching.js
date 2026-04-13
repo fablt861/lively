@@ -13,10 +13,8 @@ const QUEUE_USERS = 'queue:users';
 const RATE_LIMIT_COOLDOWN = 1.5; // seconds
 
 async function checkRateLimit(identifier) {
-    if (!identifier) return false;
-    const key = `ratelimit:matching:${identifier.toLowerCase()}`;
-    const result = await redis.set(key, '1', 'NX', 'EX', Math.ceil(RATE_LIMIT_COOLDOWN));
-    return result === null; // true if rate limited (key already existed)
+    // Disabled for Staging debugging
+    return false;
 }
 
 function setupMatching(io, socket) {

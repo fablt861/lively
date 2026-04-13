@@ -71,7 +71,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
                 }
             });
 
-        // 3. Initialize Socket
+        console.log("[Socket] Initializing io() with URL:", process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live");
         const newSocket = io(process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live", {
             transports: ["websocket", "polling"],
             forceNew: true,
