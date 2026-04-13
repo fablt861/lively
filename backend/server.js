@@ -51,7 +51,11 @@ app.use((req, res, next) => {
 const server = http.createServer(app);
 
 const io = new Server(server, {
-  cors: corsOptions
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  },
+  transports: ["websocket", "polling"]
 });
 
 const { setupMatching } = require('./matching');
