@@ -27,7 +27,10 @@ function setupMatching(io, socket) {
         isProcessing = true;
         try {
             // Check Maintenance & Launch Mode
+            console.log(`[Queue Trace] Fetching settings for ${socket.id}...`);
             const settings = await getSettings();
+            console.log(`[Queue Trace] Settings retrieved. Maintenance: ${settings.maintenanceMode}, Launch: ${settings.launchMode}`);
+            
             if (settings.maintenanceMode) {
                 console.log(`[Maintenance] Blocking join_queue for ${socket.id} (${role})`);
                 return socket.emit('maintenance_active');
@@ -161,19 +164,20 @@ async function updateQueuePositions(io, role) {
 }
 
 async function handleJoinQueue(io, socket) {
-    if (socket.currentRoom) {
-        console.log(`[Match Guard] Socket ${socket.id} already in a room. Skipping.`);
-        return;
-    }
-    console.log(`[Queue] ${socket.id} (${socket.role}) entering handleJoinQueue. Ident: ${myIdentifier}`);
+    try {
+        if (socket.currentRoom) {
+            console.log(`[Match Guard] Socket ${socket.id} already in a room (${socket.currentRoom}). Skipping.`);
+            return;
+        }
+        
+        const myIdentifier = socket.userEmail || `${socket.role}:${socket.userIp}`;
+        console.log(`[Queue Trace] Entering handleJoinQueue for ${socket.id}. Ident: ${myIdentifier}`);
 
     const isModel = socket.role === 'model';
     const myQueue = isModel ? QUEUE_MODELS : QUEUE_USERS;
     const targetQueue = isModel ? QUEUE_USERS : QUEUE_MODELS;
 
     console.log(`[Match Attempt] Socket ${socket.id} (${socket.role}) searching in ${targetQueue}...`);
-
-    const myIdentifier = socket.userEmail || `${socket.role}:${socket.userIp}`;
 
     /* 
     // --- RECOVERY ATTEMPT DISABLED FOR DEBUGGING ---
@@ -304,15 +308,19 @@ async function handleJoinQueue(io, socket) {
         }
     }
 
-    if (!foundPartner) {
-        // ENSURE UNIQUENESS: Remove existing instances of this socket before pushing
-        await redis.lrem(myQueue, 0, socket.id);
-        await redis.lpush(myQueue, socket.id);
-        
-        const modelsCount = await redis.llen(QUEUE_MODELS);
-        const usersCount = await redis.llen(QUEUE_USERS);
-        console.log(`[Queue Status] Models: ${modelsCount}, Users: ${usersCount}. Socket ${socket.id} is waiting.`);
-        socket.emit('waiting', { status: 'waiting for partner', position: isModel ? modelsCount : usersCount }); 
+        if (!foundPartner) {
+            console.log(`[Queue Trace] No partner found for ${socket.id}. Adding to my queue: ${myQueue}`);
+            // ENSURE UNIQUENESS: Remove existing instances of this socket before pushing
+            await redis.lrem(myQueue, 0, socket.id);
+            await redis.lpush(myQueue, socket.id);
+            
+            const modelsCount = await redis.llen(QUEUE_MODELS);
+            const usersCount = await redis.llen(QUEUE_USERS);
+            console.log(`[Queue Status] Models: ${modelsCount}, Users: ${usersCount}. Socket ${socket.id} is waiting.`);
+            socket.emit('waiting', { status: 'waiting for partner', position: isModel ? modelsCount : usersCount }); 
+        }
+    } catch (err) {
+        console.error(`[Queue Error] Crash in handleJoinQueue for ${socket.id}:`, err);
     }
 }
 
