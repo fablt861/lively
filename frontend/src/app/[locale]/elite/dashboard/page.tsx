@@ -57,9 +57,9 @@ export default function DashboardPage() {
             .then((res) => res.json())
             .then((data) => {
                 setStats(data);
-                setLoading(false);
             })
-            .catch(console.error);
+            .catch(console.error)
+            .finally(() => setLoading(false));
     };
 
     const fetchPayouts = () => {
@@ -70,9 +70,9 @@ export default function DashboardPage() {
             .then((res) => res.json())
             .then((data) => {
                 setPayoutHistory(data);
-                setLoadingPayouts(false);
             })
-            .catch(console.error);
+            .catch(console.error)
+            .finally(() => setLoadingPayouts(false));
     };
 
     useEffect(() => {
@@ -198,10 +198,10 @@ export default function DashboardPage() {
                     
                     <div className="space-y-1">
                         <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
-                            <span className="px-3 py-1 bg-pink-500/10 border border-pink-500/20 text-pink-400 text-[10px] font-black uppercase tracking-[0.2em] rounded-full">Elite Member</span>
+                            <span className="px-3 py-1 bg-pink-500/10 border border-pink-500/20 text-pink-400 text-[10px] font-black uppercase tracking-[0.2em] rounded-full">ELITE</span>
                             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
                         </div>
-                        <h2 className="text-3xl md:text-5xl font-extralight text-white/50 leading-none">Hello, <span className="font-black text-white">{stats?.pseudo || "..."}</span></h2>
+                        <h2 className="text-3xl md:text-5xl font-extralight text-white/50 leading-none">{t('nav.welcome')} <span className="font-black text-white">{stats?.pseudo || "..."}</span></h2>
                         <div className="pt-2">
                             <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-white to-white/40 bg-clip-text text-transparent">{t('dashboard.title')}</h1>
                             <p className="text-xs md:text-sm text-neutral-500 font-medium">{t('dashboard.subtitle')}</p>

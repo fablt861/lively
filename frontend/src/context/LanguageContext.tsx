@@ -57,7 +57,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
         // 2. Load translations
         const loadTranslations = async () => {
             try {
-                const res = await fetch(`/locales/${language}.json?v=2026_v6`);
+                const res = await fetch(`/locales/${language}.json?v=2026_v7`);
                 const data = await res.json();
                 setTranslations(data);
                 setIsLoaded(true);
@@ -106,7 +106,9 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
                 /* Simple loading shell to match the Luxury background */
                 <div className="fixed inset-0 bg-[#050505] z-[9999]" />
             ) : (
-                children
+                <div className="notranslate" translate="no">
+                    {children}
+                </div>
             )}
         </LanguageContext.Provider>
     );

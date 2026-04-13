@@ -11,7 +11,7 @@ const languages = [
     { code: 'fi', name: 'Suomi', flag: '🇫🇮' },
     { code: 'fr', name: 'Français', flag: '🇫🇷' },
     { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-    { code: 'nl', name: 'Dutch', flag: '🇳🇱' },
+    { code: 'nl', name: 'Nederlands', flag: '🇳🇱' },
     { code: 'no', name: 'Norsk', flag: '🇳🇴' },
     { code: 'pt', name: 'Português', flag: '🇵🇹' },
     { code: 'ro', name: 'Română', flag: '🇷🇴' },
@@ -44,7 +44,7 @@ export const LanguageSelector = () => {
                 className="flex items-center gap-2 px-3 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all text-xs font-bold uppercase tracking-widest text-white/90"
             >
                 <span className="text-base leading-none">{currentLang.flag}</span>
-                <span className="hidden sm:inline">{currentLang.code}</span>
+                <span className="hidden sm:inline notranslate" translate="no">{currentLang.code}</span>
                 <ChevronDown size={14} className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
             </button>
 
@@ -61,7 +61,7 @@ export const LanguageSelector = () => {
                                 className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition-colors ${language === lang.code ? 'bg-indigo-500/20 text-indigo-300' : 'text-neutral-400'}`}
                             >
                                 <span className="text-lg leading-none">{lang.flag}</span>
-                                <span className="text-sm font-medium">{lang.name}</span>
+                                <span className="text-sm font-medium notranslate" translate="no">{lang.name}</span>
                                 {language === lang.code && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.8)]" />}
                             </button>
                         ))}
