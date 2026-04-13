@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles, Lock, Timer, Check } from "lucide-react";
+import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles, Lock, Timer, Check, Plus } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 import { MaintenanceGuard } from "./MaintenanceGuard";
 import { LaunchPage } from "./LaunchPage";
@@ -109,6 +109,8 @@ export function VideoRoom({
     const [incomingBlockRequest, setIncomingBlockRequest] = useState<any>(null);
     const [isWaitingForBlockResponse, setIsWaitingForBlockResponse] = useState(false);
     const [blockTimeLeft, setBlockTimeLeft] = useState("");
+    const [displayedCredits, setDisplayedCredits] = useState<number | null>(null);
+    const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     console.log(`[VideoRoom Render] isConnected: ${isConnected}, isMatching: ${isMatching}, remoteStream (bool): ${!!remoteStream}`);
 
@@ -184,6 +186,12 @@ export function VideoRoom({
                 setUserCredits(newCredits);
                 localStorage.setItem('kinky_credits', String(newCredits));
                 
+                // If it's the first time or we just jumped up (purchase), update displayed credits immediately
+                setDisplayedCredits(prev => {
+                    if (prev === null || newCredits > prev) return newCredits;
+                    return prev;
+                });
+
                 if (newCredits <= 0) {
                     setIsBlocked(false);
                     setBlockEndTime(null);
@@ -368,6 +376,23 @@ export function VideoRoom({
         }
     }, [remoteStream]);
 
+    // Visual Throttling: Sync displayedCredits with userCredits every 20 seconds
+    useEffect(() => {
+        if (role !== 'user' || !isConnected || isMatching || !remoteStream) {
+            // Not in an active call, keep sync or clear
+            if (userCredits !== null && (displayedCredits === null || Math.abs((displayedCredits || 0) - userCredits) > 5)) {
+                setDisplayedCredits(userCredits);
+            }
+            return;
+        }
+
+        const interval = setInterval(() => {
+            setDisplayedCredits(userCredits);
+        }, 20000);
+
+        return () => clearInterval(interval);
+    }, [role, isConnected, isMatching, !!remoteStream, userCredits, displayedCredits]);
+
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
@@ -546,25 +571,30 @@ export function VideoRoom({
                 {/* User Credit Counter */}
                 {role === "user" && isConnected && !showPaywall && !showAuthModal && userCredits !== null && (
                     <div className={`absolute top-16 left-6 md:top-6 md:right-6 md:left-auto z-30 flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3 bg-black/40 backdrop-blur-xl rounded-full border border-white/10 shadow-lg transition-all duration-700 overflow-hidden ${userCredits <= 2 ? 'max-w-[calc(100vw-3rem)] md:max-w-2xl border-red-500/50 shadow-red-500/20' : 'max-w-fit'}`}>
-                        <span className="text-white/80 text-[10px] md:text-xs font-bold tracking-wider uppercase whitespace-nowrap hidden sm:block">{t('room.balance')}</span>
-                        <span className={`font-mono text-xs md:text-lg font-bold whitespace-nowrap flex items-center gap-1.5 ${userCredits <= 2 ? 'text-red-400 animate-pulse' : 'text-white'}`}>
-                                {userCredits !== null ? Math.floor(userCredits) : 0} <Coins size={12} className="md:w-[18px] text-yellow-400 fill-yellow-500/30" />
-                        </span>
+                        <div className="flex items-center gap-2">
+                            <span className="text-white/80 text-[10px] md:text-xs font-bold tracking-wider uppercase whitespace-nowrap hidden sm:block">{t('room.balance')}</span>
+                            <span className={`font-mono text-xs md:text-lg font-bold whitespace-nowrap flex items-center gap-1.5 ${userCredits <= 2 ? 'text-red-400 animate-pulse' : 'text-white'}`}>
+                                    {displayedCredits !== null ? Math.floor(displayedCredits) : (userCredits !== null ? Math.floor(userCredits) : 0)} <Coins size={12} className="md:w-[18px] text-yellow-400 fill-yellow-500/30" />
+                            </span>
+                            
+                            {/* Constant Purchase Button */}
+                            <button 
+                                onClick={() => {
+                                    if (accountStatus === 'guest') setShowAuthModal(true);
+                                    else setShowPaywall(true);
+                                }}
+                                className="ml-1 md:ml-2 p-1 md:p-1.5 bg-yellow-500/20 hover:bg-yellow-500/40 border border-yellow-500/40 rounded-full text-yellow-400 transition-all hover:scale-110 active:scale-95"
+                                title={t('room.topup')}
+                            >
+                                <Plus size={14} className="md:w-4 md:h-4 font-black" />
+                            </button>
+                        </div>
 
                         {userCredits <= 2 && (
                             <div className="flex items-center gap-2 sm:gap-4 pl-3 sm:pl-4 ml-2 border-l border-white/10">
-                                <button
-                                    onClick={() => {
-                                        if (accountStatus === 'guest') {
-                                            setShowAuthModal(true);
-                                        } else {
-                                            setShowPaywall(true);
-                                        }
-                                    }}
-                                    className="px-3 py-1 bg-red-500 hover:bg-red-400 text-white rounded-full text-[10px] sm:text-sm font-black transition-all active:scale-95 whitespace-nowrap shadow-lg shadow-red-500/20"
-                                >
-                                    {t('room.topup')}
-                                </button>
+                                <span className="text-[10px] text-red-400 font-bold animate-pulse hidden md:block uppercase tracking-tighter">
+                                    {t('room.low_balance_warning')}
+                                </span>
                             </div>
                         )}
                     </div>
