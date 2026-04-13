@@ -236,6 +236,8 @@
   "auth.login_tab": "Login",
   "auth.login_title": "Bine ai revenit.",
   "auth.password_placeholder": "Parolă",
+  "auth.phone": "Telefon",
+  "auth.pseudo": "Pseudonim",
   "auth.pseudo_placeholder": "Nume utilizator",
   "auth.secure": "Acces securizat",
   "auth.signup_btn": "Înregistrare",

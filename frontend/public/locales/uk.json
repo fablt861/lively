@@ -236,6 +236,8 @@
   "auth.login_tab": "Вхід",
   "auth.login_title": "З поверненням.",
   "auth.password_placeholder": "Пароль",
+  "auth.phone": "Телефон",
+  "auth.pseudo": "Псевдонім",
   "auth.pseudo_placeholder": "Ім'я користувача",
   "auth.secure": "Безпечний доступ",
   "auth.signup_btn": "Зареєструватися",

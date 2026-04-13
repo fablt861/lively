@@ -236,6 +236,8 @@
   "auth.login_tab": "Login",
   "auth.login_title": "Welcome back.",
   "auth.password_placeholder": "Password",
+  "auth.phone": "Téléphone",
+  "auth.pseudo": "Pseudo",
   "auth.pseudo_placeholder": "Username",
   "auth.secure": "Accès sécurisé",
   "auth.signup_btn": "Sign up",

@@ -236,6 +236,8 @@
   "auth.login_tab": "Kirjaudu",
   "auth.login_title": "Tervetuloa takaisin.",
   "auth.password_placeholder": "Salasana",
+  "auth.phone": "Puhelin",
+  "auth.pseudo": "Nimimerkki",
   "auth.pseudo_placeholder": "Käyttäjänimi",
   "auth.secure": "Suojattu yhteys",
   "auth.signup_btn": "Rekisteröidy",

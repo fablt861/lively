@@ -236,6 +236,8 @@
   "auth.login_tab": "Entrar",
   "auth.login_title": "Bienvenido de nuevo.",
   "auth.password_placeholder": "Contraseña",
+  "auth.phone": "Teléfono",
+  "auth.pseudo": "Seudónimo",
   "auth.pseudo_placeholder": "Usuario",
   "auth.secure": "Acceso seguro",
   "auth.signup_btn": "Registrarse",

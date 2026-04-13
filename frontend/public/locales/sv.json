@@ -236,6 +236,8 @@
   "auth.login_tab": "Logga in",
   "auth.login_title": "Välkommen tillbaka.",
   "auth.password_placeholder": "Lösenord",
+  "auth.phone": "Telefon",
+  "auth.pseudo": "Pseudonym",
   "auth.pseudo_placeholder": "Användarnamn",
   "auth.secure": "Säker åtkomst",
   "auth.signup_btn": "Registrera dig",

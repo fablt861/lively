@@ -236,6 +236,8 @@
   "auth.login_tab": "Inloggen",
   "auth.login_title": "Welkom terug.",
   "auth.password_placeholder": "Wachtwoord",
+  "auth.phone": "Telefoon",
+  "auth.pseudo": "Pseudoniem",
   "auth.pseudo_placeholder": "Gebruikersnaam",
   "auth.secure": "Veilige toegang",
   "auth.signup_btn": "Registreren",
