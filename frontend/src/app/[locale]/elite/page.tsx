@@ -130,7 +130,7 @@ export default function ModelLandingPage() {
                     <div className="text-center space-y-6 mb-16">
                         <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-500/10 border border-red-500/20 rounded-full text-red-400 text-[8px] font-black uppercase tracking-[0.3em]">
                             <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                            Live Cam Platform
+                            {t('model.landing.live_cam_badge')}
                         </div>
                         <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
                             {t('model.landing.live_cam_title')}
@@ -146,21 +146,21 @@ export default function ModelLandingPage() {
                             <img src="/images/live_cam_mockup_1.png" alt="Live Cam Desktop" className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
                             <div className="absolute bottom-6 left-6">
-                                <p className="text-[10px] font-black text-white uppercase tracking-widest">Premium Desktop Experience</p>
+                                <p className="text-[10px] font-black text-white uppercase tracking-widest">{t('model.landing.live_cam_feat1')}</p>
                             </div>
                         </div>
                         <div className="group relative overflow-hidden rounded-3xl bg-white/5 border border-white/10 aspect-[4/3] md:translate-y-6 hover:border-purple-500/50 transition-all duration-500">
                             <img src="/images/live_cam_mockup_2.png" alt="Live Cam Mobile" className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
                             <div className="absolute bottom-6 left-6">
-                                <p className="text-[10px] font-black text-white uppercase tracking-widest">Mobile Live Streaming</p>
+                                <p className="text-[10px] font-black text-white uppercase tracking-widest">{t('model.landing.live_cam_feat2')}</p>
                             </div>
                         </div>
                         <div className="group relative overflow-hidden rounded-3xl bg-white/5 border border-white/10 aspect-[4/3] hover:border-indigo-500/50 transition-all duration-500">
                             <img src="/images/live_cam_mockup_3.png" alt="Pro Camera Setup" className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
                             <div className="absolute bottom-6 left-6">
-                                <p className="text-[10px] font-black text-white uppercase tracking-widest">High-End Equipment Support</p>
+                                <p className="text-[10px] font-black text-white uppercase tracking-widest">{t('model.landing.live_cam_feat3')}</p>
                             </div>
                         </div>
                     </div>

@@ -204,10 +204,10 @@ export default function ModelSignupPage() {
     };
 
     const steps = [
-        { id: 1, label: "Pays" },
-        { id: 2, label: "Contact" },
-        { id: 3, label: "Identité" },
-        { id: 4, label: "Vérification" }
+        { id: 1, label: t('model.signup.step1_title_short') },
+        { id: 2, label: t('model.signup.step2_title_short') },
+        { id: 3, label: t('model.signup.step3_title_short') },
+        { id: 4, label: t('model.signup.step4_title_short') }
     ];
 
     return (
@@ -461,7 +461,7 @@ export default function ModelSignupPage() {
                                                             className="bg-pink-500 text-white font-black text-[8px] uppercase tracking-widest px-3 py-1.5 rounded-full shadow-2xl flex items-center gap-1.5 hover:bg-pink-600 transition-colors"
                                                         >
                                                             <Camera size={10} />
-                                                            {t('model.signup.step4_take_photo') || "Take Photo"}
+                                                            {t('model.signup.step4_take_photo')}
                                                         </button>
                                                     </div>
                                                 </div>

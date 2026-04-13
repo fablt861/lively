@@ -115,7 +115,7 @@ export default function DashboardPage() {
                 }
             }
         } catch (err) {
-            setPayoutMessage({ text: "Network error", type: 'error' });
+            setPayoutMessage({ text: t('common.error_network'), type: 'error' });
         } finally {
             setPayoutLoading(false);
         }
@@ -419,9 +419,9 @@ export default function DashboardPage() {
                                     <thead>
                                         <tr className="border-b border-white/5 bg-white/[0.02]">
                                             <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_date')}</th>
-                                            <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">Invoice</th>
+                                            <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_invoice')}</th>
                                             <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('admin.payouts.table_amount')}</th>
-                                            <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">Fees</th>
+                                            <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_fees')}</th>
                                             <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('admin.payouts.table_method')}</th>
                                             <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] text-right">{t('admin.table.status')}</th>
                                         </tr>
@@ -450,7 +450,7 @@ export default function DashboardPage() {
                                                             <button 
                                                                 onClick={() => window.open(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.kinky.live'}/api/elite/${id}/payouts/${p.id}/invoice?token=model-token-${id}`, '_blank')}
                                                                 className="p-2 text-neutral-500 hover:text-indigo-400 transition-colors bg-white/5 rounded-lg border border-white/5 hover:border-indigo-500/30"
-                                                                title="Download Invoice"
+                                                                title={t('dashboard.download_invoice')}
                                                             >
                                                                 <FileText size={16} />
                                                             </button>

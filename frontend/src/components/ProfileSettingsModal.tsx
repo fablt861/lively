@@ -54,7 +54,7 @@ export function ProfileSettingsModal({ isOpen, onClose, modelEmail, onProfileUpd
                 })
                 .catch(err => {
                     console.error(err);
-                    setError(t('dashboard.profile_load_error') || "Failed to load profile settings.");
+                    setError(t('dashboard.profile_load_error'));
                     setLoading(false);
                 });
         }
@@ -139,7 +139,7 @@ export function ProfileSettingsModal({ isOpen, onClose, modelEmail, onProfileUpd
                     onClose();
                 }, 2000);
             } else {
-                setError(t(data.error) || data.error || t('profile.save_error'));
+                setError(t(data.error) || t('profile.save_error'));
             }
         } catch (err) {
             setError(t('billing.network_error'));
@@ -249,7 +249,7 @@ export function ProfileSettingsModal({ isOpen, onClose, modelEmail, onProfileUpd
                                 {/* Email */}
                                 <div className="space-y-2 col-span-1 md:col-span-2">
                                     <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
-                                        <Mail size={12} /> {t('auth.email_placeholder') || "Email"}
+                                        <Mail size={12} /> {t('auth.email_placeholder')}
                                     </label>
                                     <input 
                                         type="email"

@@ -27,7 +27,7 @@ interface ModelBillingModalProps {
 }
 
 export function ModelBillingModal({ isOpen, onClose, modelEmail }: ModelBillingModalProps) {
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
     const [info, setInfo] = useState<BillingInfo>({
         name: "",
         address: "",

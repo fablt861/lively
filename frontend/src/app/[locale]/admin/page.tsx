@@ -517,7 +517,7 @@ export default function AdminPage() {
                                     {realtimeStats?.queue?.details?.models.length === 0 ? (
                                         <div className="py-12 flex flex-col items-center justify-center text-neutral-600 border-2 border-dashed border-white/5 rounded-3xl">
                                             <Activity className="w-8 h-8 opacity-20 mb-3" />
-                                            <p className="text-sm font-medium">Aucun modèle en attente</p>
+                                            <p className="text-sm font-medium">{t('admin.realtime.no_models')}</p>
                                         </div>
                                     ) : (
                                         realtimeStats?.queue?.details?.models.map((m: any, i: number) => (
@@ -533,7 +533,7 @@ export default function AdminPage() {
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" />
-                                                    <span className="text-[10px] font-black text-indigo-400 tracking-widest uppercase">EN ATTENTE</span>
+                                                    <span className="text-[10px] font-black text-indigo-400 tracking-widest uppercase">{t('admin.realtime.waiting_badge')}</span>
                                                 </div>
                                             </div>
                                         ))
@@ -563,7 +563,7 @@ export default function AdminPage() {
                                     {realtimeStats?.queue?.details?.users.length === 0 ? (
                                         <div className="py-12 flex flex-col items-center justify-center text-neutral-600 border-2 border-dashed border-white/5 rounded-3xl">
                                             <Activity className="w-8 h-8 opacity-20 mb-3" />
-                                            <p className="text-sm font-medium">Aucun utilisateur en attente</p>
+                                            <p className="text-sm font-medium">{t('admin.realtime.no_users')}</p>
                                         </div>
                                     ) : (
                                         realtimeStats?.queue?.details?.users.map((u: any, i: number) => (
@@ -607,11 +607,11 @@ export default function AdminPage() {
                             <h3 className="text-xl font-medium text-indigo-400 border-b border-white/5 pb-4">{t('admin.settings.rates_title')}</h3>
                             <div className="grid grid-cols-2 gap-6">
                                 <div className="col-span-2 space-y-4">
-                                    <label className="block text-sm text-neutral-400 mb-2">Model Payout Tiers (Graduated)</label>
+                                    <label className="block text-sm text-neutral-400 mb-2">{t('admin.settings.payout_tiers_title')}</label>
                                     {(settings.payoutTiers || []).map((tier: any, idx: number) => (
                                         <div key={idx} className="flex items-center gap-4 bg-black/30 p-4 rounded-xl border border-white/5">
                                             <div className="flex-1">
-                                                <label className="block text-[10px] text-neutral-500 uppercase font-bold mb-1">Dès (Minutes)</label>
+                                                <label className="block text-[10px] text-neutral-500 uppercase font-bold mb-1">{t('admin.settings.min_minutes')}</label>
                                                 <input 
                                                     type="number" 
                                                     value={tier.minMinutes} 
@@ -624,7 +624,7 @@ export default function AdminPage() {
                                                 />
                                             </div>
                                             <div className="flex-1">
-                                                <label className="block text-[10px] text-neutral-500 uppercase font-bold mb-1">Gains ($ / min)</label>
+                                                <label className="block text-[10px] text-neutral-500 uppercase font-bold mb-1">{t('admin.settings.earnings_rate')}</label>
                                                 <input 
                                                     type="number" 
                                                     step="0.01"
@@ -655,7 +655,7 @@ export default function AdminPage() {
                                         }}
                                         className="text-xs font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-2 px-2 py-1"
                                     >
-                                        + Ajouter un palier
+                                        {t('admin.settings.add_tier')}
                                     </button>
                                 </div>
                                 <div className="col-span-2">
@@ -709,10 +709,10 @@ export default function AdminPage() {
                         </div>
                         
                         <div className="bg-neutral-900 border border-white/5 p-8 rounded-3xl space-y-6 shadow-2xl">
-                            <h3 className="text-xl font-medium text-pink-400 border-b border-white/5 pb-4 uppercase tracking-tighter">Session Privée (Blocage {settings.blockDurationMin || 30} min)</h3>
+                            <h3 className="text-xl font-medium text-pink-400 border-b border-white/5 pb-4 uppercase tracking-tighter">{t('admin.settings.private_session_title', { minutes: settings.blockDurationMin || 30 })}</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-1">
-                                    <label className="block text-[10px] text-neutral-500 font-bold uppercase tracking-widest mb-2">Durée de la session (Minutes)</label>
+                                    <label className="block text-[10px] text-neutral-500 font-bold uppercase tracking-widest mb-2">{t('admin.settings.session_duration')}</label>
                                     <input type="number" 
                                         value={settings.blockDurationMin || 30} 
                                         onChange={e => setSettings({ ...settings, blockDurationMin: parseInt(e.target.value) })}
@@ -720,21 +720,21 @@ export default function AdminPage() {
                                     />
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="block text-[10px] text-neutral-500 font-bold uppercase tracking-widest mb-2">Coût pour l'utilisateur (Total Crédits)</label>
+                                    <label className="block text-[10px] text-neutral-500 font-bold uppercase tracking-widest mb-2">{t('admin.settings.user_cost')}</label>
                                     <input type="number" 
                                         value={settings.blockCreditsCost || 600} 
                                         onChange={e => setSettings({ ...settings, blockCreditsCost: parseInt(e.target.value) })}
                                         className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-pink-500 transition-colors font-mono" 
                                     />
                                     <div className="flex justify-between items-center mt-2">
-                                        <p className="text-[10px] text-indigo-400 font-black uppercase">Débit Auto</p>
+                                        <p className="text-[10px] text-indigo-400 font-black uppercase">{t('admin.settings.auto_debit')}</p>
                                         <p className="text-[10px] text-neutral-400 font-mono tracking-tighter">
                                             {((settings.blockCreditsCost || 600) / (settings.blockDurationMin || 30)).toFixed(2)} CREDITS / MIN
                                         </p>
                                     </div>
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="block text-[10px] text-neutral-500 font-bold uppercase tracking-widest mb-2">Paiement Modèle ($ Net à la fin)</label>
+                                    <label className="block text-[10px] text-neutral-500 font-bold uppercase tracking-widest mb-2">{t('admin.settings.model_payout')}</label>
                                     <div className="relative">
                                         <span className="absolute left-3 top-3.5 text-white/30">$</span>
                                         <input type="number" 
@@ -746,7 +746,7 @@ export default function AdminPage() {
                                     </div>
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="block text-[10px] text-neutral-500 font-bold uppercase tracking-widest mb-2">Prix Pack Spécial ($ de recharge)</label>
+                                    <label className="block text-[10px] text-neutral-500 font-bold uppercase tracking-widest mb-2">{t('admin.settings.special_pack_price')}</label>
                                     <div className="relative">
                                         <span className="absolute left-3 top-3.5 text-white/30">$</span>
                                         <input type="number" 
@@ -756,7 +756,7 @@ export default function AdminPage() {
                                             className="w-full bg-black/50 border border-white/10 rounded-xl p-3 pl-8 text-white focus:outline-none focus:border-pink-500 transition-colors font-mono" 
                                         />
                                     </div>
-                                    <p className="text-[10px] text-neutral-500 mt-2 font-medium italic">Pack proposé automatiquement si le solde est insuffisant.</p>
+                                    <p className="text-[10px] text-neutral-500 mt-2 font-medium italic">{t('admin.settings.auto_pack_desc')}</p>
                                 </div>
                             </div>
                         </div>
@@ -783,7 +783,7 @@ export default function AdminPage() {
                             {settings.maintenanceMode && (
                                 <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-3 animate-pulse">
                                     <ShieldAlert size={14} />
-                                    Accès au live chat est actuellement bloqué
+                                    {t('admin.settings.block_notice')}
                                 </div>
                             )}
                         </div>
@@ -796,9 +796,9 @@ export default function AdminPage() {
                                 <div className="space-y-1">
                                     <h3 className="text-xl font-medium text-white flex items-center gap-2">
                                         <Zap className={settings.launchMode ? 'text-indigo-500' : 'text-green-500'} size={20} />
-                                        Mode Lancement (Coming Soon)
+                                        {t('launch.stay_tuned')} {t('admin.settings.coming_soon')}
                                     </h3>
-                                    <p className="text-xs text-neutral-500">Affiche une page de capture magnifique au lieu du chat.</p>
+                                    <p className="text-xs text-neutral-500">{t('admin.settings.landpage_desc_short')}</p>
                                 </div>
                                 <button 
                                     onClick={() => setSettings({ ...settings, launchMode: !settings.launchMode })}
@@ -811,7 +811,7 @@ export default function AdminPage() {
                             {settings.launchMode && (
                                 <div className="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl text-indigo-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-3 animate-pulse">
                                     <Sparkles size={14} className="text-indigo-500" />
-                                    La page "magnifique" est activée pour tous les visiteurs
+                                    {t('admin.settings.landpage_notice') || "STUNNING LANDING PAGE ENABLED"}
                                 </div>
                             )}
                         </div>
@@ -893,7 +893,7 @@ export default function AdminPage() {
                                                     <p className="text-sm font-bold text-white">{model.dob}</p>
                                                 </div>
                                                 <div className="space-y-0.5">
-                                                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Email</p>
+                                                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">{t('admin.model.email')}</p>
                                                     <p className="text-[10px] font-bold text-pink-400 truncate max-w-[120px]">{model.email}</p>
                                                 </div>
                                             </div>
@@ -901,9 +901,9 @@ export default function AdminPage() {
 
                                         <div className="grid grid-cols-3 gap-3">
                                             {[
-                                                { id: 'profile', label: 'Profile', url: model.photoProfile },
-                                                { id: 'id', label: 'ID Document', url: model.photoId },
-                                                { id: 'selfie', label: 'Selfie + ID', url: model.photoIdSelfie }
+                                                { id: 'profile', label: t('admin.validations.profile'), url: model.photoProfile },
+                                                { id: 'id', label: t('admin.validations.id_document'), url: model.photoId },
+                                                { id: 'selfie', label: t('admin.validations.selfie_id'), url: model.photoIdSelfie }
                                             ].map((img, idx, arr) => (
                                                 <div key={img.id} className="bg-black/50 rounded-2xl p-3 border border-white/5">
                                                     <p className="text-[10px] text-neutral-500 text-center mb-2 uppercase tracking-tighter">{img.label}</p>
@@ -978,7 +978,7 @@ export default function AdminPage() {
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.last_login')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.total_spent')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.credits')}</th>
-                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Type</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.common.type')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.status')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase text-right">{t('admin.table.action')}</th>
                                     </tr>
@@ -1188,15 +1188,15 @@ export default function AdminPage() {
                                                     <div className="text-xs text-neutral-400 space-y-1">
                                                         {p.billingInfo.method === 'bank' && (
                                                             <>
-                                                                <div>IBAN: <span className="text-white font-mono">{p.billingInfo.bankIban}</span></div>
-                                                                <div>SWIFT: <span className="text-white font-mono">{p.billingInfo.bankSwift}</span></div>
+                                                                <div>{t('common.iban')}: <span className="text-white font-mono">{p.billingInfo.bankIban}</span></div>
+                                                                <div>{t('common.swift')}: <span className="text-white font-mono">{p.billingInfo.bankSwift}</span></div>
                                                             </>
                                                         )}
                                                         {p.billingInfo.method === 'paypal' && (
-                                                            <div>Email: <span className="text-white font-mono">{p.billingInfo.paypalEmail}</span></div>
+                                                            <div>{t('admin.model.email')}: <span className="text-white font-mono">{p.billingInfo.paypalEmail}</span></div>
                                                         )}
                                                         {p.billingInfo.method === 'crypto' && (
-                                                            <div>Wallet: <span className="text-white font-mono truncate max-w-[200px] block">{p.billingInfo.cryptoAddress}</span></div>
+                                                            <div>{t('common.wallet')}: <span className="text-white font-mono truncate max-w-[200px] block">{p.billingInfo.cryptoAddress}</span></div>
                                                         )}
                                                         <div className="pt-1 mt-1 border-t border-white/5 text-[10px] italic">
                                                             {p.billingInfo.address}, {p.billingInfo.country}
@@ -1206,7 +1206,7 @@ export default function AdminPage() {
                                                 <td className="p-5 text-right space-x-2">
                                                     <button
                                                         onClick={async () => {
-                                                            if (confirm("Reject this payout and refund the balance?")) {
+                                                            if (confirm(t('admin.payouts.confirm_reject') || "Reject this payout and refund the balance?")) {
                                                                 await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/payouts/${p.id}/reject`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
                                                                 fetchPayoutRequests();
                                                             }
@@ -1217,7 +1217,7 @@ export default function AdminPage() {
                                                     </button>
                                                     <button
                                                         onClick={async () => {
-                                                            if (confirm("Confirm that this payout has been processed and paid?")) {
+                                                            if (confirm(t('admin.payouts.confirm_approve') || "Confirm that this payout has been processed and paid?")) {
                                                                 const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/payouts/${p.id}/approve`, { 
                                                                     method: "POST", 
                                                                     headers: { Authorization: `Bearer ${token}` } 
@@ -1226,7 +1226,7 @@ export default function AdminPage() {
                                                                 if (response.ok) {
                                                                     fetchPayoutRequests();
                                                                     fetchPayoutHistory();
-                                                                    alert("Payout approved and invoice generated successfully.");
+                                                                    alert(t('admin.payouts.approve_success') || "Payout approved and invoice generated successfully.");
                                                                 } else {
                                                                     try {
                                                                         const err = await response.json();
@@ -1255,26 +1255,26 @@ export default function AdminPage() {
                             <div className="flex items-center justify-between mb-6">
                                 <h3 className="text-xl font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-3">
                                     <HistoryIcon size={20} className="text-indigo-500" />
-                                    Factures & Historique
+                                    {t('admin.payouts.history_title')}
                                 </h3>
                                 <div className="text-[10px] font-black text-neutral-500 uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/5">
-                                    {payoutHistory.length} Factures Générées
+                                    {payoutHistory.length} {t('admin.payouts.invoices_generated')}
                                 </div>
                             </div>
                             
                             {payoutHistory.length === 0 ? (
                                 <div className="bg-neutral-900 border border-white/5 rounded-3xl p-12 text-center text-neutral-500 italic">
-                                    Aucun historique de paiement disponible.
+                                    {t('admin.payouts.history_empty')}
                                 </div>
                             ) : (
                                 <div className="bg-neutral-900 border border-white/5 rounded-3xl overflow-hidden shadow-2xl opacity-80 hover:opacity-100 transition-opacity">
                                     <table className="w-full text-left">
                                         <thead className="bg-white/[0.02] border-b border-white/5">
                                             <tr>
-                                                <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Model / Info</th>
-                                                <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Montant</th>
-                                                <th className="p-5 text-neutral-400 font-medium text-xs uppercase">Traité le</th>
-                                                <th className="p-5 text-neutral-400 font-medium text-xs uppercase text-right">Facture</th>
+                                                <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.common.model_info')}</th>
+                                                <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.common.amount')}</th>
+                                                <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.common.processed_at')}</th>
+                                                <th className="p-5 text-neutral-400 font-medium text-xs uppercase text-right">{t('admin.common.invoice')}</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-white/5">
@@ -1293,7 +1293,7 @@ export default function AdminPage() {
                                                             onClick={() => window.open(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.kinky.live'}/api/admin/payouts/invoice/${p.id}?token=${token}`, '_blank')}
                                                             className="inline-flex items-center gap-2 bg-indigo-500/10 hover:bg-indigo-500 text-indigo-400 hover:text-white px-4 py-2 rounded-xl border border-indigo-500/20 transition-all font-bold text-[10px] uppercase tracking-widest"
                                                         >
-                                                            <FileText size={14} /> TÉLÉCHARGER
+                                                            <FileText size={14} /> {t('common.download')}
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -1359,7 +1359,7 @@ export default function AdminPage() {
                                         <div className="flex gap-4 pt-4 border-t border-white/5">
                                             <button
                                                 onClick={async () => {
-                                                    if (confirm("Ignore this report and close it?")) {
+                                                    if (confirm(t('admin.reports.confirm_dismiss') || "Ignore this report and close it?")) {
                                                         await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/report/admin/${report.id}/dismiss`, { 
                                                             method: "POST", 
                                                             headers: { Authorization: `Bearer ${token}` } 
@@ -1373,7 +1373,7 @@ export default function AdminPage() {
                                             </button>
                                             <button
                                                 onClick={async () => {
-                                                    if (confirm(`ARE YOU SURE? This will permanently BAN the account: ${report.reportedEmail}`)) {
+                                                    if (confirm(t('admin.reports.confirm_ban', { email: report.reportedEmail }))) {
                                                         await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/report/admin/${report.id}/ban`, { 
                                                             method: "POST", 
                                                             headers: { Authorization: `Bearer ${token}` } 
@@ -1421,7 +1421,7 @@ export default function AdminPage() {
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
                                     {marketingUsersStats.length === 0 && (
-                                        <tr><td colSpan={8} className="p-12 text-center text-neutral-500 font-medium tracking-wide uppercase text-xs italic">Aucune donnée de tracking enregistrée.</td></tr>
+                                        <tr><td colSpan={8} className="p-12 text-center text-neutral-500 font-medium tracking-wide uppercase text-xs italic">{t('admin.marketing.no_data')}</td></tr>
                                     )}
                                     {[...marketingUsersStats].sort((a,b) => b.revenue - a.revenue || b.visits - a.visits).map((row, i) => {
                                         const crSignup = row.visits > 0 ? (row.signups / row.visits) * 100 : 0;
@@ -1445,7 +1445,7 @@ export default function AdminPage() {
                                                             <div className="font-bold text-white tracking-tight">
                                                                 {row.id === 'direct' ? t('admin.marketing.direct') : row.id.replace(/\|/g, ' ')}
                                                             </div>
-                                                            <div className="text-[9px] text-neutral-500 font-mono mt-0.5 opacity-50 uppercase tracking-widest">{row.id === 'direct' ? 'Organic traffic' : 'Tracked campaign'}</div>
+                                                            <div className="text-[9px] text-neutral-500 font-mono mt-0.5 opacity-50 uppercase tracking-widest">{row.id === 'direct' ? t('admin.marketing.organic_traffic') : t('admin.marketing.tracked_campaign')}</div>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -1509,7 +1509,7 @@ export default function AdminPage() {
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
                                     {marketingModelsStats.length === 0 && (
-                                        <tr><td colSpan={6} className="p-12 text-center text-neutral-500 font-medium tracking-wide uppercase text-xs italic">Aucune donnée de tracking enregistrée pour les models.</td></tr>
+                                        <tr><td colSpan={6} className="p-12 text-center text-neutral-500 font-medium tracking-wide uppercase text-xs italic">{t('admin.marketing.models.no_data')}</td></tr>
                                     )}
                                     {[...marketingModelsStats].sort((a,b) => b.validated - a.validated || b.visits - a.visits).map((row, i) => {
                                         const crSignup = row.visits > 0 ? (row.signups / row.visits) * 100 : 0;
@@ -1532,7 +1532,7 @@ export default function AdminPage() {
                                                             <div className="font-bold text-white tracking-tight">
                                                                 {row.id === 'direct' ? t('admin.marketing.direct') : row.id.replace(/\|/g, ' ')}
                                                             </div>
-                                                            <div className="text-[9px] text-neutral-500 font-mono mt-0.5 opacity-50 uppercase tracking-widest">{row.id === 'direct' ? 'Organic attraction' : 'Tracked recruitment'}</div>
+                                                            <div className="text-[9px] text-neutral-500 font-mono mt-0.5 opacity-50 uppercase tracking-widest">{row.id === 'direct' ? t('admin.marketing.models.organic_attraction') : t('admin.marketing.models.tracked_recruitment')}</div>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -1609,7 +1609,7 @@ export default function AdminPage() {
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
                                     {financesStats.months.length === 0 && (
-                                        <tr><td colSpan={6} className="p-12 text-center text-neutral-500 font-medium tracking-wide uppercase text-xs italic">Aucune donnée financière enregistrée.</td></tr>
+                                        <tr><td colSpan={6} className="p-12 text-center text-neutral-500 font-medium tracking-wide uppercase text-xs italic">{t('admin.finances.no_data')}</td></tr>
                                     )}
                                     {financesStats.months.map((row: any, i: number) => (
                                         <tr key={i} className="hover:bg-white/[0.02] transition-colors group">
@@ -1623,7 +1623,7 @@ export default function AdminPage() {
                                                     className="flex flex-col items-start hover:bg-white/5 p-2 -m-2 rounded-lg transition-colors group/edit"
                                                 >
                                                     <span className="font-mono text-orange-400 text-sm font-bold border-b border-transparent group-hover/edit:border-orange-400/50">${row.marketing_expense.toFixed(2)}</span>
-                                                    <span className="text-[8px] text-neutral-600 uppercase font-black tracking-tighter opacity-0 group-hover/edit:opacity-100 transition-opacity">Modifier</span>
+                                                    <span className="text-[8px] text-neutral-600 uppercase font-black tracking-tighter opacity-0 group-hover/edit:opacity-100 transition-opacity">{t('common.edit')}</span>
                                                 </button>
                                             </td>
                                             <td className="p-6 font-mono text-neutral-500 text-xs">${row.processor_fees.toFixed(2)}</td>
@@ -1642,20 +1642,19 @@ export default function AdminPage() {
                 {activeTab === 'moderation' && (
                     <div className="space-y-8 max-w-4xl animate-in fade-in duration-500 pb-20">
                         <div className="flex flex-col gap-2">
-                            <h2 className="text-3xl font-light">Modération du Chat</h2>
+                            <h2 className="text-3xl font-light">{t('admin.moderation.title')}</h2>
                             <p className="text-neutral-500 text-sm tracking-wide">
-                                Les emails, numéros de téléphone et URLs sont bloqués automatiquement. 
-                                Vous pouvez ajouter ici des mots-clés spécifiques à censurer.
+                                {t('admin.moderation.desc')}
                             </p>
                         </div>
 
                         {/* Add Keyword */}
                         <div className="bg-neutral-900 border border-white/5 p-8 rounded-3xl shadow-2xl space-y-6">
-                            <h3 className="text-xl font-medium text-red-400 border-b border-white/5 pb-4">Ajouter un mot-clé</h3>
+                            <h3 className="text-xl font-medium text-red-400 border-b border-white/5 pb-4">{t('admin.moderation.add_keyword')}</h3>
                             <div className="flex gap-4">
                                 <input 
                                     type="text" 
-                                    placeholder="Ex: paypal, skype, direct..." 
+                                    placeholder={t('admin.moderation.add_placeholder') || "Ex: paypal, skype, direct..."} 
                                     className="flex-1 bg-black/50 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-red-500 transition-colors"
                                     value={newKeyword}
                                     onChange={(e) => setNewKeyword(e.target.value)}
@@ -1665,7 +1664,7 @@ export default function AdminPage() {
                                     onClick={() => handleBlocklistAction('add', newKeyword)}
                                     className="bg-red-500 hover:bg-red-400 text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg shadow-red-500/20 active:scale-95"
                                 >
-                                    Bloquer
+                                    {t('admin.moderation.block_cta')}
                                 </button>
                             </div>
                         </div>
@@ -1673,14 +1672,14 @@ export default function AdminPage() {
                         {/* Current Blocklist */}
                         <div className="bg-neutral-900 border border-white/5 rounded-3xl overflow-hidden shadow-2xl">
                             <div className="p-6 bg-white/[0.02] border-b border-white/5 flex items-center justify-between">
-                                <h3 className="text-sm font-bold uppercase tracking-widest text-neutral-400">Mots-clés bloqués ({blockedKeywords.length})</h3>
+                                <h3 className="text-sm font-bold uppercase tracking-widest text-neutral-400">{t('admin.moderation.blocked_keywords', { count: blockedKeywords.length })}</h3>
                                 <div className="text-[10px] font-black text-red-500 uppercase tracking-tighter animate-pulse flex items-center gap-2">
-                                    <ShieldAlert size={12} /> Filtre actif
+                                    <ShieldAlert size={12} /> {t('admin.moderation.filter_active')}
                                 </div>
                             </div>
                             <div className="p-8">
                                 {blockedKeywords.length === 0 ? (
-                                    <div className="text-center py-12 text-neutral-600 italic">Aucun mot-clé personnalisé.</div>
+                                    <div className="text-center py-12 text-neutral-600 italic">{t('admin.moderation.no_keywords')}</div>
                                 ) : (
                                     <div className="flex flex-wrap gap-3">
                                         {blockedKeywords.sort().map((word) => (
@@ -1689,7 +1688,7 @@ export default function AdminPage() {
                                                 <button 
                                                     onClick={() => handleBlocklistAction('remove', word)}
                                                     className="text-neutral-600 hover:text-red-500 transition-colors"
-                                                    title="Supprimer"
+                                                    title={t('common.delete') || "Supprimer"}
                                                 >
                                                     <XCircle size={16} />
                                                 </button>
@@ -1704,18 +1703,18 @@ export default function AdminPage() {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="bg-neutral-900/40 border border-white/5 p-6 rounded-2xl">
                                 <div className="text-indigo-400 mb-2"><Mail size={18} /></div>
-                                <div className="text-sm font-bold text-white mb-1">Emails</div>
-                                <p className="text-xs text-neutral-500">Détection automatique des formats @ email.</p>
+                                <div className="text-sm font-bold text-white mb-1">{t('admin.moderation.emails_title')}</div>
+                                <p className="text-xs text-neutral-500">{t('admin.moderation.emails_desc')}</p>
                             </div>
                             <div className="bg-neutral-900/40 border border-white/5 p-6 rounded-2xl">
                                 <div className="text-pink-400 mb-2"><CheckCircle size={18} /></div>
-                                <div className="text-sm font-bold text-white mb-1">Téléphones</div>
-                                <p className="text-xs text-neutral-500">Blocage des numéros français et internationaux.</p>
+                                <div className="text-sm font-bold text-white mb-1">{t('admin.moderation.phones_title')}</div>
+                                <p className="text-xs text-neutral-500">{t('admin.moderation.phones_desc')}</p>
                             </div>
                             <div className="bg-neutral-900/40 border border-white/5 p-6 rounded-2xl">
                                 <div className="text-amber-400 mb-2"><Globe size={18} /></div>
-                                <div className="text-sm font-bold text-white mb-1">URLs / Liens</div>
-                                <p className="text-xs text-neutral-500">Blocage des liens http, https et www.</p>
+                                <div className="text-sm font-bold text-white mb-1">{t('admin.moderation.urls_title')}</div>
+                                <p className="text-xs text-neutral-500">{t('admin.moderation.urls_desc')}</p>
                             </div>
                         </div>
                     </div>

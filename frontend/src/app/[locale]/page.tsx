@@ -129,7 +129,7 @@ export default function Home() {
                                                 <span className="text-sm font-black text-white tracking-tight">
                                                     {userRole === 'model' ? modelEarnings.toFixed(2) : userCredits.toFixed(0)} 
                                                     <span className="text-[10px] text-white/60 ml-1">
-                                                        {userRole === 'model' ? '€' : 'CREDITS'}
+                                                        {userRole === 'model' ? '€' : t('common.credits')}
                                                     </span>
                                                 </span>
                                             </div>
@@ -143,7 +143,7 @@ export default function Home() {
                                                     <div className="p-2 bg-pink-500/10 rounded-lg text-pink-400 group-hover:bg-pink-500 group-hover:text-white transition-all">
                                                         <Activity size={16} />
                                                     </div>
-                                                    <span className="text-xs font-bold uppercase tracking-wider">Dashboard</span>
+                                                    <span className="text-xs font-bold uppercase tracking-wider">{t('nav.dashboard')}</span>
                                                 </button>
                                             ) : (
                                                 <button

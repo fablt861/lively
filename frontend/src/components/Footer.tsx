@@ -42,20 +42,20 @@ export function Footer() {
                             <div className="w-8 h-8 rounded-full bg-[#f79e1b] opacity-80" />
                         </div>
                         <div className="h-6 w-px bg-white/20 mx-1" />
-                        <span className="text-white font-medium text-sm tracking-tight italic">ID Check</span>
+                        <span className="text-white font-medium text-sm tracking-tight italic">{t('common.id_check')}</span>
                     </div>
 
                     {/* Visa Secure */}
                     <div className="flex items-center gap-4">
                         <div className="flex flex-col">
                             <div className="bg-[#1a1f71] px-2 py-0.5 rounded-t-sm flex items-center justify-center">
-                                <span className="text-[10px] font-black text-white leading-none italic">VISA</span>
+                                <span className="text-[10px] font-black text-white leading-none italic">{t('common.visa')}</span>
                             </div>
                             <div className="bg-[#00579f] px-2 py-0.5 rounded-b-sm flex items-center justify-center border-t border-white/10">
-                                <span className="text-[7px] font-bold text-white leading-none uppercase tracking-tighter">SECURE</span>
+                                <span className="text-[7px] font-bold text-white leading-none uppercase tracking-tighter">{t('common.secure')}</span>
                             </div>
                         </div>
-                        <span className="text-[#1a1f71] font-black text-xl italic tracking-tighter mix-blend-screen grayscale brightness-200">VISA</span>
+                        <span className="text-[#1a1f71] font-black text-xl italic tracking-tighter mix-blend-screen grayscale brightness-200">{t('common.visa')}</span>
                     </div>
 
                 </div>
