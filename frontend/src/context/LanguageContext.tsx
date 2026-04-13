@@ -19,92 +19,112 @@ const languageMap: Record<string, Language> = {
     'ro': 'ro', 'uk': 'uk', 'pt': 'pt', 'ru': 'ru', 'sv': 'sv', 'no': 'no', 'fi': 'fi'
 };
 
+// Global cache to persist translations across remounts (App Router layout transitions)
+const translationsCache: Record<string, Record<string, string>> = {};
+const statusCache: Record<string, boolean> = {};
+
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     const params = useParams();
     const pathname = usePathname();
     const router = useRouter();
-    const urlLocale = params?.locale as Language;
+    const urlLocale = (params?.locale as Language) || 'en';
 
-    const [language, setLanguageState] = useState<Language>(urlLocale || 'en');
-    const [translations, setTranslations] = useState<Record<string, string>>({});
-    const [isLoaded, setIsLoaded] = useState(false);
+    // Initialize from cache if available to prevent flicker
+    const [language, setLanguageState] = useState<Language>(urlLocale);
+    const [translations, setTranslations] = useState<Record<string, string>>(translationsCache[urlLocale] || {});
+    const [isLoaded, setIsLoaded] = useState(statusCache[urlLocale] || false);
 
+    // Sync state with URL locale changes without necessarily resetting isLoaded
     useEffect(() => {
-        // Sync state if URL locale changes
         if (urlLocale && urlLocale !== language && languageMap[urlLocale]) {
             setLanguageState(urlLocale);
             localStorage.setItem('preferred_language', urlLocale);
-            // Reset loading state for new language
-            setIsLoaded(false);
+            
+            // If we don't have translations for this new language, then we mark as not loaded
+            if (!translationsCache[urlLocale]) {
+                setIsLoaded(false);
+            } else {
+                setTranslations(translationsCache[urlLocale]);
+                setIsLoaded(true);
+            }
         }
-    }, [urlLocale]);
+    }, [urlLocale, language]);
 
     useEffect(() => {
         const savedLang = localStorage.getItem('preferred_language') as Language;
-        if (!urlLocale) {
+        if (!params?.locale) {
             if (savedLang && languageMap[savedLang]) {
                 setLanguageState(savedLang);
             } else {
-                const browserLang = navigator.language.split('-')[0];
+                const browserLang = typeof navigator !== 'undefined' ? navigator.language.split('-')[0] : 'en';
                 if (languageMap[browserLang]) {
                     setLanguageState(languageMap[browserLang]);
                 }
             }
         }
-    }, [urlLocale]);
+    }, [params?.locale]);
 
     useEffect(() => {
-        // 2. Load translations
+        // Only fetch if not in cache or if we need a refresh
         const loadTranslations = async () => {
+            if (translationsCache[language] && statusCache[language]) {
+                setTranslations(translationsCache[language]);
+                setIsLoaded(true);
+                return;
+            }
+
             try {
-                const res = await fetch(`/locales/${language}.json?v=2026_v9`);
+                const res = await fetch(`/locales/${language}.json?v=2026_v10`);
                 const data = await res.json();
+                translationsCache[language] = data;
+                statusCache[language] = true;
                 setTranslations(data);
                 setIsLoaded(true);
                 document.documentElement.lang = language;
             } catch (err) {
                 console.error(`Failed to load ${language} translations:`, err);
-                setIsLoaded(true); // Don't block UI forever if fetch fails
+                setIsLoaded(true);
             }
         };
         loadTranslations();
     }, [language]);
 
     const setLanguage = (lang: Language) => {
-        setIsLoaded(false); // Reset while switching
+        // Do NOT set isLoaded(false) here to avoid the black flicker
+        // The URL change will trigger the sync effect
         setLanguageState(lang);
         localStorage.setItem('preferred_language', lang);
 
-        // Navigate to the new localized route
         const segments = pathname.split('/');
-        // If segments[1] is a locale, replace it.
         if (languageMap[segments[1]]) {
             segments[1] = lang;
         } else {
-            // This shouldn't happen with middleware, but handle just in case
             segments.splice(1, 0, lang);
         }
-        router.push(segments.join('/'));
+        
+        // Use replace to avoid history cluttering during lang switches
+        router.replace(segments.join('/'));
     };
 
     const t = (key: string, params?: Record<string, any>) => {
-        // While loading, return empty to avoid flash of keys
-        if (!isLoaded) return "";
+        // Fallback to key if not loaded yet, but try to use cache if possible
+        const text = translations[key] || translationsCache[language]?.[key] || key;
         
-        let text = translations[key] || key;
-        if (params) {
-            Object.entries(params).forEach(([k, v]) => {
-                text = text.replace(`{{${k}}}`, v.toString());
-            });
-        }
-        return text;
+        if (!params) return text;
+        
+        let processedText = text;
+        Object.entries(params).forEach(([k, v]) => {
+            processedText = processedText.replace(`{{${k}}}`, v.toString());
+        });
+        return processedText;
     };
 
     return (
         <LanguageContext.Provider value={{ language, setLanguage, t }}>
-            {!isLoaded ? (
-                /* Simple loading shell to match the Luxury background */
-                <div className="fixed inset-0 bg-[#050505] z-[9999]" />
+            {!isLoaded && Object.keys(translations).length === 0 ? (
+                <div className="fixed inset-0 bg-[#050505] z-[9999] flex items-center justify-center">
+                    <div className="w-8 h-8 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
+                </div>
             ) : (
                 <div className="notranslate" translate="no">
                     {children}
