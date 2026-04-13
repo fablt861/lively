@@ -138,6 +138,7 @@ export default function DashboardPage() {
             setId(newEmail);
             window.location.reload();
         } else {
+            setStats(prev => prev ? { ...prev, pseudo: newPseudo } : prev);
             fetchStats();
         }
     };

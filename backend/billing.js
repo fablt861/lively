@@ -4,6 +4,7 @@ const redis = getRedisClient();
 const { getSettings } = require('./settings');
 const { markAsSeen } = require('./moderation');
 const { logRevenue, logModelPayout } = require('./stats');
+const { query } = require('./db');
 
 redis.on('error', (err) => {
     console.error('[Billing Redis Error]', err.message);
@@ -327,14 +328,16 @@ async function getModelStats(modelId) {
     const normalizedId = modelId.toLowerCase();
     const balanceStr = await redis.get(`model:${normalizedId}:balance`);
     const historyStrs = await redis.lrange(`model:${normalizedId}:history`, 0, 50);
-    const profileRaw = await redis.get(`model:active:${normalizedId}`);
-    const profile = profileRaw ? JSON.parse(profileRaw) : {};
+    
+    // FETCH PROFILE FROM SQL (Source of Truth)
+    const modelRes = await query('SELECT pseudo, photo_profile FROM models WHERE email = $1', [normalizedId]);
+    const profile = modelRes.rows[0] || {};
 
     return {
         balance: parseFloat(balanceStr || '0'),
         history: historyStrs.map(h => JSON.parse(h)),
         pseudo: profile.pseudo || 'Model',
-        photoProfile: profile.photoProfile || ''
+        photoProfile: profile.photo_profile || ''
     };
 }
 
