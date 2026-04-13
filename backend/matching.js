@@ -174,7 +174,7 @@ async function handleJoinQueue(io, socket) {
 
     console.log(`[Match Attempt] Socket ${socket.id} (${socket.role}) searching in ${targetQueue}...`);
 
-    const myIdentifier = socket.userEmail || socket.userIp;
+    const myIdentifier = socket.userEmail || `${socket.role}:${socket.userIp}`;
 
     // --- RECOVERY ATTEMPT ---
     const existingRoomId = await redis.get(`user_active_room:${myIdentifier.toLowerCase()}`);
@@ -235,10 +235,11 @@ async function handleJoinQueue(io, socket) {
              const cSocket = io.sockets.sockets.get(cId);
              if (!cSocket) continue;
 
-             const cIdentifier = (cSocket.userEmail || cSocket.userIp)?.toLowerCase();
-             const alreadySeen = await redis.get(`seen:${myIdentifier.toLowerCase()}:${cIdentifier}`);
+             const cIdentifier = cSocket.userEmail || `${cSocket.role}:${cSocket.userIp}`;
+             const alreadySeen = await redis.get(`seen:${myIdentifier.toLowerCase()}:${cIdentifier.toLowerCase()}`);
              
              if (!alreadySeen) {
+                 console.log(`[Matching] Found candidate ${cId} (${cIdentifier}). Not seen yet.`);
                  targetIndex = i;
                  break;
              }
@@ -291,12 +292,10 @@ async function handleJoinQueue(io, socket) {
             partnerSocket.currentRoom = roomId;
 
             // --- NEW: Mark as seen to avoid immediate rematching after hangup ---
-            const myIdentifier = (socket.userEmail || socket.userIp)?.toLowerCase();
-            const partnerIdentifier = (partnerSocket.userEmail || partnerSocket.userIp)?.toLowerCase();
             if (myIdentifier && partnerIdentifier) {
-                // 60s cooldown should be enough to avoid the "next" loop
-                await redis.set(`seen:${myIdentifier}:${partnerIdentifier}`, '1', 'EX', 60);
-                await redis.set(`seen:${partnerIdentifier}:${myIdentifier}`, '1', 'EX', 60);
+                // Reduced cooldown to 5s for easier testing and staging use
+                await redis.set(`seen:${myIdentifier.toLowerCase()}:${partnerIdentifier.toLowerCase()}`, '1', 'EX', 5);
+                await redis.set(`seen:${partnerIdentifier.toLowerCase()}:${myIdentifier.toLowerCase()}`, '1', 'EX', 5);
             }
 
             const userId = isModel ? partnerId : socket.id;
