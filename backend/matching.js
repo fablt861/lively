@@ -23,6 +23,28 @@ async function checkRateLimit(identifier) {
 function setupMatching(io, socket) {
     let isProcessing = false;
 
+    socket.on('identify', async ({ role, email, language }) => {
+        console.log(`[Identify] Socket ${socket.id} identifies as ${role} (${email})`);
+        try {
+            socket.role = role;
+            socket.data.role = role;
+            socket.language = language || 'en';
+            socket.data.language = socket.language;
+            socket.userEmail = email?.toLowerCase();
+            socket.data.userEmail = socket.userEmail;
+
+            if (socket.userEmail) {
+                await socket.join(`email:${socket.userEmail}`);
+                if (role === 'model') {
+                    await redis.sadd('online_models', socket.userEmail);
+                }
+                const isNew = await redis.set(`user_socket:${socket.userEmail}`, socket.id, 'EX', 86400);
+            }
+        } catch (err) {
+            console.error('[Identify Error]', err);
+        }
+    });
+
     // Join role queue
     socket.on('join_queue', async ({ role, language, email }) => {
         console.log(`[Queue] Received join_queue from ${socket.id}. Role: ${role}, Email: ${email}`);

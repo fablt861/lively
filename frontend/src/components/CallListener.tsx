@@ -27,8 +27,9 @@ export function CallListener() {
         const newSocket = io(BACKEND_URL);
         setSocket(newSocket);
 
-        // Tell backend who we are so it can map our email to this socket
-        newSocket.emit('join_queue', { role: 'model', email, language });
+        // Tell backend who we are so it can map our email to this socket 
+        // without joining the matching queue
+        newSocket.emit('identify', { role: 'model', email, language });
 
         newSocket.on('direct_call_incoming', (payload) => {
             console.log('[CallListener] Incoming call:', payload);
