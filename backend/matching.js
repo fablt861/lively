@@ -314,6 +314,12 @@ async function handleJoinQueue(io, socket) {
 
             await partnerSocket.join(roomId);
             partnerSocket.currentRoom = roomId;
+            
+            // ENSURE BOTH ARE REMOVED FROM ALL QUEUES to prevent dual-matching
+            await redis.lrem(QUEUE_USERS, 0, socket.id);
+            await redis.lrem(QUEUE_MODELS, 0, socket.id);
+            await redis.lrem(QUEUE_USERS, 0, partnerId);
+            await redis.lrem(QUEUE_MODELS, 0, partnerId);
 
             // --- NEW: Mark as seen to avoid immediate rematching after hangup ---
             if (myIdentifier && pIdentifier) {

@@ -123,6 +123,13 @@ export function VideoRoom({
             setShowNextConfirm(true);
             return;
         }
+
+        // --- NEW SAFETY: Cannot re-queue while looking at the money! ---
+        if (privateSummary && role === 'model') {
+            console.log("[Block] Cannot re-queue while viewing summary modal.");
+            return;
+        }
+
         setIsBlocked(false);
         setBlockEndTime(null);
         setShowNextConfirm(false);
