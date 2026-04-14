@@ -173,17 +173,22 @@ export function VideoRoom({
 
         setIsTogglingFavorite(true);
         const action = isFavorite ? 'remove' : 'add';
+        console.log(`[Favorites] Attempting to ${action}:`, { userEmail, modelEmail: partnerInfo.email });
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/favorites/${action}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userEmail, modelEmail: partnerInfo.email })
             });
-            if (res.ok) {
+            const data = await res.json();
+            if (res.ok && data.success) {
                 setIsFavorite(!isFavorite);
+                console.log(`[Favorites] Successfully ${action}ed`);
+            } else {
+                console.error(`[Favorites] Error during ${action}:`, data);
             }
         } catch (err) {
-            console.error(err);
+            console.error(`[Favorites] Network error during ${action}:`, err);
         } finally {
             setIsTogglingFavorite(false);
         }
@@ -849,13 +854,13 @@ export function VideoRoom({
                         </button>
                     )}
                     {/* Favorite Button */}
-                    {role === 'user' && partnerInfo?.email && (
+                    {role === 'user' && partnerInfo?.email && localStorage.getItem('kinky_user_email') && (
                         <button
                             onClick={toggleFavorite}
                             disabled={isTogglingFavorite}
-                            className={`w-12 h-12 flex items-center justify-center rounded-2xl border backdrop-blur-md transition-all ${isFavorite ? "bg-red-500 border-red-400 text-white" : "bg-white/10 border-white/5 text-white/40"}`}
+                            className={`w-12 h-12 flex items-center justify-center rounded-2xl border shadow-lg transition-all duration-300 ${isFavorite ? "bg-red-500 border-red-400 text-white scale-110" : "bg-white border-neutral-200 text-neutral-400"}`}
                         >
-                            <Heart size={20} fill={isFavorite ? "currentColor" : "none"} className={isTogglingFavorite ? "animate-pulse" : ""} />
+                            <Heart size={20} fill={isFavorite ? "currentColor" : "none"} className={`${isTogglingFavorite ? "animate-pulse" : ""} ${isFavorite ? "drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" : ""}`} />
                         </button>
                     )}
                 </div>
@@ -882,14 +887,14 @@ export function VideoRoom({
                     </button>
                     <button onClick={() => setShowExitConfirm(true)} className="p-4 rounded-full bg-red-600 hover:bg-red-500 transition-colors shadow-lg"><PhoneOff size={24} /></button>
                     {/* Favorite Button Desktop */}
-                    {role === 'user' && partnerInfo?.email && (
+                    {role === 'user' && partnerInfo?.email && localStorage.getItem('kinky_user_email') && (
                         <button
                             onClick={toggleFavorite}
                             disabled={isTogglingFavorite}
-                            className={`p-4 rounded-full transition-all border ${isFavorite ? "bg-red-500 border-red-400 text-white" : "bg-white/10 border-white/5 text-white/40 hover:bg-white/20 hover:text-white"}`}
+                            className={`p-4 rounded-full transition-all duration-300 border shadow-xl flex items-center justify-center ${isFavorite ? "bg-red-500 border-red-400 text-white scale-110" : "bg-white border-neutral-200 text-neutral-400 hover:text-red-500 hover:border-red-200"}`}
                             title={isFavorite ? t('favorite.remove') : t('favorite.add')}
                         >
-                            <Heart size={24} fill={isFavorite ? "currentColor" : "none"} className={isTogglingFavorite ? "animate-pulse" : ""} />
+                            <Heart size={24} fill={isFavorite ? "currentColor" : "none"} className={`${isTogglingFavorite ? "animate-pulse" : ""} ${isFavorite ? "drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]" : ""}`} />
                         </button>
                     )}
                     {/* User Block Button Desktop */}
