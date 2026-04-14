@@ -880,13 +880,25 @@ export function VideoRoom({
                             <PhoneOff size={32} className="text-red-500" />
                         </div>
 
-                        <h2 className="text-2xl font-black mb-2 text-center">{t('room.exit_confirm_title')}</h2>
-                        <p className="text-white/60 text-sm mb-8 leading-relaxed text-center">
-                            {(isBlocked && role === 'model') 
-                                ? t('room.exit_confirm_private_model') 
-                                : t('room.exit_confirm_desc')
-                            }
-                        </p>
+                        <h2 className="text-2xl font-black mb-6 text-center">{t('room.exit_confirm_title')}</h2>
+                        
+                        <div className={`p-6 rounded-[2rem] mb-8 flex flex-col items-center gap-4 transition-all ${
+                            isBlocked && role === 'model' 
+                            ? 'bg-red-500/20 border-2 border-red-500/50 animate-pulse shadow-[0_0_30px_rgba(239,68,68,0.2)]' 
+                            : 'bg-white/5 border border-white/10'
+                        }`}>
+                            {isBlocked && role === 'model' && (
+                                <div className="p-3 bg-red-500 rounded-2xl shadow-lg shadow-red-500/40 border-4 border-white/20">
+                                    <ShieldAlert size={32} className="text-white" />
+                                </div>
+                            )}
+                            <p className={`${isBlocked && role === 'model' ? 'text-white font-black text-lg' : 'text-white/60 text-sm'} leading-tight text-center`}>
+                                {(isBlocked && role === 'model') 
+                                    ? t('room.exit_confirm_private_model') 
+                                    : t('room.exit_confirm_desc')
+                                }
+                            </p>
+                        </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <button
