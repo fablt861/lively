@@ -184,8 +184,12 @@ export function VideoRoom({
 
         const handlePartnerOutOfCredits = () => {
             if (role === 'model') {
-                console.log("[Auto-Next] Partner out of credits, re-joining queue");
-                handleNext();
+                console.log("[Auto-Next] Partner out of credits. Gating check...");
+                if (!isBlocked) {
+                    handleNext();
+                } else {
+                    console.log("[Auto-Next] Private session summary expected, waiting for acknowledgment.");
+                }
             }
         };
 
@@ -246,10 +250,21 @@ export function VideoRoom({
 
         const handlePartnerLeft = () => {
             console.log("[Socket] Partner left, resetting block state and transitioning...");
+            
+            // We need to know if we were in a block to decide if we auto-requeue
+            // Since setIsBlocked is async, we use the value from the closure which is correct for this event
+            const processAutoNext = !isBlocked;
+
             setIsBlocked(false);
             setBlockEndTime(null);
             if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
-            // handleNext(); // REMOVED: Server now handles re-queueing both parties automatically
+            
+            if (processAutoNext) {
+                console.log("[Auto-Next] Ordinary session ended, re-joining queue");
+                handleNext(true);
+            } else {
+                console.log("[Auto-Next] Private session ended, re-queueing gated by summary modal");
+            }
         };
 
         const handlePrivateSummary = (data: any) => {
@@ -258,6 +273,12 @@ export function VideoRoom({
                 setPrivateSummary(data);
                 setIsRequeuingBlocked(true); // Prevent auto-requeue until acknowledged
             }
+        };
+
+        const handleCloseSummary = () => {
+            setPrivateSummary(null);
+            setIsRequeuingBlocked(false);
+            handleNext(true); // Now we finally re-queue
         };
 
         socket.on('out_of_credits', handleOutOfCredits);

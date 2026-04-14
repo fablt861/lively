@@ -218,8 +218,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
                 peerConnectionRef.current.close();
                 peerConnectionRef.current = null;
             }
-            // Instantly start matching again
-            socket.emit("next");
+            // Re-queueing logic moved to UI component (VideoRoom) to handle private sessions correctly
         });
 
         socket.on("partner_disconnected", () => {
