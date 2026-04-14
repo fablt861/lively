@@ -695,7 +695,7 @@
   "room.next_confirm_title": "Lopetetaanko yksityinen istunto?",
   "room.next_confirm_user_desc": "Olet tällä hetkellä yksityisessä istunnossa. Oletko varma, että haluat siirtyä seuraavaan?",
   "room.next_confirm_model_desc": "Varoitus: Jos lähdet nyt, et ansaitse mitään tästä yksityisestä istunnosta.",
-  "room.private_summary_title": "Istunto päättynyt",
+  "room.private_summary_title": "YKSITYINEN ISTUNTO",
   "room.private_summary_subtitle": "Tuloraportti",
   "room.earned_amount_label": "ANSAITTU SUMMA",
   "room.duration_label": "KESTO",
@@ -705,5 +705,10 @@
   "common.confirm": "Vahvista",
   "room.block_refused_title": "Pyyntö hylätty",
   "room.block_refused_desc": "Malli on hylännyt yksityisistuntopyyntösi.",
-  "common.close": "Sulje"
+  "common.close": "Sulje",
+  "room.summary_reason_user_next": "Asiakas poistui",
+  "room.summary_reason_model_next": "Poistuit",
+  "room.summary_reason_user_disconnect": "Asiakas katkaissut yhteyden",
+  "room.summary_reason_model_disconnect": "Yhteys katkennut",
+  "room.summary_reason_billing_stop": "Istunto päättyi"
 }

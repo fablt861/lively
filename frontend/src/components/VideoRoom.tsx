@@ -1226,7 +1226,9 @@ export function VideoRoom({
                                 </div>
                                 <div className="flex flex-col text-right">
                                     <span className="text-[8px] text-white/30 uppercase font-bold tracking-widest">{t('room.status_label')}</span>
-                                    <span className="text-sm font-bold text-indigo-400 capitalize">{privateSummary.reason.replace('_', ' ')}</span>
+                                    <span className="text-sm font-bold text-indigo-400">
+                                        {t(`room.summary_reason_${privateSummary.reason}`)}
+                                    </span>
                                 </div>
                             </div>
                         </div>

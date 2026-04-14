@@ -695,7 +695,7 @@
   "room.next_confirm_title": "¿Cerrar sesión privada?",
   "room.next_confirm_user_desc": "Actualmente estás en una sesión privada. ¿Estás seguro de que quieres pasar al siguiente?",
   "room.next_confirm_model_desc": "Advertencia: si te vas ahora, no ganarás nada por esta sesión privada.",
-  "room.private_summary_title": "Sesión terminada",
+  "room.private_summary_title": "SESIÓN PRIVADA",
   "room.private_summary_subtitle": "Informe de ganancias",
   "room.earned_amount_label": "CANTIDAD GANADA",
   "room.duration_label": "DURACIÓN",
@@ -705,5 +705,10 @@
   "common.confirm": "Confirmar",
   "room.block_refused_title": "Solicitud rechazada",
   "room.block_refused_desc": "La modelo ha rechazado su solicitud de sesión privada.",
-  "common.close": "Cerrar"
+  "common.close": "Cerrar",
+  "room.summary_reason_user_next": "El cliente se fue",
+  "room.summary_reason_model_next": "Te fuiste",
+  "room.summary_reason_user_disconnect": "Cliente desconectado",
+  "room.summary_reason_model_disconnect": "Te has desconectado",
+  "room.summary_reason_billing_stop": "Sesión terminada"
 }

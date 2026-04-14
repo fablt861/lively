@@ -695,7 +695,7 @@
   "room.next_confirm_title": "Închideți sesiunea privată?",
   "room.next_confirm_user_desc": "Sunteți în prezent într-o sesiune privată. Sigur doriți să treceți la următorul?",
   "room.next_confirm_model_desc": "Avertisment: Dacă plecați acum, nu veți câștiga nimic pentru această sesiune privată.",
-  "room.private_summary_title": "Sesiune încheiată",
+  "room.private_summary_title": "SESIUNE PRIVATĂ",
   "room.private_summary_subtitle": "Raport de câștiguri",
   "room.earned_amount_label": "SUMA CÂȘTIGATĂ",
   "room.duration_label": "DURATĂ",
@@ -705,5 +705,10 @@
   "common.confirm": "Confirmă",
   "room.block_refused_title": "Cerere refuzată",
   "room.block_refused_desc": "Modelul a refuzat cererea dumneavoastră de sesiune privată.",
-  "common.close": "Închide"
+  "common.close": "Închide",
+  "room.summary_reason_user_next": "Clientul a plecat",
+  "room.summary_reason_model_next": "Ai plecat",
+  "room.summary_reason_user_disconnect": "Client deconectat",
+  "room.summary_reason_model_disconnect": "Te-ai deconectat",
+  "room.summary_reason_billing_stop": "Sesiune încheiată"
 }

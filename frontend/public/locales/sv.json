@@ -695,7 +695,7 @@
   "room.next_confirm_title": "Avsluta privat session?",
   "room.next_confirm_user_desc": "Du är för närvarande i en privat session. Är du säker på att du vill gå till nästa?",
   "room.next_confirm_model_desc": "Varning: Om du lämnar nu kommer du inte att tjäna någonting för denna privata session.",
-  "room.private_summary_title": "Session avslutad",
+  "room.private_summary_title": "PRIVAT SESSION",
   "room.private_summary_subtitle": "Intäktsrapport",
   "room.earned_amount_label": "INTJÄNAT BELOPP",
   "room.duration_label": "VARAKTIGHET",
@@ -705,5 +705,10 @@
   "common.confirm": "Bekräfta",
   "room.block_refused_title": "Begäran avslogs",
   "room.block_refused_desc": "Modellen har avböjt din begäran om en privat session.",
-  "common.close": "Stäng"
+  "common.close": "Stäng",
+  "room.summary_reason_user_next": "Klienten lämnade",
+  "room.summary_reason_model_next": "Du lämnade",
+  "room.summary_reason_user_disconnect": "Klienten kopplades från",
+  "room.summary_reason_model_disconnect": "Du kopplades från",
+  "room.summary_reason_billing_stop": "Sessionen avslutad"
 }

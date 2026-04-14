@@ -695,7 +695,7 @@
   "room.next_confirm_title": "Завершить частную сессию?",
   "room.next_confirm_user_desc": "Вы сейчас находитесь на частной сессии. Вы уверены, что хотите перейти к следующему?",
   "room.next_confirm_model_desc": "Предупреждение: если вы уйдете сейчас, вы ничего не заработаете за эту частную сессию.",
-  "room.private_summary_title": "Сессия окончена",
+  "room.private_summary_title": "ПРИВАТНАЯ СЕССИЯ",
   "room.private_summary_subtitle": "Отчет о доходах",
   "room.earned_amount_label": "ЗАРАБОТАННАЯ СУММА",
   "room.duration_label": "ПРОДОЛЖИТЕЛЬНОСТЬ",
@@ -705,5 +705,10 @@
   "common.confirm": "Подтвердить",
   "room.block_refused_title": "Запрос отклонен",
   "room.block_refused_desc": "Модель отклонила ваш запрос на частную сессию.",
-  "common.close": "Закрыть"
+  "common.close": "Закрыть",
+  "room.summary_reason_user_next": "Клиент ушел",
+  "room.summary_reason_model_next": "Вы ушли",
+  "room.summary_reason_user_disconnect": "Клиент отключился",
+  "room.summary_reason_model_disconnect": "Вы отключились",
+  "room.summary_reason_billing_stop": "Сессия завершена"
 }

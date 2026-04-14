@@ -695,7 +695,7 @@
   "room.next_confirm_title": "Завершити приватну сесію?",
   "room.next_confirm_user_desc": "Ви зараз перебуваєте на приватній сесії. Ви впевнені, що хочете перейти до наступного?",
   "room.next_confirm_model_desc": "Попередження: якщо ви підете зараз, ви нічого не заробите за цю приватну сесію.",
-  "room.private_summary_title": "Сесію закінчено",
+  "room.private_summary_title": "ПРИВАТНА СЕСІЯ",
   "room.private_summary_subtitle": "Звіт про доходи",
   "room.earned_amount_label": "ЗАРОБЛЕНА СУМА",
   "room.duration_label": "ТРИВАЛІСТЬ",
@@ -705,5 +705,10 @@
   "common.confirm": "Підтвердити",
   "room.block_refused_title": "Запит відхилено",
   "room.block_refused_desc": "Модель відхилила ваш запит на приватну сесію.",
-  "common.close": "Закрити"
+  "common.close": "Закрити",
+  "room.summary_reason_user_next": "Клієнт пішов",
+  "room.summary_reason_model_next": "Ви пішли",
+  "room.summary_reason_user_disconnect": "Клієнт відключився",
+  "room.summary_reason_model_disconnect": "Ви відключилися",
+  "room.summary_reason_billing_stop": "Сесію завершено"
 }

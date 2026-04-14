@@ -695,8 +695,8 @@
   "room.next_confirm_title": "Privésessie beëindigen?",
   "room.next_confirm_user_desc": "Je bent momenteel in een privésessie. Weet je zeker dat je naar de volgende wilt gaan?",
   "room.next_confirm_model_desc": "Waarschuwing: als je nu weggaat, verdien je niets voor deze privésessie.",
-  "room.private_summary_title": "Sessie beëindigd",
-  "room.private_summary_subtitle": "Inkomstenrapport",
+  "room.private_summary_title": "PRIVÉ SESSIE",
+  "room.private_summary_subtitle": "Inkomstenoverzicht",
   "room.earned_amount_label": "VERDIEND BEDRAG",
   "room.duration_label": "DUUR",
   "room.status_label": "STATUS",
@@ -705,5 +705,10 @@
   "common.confirm": "Bevestigen",
   "room.block_refused_title": "Verzoek afgewezen",
   "room.block_refused_desc": "Het model heeft uw verzoek om een privésessie afgewezen.",
-  "common.close": "Sluiten"
+  "common.close": "Sluiten",
+  "room.summary_reason_user_next": "Klant is weggegaan",
+  "room.summary_reason_model_next": "Je bent weggegaan",
+  "room.summary_reason_user_disconnect": "Klant verbinding verbroken",
+  "room.summary_reason_model_disconnect": "Verbinding verbroken",
+  "room.summary_reason_billing_stop": "Sessie beëindigd"
 }

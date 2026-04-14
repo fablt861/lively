@@ -695,7 +695,7 @@
   "room.next_confirm_title": "Private Sitzung beenden?",
   "room.next_confirm_user_desc": "Sie befinden sich gerade in einer privaten Sitzung. Sind Sie sicher, dass Sie zur nächsten wechseln möchten?",
   "room.next_confirm_model_desc": "Warnung: Wenn Sie jetzt gehen, verdienen Sie nichts für diese private Sitzung.",
-  "room.private_summary_title": "Sitzung beendet",
+  "room.private_summary_title": "PRIVATSITZUNG",
   "room.private_summary_subtitle": "Einnahmenbericht",
   "room.earned_amount_label": "VERDIENTER BETRAG",
   "room.duration_label": "DAUER",
@@ -705,5 +705,10 @@
   "common.confirm": "Bestätigen",
   "room.block_refused_title": "Anfrage abgelehnt",
   "room.block_refused_desc": "Das Modell hat Ihre private Sitzungsanfrage abgelehnt.",
-  "common.close": "Schließen"
+  "common.close": "Schließen",
+  "room.summary_reason_user_next": "Kunde hat verlassen",
+  "room.summary_reason_model_next": "Sie haben verlassen",
+  "room.summary_reason_user_disconnect": "Kunde getrennt",
+  "room.summary_reason_model_disconnect": "Verbindung getrennt",
+  "room.summary_reason_billing_stop": "Sitzung beendet"
 }

@@ -695,7 +695,7 @@
   "room.next_confirm_title": "Quit private session?",
   "room.next_confirm_user_desc": "You are currently in a private session. Are you sure you want to go to the next one?",
   "room.next_confirm_model_desc": "Warning: If you leave now, you will earn nothing for this private session.",
-  "room.private_summary_title": "Session Ended",
+  "room.private_summary_title": "PRIVATE SESSION",
   "room.private_summary_subtitle": "Earnings Report",
   "room.earned_amount_label": "AMOUNT EARNED",
   "room.duration_label": "DURATION",
@@ -705,5 +705,10 @@
   "common.confirm": "Confirm",
   "room.block_refused_title": "Request Declined",
   "room.block_refused_desc": "The model has declined your private session request.",
-  "common.close": "Close"
+  "common.close": "Close",
+  "room.summary_reason_user_next": "Client left",
+  "room.summary_reason_model_next": "You left",
+  "room.summary_reason_user_disconnect": "Client disconnected",
+  "room.summary_reason_model_disconnect": "You disconnected",
+  "room.summary_reason_billing_stop": "Session ended"
 }
