@@ -17,8 +17,10 @@ export function CallListener() {
     } | null>(null);
 
     useEffect(() => {
-        const role = localStorage.getItem('kinky_role');
+        const role = localStorage.getItem('kinky_user_role');
         const email = localStorage.getItem('kinky_user_email');
+        
+        console.log('[CallListener] Initializing...', { role, email });
         
         if (role !== 'model' || !email) return;
 
@@ -29,6 +31,7 @@ export function CallListener() {
         newSocket.emit('join_queue', { role: 'model', email, language });
 
         newSocket.on('direct_call_incoming', (payload) => {
+            console.log('[CallListener] Incoming call:', payload);
             setIncomingCall(payload);
         });
 
