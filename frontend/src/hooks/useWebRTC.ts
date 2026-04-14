@@ -25,6 +25,8 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
     const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
     const statsIntervalRef = useRef<NodeJS.Timeout | null>(null);
     const lastStatsRef = useRef<{ timestamp: number; bytesReceived: number; packetsLost: number } | null>(null);
+    const monitoringStartTimeRef = useRef<number>(0);
+    const consecutiveBadSamplesRef = useRef<number>(0);
     const iceServersRef = useRef<any[]>(DEFAULT_ICE_SERVERS);
     const localStreamRef = useRef<MediaStream | null>(null);
     const currentRoomRef = useRef<string | null>(null);
@@ -200,6 +202,8 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
                 console.log('[WebRTC] ICE Connection success!');
                 socket?.emit('connection_success', { roomId: currentRoomRef.current });
                 setIsCallConnected(true);
+                monitoringStartTimeRef.current = Date.now();
+                consecutiveBadSamplesRef.current = 0;
                 startStatsMonitoring();
             }
         };
@@ -239,26 +243,57 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
                 }
             });
 
+            const now = Date.now();
+
             if (lastStatsRef.current && currentBytes > 0) {
                 const deltaBytes = currentBytes - lastStatsRef.current.bytesReceived;
                 const deltaPacketsLost = currentPacketsLost - lastStatsRef.current.packetsLost;
-                const bitrateMbps = (deltaBytes * 8) / 1000000; // Simplified for 1s interval
+                const deltaTimeS = (now - lastStatsRef.current.timestamp) / 1000;
+                
+                // Accurate Bitrate Calculation (Mbps)
+                const bitrateMbps = deltaTimeS > 0 ? (deltaBytes * 8) / (deltaTimeS * 1000000) : 0;
+                const isWarmup = (now - monitoringStartTimeRef.current) < 10000; // 10s warmup
 
                 // Quality Logic
+                let targetQuality: 'excellent' | 'fair' | 'poor' = 'excellent';
+                
                 if (deltaPacketsLost > 5 || bitrateMbps < 0.2) {
-                    setConnectionQuality('poor');
-                    updateQualityParameters(0.2); // Limit to 200kbps and downscale
+                    targetQuality = 'poor';
                 } else if (deltaPacketsLost > 2 || bitrateMbps < 0.5) {
+                    targetQuality = 'fair';
+                } else {
+                    targetQuality = 'excellent';
+                }
+
+                // Stabilization:
+                // 1. During warmup, we don't downgrade to POOR based on bitrate alone (packets lost still counts)
+                if (isWarmup && targetQuality === 'poor' && deltaPacketsLost <= 5) {
+                    targetQuality = 'excellent';
+                }
+
+                // 2. Smoothing: require consecutive samples for downgrading to 'poor'
+                if (targetQuality === 'poor') {
+                    consecutiveBadSamplesRef.current++;
+                    if (consecutiveBadSamplesRef.current < 2 && !isWarmup) {
+                        // Keep current if it's the first bad sample and we out of warmup
+                        // but if we were fair, stay fair. If we were excellent, stay excellent.
+                    } else {
+                        setConnectionQuality('poor');
+                        updateQualityParameters(0.2);
+                    }
+                } else if (targetQuality === 'fair') {
+                    consecutiveBadSamplesRef.current = 0;
                     setConnectionQuality('fair');
                     updateQualityParameters(0.5);
                 } else {
+                    consecutiveBadSamplesRef.current = 0;
                     setConnectionQuality('excellent');
-                    updateQualityParameters(1.5); // Back to 1.5Mbps
+                    updateQualityParameters(1.5);
                 }
             }
 
             lastStatsRef.current = {
-                timestamp: Date.now(),
+                timestamp: now,
                 bytesReceived: currentBytes,
                 packetsLost: currentPacketsLost
             };
