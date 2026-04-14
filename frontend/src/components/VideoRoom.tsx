@@ -310,9 +310,22 @@ export function VideoRoom({
         };
 
         const handleCloseSummary = () => {
+            console.log("[Block] Closing summary modal. Current state - isMatching:", isMatching, "remoteStream:", !!remoteStream);
             setPrivateSummary(null);
             setIsRequeuingBlocked(false);
-            handleNext(true); // Now we finally re-queue
+            
+            // Safety: If someone already matched us while we were on the summary,
+            // we are already "in a match" (even if the video hasn't arrived).
+            // In that case, DO NOT call handleNext, otherwise we skip the person.
+            // But if we are clearly IDLE (not matching and no stream), then we must rejoin.
+            const isIdle = !isMatching && !remoteStream;
+            
+            if (isIdle) {
+                console.log("[Block] Summary closed and idle, re-joining queue");
+                handleNext(true);
+            } else {
+                console.log("[Block] Summary closed but match already in progress, skipping re-queue");
+            }
         };
 
         const handleMatched = (data: any) => {
