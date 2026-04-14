@@ -184,12 +184,16 @@ export default function DashboardPage() {
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12 md:mb-16">
                 <div className="flex flex-col md:flex-row items-center md:items-end gap-6 md:gap-8 text-center md:text-left">
                     <div className="relative group">
-                        <div className="w-24 h-24 md:w-32 md:h-32 rounded-[2.5rem] bg-neutral-900 border-2 border-white/10 overflow-hidden ring-4 ring-pink-500/10 ring-offset-4 ring-offset-neutral-950 group-hover:ring-pink-500/30 transition-all duration-500 shadow-2xl">
-                            <img 
-                                src={stats?.photoProfile || "/images/avatars/model_1.png"} 
-                                alt="Profile" 
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                            />
+                        <div className="w-24 h-24 md:w-32 md:h-32 rounded-[2.5rem] bg-neutral-900 border-2 border-white/10 overflow-hidden ring-4 ring-pink-500/10 ring-offset-4 ring-offset-neutral-950 group-hover:ring-pink-500/30 transition-all duration-500 shadow-2xl flex items-center justify-center">
+                            {stats?.photoProfile ? (
+                                <img 
+                                    src={stats.photoProfile} 
+                                    alt="Profile" 
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                />
+                            ) : (
+                                <User size={40} className="text-white/10" />
+                            )}
                         </div>
                         <button 
                             onClick={() => setIsProfileOpen(true)}
