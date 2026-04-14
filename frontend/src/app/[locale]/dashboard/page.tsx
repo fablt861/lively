@@ -7,7 +7,7 @@ import { LanguageSelector } from "@/components/LanguageSelector";
 import { ProfileSettingsModal } from "@/components/ProfileSettingsModal";
 import { PaywallModal } from "@/components/PaywallModal";
 import { io, Socket } from "socket.io-client";
-import { Phone, PhoneOff, X } from "lucide-react";
+import { Phone, PhoneOff, X, LogOut } from "lucide-react";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live";
 
@@ -166,6 +166,18 @@ export default function CustomerDashboard() {
         setCallStatus(null);
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem('kinky_token');
+        localStorage.removeItem('kinky_user_pseudo');
+        localStorage.removeItem('kinky_user_email');
+        localStorage.removeItem('kinky_user_role');
+        localStorage.removeItem('kinky_account_status');
+        localStorage.removeItem('kinky_credits');
+        localStorage.removeItem('kinky_role'); // Legacy cleanup
+        localStorage.removeItem('kinky_email'); // Legacy cleanup
+        window.location.href = `/${language}/`;
+    };
+
     const handleProfileUpdate = (newEmail: string, newPseudo: string) => {
         localStorage.setItem('kinky_user_email', newEmail);
         localStorage.setItem('kinky_user_pseudo', newPseudo);
@@ -214,6 +226,12 @@ export default function CustomerDashboard() {
 
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto">
                         <LanguageSelector />
+                        <button
+                            onClick={handleLogout}
+                            className="px-6 py-4 bg-white/5 hover:bg-red-500/10 border border-white/10 text-white/60 hover:text-red-500 rounded-full transition-all duration-300 text-sm font-black uppercase tracking-widest flex items-center justify-center gap-3 w-full sm:w-auto text-center active:scale-[0.98]"
+                        >
+                            <LogOut size={18} /> {t('nav.logout')}
+                        </button>
                         <button
                             onClick={() => window.location.href = `/${language}/live`}
                             className="px-8 py-4 bg-gradient-to-tr from-pink-500 to-violet-500 hover:scale-105 active:scale-95 text-white rounded-full transition-all duration-300 text-sm font-black uppercase tracking-widest flex items-center justify-center gap-3 w-full sm:w-auto text-center shadow-lg shadow-pink-500/20"

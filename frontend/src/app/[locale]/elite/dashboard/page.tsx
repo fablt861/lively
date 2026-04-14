@@ -10,7 +10,7 @@ import { ModelBillingModal } from "@/components/ModelBillingModal";
 import { ProfileSettingsModal } from "@/components/ProfileSettingsModal";
 import { GeoBlockModal } from "@/components/GeoBlockModal";
 import { ModelRulesModal } from "@/components/ModelRulesModal";
-import { Settings, User, FileText, ShieldOff, ShieldAlert, AlertCircle } from "lucide-react";
+import { Settings, User, FileText, ShieldOff, ShieldAlert, AlertCircle, LogOut } from "lucide-react";
 
 interface Stats {
     balance: number;
@@ -125,9 +125,22 @@ export default function DashboardPage() {
         }
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem('kinky_token');
+        localStorage.removeItem('kinky_user_pseudo');
+        localStorage.removeItem('kinky_user_email');
+        localStorage.removeItem('kinky_user_role');
+        localStorage.removeItem('kinky_account_status');
+        localStorage.removeItem('kinky_credits');
+        localStorage.removeItem('kinky_role'); // Legacy cleanup
+        localStorage.removeItem('kinky_email'); // Legacy cleanup
+        window.location.href = `/${language}/`;
+    };
+
     const handleProfileUpdate = (newEmail: string, newPseudo: string) => {
         // Update localStorage
         localStorage.setItem('kinky_user_email', newEmail);
+        localStorage.setItem('kinky_user_pseudo', newPseudo);
         
         // Update user object if it exists in localStorage
         const userJson = localStorage.getItem('user');
@@ -219,8 +232,14 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto">
-                    <div className="self-center sm:self-auto">
+                    <div className="self-center sm:self-auto flex items-center gap-4">
                         <LanguageSelector />
+                        <button
+                            onClick={handleLogout}
+                            className="px-6 py-4 bg-white/5 hover:bg-red-500/10 border border-white/10 text-white/40 hover:text-red-500 rounded-full transition-all duration-300 text-sm font-black uppercase tracking-widest flex items-center justify-center gap-3 w-full sm:w-auto text-center active:scale-[0.98]"
+                        >
+                            <LogOut size={18} /> {t('nav.logout')}
+                        </button>
                     </div>
                     <Link
                         href={`/${language}/live`}
