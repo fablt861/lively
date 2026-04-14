@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles, Lock, Timer, Check, Plus, Heart } from "lucide-react";
+import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles, Lock, Timer, Check, Plus, Heart, Smile } from "lucide-react";
+import EmojiPicker, { Theme } from 'emoji-picker-react';
 import { CallListener } from './CallListener';
 import { useTranslation } from "@/context/LanguageContext";
 import { MaintenanceGuard } from "./MaintenanceGuard";
@@ -90,6 +91,7 @@ export function VideoRoom({
     const [isAudioMuted, setIsAudioMuted] = useState(false);
     const [isVideoMuted, setIsVideoMuted] = useState(false);
     const [chatInput, setChatInput] = useState("");
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const [accountStatus, setAccountStatus] = useState<'guest' | 'registered' | 'premium'>('guest');
@@ -575,8 +577,24 @@ export function VideoRoom({
         if (chatInput.trim()) {
             sendMessage(chatInput);
             setChatInput("");
+            setShowEmojiPicker(false);
         }
     };
+
+    const onEmojiClick = (emojiData: any) => {
+        setChatInput(prev => prev + emojiData.emoji);
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            const target = event.target as Element;
+            if (showEmojiPicker && !target.closest('.emoji-picker-container') && !target.closest('.emoji-toggle-btn')) {
+                setShowEmojiPicker(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [showEmojiPicker]);
 
     const captureScreenshots = async (): Promise<string[]> => {
         const video = remoteVideoRef.current;
@@ -942,14 +960,35 @@ export function VideoRoom({
                         <div ref={messagesEndRef} />
                     </div>
 
-                    <form onSubmit={handleSend} className="p-4 md:p-6 bg-transparent md:bg-neutral-950/80 flex items-center gap-2">
+                    <form onSubmit={handleSend} className="p-4 md:p-6 bg-transparent md:bg-neutral-950/80 flex items-center gap-2 relative">
+                        {showEmojiPicker && (
+                            <div className="absolute bottom-full right-4 md:right-6 z-50 mb-4 emoji-picker-container shadow-2xl animate-in slide-in-from-bottom-2 duration-300">
+                                <EmojiPicker
+                                    onEmojiClick={onEmojiClick}
+                                    theme={Theme.DARK}
+                                    lazyLoadEmojis={true}
+                                    searchPlaceholder={t('common.search') || "Search..."}
+                                    width={320}
+                                    height={400}
+                                    skinTonesDisabled
+                                />
+                            </div>
+                        )}
                         <div className="relative flex-1">
+                            <button
+                                type="button"
+                                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                                className="absolute left-3 top-1/2 -translate-y-1/2 p-2 text-white/40 hover:text-white transition-colors emoji-toggle-btn"
+                                title="Emoji"
+                            >
+                                <Smile size={20} />
+                            </button>
                             <input
                                 type="text"
                                 value={chatInput}
                                 onChange={(e) => setChatInput(e.target.value)}
                                 placeholder={t('room.chat_placeholder')}
-                                className="w-full bg-white/10 border border-white/10 rounded-2xl px-5 py-4 text-base text-white focus:outline-none focus:border-indigo-500 transition-all pr-12 backdrop-blur-md"
+                                className="w-full bg-white/10 border border-white/10 rounded-2xl pl-12 pr-12 py-4 text-base text-white focus:outline-none focus:border-indigo-500 transition-all backdrop-blur-md"
                             />
                             <button
                                 type="submit"
