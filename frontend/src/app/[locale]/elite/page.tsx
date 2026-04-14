@@ -11,7 +11,8 @@ import {
     DollarSign,
     Star,
     CheckCircle2,
-    ArrowRight
+    ArrowRight,
+    ShieldOff
 } from "lucide-react";
 import { ModelSimulator } from "@/components/ModelSimulator";
 import { useTranslation } from "@/context/LanguageContext";
