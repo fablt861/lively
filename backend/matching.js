@@ -212,13 +212,20 @@ async function handleJoinQueue(io, socket) {
                 }
                 await redis.hset('billing:active_rooms', existingRoomId, JSON.stringify(roomData));
 
+                // Check if this room was in a private session
+                const blockDataRaw = await redis.get(`billing:is_blocked:${existingRoomId}`);
+                const blockData = blockDataRaw ? JSON.parse(blockDataRaw) : null;
+
                 socket.emit('matched', {
                     roomId: existingRoomId,
                     initiator: socket.id,
                     isRecovery: true,
                     partnerEmail: partnerEmail,
                     partnerRole: isModel ? 'user' : 'model',
-                    partnerName: partnerEmail.includes('@') ? partnerEmail.split('@')[0] : 'Partner'
+                    partnerName: partnerEmail.includes('@') ? partnerEmail.split('@')[0] : 'Partner',
+                    isBlocked: !!blockData,
+                    blockEnd: blockData?.blockEnd,
+                    blockDurationMin: blockData?.blockDurationMin
                 });
                 
                 socket.to(existingRoomId).emit('partner_reconnected', {

@@ -167,6 +167,18 @@ export function VideoRoom({
             .catch(console.error);
 
         if (role !== "user") return;
+
+        // Restore block state if we are a model and just refreshed
+        const savedBlock = localStorage.getItem(`active_block_${role}`);
+        if (savedBlock) {
+            try {
+                const { roomId, blockEnd } = JSON.parse(savedBlock);
+                // We'll trust the socket recovery more, but this is a fallback for UI stability
+                console.log("[Block] Found saved block state in localStorage:", roomId);
+                setIsBlocked(true);
+                setBlockEndTime(blockEnd);
+            } catch (e) {}
+        }
     }, [role]);
 
     useEffect(() => {
@@ -237,26 +249,35 @@ export function VideoRoom({
         };
 
         const handleBlockSessionStarted = (payload: { blockEnd: number; durationMin: number }) => {
+            console.log("[Block] Session started officially:", payload);
             setIsBlocked(true);
             setBlockEndTime(payload.blockEnd);
             setIncomingBlockRequest(null);
+            
+            // Persist for recovery
+            localStorage.setItem(`active_block_${role}`, JSON.stringify({
+                blockEnd: payload.blockEnd,
+                timestamp: Date.now()
+            }));
         };
 
         const handleBlockSessionEnded = () => {
+            console.log("[Block] Session ended signal received");
             setIsBlocked(false);
             setBlockEndTime(null);
-            // alert(t('room.block_ended') || "La session privée est terminée.");
+            localStorage.removeItem(`active_block_${role}`);
         };
 
         const handlePartnerLeft = () => {
-            console.log("[Socket] Partner left, resetting block state and transitioning...");
+            console.log("[Socket] Partner left. isBlocked state at event time:", isBlocked);
             
             // We need to know if we were in a block to decide if we auto-requeue
-            // Since setIsBlocked is async, we use the value from the closure which is correct for this event
             const processAutoNext = !isBlocked;
 
             setIsBlocked(false);
             setBlockEndTime(null);
+            localStorage.removeItem(`active_block_${role}`);
+
             if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
             
             if (processAutoNext) {
@@ -281,6 +302,23 @@ export function VideoRoom({
             handleNext(true); // Now we finally re-queue
         };
 
+        const handleMatched = (data: any) => {
+            console.log("[Socket] Matched event received in VideoRoom:", data);
+            if (data.isBlocked) {
+                console.log("[Block] Recovering active private session state from Matched event", data.blockEnd);
+                setIsBlocked(true);
+                setBlockEndTime(data.blockEnd);
+                localStorage.setItem(`active_block_${role}`, JSON.stringify({
+                    blockEnd: data.blockEnd,
+                    timestamp: Date.now()
+                }));
+            } else {
+                // Clear any stale block state from a previous session
+                localStorage.removeItem(`active_block_${role}`);
+            }
+        };
+
+        socket.on('matched', handleMatched);
         socket.on('out_of_credits', handleOutOfCredits);
         socket.on('partner_out_of_credits', handlePartnerOutOfCredits);
         socket.on('credits_update', handleCreditsUpdate);

@@ -266,16 +266,16 @@ async function stopBilling(roomId, reason = 'unknown') {
         const totalBlockGain = parseFloat(blockData?.blockGain || session?.blockGain || settings.blockModelGain || 25);
         const totalBlockSec = (parseInt(blockData?.blockDurationMin || session?.blockDurationMin || settings.blockDurationMin || 30)) * 60;
         
+        // Prorated payout if user left or timer ended
+        const blockStart = blockData?.blockStartTime || session?.startTime || Date.now();
+        const elapsedSinceBlockStart = Math.max(0, (Date.now() - blockStart) / 1000);
+        const actualPrivateDuration = Math.min(totalBlockSec, elapsedSinceBlockStart);
+        
         if (isModelQuit) {
             privateEarned = 0;
             console.log(`[Billing] Model left early. Awarding $0 for block in room ${roomId}`);
         } else {
-            // Prorated payout if user left or timer ended
-            const elapsedSinceBlockStart = Math.min(totalBlockSec, durationSec); // Assuming block started at room start for simplicity, or we track blockStartTime
-            // Actually, durationSec is since session.startTime. If block started later, we'd need blockStartTime.
-            // But usually blocks start immediately or we can assume durationSec is fine if we only care about the call length.
-            
-            privateEarned = parseFloat(((elapsedSinceBlockStart / totalBlockSec) * totalBlockGain).toFixed(4));
+            privateEarned = parseFloat(((actualPrivateDuration / totalBlockSec) * totalBlockGain).toFixed(4));
             console.log(`[Billing] Private session ended (${reason}). Prorated gain: $${privateEarned} / $${totalBlockGain}`);
         }
 
@@ -288,7 +288,7 @@ async function stopBilling(roomId, reason = 'unknown') {
                 reason,
                 earned: privateEarned,
                 totalPossible: totalBlockGain,
-                durationSec: Math.floor(elapsedSinceBlockStart)
+                durationSec: Math.floor(actualPrivateDuration)
             });
         }
 

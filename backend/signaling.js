@@ -71,6 +71,7 @@ function setupSignaling(io, socket) {
             
             const duration = payload.durationMin || settings.blockDurationMin || 30;
             const blockData = {
+                blockStartTime: Date.now(),
                 blockEnd: Date.now() + duration * 60 * 1000,
                 blockGain: settings.blockModelGain || 25,
                 blockCreditsCost: payload.creditsCost || settings.blockCreditsCost || 600,
