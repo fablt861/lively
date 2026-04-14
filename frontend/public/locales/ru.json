@@ -721,5 +721,15 @@
   "terms.updated": "Вступление в силу: 27 марта 2024 г.",
   "terms.withdrawal_content": "Services are provided immediately upon registration. Consequently, Users expressly waive their 14-day right of withdrawal.",
   "terms.withdrawal_section": "9. Waiver of Withdrawal\nUsers are informed of the principle 14-day withdrawal period but expressly accept that Services are fully performed before expiry. Consequently, they expressly waive their right of withdrawal.",
-  "terms.withdrawal_title": "10. Waiver of Withdrawal"
+  "terms.withdrawal_title": "10. Waiver of Withdrawal",
+  "dashboard.rules_warning_title": "Строгие правила платформы",
+  "dashboard.rules_warning_desc": "У Kinky очень строгие правила. Несоблюдение может привести к немедленной и постоянной блокировке аккаунта.",
+  "dashboard.rules_cta": "Посмотреть правила",
+  "dashboard.rules_modal_title": "Правила и безопасность",
+  "dashboard.rules_prohibited_title": "Строго запрещено",
+  "dashboard.rules_prohibited_item1": "Нагота запрещена в начале звонка",
+  "dashboard.rules_prohibited_item2": "Обмен личными данными (Тел., Email, Банк, PayPal и т.д.)",
+  "dashboard.rules_prohibited_item3": "Отсутствие перед камерой во время звонка",
+  "dashboard.rules_allowed_title": "Что разрешено",
+  "dashboard.rules_allowed_item1": "Не показывать лицо"
 }

@@ -721,5 +721,15 @@
   "terms.updated": "Intrare în vigoare: 27 martie 2024",
   "terms.withdrawal_content": "Services are provided immediately upon registration. Consequently, Users expressly waive their 14-day right of withdrawal.",
   "terms.withdrawal_section": "9. Waiver of Withdrawal\nUsers are informed of the principle 14-day withdrawal period but expressly accept that Services are fully performed before expiry. Consequently, they expressly waive their right of withdrawal.",
-  "terms.withdrawal_title": "10. Waiver of Withdrawal"
+  "terms.withdrawal_title": "10. Waiver of Withdrawal",
+  "dashboard.rules_warning_title": "Reguli stricte ale platformei",
+  "dashboard.rules_warning_desc": "Kinky are reguli foarte stricte. Nerespectarea poate duce la interzicerea imediată și permanentă a contului.",
+  "dashboard.rules_cta": "Vezi regulile",
+  "dashboard.rules_modal_title": "Reguli și siguranță",
+  "dashboard.rules_prohibited_title": "Strict interzis",
+  "dashboard.rules_prohibited_item1": "Nuditatea este interzisă la începutul unui apel",
+  "dashboard.rules_prohibited_item2": "Partajarea informațiilor personale (Tel, E-mail, Bancă, PayPal etc.)",
+  "dashboard.rules_prohibited_item3": "Să nu fii în fața camerei în timpul unui apel",
+  "dashboard.rules_allowed_title": "Ce este autorizat",
+  "dashboard.rules_allowed_item1": "A nu-ți arăta fața"
 }

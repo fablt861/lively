@@ -731,5 +731,15 @@
   "terms.updated": "Entrée en vigueur : 27 mars 2024",
   "terms.withdrawal_content": "Les Services sont fournis dès l'inscription. En conséquence, les Utilisateurs renoncent expressément à leur droit de rétractation de 14 jours.",
   "terms.withdrawal_section": "9. Renonciation au Droit de Rétractation\nLes Utilisateurs sont informés du délai de rétractation de 14 jours mais acceptent que les Services soient pleinement exécutés avant l'expiration. Ils y renoncent donc expressément.",
-  "terms.withdrawal_title": "10. Renonciation au Droit de Rétractation"
+  "terms.withdrawal_title": "10. Renonciation au Droit de Rétractation",
+  "dashboard.rules_warning_title": "Règles Strictes de la Plateforme",
+  "dashboard.rules_warning_desc": "Kinky a des règles très strictes qui si elles ne sont pas respectées peuvent conduire immédiatement au bannissement définitif du compte.",
+  "dashboard.rules_cta": "Afficher les règles",
+  "dashboard.rules_modal_title": "Règles & Sécurité",
+  "dashboard.rules_prohibited_title": "Strictement Interdit",
+  "dashboard.rules_prohibited_item1": "Nudité interdite au début d'un call",
+  "dashboard.rules_prohibited_item2": "Partage d'infos personnelles (Tél, Email, Banque, PayPal, etc.)",
+  "dashboard.rules_prohibited_item3": "Ne pas être devant sa caméra pendant un call",
+  "dashboard.rules_allowed_title": "Ce qui est Autorisé",
+  "dashboard.rules_allowed_item1": "Ne pas montrer son visage"
 }

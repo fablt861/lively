@@ -9,7 +9,8 @@ import { LanguageSelector } from "@/components/LanguageSelector";
 import { ModelBillingModal } from "@/components/ModelBillingModal";
 import { ProfileSettingsModal } from "@/components/ProfileSettingsModal";
 import { GeoBlockModal } from "@/components/GeoBlockModal";
-import { Settings, User, FileText, ShieldOff } from "lucide-react";
+import { ModelRulesModal } from "@/components/ModelRulesModal";
+import { Settings, User, FileText, ShieldOff, ShieldAlert, AlertCircle } from "lucide-react";
 
 interface Stats {
     balance: number;
@@ -50,6 +51,7 @@ export default function DashboardPage() {
     const [isBillingOpen, setIsBillingOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isGeoBlockOpen, setIsGeoBlockOpen] = useState(false);
+    const [isRulesOpen, setIsRulesOpen] = useState(false);
     const [payoutLoading, setPayoutLoading] = useState(false);
     const [payoutMessage, setPayoutMessage] = useState<{ text: string, type: 'error' | 'success' } | null>(null);
 
@@ -265,6 +267,31 @@ export default function DashboardPage() {
                 >
                     {t('dashboard.telegram_cta')}
                 </a>
+            </div>
+
+            {/* Strict Rules Warning Section */}
+            <div className="mb-12 group relative overflow-hidden rounded-[1.5rem] md:rounded-[2rem] bg-rose-500/5 border border-rose-500/20 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl backdrop-blur-md transition-all hover:bg-rose-500/10">
+                <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
+                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-rose-500/20 flex items-center justify-center text-rose-500 flex-shrink-0 animate-pulse">
+                        <ShieldAlert className="w-6 h-6 md:w-8 md:h-8" />
+                    </div>
+                    <div>
+                        <h2 className="text-xl md:text-2xl font-bold text-white mb-1 flex items-center gap-2 justify-center md:justify-start">
+                            {t('dashboard.rules_warning_title')}
+                            <span className="block w-2 h-2 rounded-full bg-rose-500"></span>
+                        </h2>
+                        <p className="text-sm md:text-base text-rose-100/60 max-w-xl text-center md:text-left">
+                            {t('dashboard.rules_warning_desc')}
+                        </p>
+                    </div>
+                </div>
+                <button 
+                    onClick={() => setIsRulesOpen(true)}
+                    className="w-full md:w-auto text-center whitespace-nowrap px-6 md:px-8 py-3 md:py-4 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-full font-bold transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+                >
+                    <AlertCircle size={18} className="text-rose-500" />
+                    {t('dashboard.rules_cta')}
+                </button>
             </div>
 
             {/* Main Stats Grid */}
@@ -506,6 +533,11 @@ export default function DashboardPage() {
                 isOpen={isGeoBlockOpen}
                 onClose={() => setIsGeoBlockOpen(false)}
                 userEmail={id}
+            />
+
+            <ModelRulesModal
+                isOpen={isRulesOpen}
+                onClose={() => setIsRulesOpen(false)}
             />
         </div>
     );

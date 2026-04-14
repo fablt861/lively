@@ -721,5 +721,15 @@
   "terms.updated": "Entrada en vigor: 27 de marzo de 2024",
   "terms.withdrawal_content": "Los servicios se prestan inmediatamente después del registro. En consecuencia, los usuarios renuncian expresamente a su derecho de desistimiento de 14 días.",
   "terms.withdrawal_section": "9. Renuncia al retiro\nSe informa a los usuarios del período de desistimiento de 14 días mencionado en principio, pero aceptan expresamente que los servicios se realicen íntegramente antes del vencimiento. En consecuencia, renuncian expresamente a su derecho de desistimiento.",
-  "terms.withdrawal_title": "10. Renuncia al Retiro"
+  "terms.withdrawal_title": "10. Renuncia al Retiro",
+  "dashboard.rules_warning_title": "Reglas estrictas de la plataforma",
+  "dashboard.rules_warning_desc": "Kinky tiene reglas muy estrictas. El incumplimiento puede llevar al baneo inmediato y permanente de la cuenta.",
+  "dashboard.rules_cta": "Ver reglas",
+  "dashboard.rules_modal_title": "Reglas y seguridad",
+  "dashboard.rules_prohibited_title": "Estrictamente prohibido",
+  "dashboard.rules_prohibited_item1": "Nudez prohibida al inicio de una llamada",
+  "dashboard.rules_prohibited_item2": "Compartir información personal (Teleno, Correo, Banco, PayPal, etc.)",
+  "dashboard.rules_prohibited_item3": "No estar frente a la cámara durante una llamada",
+  "dashboard.rules_allowed_title": "Lo que está autorizado",
+  "dashboard.rules_allowed_item1": "No mostrar el rostro"
 }

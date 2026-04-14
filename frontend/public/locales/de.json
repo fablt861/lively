@@ -721,5 +721,15 @@
   "terms.updated": "Inkrafttreten: 27. März 2024",
   "terms.withdrawal_content": "Services are provided immediately upon registration. Consequently, Users expressly waive their 14-day right of withdrawal.",
   "terms.withdrawal_section": "9. Waiver of Withdrawal\nUsers are informed of the principle 14-day withdrawal period but expressly accept that Services are fully performed before expiry. Consequently, they expressly waive their right of withdrawal.",
-  "terms.withdrawal_title": "10. Waiver of Withdrawal"
+  "terms.withdrawal_title": "10. Waiver of Withdrawal",
+  "dashboard.rules_warning_title": "Strenge Plattformregeln",
+  "dashboard.rules_warning_desc": "Kinky hat sehr strenge Regeln. Die Nichteinhaltung kann zu einer sofortigen und dauerhaften Kontosperre führen.",
+  "dashboard.rules_cta": "Regeln anzeigen",
+  "dashboard.rules_modal_title": "Regeln & Sicherheit",
+  "dashboard.rules_prohibited_title": "Streng verboten",
+  "dashboard.rules_prohibited_item1": "Nacktheit zu Beginn eines Anrufs verboten",
+  "dashboard.rules_prohibited_item2": "Weitergabe persönlicher Daten (Tel., E-Mail, Bank, PayPal usw.)",
+  "dashboard.rules_prohibited_item3": "Nicht vor der Kamera sein während eines Anrufs",
+  "dashboard.rules_allowed_title": "Was erlaubt ist",
+  "dashboard.rules_allowed_item1": "Gesicht nicht zeigen"
 }

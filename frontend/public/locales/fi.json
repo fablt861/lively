@@ -721,5 +721,15 @@
   "terms.updated": "Voimaantulo: 27. maaliskuuta 2024",
   "terms.withdrawal_content": "Services are provided immediately upon registration. Consequently, Users expressly waive their 14-day right of withdrawal.",
   "terms.withdrawal_section": "9. Waiver of Withdrawal\nUsers are informed of the principle 14-day withdrawal period but expressly accept that Services are fully performed before expiry. Consequently, they expressly waive their right of withdrawal.",
-  "terms.withdrawal_title": "10. Waiver of Withdrawal"
+  "terms.withdrawal_title": "10. Waiver of Withdrawal",
+  "dashboard.rules_warning_title": "Tiukat alustan säännöt",
+  "dashboard.rules_warning_desc": "Kinkyllä on erittäin tiukat säännöt. Sääntöjen noudattamatta jättäminen voi johtaa tilin välittömään ja pysyвään bannaukseen.",
+  "dashboard.rules_cta": "Näytä säännöt",
+  "dashboard.rules_modal_title": "Säännöt & Turvallisuus",
+  "dashboard.rules_prohibited_title": "Ehdottomasti kielletty",
+  "dashboard.rules_prohibited_item1": "Alastomuus kielletty puhelun alussa",
+  "dashboard.rules_prohibited_item2": "Henkilökohtaisten tietojen jakaminen (Puh, Sähköposti, Pankki, PayPal jne.)",
+  "dashboard.rules_prohibited_item3": "Poissaolo kameran edestä puhelun aikana",
+  "dashboard.rules_allowed_title": "Mikä on sallittua",
+  "dashboard.rules_allowed_item1": "Kasvojen näyttämättä jättäminen"
 }
