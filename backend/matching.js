@@ -399,11 +399,20 @@ async function disconnectFromRoom(io, socket, reason = 'unknown') {
         socket.currentRoom = null;
 
         // --- NEW: Automatically put the partner back in the queue ---
+        // UNLESS it was a private session! We want the model to see their report first.
         if (partnerSocket) {
-            console.log(`[Auto-Next] Re-queueing partner ${partnerSocket.id} after disconnect by ${socket.id}`);
-            partnerSocket.leave(roomId);
-            partnerSocket.currentRoom = null;
-            await handleJoinQueue(io, partnerSocket);
+            const blockData = await redis.get(`billing:is_blocked:${roomId}`);
+            if (blockData) {
+                console.log(`[Auto-Next] Gating auto-requeue for partner ${partnerSocket.id} (Private Session)`);
+                partnerSocket.leave(roomId);
+                partnerSocket.currentRoom = null;
+                // Partner (model) will call handleJoinQueue themselves when they close the summary modal
+            } else {
+                console.log(`[Auto-Next] Re-queueing partner ${partnerSocket.id} after disconnect by ${socket.id}`);
+                partnerSocket.leave(roomId);
+                partnerSocket.currentRoom = null;
+                await handleJoinQueue(io, partnerSocket);
+            }
         }
     }
 }
