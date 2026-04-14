@@ -87,7 +87,6 @@ export default async function RootLayout({
           <Suspense fallback={null}>
             <MarketingTracker />
           </Suspense>
-          <CallListener />
           {children}
           <Footer />
         </LanguageProvider>

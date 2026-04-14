@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles, Lock, Timer, Check, Plus, Heart } from "lucide-react";
+import { CallListener } from './CallListener';
 import { useTranslation } from "@/context/LanguageContext";
 import { MaintenanceGuard } from "./MaintenanceGuard";
 import { LaunchPage } from "./LaunchPage";
@@ -1288,6 +1289,7 @@ export function VideoRoom({
 
             {/* PRIVATE EARNINGS SUMMARY MODAL */}
             {privateSummary && (
+                // ... (summary content)
                 <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl">
                     <div className="w-full max-w-md bg-neutral-900/50 border border-indigo-500/30 rounded-[3rem] p-10 shadow-[0_0_50px_rgba(99,102,241,0.2)] text-center relative overflow-hidden">
                         {/* Background Decorations */}
@@ -1338,6 +1340,9 @@ export function VideoRoom({
                     </div>
                 </div>
             )}
+
+            {/* DIRECT CALL LISTENER (MODEL SIDE) */}
+            <CallListener />
         </div>
     );
 }
