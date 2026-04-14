@@ -115,17 +115,23 @@ export function VideoRoom({
     const [isRequeuingBlocked, setIsRequeuingBlocked] = useState(false);
     const [showBlockRefused, setShowBlockRefused] = useState(false);
     const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const isBlockedRef = useRef(isBlocked);
+    const privateSummaryRef = useRef(privateSummary);
+
+    // Sync refs for use in socket listeners (to avoid stale closures)
+    useEffect(() => { isBlockedRef.current = isBlocked; }, [isBlocked]);
+    useEffect(() => { privateSummaryRef.current = privateSummary; }, [privateSummary]);
 
     console.log(`[VideoRoom Render] isConnected: ${isConnected}, isMatching: ${isMatching}, remoteStream (bool): ${!!remoteStream}`);
 
     const handleNext = (force = false) => {
-        if (!force && isBlocked) {
+        if (!force && isBlockedRef.current) {
             setShowNextConfirm(true);
             return;
         }
 
         // --- NEW SAFETY: Cannot re-queue while looking at the money! ---
-        if (privateSummary && role === 'model') {
+        if (privateSummaryRef.current && role === 'model') {
             console.log("[Block] Cannot re-queue while viewing summary modal.");
             return;
         }
@@ -276,10 +282,10 @@ export function VideoRoom({
         };
 
         const handlePartnerLeft = () => {
-            console.log("[Socket] Partner left. isBlocked state at event time:", isBlocked);
+            console.log("[Socket] Partner left. isBlocked state (ref):", isBlockedRef.current);
             
             // We need to know if we were in a block to decide if we auto-requeue
-            const processAutoNext = !isBlocked;
+            const processAutoNext = !isBlockedRef.current;
 
             setIsBlocked(false);
             setBlockEndTime(null);
