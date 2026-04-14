@@ -651,6 +651,17 @@ export function VideoRoom({
                         muted
                         className={`w-full h-full object-cover ${isVideoMuted ? "opacity-0" : "opacity-100"}`}
                     />
+                    
+                    {/* Mobile Mic Toggle Overlay */}
+                    <div className="md:hidden absolute bottom-2 right-2">
+                        <button
+                            onClick={handleToggleAudio}
+                            className={`w-8 h-8 flex items-center justify-center rounded-xl transition-all backdrop-blur-md border ${isAudioMuted ? "bg-red-500/80 border-red-500/50 text-white" : "bg-black/40 border-white/10 text-white"}`}
+                        >
+                            {isAudioMuted ? <MicOff size={14} /> : <Mic size={14} />}
+                        </button>
+                    </div>
+
                     {isVideoMuted && (
                         <div className="absolute inset-0 flex items-center justify-center bg-neutral-800">
                             <VideoOff className="w-6 h-6 md:w-8 md:h-8 text-neutral-500" />
@@ -660,32 +671,18 @@ export function VideoRoom({
 
                 {/* Block Session Timer (Overlaid on Video) */}
                 {isBlocked && (
-                    <div className="absolute top-20 left-1/2 -translate-x-1/2 md:top-[110px] md:right-6 md:left-auto md:translate-x-0 z-40 bg-black/60 backdrop-blur-md px-6 py-3 rounded-2xl border border-pink-500/30 flex items-center gap-3 shadow-xl shadow-pink-500/10 transition-all duration-500">
-                        <Timer className="text-pink-500" size={20} />
-                        <span className="text-xl font-mono font-black text-white tracking-widest">{blockTimeLeft}</span>
+                    <div className="absolute top-[115px] left-6 md:top-[110px] md:right-6 md:left-auto md:translate-x-0 z-40 bg-black/60 backdrop-blur-md px-4 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl border border-pink-500/30 flex items-center gap-2 md:gap-3 shadow-xl shadow-pink-500/10 transition-all duration-500">
+                        <Timer className="text-pink-500 w-4 h-4 md:w-5 md:h-5" />
+                        <span className="text-base md:text-xl font-mono font-black text-white tracking-widest">{blockTimeLeft}</span>
                         <div className="flex flex-col">
-                            <span className="text-[10px] font-bold text-pink-400 uppercase tracking-tighter">{t('room.block_timer_label')}</span>
-                            <span className="text-[8px] text-white/50 uppercase leading-none">{t('room.block_locked_label')}</span>
+                            <span className="text-[8px] md:text-[10px] font-bold text-pink-400 uppercase tracking-tighter leading-none">{t('room.block_timer_label')}</span>
+                            <span className="text-[6px] md:text-[8px] text-white/50 uppercase leading-none">{t('room.block_locked_label')}</span>
                         </div>
                     </div>
                 )}
 
                 {/* Mobile Right Sidebar Controls */}
                 <div className="flex md:hidden absolute top-1/2 -translate-y-[40%] right-4 z-40 flex-col gap-4">
-                    <button
-                        onClick={handleToggleAudio}
-                        className={`w-12 h-12 flex items-center justify-center rounded-2xl transition-all backdrop-blur-md border ${isAudioMuted ? "bg-red-500/80 border-red-500/50 text-white" : "bg-white/10 border-white/10 text-white"}`}
-                    >
-                        {isAudioMuted ? <MicOff size={20} /> : <Mic size={20} />}
-                    </button>
-                    {role !== 'model' && (
-                        <button
-                            onClick={handleToggleVideo}
-                            className={`w-12 h-12 flex items-center justify-center rounded-2xl transition-all backdrop-blur-md border ${isVideoMuted ? "bg-red-500/80 border-red-500/50 text-white" : "bg-white/10 border-white/10 text-white"}`}
-                        >
-                            {isVideoMuted ? <VideoOff size={20} /> : <Video size={20} />}
-                        </button>
-                    )}
                     <button
                         onClick={() => setIsReportModalOpen(true)}
                         className="w-12 h-12 flex items-center justify-center rounded-2xl bg-orange-500/80 border border-orange-400/50 text-white backdrop-blur-md"
@@ -702,7 +699,7 @@ export function VideoRoom({
                     {role === 'user' && isConnected && !isBlocked && (
                         <button
                             onClick={() => setShowBlockRequestModal(true)}
-                            className="w-12 h-12 flex items-center justify-center rounded-2xl bg-pink-600/80 border border-pink-500/50 text-white backdrop-blur-md animate-pulse shadow-lg shadow-pink-500/20"
+                            className="w-12 h-12 flex items-center justify-center rounded-2xl bg-pink-600/80 border border-pink-500/50 text-white backdrop-blur-md shadow-lg shadow-pink-500/20"
                         >
                             <Lock size={20} />
                         </button>
@@ -726,9 +723,6 @@ export function VideoRoom({
                 {/* Desktop Controls (Hidden on Mobile) */}
                 <div className="hidden md:flex absolute bottom-8 right-6 z-40 flex-row gap-4">
                     <button onClick={handleToggleAudio} className={`p-4 rounded-full ${isAudioMuted ? "bg-red-500" : "bg-white/10"}`}><Mic size={24} /></button>
-                    {role !== 'model' && (
-                        <button onClick={handleToggleVideo} className={`p-4 rounded-full ${isVideoMuted ? "bg-red-500" : "bg-white/10"}`}><Video size={24} /></button>
-                    )}
                     <button onClick={() => setIsReportModalOpen(true)} className="p-4 rounded-full bg-orange-600/80 hover:bg-orange-500 transition-colors border border-orange-400/30">
                         <ShieldAlert size={24} />
                     </button>
@@ -737,7 +731,7 @@ export function VideoRoom({
                     {role === 'user' && isConnected && !isBlocked && (
                         <button
                             onClick={() => setShowBlockRequestModal(true)}
-                            className="p-4 rounded-full bg-pink-600 hover:bg-pink-500 text-white transition-all shadow-lg shadow-pink-500/20 active:scale-95 animate-pulse"
+                            className="p-4 rounded-full bg-pink-600 hover:bg-pink-500 text-white transition-all shadow-lg shadow-pink-500/20 active:scale-95"
                             title={t('room.block_cta_tooltip')}
                         >
                             <Lock size={24} />
