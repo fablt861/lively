@@ -944,7 +944,7 @@ export function VideoRoom({
                         
                         <div className={`p-6 rounded-[2rem] mb-8 flex flex-col items-center gap-4 transition-all ${
                             isBlocked && role === 'model' 
-                            ? 'bg-red-500/20 border-2 border-red-500/50 animate-pulse shadow-[0_0_30px_rgba(239,68,68,0.2)]' 
+                            ? 'bg-red-500/20 border-2 border-red-500/50 shadow-[0_0_30px_rgba(239,68,68,0.2)]' 
                             : 'bg-white/5 border border-white/10'
                         }`}>
                             {isBlocked && role === 'model' && (
