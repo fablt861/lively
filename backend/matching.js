@@ -523,17 +523,21 @@ async function disconnectFromRoom(io, socket, reason = 'unknown') {
         socket.currentRoom = null;
 
         // --- NEW: Automatically put the partner back in the queue ---
-        // UNLESS it was a private session! We want the model to see their report first.
+        // UNLESS it was a private session OR a direct call! 
+        // We want the participants to decide what to do next.
         if (partnerSocket) {
-            if (blockDataRaw) {
-                console.log(`[Auto-Next] Gating auto-requeue for partner ${partnerSocket.id} (Private Session detected)`);
+            const isDirectCall = roomId.startsWith('direct-call-');
+            if (blockDataRaw || isDirectCall) {
+                console.log(`[Auto-Next] Gating auto-requeue for partner ${partnerSocket.id} (Private Session or Direct Call detected)`);
                 partnerSocket.leave(roomId);
                 partnerSocket.currentRoom = null;
-                // Partner (model) will call handleJoinQueue themselves when they close the summary modal
+                if (partnerSocket.data) partnerSocket.data.currentRoom = null;
+                // Partner will handle it via their UI
             } else {
                 console.log(`[Auto-Next] Re-queueing partner ${partnerSocket.id} after disconnect by ${socket.id}`);
                 partnerSocket.leave(roomId);
                 partnerSocket.currentRoom = null;
+                if (partnerSocket.data) partnerSocket.data.currentRoom = null;
                 await handleJoinQueue(io, partnerSocket);
             }
         }
