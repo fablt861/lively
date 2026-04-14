@@ -83,6 +83,23 @@ export default function CustomerDashboard() {
         }
     };
 
+    const handlePurchase = async (credits: number, priceUsd: number) => {
+        if (!userEmail) return;
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/add-credits`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: userEmail, amount: credits, priceUsd })
+            });
+            if (res.ok) {
+                setShowPaywall(false);
+                fetchUserInfo();
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     const handleProfileUpdate = (newEmail: string, newPseudo: string) => {
         localStorage.setItem('kinky_user_email', newEmail);
         localStorage.setItem('kinky_user_pseudo', newPseudo);
@@ -124,9 +141,6 @@ export default function CustomerDashboard() {
                         </div>
                         
                         <div className="space-y-1">
-                            <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
-                                <span className="px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-black uppercase tracking-[0.2em] rounded-full">CLIENT</span>
-                            </div>
                             <h2 className="text-3xl md:text-5xl font-extralight text-white/50 leading-none">{t('nav.welcome')} <span className="font-black text-white">{userInfo?.pseudo || "..."}</span></h2>
                             <p className="text-xs md:text-sm text-neutral-500 font-medium tracking-wide uppercase mt-2">{t('profile.manage_desc')}</p>
                         </div>
@@ -142,10 +156,10 @@ export default function CustomerDashboard() {
                             {t('dashboard.profile_settings_title')}
                         </button>
                         <button
-                            onClick={() => window.location.href = `/${language}`}
-                            className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-full transition-all duration-300 text-sm font-black uppercase tracking-widest flex items-center justify-center gap-3 w-full sm:w-auto text-center"
+                            onClick={() => window.location.href = `/${language}/live`}
+                            className="px-8 py-4 bg-gradient-to-tr from-pink-500 to-violet-500 hover:scale-105 active:scale-95 text-white rounded-full transition-all duration-300 text-sm font-black uppercase tracking-widest flex items-center justify-center gap-3 w-full sm:w-auto text-center shadow-lg shadow-pink-500/20"
                         >
-                            {t('mockup.live')} <ChevronRight size={18} />
+                            {t('dashboard.start_chatting') || "Start Chatting"} <ChevronRight size={18} />
                         </button>
                     </div>
                 </header>
@@ -266,7 +280,7 @@ export default function CustomerDashboard() {
                 onProfileUpdate={handleProfileUpdate}
             />
 
-            {showPaywall && <PaywallModal onClose={() => setShowPaywall(false)} onPurchase={() => fetchUserInfo()} />}
+            {showPaywall && <PaywallModal onClose={() => setShowPaywall(false)} onPurchase={handlePurchase} />}
         </div>
     );
 }

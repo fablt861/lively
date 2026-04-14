@@ -310,6 +310,7 @@
   "dashboard.profile_load_error": "Failed to load profile settings.",
   "dashboard.profile_saved_success": "Profile updated successfully!",
   "dashboard.profile_settings_title": "Profile Settings",
+  "dashboard.start_chatting": "Start Chatting",
   "dashboard.favorites_title": "My Favorite Models",
   "dashboard.favorites_empty": "You haven't added any favorites yet. Start matching to find your favorites!",
   "dashboard.save_changes": "Save Changes",
