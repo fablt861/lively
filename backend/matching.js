@@ -45,10 +45,11 @@ function setupMatching(io, socket) {
 
             socket.language = language || 'en';
             socket.userEmail = email?.toLowerCase(); // Persistent ID for registered users
-            if (role === 'model' && socket.userEmail) {
-                await redis.sadd('online_models', socket.userEmail);
-                await redis.set(`user_socket:${socket.userEmail}`, socket.id, 'EX', 86400);
-            } else if (role === 'user' && socket.userEmail) {
+            if (socket.userEmail) {
+                await socket.join(`email:${socket.userEmail}`);
+                if (role === 'model') {
+                    await redis.sadd('online_models', socket.userEmail);
+                }
                 await redis.set(`user_socket:${socket.userEmail}`, socket.id, 'EX', 86400);
             }
 
@@ -172,6 +173,9 @@ function setupMatching(io, socket) {
         socket.userEmail = email?.toLowerCase();
         socket.currentRoom = roomId;
         
+        if (socket.userEmail) {
+            await socket.join(`email:${socket.userEmail}`);
+        }
         await socket.join(roomId);
         
         // Notify the room that someone joined
