@@ -101,7 +101,11 @@ function setupMatching(io, socket) {
             const geo = geoip.lookup(userIp);
             socket.country = geo ? geo.country : 'Unknown';
             socket.data.country = socket.country;
-            console.log(`[GeoIP] Socket ${socket.id} is from ${socket.country}`);
+            console.log(`[GeoIP] Socket ${socket.id} (IP: ${userIp}) detected from: ${socket.country}`);
+            
+            if (socket.country === 'Unknown') {
+                console.log(`[GeoIP] Warning: Could not detect country for IP ${userIp}. This usually happens on localhost or internal networks.`);
+            }
 
             // Rate Limit Check (IP or Email)
             const identifier = email || userIp;
@@ -392,64 +396,68 @@ async function handleJoinQueue(io, socket) {
 
     while (maxRetries > 0) {
         // Anti-Rebound Search: get all candidates (limit to first 30 for performance)
-        const candidates = await redis.lrange(targetQueue, -30, -1);
-        console.log(`[Queue] Found ${candidates.length} candidates in ${targetQueue}`);
+        const allCandidates = await redis.lrange(targetQueue, -30, -1);
+        console.log(`[Queue] Found ${allCandidates.length} total candidates in ${targetQueue}`);
         
-        let targetIndex = -1;
-        for (let i = candidates.length - 1; i >= 0; i--) {
-             const cId = candidates[i];
-             const cSocket = io.sockets.sockets.get(cId);
-             if (!cSocket) {
-                 console.log(`[Queue Trace] Candidate ${cId} is offline. Skipping.`);
-                 continue;
-             }
+        // 1. Filter candidates by Geo-Blocking
+        const allowedCandidates = [];
+        for (const cId of allCandidates) {
+            const cSocket = io.sockets.sockets.get(cId);
+            if (!cSocket) continue;
 
-              const cRole = cSocket.data.role || (targetQueue === QUEUE_MODELS ? 'model' : 'user');
-              const cIdentifier = (cSocket.data.userEmail || `${cRole}:${cSocket.data.userIp || 'unknown'}`).toLowerCase();
-              
-              // GEORBLOCKING CHECK
-              const isModelSearching = socket.data.role === 'model';
-              const isCandidateModel = cRole === 'model';
-              
-              if (isModelSearching) {
-                  // This socket is a Model, candidate is a User.
-                  // Check if Model (self) blocked User's country.
-                  const blocked = socket.data.blockedCountries || [];
-                  const userCountry = cSocket.data.country || 'Unknown';
-                  if (blocked.includes(userCountry)) {
-                      console.log(`[GeoBlock] Model ${socket.id} blocked User ${cId} (Country: ${userCountry})`);
-                      continue; 
-                  }
-              } else if (isCandidateModel) {
-                  // This socket is a User, candidate is a Model.
-                  // Check if Model (candidate) blocked User's (self) country.
-                  const blocked = cSocket.data.blockedCountries || [];
-                  const userCountry = socket.data.country || 'Unknown';
-                  if (blocked.includes(userCountry)) {
-                      console.log(`[GeoBlock] Candidate Model ${cId} blocked User ${socket.id} (Country: ${userCountry})`);
-                      continue;
-                  }
-              }
-
-              const alreadySeen = await redis.get(`seen:${myIdentifier.toLowerCase()}:${cIdentifier.toLowerCase()}`);
-              
-              console.log(`[Queue Trace] Checking candidate ${cId} (${cIdentifier}). Seen: ${!!alreadySeen}`);
-              
-              if (!alreadySeen) {
-                  console.log(`[Matching] Found candidate ${cId} (${cIdentifier}). Not seen yet.`);
-                  targetIndex = i;
-                  break;
-              }
+            const cRole = cSocket.data.role || (targetQueue === QUEUE_MODELS ? 'model' : 'user');
+            const isModelSearching = socket.data.role === 'model';
+            const isCandidateModel = cRole === 'model';
+            
+            let isBlocked = false;
+            if (isModelSearching) {
+                const blocked = socket.data.blockedCountries || [];
+                const userCountry = cSocket.data.country || 'Unknown';
+                if (blocked.includes(userCountry)) {
+                    console.log(`[GeoBlock] Filtered: Model ${socket.id} (searching) blocked User ${cId} (Country: ${userCountry})`);
+                    isBlocked = true;
+                }
+            } else if (isCandidateModel) {
+                const blocked = cSocket.data.blockedCountries || [];
+                const userCountry = socket.data.country || 'Unknown';
+                if (blocked.includes(userCountry)) {
+                    console.log(`[GeoBlock] Filtered: Candidate Model ${cId} blocked User ${socket.id} (searching) (Country: ${userCountry})`);
+                    isBlocked = true;
+                }
+            }
+            
+            if (!isBlocked) {
+                allowedCandidates.push(cId);
+            }
         }
 
-        // If all available candidates are "seen", fallback to the oldest one (tail)
-        if (targetIndex === -1 && candidates.length > 0) {
-            console.log(`[Match Cooldown] Everyone in queue (+${candidates.length}) already seen by ${myIdentifier}. Falling back to oldest.`);
-            targetIndex = candidates.length - 1;
+        console.log(`[Queue] ${allowedCandidates.length}/${allCandidates.length} candidates allowed after Geo-Blocking`);
+
+        let targetId = null;
+        
+        // 2. Try to find a candidate not yet seen
+        for (let i = allowedCandidates.length - 1; i >= 0; i--) {
+            const cId = allowedCandidates[i];
+            const cSocket = io.sockets.sockets.get(cId);
+            const cRole = cSocket.data.role || (targetQueue === QUEUE_MODELS ? 'model' : 'user');
+            const cIdentifier = (cSocket.data.userEmail || `${cRole}:${cSocket.data.userIp || 'unknown'}`).toLowerCase();
+            
+            const alreadySeen = await redis.get(`seen:${myIdentifier.toLowerCase()}:${cIdentifier.toLowerCase()}`);
+            if (!alreadySeen) {
+                console.log(`[Matching] Found allowed candidate ${cId} (${cIdentifier}). Not seen yet.`);
+                targetId = cId;
+                break;
+            }
         }
 
-        if (targetIndex !== -1) {
-            const chosenId = candidates[targetIndex];
+        // 3. Fallback to oldest ALLOWED candidate if all seen
+        if (!targetId && allowedCandidates.length > 0) {
+            targetId = allowedCandidates[allowedCandidates.length - 1];
+            console.log(`[Match Cooldown] Everyone allowed already seen. Falling back to oldest allowed: ${targetId}`);
+        }
+
+        if (targetId) {
+            const chosenId = targetId;
 
             // Validate that the chosen partner is still online before removing
             const pSocket = io.sockets.sockets.get(chosenId);
