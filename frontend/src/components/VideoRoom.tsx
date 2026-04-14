@@ -977,8 +977,12 @@ export function VideoRoom({
                         <div className="relative flex-1">
                             <button
                                 type="button"
-                                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                                className="absolute left-3 top-1/2 -translate-y-1/2 p-2 text-white/40 hover:text-white transition-colors emoji-toggle-btn"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    console.log("[Emoji] Toggle clicked, current state:", showEmojiPicker);
+                                    setShowEmojiPicker(!showEmojiPicker);
+                                }}
+                                className="absolute left-3 top-1/2 -translate-y-1/2 p-2 text-indigo-400 hover:text-indigo-300 transition-colors emoji-toggle-btn z-20"
                                 title="Emoji"
                             >
                                 <Smile size={20} />
