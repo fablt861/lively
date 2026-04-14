@@ -298,7 +298,7 @@ async function handleJoinQueue(io, socket) {
         if (partnerSocket) {
             const pIdentifier = (partnerSocket.userEmail || partnerSocket.userIp || partnerSocket.id).toLowerCase();
             const myIdentifierSorted = [myIdentifier.toLowerCase(), pIdentifier].sort();
-            const roomId = `room_${myIdentifierSorted[0]}_${myIdentifierSorted[1]}`;
+            const roomId = `room_${myIdentifierSorted[0]}_${myIdentifierSorted[1]}_${Date.now()}`;
             
             console.log(`[Match SUCCESS] ${socket.id} <-> ${partnerId}. Deterministic Room ${roomId}`);
 

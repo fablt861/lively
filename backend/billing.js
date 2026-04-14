@@ -186,6 +186,10 @@ function initBillingLoop(io) {
 }
 
 async function startBilling(roomId, userId, modelId, userSocketId, modelSocketId) {
+    // Safety: Ensure no stale block data exists for this roomId (Defense-in-depth)
+    await redis.del(`billing:is_blocked:${roomId}`);
+    await redis.del(`billing:is_blocked_pending:${roomId}`);
+
     const normalizedUserId = String(userId).toLowerCase();
     const normalizedModelId = String(modelId).toLowerCase();
 
