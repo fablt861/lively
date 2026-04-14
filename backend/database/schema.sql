@@ -68,3 +68,14 @@ CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_models_email ON models(email);
 CREATE INDEX IF NOT EXISTS idx_users_registered_at ON users(registered_at DESC);
 CREATE INDEX IF NOT EXISTS idx_models_registered_at ON models(registered_at DESC);
+
+-- 5. Favorites
+CREATE TABLE IF NOT EXISTS favorites (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_email VARCHAR(255) REFERENCES users(email) ON DELETE CASCADE,
+    model_email VARCHAR(255) REFERENCES models(email) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_email, model_email)
+);
+
+CREATE INDEX IF NOT EXISTS idx_favorites_user_email ON favorites(user_email);
