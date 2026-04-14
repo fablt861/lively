@@ -85,6 +85,17 @@ function setupMatching(io, socket) {
             }
 
             const isNew = await redis.set(`has_joined:${socket.id}`, '1', 'NX', 'EX', 86400);
+            
+            // ENSURE ONE SOCKET PER EMAIL IN QUEUE
+            if (socket.userEmail) {
+                const oldSocketId = await redis.get(`queue_socket:${socket.userEmail}`);
+                if (oldSocketId && oldSocketId !== socket.id) {
+                    console.log(`[Queue Cleanup] Removing old socket ${oldSocketId} for email ${socket.userEmail}`);
+                    await redis.lrem(role === 'model' ? QUEUE_MODELS : QUEUE_USERS, 0, oldSocketId);
+                }
+                await redis.set(`queue_socket:${socket.userEmail}`, socket.id, 'EX', 86400);
+            }
+
             await redis.lrem(role === 'model' ? QUEUE_MODELS : QUEUE_USERS, 0, socket.id);
             await disconnectFromRoom(io, socket, role + '_rejoin');
             await handleJoinQueue(io, socket);
@@ -189,6 +200,9 @@ function setupMatching(io, socket) {
         // Start billing if it's a model-user pair and both are in
         const roomSockets = await io.in(roomId).fetchSockets();
         if (roomSockets.length === 2) {
+            console.log(`[DirectCall] Both parties in room ${roomId}. Emitting direct_matched_ready.`);
+            io.to(roomId).emit('direct_matched_ready');
+
             const userSocket = roomSockets.find(s => s.role === 'user');
             const modelSocket = roomSockets.find(s => s.role === 'model');
             if (userSocket && modelSocket) {

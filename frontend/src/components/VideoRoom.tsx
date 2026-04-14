@@ -53,6 +53,7 @@ interface VideoRoomProps {
     isLaunchOverride?: boolean;
     packs?: any[];
     onPurchase?: (credits: number, priceUsd: number) => Promise<void>;
+    isDirectCall?: boolean;
 }
 
 export function VideoRoom({
@@ -77,7 +78,8 @@ export function VideoRoom({
     isLaunch,
     isLaunchOverride,
     packs,
-    onPurchase
+    onPurchase,
+    isDirectCall
 }: VideoRoomProps) {
     const { t, language } = useTranslation();
     const router = useRouter();
@@ -108,6 +110,13 @@ export function VideoRoom({
     const [showSpecialPackModal, setShowSpecialPackModal] = useState(false);
     const [incomingBlockRequest, setIncomingBlockRequest] = useState<any>(null);
     const [isWaitingForBlockResponse, setIsWaitingForBlockResponse] = useState(false);
+
+    useEffect(() => {
+        if (isDirectCall && !hasStartedMatch) {
+            console.log('[DirectCall] Skipping PreMatchModal');
+            setHasStartedMatch(true);
+        }
+    }, [isDirectCall, hasStartedMatch]);
     const [blockTimeLeft, setBlockTimeLeft] = useState("");
     const [displayedCredits, setDisplayedCredits] = useState<number | null>(null);
     const [showNextConfirm, setShowNextConfirm] = useState(false);

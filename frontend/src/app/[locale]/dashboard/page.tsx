@@ -43,7 +43,7 @@ export default function CustomerDashboard() {
         newSocket.on('direct_call_accepted', ({ roomId }) => {
             setCallStatus('accepted');
             setTimeout(() => {
-                window.location.href = `/${language}/live?room=${roomId}`;
+                window.location.href = `/${language}/live?room=${roomId}&init=true`;
             }, 1500);
         });
 

@@ -128,10 +128,10 @@ function setupSignaling(io, socket) {
             const roomId = `direct-call-${Date.now()}`;
             
             // Notify both to join this room
-            // Client gets it via their socket (requestorSocketId)
-            io.to(requestorSocketId).emit('direct_call_accepted', { roomId, modelEmail });
-            // Model gets it via their personal email room
-            io.to(`email:${modelEmail.toLowerCase()}`).emit('direct_call_accepted', { roomId, requestorEmail: requestorEmail });
+            // Client gets it via their socket (requestorSocketId). They are the INTITIATOR.
+            io.to(requestorSocketId).emit('direct_call_accepted', { roomId, modelEmail, initiatorRole: 'user' });
+            // Model gets it via their personal email room. They are NOT the initiator.
+            io.to(`email:${modelEmail.toLowerCase()}`).emit('direct_call_accepted', { roomId, requestorEmail: requestorEmail, initiatorRole: 'user' });
         } else {
             io.to(requestorSocketId).emit('direct_call_rejected', { reason: 'busy' });
         }

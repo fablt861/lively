@@ -38,7 +38,7 @@ export function CallListener() {
         newSocket.on('direct_call_accepted', ({ roomId }) => {
             setIncomingCall(null);
             setTimeout(() => {
-                window.location.href = `/${language}/live?room=${roomId}`;
+                window.location.href = `/${language}/live?room=${roomId}&init=false`;
             }, 1000);
         });
         newSocket.on('direct_call_rejected', () => setIncomingCall(null));

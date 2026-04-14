@@ -79,20 +79,36 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
 
         setSocket(newSocket);
 
-        // Check for direct room parameter
         const urlParams = new URLSearchParams(window.location.search);
         const directRoom = urlParams.get('room');
+        const isInit = urlParams.get('init') === 'true';
 
         if (directRoom) {
             const email = localStorage.getItem("kinky_user_email") || null;
-            newSocket.emit("join_direct_room", { 
-                roomId: directRoom, 
-                role, 
-                email, 
-                language: navigator.language || "en" 
+            
+            newSocket.on('connect', () => {
+                console.log('[DirectCall] Socket connected, joining room:', directRoom);
+                newSocket.on('direct_matched_ready', async () => {
+                    console.log('[DirectCall] Both parties ready, starting handshake');
+                    setIsMatching(false);
+                    setIsCallConnected(true);
+                    
+                    if (isInit) {
+                        // Create PC and offer
+                        const pc = createPeerConnection();
+                        const offer = await pc.createOffer();
+                        await pc.setLocalDescription(offer);
+                        newSocket.emit("offer", offer);
+                    }
+                });
+
+                newSocket.emit("join_direct_room", { 
+                    roomId: directRoom, 
+                    role, 
+                    email, 
+                    language: navigator.language || "en" 
+                });
             });
-            setIsMatching(false);
-            setIsCallConnected(true);
         }
 
         return () => {
@@ -362,6 +378,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
         isMaintenance,
         isLaunch,
         cameraPermissionError,
+        isDirectCall: !!(typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('room')),
         retryCamera: () => setRetryCount(prev => prev + 1)
     };
 }
