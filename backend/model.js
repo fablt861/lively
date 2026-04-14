@@ -254,5 +254,45 @@ router.get('/:email/payouts/:id/invoice', requireModelAuth, async (req, res) => 
     }
 });
 
+// GET Geoblock Info
+router.get('/:email/geoblock', requireModelAuth, async (req, res) => {
+    try {
+        const email = req.params.email.toLowerCase();
+        if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
+
+        const modelRes = await query('SELECT blocked_countries FROM models WHERE email = $1', [email]);
+        if (modelRes.rows.length === 0) return res.status(404).json({ error: 'Model not found' });
+        
+        res.json({ blockedCountries: modelRes.rows[0].blocked_countries || [] });
+    } catch (err) {
+        console.error('[Get Geoblock Error]', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// POST Update Geoblock Info
+router.post('/:email/geoblock', requireModelAuth, async (req, res) => {
+    try {
+        const email = req.params.email.toLowerCase();
+        if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
+
+        const { blockedCountries } = req.body;
+        if (!Array.isArray(blockedCountries) || blockedCountries.length > 3) {
+            return res.status(400).json({ error: 'geoblock.error.invalid_limit' });
+        }
+
+        await query('UPDATE models SET blocked_countries = $1 WHERE email = $2', [JSON.stringify(blockedCountries), email]);
+        
+        // Find active sockets for this model to update their data in real-time
+        // We can do this via global io if available, or just rely on re-fetch on join_queue
+        // But for consistency, let's assume matching.js will handle the next join_queue
+        
+        res.json({ success: true });
+    } catch (err) {
+        console.error('[Update Geoblock Error]', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 module.exports = router;
 

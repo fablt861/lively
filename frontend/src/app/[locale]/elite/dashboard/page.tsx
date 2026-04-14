@@ -8,7 +8,8 @@ import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { ModelBillingModal } from "@/components/ModelBillingModal";
 import { ProfileSettingsModal } from "@/components/ProfileSettingsModal";
-import { Settings, User, FileText } from "lucide-react";
+import { GeoBlockModal } from "@/components/GeoBlockModal";
+import { Settings, User, FileText, ShieldOff } from "lucide-react";
 
 interface Stats {
     balance: number;
@@ -48,6 +49,7 @@ export default function DashboardPage() {
     const [activeTab, setActiveTab] = useState<'earnings' | 'payouts'>('earnings');
     const [isBillingOpen, setIsBillingOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const [isGeoBlockOpen, setIsGeoBlockOpen] = useState(false);
     const [payoutLoading, setPayoutLoading] = useState(false);
     const [payoutMessage, setPayoutMessage] = useState<{ text: string, type: 'error' | 'success' } | null>(null);
 
@@ -296,6 +298,13 @@ export default function DashboardPage() {
                             >
                                 <User size={18} /> {t('dashboard.profile_cta')}
                             </button>
+
+                            <button 
+                                onClick={() => setIsGeoBlockOpen(true)}
+                                className="group flex items-center justify-center gap-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 px-6 md:px-8 py-3 md:py-4 rounded-full font-medium transition-all duration-300 border border-indigo-500/20"
+                            >
+                                <ShieldOff size={18} /> {t('dashboard.btn_geoblock')}
+                            </button>
                         </div>
                         {payoutMessage && (
                             <p className={`mt-4 text-xs font-bold ${payoutMessage.type === 'error' ? 'text-red-400' : 'text-green-400'}`}>
@@ -487,6 +496,12 @@ export default function DashboardPage() {
                 userEmail={id}
                 role="model"
                 onProfileUpdate={handleProfileUpdate}
+            />
+
+            <GeoBlockModal
+                isOpen={isGeoBlockOpen}
+                onClose={() => setIsGeoBlockOpen(false)}
+                userEmail={id}
             />
         </div>
     );

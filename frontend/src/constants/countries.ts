@@ -1,0 +1,22 @@
+export const COUNTRIES = [
+  { code: 'FR', name: 'France' },
+  { code: 'BE', name: 'Belgique' },
+  { code: 'CH', name: 'Suisse' },
+  { code: 'LU', name: 'Luxembourg' },
+  { code: 'MC', name: 'Monaco' },
+  { code: 'CA', name: 'Canada' },
+  { code: 'US', name: 'États-Unis' },
+  { code: 'GB', name: 'Royaume-Uni' },
+  { code: 'DE', name: 'Allemagne' },
+  { code: 'IT', name: 'Italie' },
+  { code: 'ES', name: 'Espagne' },
+  { code: 'PT', name: 'Portugal' },
+  { code: 'MA', name: 'Maroc' },
+  { code: 'DZ', name: 'Algérie' },
+  { code: 'TN', name: 'Tunisie' },
+  { code: 'SN', name: 'Sénégal' },
+  { code: 'CI', name: 'Côte d’Ivoire' },
+  { code: 'CM', name: 'Cameroun' },
+  { code: 'BR', name: 'Brésil' },
+  { code: 'AE', name: 'Émirats Arabes Unis' }
+].sort((a, b) => a.name.localeCompare(b.name));

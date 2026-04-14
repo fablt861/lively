@@ -4,6 +4,8 @@ const { startBilling, stopBilling } = require('./billing');
 const { getSettings } = require('./settings');
 const { markAsSeen } = require('./moderation');
 const { hydrateUserCredits } = require('./balance');
+const geoip = require('geoip-lite');
+const { query } = require('./db');
 
 redis.on('error', (err) => {
     console.error('[Redis Error] Could not connect. Is Redis running?', err.message);
@@ -37,6 +39,11 @@ function setupMatching(io, socket) {
                 await socket.join(`email:${socket.userEmail}`);
                 if (role === 'model') {
                     await redis.sadd('online_models', socket.userEmail);
+                    // Fetch blocked countries
+                    const modelRes = await query('SELECT blocked_countries FROM models WHERE email = $1', [socket.userEmail]);
+                    if (modelRes.rows.length > 0) {
+                        socket.data.blockedCountries = modelRes.rows[0].blocked_countries || [];
+                    }
                 }
                 const isNew = await redis.set(`user_socket:${socket.userEmail}`, socket.id, 'EX', 86400);
             }
@@ -76,6 +83,11 @@ function setupMatching(io, socket) {
                 await socket.join(`email:${socket.userEmail}`);
                 if (role === 'model') {
                     await redis.sadd('online_models', socket.userEmail);
+                    // Fetch blocked countries
+                    const modelRes = await query('SELECT blocked_countries FROM models WHERE email = $1', [socket.userEmail]);
+                    if (modelRes.rows.length > 0) {
+                        socket.data.blockedCountries = modelRes.rows[0].blocked_countries || [];
+                    }
                 }
                 await redis.set(`user_socket:${socket.userEmail}`, socket.id, 'EX', 86400);
             }
@@ -84,8 +96,12 @@ function setupMatching(io, socket) {
             const userIp = socket.handshake.headers['x-forwarded-for'] || socket.handshake.address;
             socket.userIp = userIp;
             socket.data.userIp = userIp;
-
-            console.log(`[Queue] Socket ${socket.id} joined as ${role}. IP: ${userIp}, Email: ${email}`);
+            
+            // NEW: Get Country for Geo-Blocking
+            const geo = geoip.lookup(userIp);
+            socket.country = geo ? geo.country : 'Unknown';
+            socket.data.country = socket.country;
+            console.log(`[GeoIP] Socket ${socket.id} is from ${socket.country}`);
 
             // Rate Limit Check (IP or Email)
             const identifier = email || userIp;
@@ -388,17 +404,42 @@ async function handleJoinQueue(io, socket) {
                  continue;
              }
 
-             const cRole = cSocket.role || (targetQueue === QUEUE_MODELS ? 'model' : 'user');
-             const cIdentifier = (cSocket.userEmail || `${cRole}:${cSocket.userIp || 'unknown'}`).toLowerCase();
-             const alreadySeen = await redis.get(`seen:${myIdentifier.toLowerCase()}:${cIdentifier.toLowerCase()}`);
-             
-             console.log(`[Queue Trace] Checking candidate ${cId} (${cIdentifier}). Seen: ${!!alreadySeen}`);
-             
-             if (!alreadySeen) {
-                 console.log(`[Matching] Found candidate ${cId} (${cIdentifier}). Not seen yet.`);
-                 targetIndex = i;
-                 break;
-             }
+              const cRole = cSocket.data.role || (targetQueue === QUEUE_MODELS ? 'model' : 'user');
+              const cIdentifier = (cSocket.data.userEmail || `${cRole}:${cSocket.data.userIp || 'unknown'}`).toLowerCase();
+              
+              // GEORBLOCKING CHECK
+              const isModelSearching = socket.data.role === 'model';
+              const isCandidateModel = cRole === 'model';
+              
+              if (isModelSearching) {
+                  // This socket is a Model, candidate is a User.
+                  // Check if Model (self) blocked User's country.
+                  const blocked = socket.data.blockedCountries || [];
+                  const userCountry = cSocket.data.country || 'Unknown';
+                  if (blocked.includes(userCountry)) {
+                      console.log(`[GeoBlock] Model ${socket.id} blocked User ${cId} (Country: ${userCountry})`);
+                      continue; 
+                  }
+              } else if (isCandidateModel) {
+                  // This socket is a User, candidate is a Model.
+                  // Check if Model (candidate) blocked User's (self) country.
+                  const blocked = cSocket.data.blockedCountries || [];
+                  const userCountry = socket.data.country || 'Unknown';
+                  if (blocked.includes(userCountry)) {
+                      console.log(`[GeoBlock] Candidate Model ${cId} blocked User ${socket.id} (Country: ${userCountry})`);
+                      continue;
+                  }
+              }
+
+              const alreadySeen = await redis.get(`seen:${myIdentifier.toLowerCase()}:${cIdentifier.toLowerCase()}`);
+              
+              console.log(`[Queue Trace] Checking candidate ${cId} (${cIdentifier}). Seen: ${!!alreadySeen}`);
+              
+              if (!alreadySeen) {
+                  console.log(`[Matching] Found candidate ${cId} (${cIdentifier}). Not seen yet.`);
+                  targetIndex = i;
+                  break;
+              }
         }
 
         // If all available candidates are "seen", fallback to the oldest one (tail)
