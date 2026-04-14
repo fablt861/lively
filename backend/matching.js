@@ -79,7 +79,7 @@ function setupMatching(io, socket) {
 
             const isNew = await redis.set(`has_joined:${socket.id}`, '1', 'NX', 'EX', 86400);
             await redis.lrem(role === 'model' ? QUEUE_MODELS : QUEUE_USERS, 0, socket.id);
-            await disconnectFromRoom(io, socket);
+            await disconnectFromRoom(io, socket, role + '_rejoin');
             await handleJoinQueue(io, socket);
             await updateQueuePositions(io, role);
         } finally {
@@ -90,7 +90,7 @@ function setupMatching(io, socket) {
     socket.on('out_of_credits', async () => {
         console.log(`Socket ${socket.id} ran out of credits`);
         await redis.lrem(QUEUE_USERS, 0, socket.id);
-        await disconnectFromRoom(io, socket);
+        await disconnectFromRoom(io, socket, 'balance_exhausted');
         await updateQueuePositions(io, 'user');
     });
 
@@ -108,10 +108,11 @@ function setupMatching(io, socket) {
             console.log(`Socket ${socket.id} called next`);
             if (socket.role === 'model') {
                 await redis.lrem(QUEUE_MODELS, 0, socket.id);
-            } else if (socket.role === 'user') {
+            } else {
                 await redis.lrem(QUEUE_USERS, 0, socket.id);
             }
-            await disconnectFromRoom(io, socket);
+
+            await disconnectFromRoom(io, socket, socket.role + '_next');
             await handleJoinQueue(io, socket);
             await updateQueuePositions(io, socket.role);
         } finally {
@@ -124,7 +125,7 @@ function setupMatching(io, socket) {
         isProcessing = true;
         try {
             console.log(`Socket ${socket.id} called stop`);
-            await disconnectFromRoom(io, socket);
+            await disconnectFromRoom(io, socket, socket.role + '_stop');
         } finally {
             isProcessing = false;
         }
@@ -133,11 +134,19 @@ function setupMatching(io, socket) {
     socket.on('disconnect', async () => {
         // Remove from queue
         // NOTE: We do NOT call stopBilling here to allow for the 20s grace period recovery
+        // However, we still need to clear queue position. 
+        // Real stopBilling happens via billing loop timeout or manual disconnectFromRoom.
+        
+        console.log(`Socket ${socket.id} disconnected`);
         if (socket.role === 'model') {
             await redis.lrem(QUEUE_MODELS, 0, socket.id);
         } else if (socket.role === 'user') {
             await redis.lrem(QUEUE_USERS, 0, socket.id);
         }
+        
+        // --- NEW: If no recovery happens, the billing loop will catch it. ---
+        // But if we want it to be immediate for things like 'Next' (which calls disconnectFromRoom already), it's fine.
+        // For actual DROPS, we'll let the billing loop handle it to preserve session recovery.
         
         if (socket.currentRoom) {
             socket.to(socket.currentRoom).emit('partner_disconnected');
@@ -358,7 +367,7 @@ async function handleJoinQueue(io, socket) {
     }
 }
 
-async function disconnectFromRoom(io, socket) {
+async function disconnectFromRoom(io, socket, reason = 'unknown') {
     if (socket.currentRoom) {
         const roomId = socket.currentRoom;
         
@@ -374,10 +383,10 @@ async function disconnectFromRoom(io, socket) {
         }
 
         // Notify the room that a partner left
-        socket.to(roomId).emit('partner_left');
+        socket.to(roomId).emit('partner_left', { reason });
 
         // Stop billing for this room
-        await stopBilling(roomId);
+        await stopBilling(roomId, reason);
 
         socket.leave(roomId);
         socket.currentRoom = null;

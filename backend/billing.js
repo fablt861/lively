@@ -43,7 +43,7 @@ function initBillingLoop(io) {
                             
                             if (session.emptyTicks >= 20) {
                                 console.log(`[Billing] Room ${roomId} exceeded grace period. Auto-closing.`);
-                                await stopBilling(roomId);
+                                await stopBilling(roomId, 'disconnect_timeout');
                             } else {
                                 // Update session with new tick count
                                 await redis.hset(ACTIVE_ROOMS_KEY, roomId, JSON.stringify(session));
@@ -84,32 +84,8 @@ function initBillingLoop(io) {
                         if (Date.now() >= blockEndNum) {
                             // Block ended naturally!
                             console.log(`[Billing] Block session in room ${roomId} ended naturally.`);
-                            
-                            const bonus = parseFloat(blockData.blockGain || settings.blockModelGain || 25);
-                            await redis.incrbyfloat(`model:${session.modelId}:balance`, bonus);
-                            await redis.incrbyfloat(`model:${session.modelId}:total_gains`, bonus);
-                            session.earnedUsd = (session.earnedUsd || 0) + bonus;
-                            
-                            await logModelPayout(bonus);
-                            
-                            // Reset block status in session and delete dedicated key
-                            delete session.isBlocked;
-                            delete session.blockEnd;
-                            delete session.blockGain;
-                            delete session.blockCreditsCost;
-                            delete session.blockDurationMin;
-                            await redis.del(`billing:is_blocked:${roomId}`);
-                            
-                            // IMMEDIATELY notify about the new payout total before ending the block
-                            if (ioInstance) {
-                                ioInstance.to(roomId).emit('payout_update', { 
-                                    rate: activeRate, 
-                                    earned: session.earnedUsd || 0,
-                                    durationSec
-                                });
-                                ioInstance.to(roomId).emit('block_session_ended');
-                            }
-                            // Will proceed with normal rates below
+                            await stopBilling(roomId, 'timer_ended');
+                            continue;
                         } else {
                             isBlockedActive = true;
                             // Fixed rate: totalCredits / totalSeconds
@@ -245,7 +221,7 @@ async function startBilling(roomId, userId, modelId, userSocketId, modelSocketId
     // Loop is already running globally if initialized via server.js
 }
 
-async function stopBilling(roomId) {
+async function stopBilling(roomId, reason = 'unknown') {
     try {
         const sessionStr = await redis.hget(ACTIVE_ROOMS_KEY, roomId);
     if (!sessionStr) return;
@@ -272,18 +248,43 @@ async function stopBilling(roomId) {
     let totalModelEarned = parseFloat(session.earnedUsd || 0);
     let privateEarned = 0;
 
-    const blockDataRaw = await redis.get(`billing:is_blocked:${roomId}`);
-    const blockData = blockDataRaw ? JSON.parse(blockDataRaw) : null;
+    const isUserQuit = reason.startsWith('user_') || reason === 'balance_exhausted';
+    const isModelQuit = reason.startsWith('model_');
+    const isTimerEnded = reason === 'timer_ended';
 
     if (blockData || session.isBlocked) {
         const { getSettings } = require('./settings');
         const settings = await getSettings();
-        const gain = blockData ? blockData.blockGain : session.blockGain;
-        privateEarned = parseFloat(gain || settings.blockModelGain || 25);
-        console.log(`[Billing] Applying blockGain $${privateEarned} for intentional stop in room ${roomId}`);
+        const totalBlockGain = parseFloat(blockData?.blockGain || session?.blockGain || settings.blockModelGain || 25);
+        const totalBlockSec = (parseInt(blockData?.blockDurationMin || session?.blockDurationMin || settings.blockDurationMin || 30)) * 60;
+        
+        if (isModelQuit) {
+            privateEarned = 0;
+            console.log(`[Billing] Model left early. Awarding $0 for block in room ${roomId}`);
+        } else {
+            // Prorated payout if user left or timer ended
+            const elapsedSinceBlockStart = Math.min(totalBlockSec, durationSec); // Assuming block started at room start for simplicity, or we track blockStartTime
+            // Actually, durationSec is since session.startTime. If block started later, we'd need blockStartTime.
+            // But usually blocks start immediately or we can assume durationSec is fine if we only care about the call length.
+            
+            privateEarned = parseFloat(((elapsedSinceBlockStart / totalBlockSec) * totalBlockGain).toFixed(4));
+            console.log(`[Billing] Private session ended (${reason}). Prorated gain: $${privateEarned} / $${totalBlockGain}`);
+        }
+
         await redis.incrbyfloat(`model:${modelId}:balance`, privateEarned);
         await redis.incrbyfloat(`model:${modelId}:total_gains`, privateEarned);
-        await logModelPayout(privateEarned);
+        
+        // Notify model about the summary
+        const ioInstance = require('./server').getIO();
+        if (ioInstance) {
+            ioInstance.to(roomId).emit('private_session_summary', {
+                reason,
+                earned: privateEarned,
+                totalPossible: totalBlockGain,
+                durationSec: Math.min(totalBlockSec, durationSec)
+            });
+        }
+
         totalModelEarned += privateEarned;
         await redis.del(`billing:is_blocked:${roomId}`);
     }

@@ -110,13 +110,21 @@ export function VideoRoom({
     const [isWaitingForBlockResponse, setIsWaitingForBlockResponse] = useState(false);
     const [blockTimeLeft, setBlockTimeLeft] = useState("");
     const [displayedCredits, setDisplayedCredits] = useState<number | null>(null);
+    const [showNextConfirm, setShowNextConfirm] = useState(false);
+    const [privateSummary, setPrivateSummary] = useState<any>(null);
+    const [isRequeuingBlocked, setIsRequeuingBlocked] = useState(false);
     const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     console.log(`[VideoRoom Render] isConnected: ${isConnected}, isMatching: ${isMatching}, remoteStream (bool): ${!!remoteStream}`);
 
-    const handleNext = () => {
+    const handleNext = (force = false) => {
+        if (!force && isBlocked) {
+            setShowNextConfirm(true);
+            return;
+        }
         setIsBlocked(false);
         setBlockEndTime(null);
+        setShowNextConfirm(false);
         if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
         if (onNext) onNext();
         else nextPartner();
@@ -243,6 +251,14 @@ export function VideoRoom({
             // handleNext(); // REMOVED: Server now handles re-queueing both parties automatically
         };
 
+        const handlePrivateSummary = (data: any) => {
+            console.log("[Block] Received private summary:", data);
+            if (role === 'model') {
+                setPrivateSummary(data);
+                setIsRequeuingBlocked(true); // Prevent auto-requeue until acknowledged
+            }
+        };
+
         socket.on('out_of_credits', handleOutOfCredits);
         socket.on('partner_out_of_credits', handlePartnerOutOfCredits);
         socket.on('credits_update', handleCreditsUpdate);
@@ -251,9 +267,7 @@ export function VideoRoom({
         socket.on('respond_block_session', handleRespondBlockSession);
         socket.on('block_session_started', handleBlockSessionStarted);
         socket.on('block_session_ended', handleBlockSessionEnded);
-        socket.on('matched', () => {
-            // No longer using sessionStorage flag, relying on reload type
-        });
+        socket.on('private_session_summary', handlePrivateSummary);
         socket.on('partner_left', handlePartnerLeft);
 
         return () => {
@@ -265,6 +279,7 @@ export function VideoRoom({
             socket.off('respond_block_session', handleRespondBlockSession);
             socket.off('block_session_started', handleBlockSessionStarted);
             socket.off('block_session_ended', handleBlockSessionEnded);
+            socket.off('private_session_summary', handlePrivateSummary);
             socket.off('partner_left', handlePartnerLeft);
         };
     }, [socket, role, accountStatus, onNext, onCallEnd]);
@@ -709,7 +724,7 @@ export function VideoRoom({
                 {/* NEXT Button (Above Input on mobile, Bottom Center on desktop) */}
                 <div className="absolute bottom-[100px] right-4 md:bottom-8 md:right-auto md:left-1/2 md:-translate-x-1/2 z-40 flex flex-col items-center gap-3">
                     <button
-                        onClick={handleNext}
+                        onClick={() => handleNext()}
                         disabled={isBlocked && role === 'model'}
                         className={`group relative flex items-center justify-center px-6 py-3 md:px-12 md:py-5 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 hover:opacity-90 shadow-[0_0_30px_rgba(99,102,241,0.4)] transition-all duration-300 hover:scale-105 active:scale-95 ${isBlocked && role === 'model' ? 'opacity-50 grayscale cursor-not-allowed scale-95' : ''}`}
                     >
@@ -1035,6 +1050,89 @@ export function VideoRoom({
                                 {t('room.block_refuse')}
                             </button>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* NEXT CONFIRMATION MODAL */}
+            {showNextConfirm && (
+                <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+                    <div className="w-full max-w-sm bg-neutral-900 border border-white/10 rounded-[2rem] p-8 shadow-2xl text-center">
+                        <div className="w-16 h-16 bg-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <Lock className="text-pink-500" size={32} />
+                        </div>
+                        <h3 className="text-xl font-bold mb-4">{t('room.next_confirm_title') || "Quitter la session privée ?"}</h3>
+                        <p className="text-white/60 text-sm mb-8 leading-relaxed">
+                            {role === 'user' 
+                                ? (t('room.next_confirm_user_desc') || "Vous êtes actuellement en session privée. Êtes-vous sûr de vouloir passer au suivant ?")
+                                : (t('room.next_confirm_model_desc') || "Attention, si vous quittez maintenant, vous ne gagnerez rien sur cette session privée.")
+                            }
+                        </p>
+                        <div className="flex flex-col gap-3">
+                            <button
+                                onClick={() => handleNext(true)}
+                                className="w-full py-4 bg-pink-600 hover:bg-pink-500 rounded-2xl font-bold transition-all"
+                            >
+                                {t('common.confirm') || "Confirmer"}
+                            </button>
+                            <button
+                                onClick={() => setShowNextConfirm(false)}
+                                className="w-full py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-bold transition-all"
+                            >
+                                {t('common.cancel') || "Annuler"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* PRIVATE EARNINGS SUMMARY MODAL */}
+            {privateSummary && (
+                <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl">
+                    <div className="w-full max-w-md bg-neutral-900/50 border border-indigo-500/30 rounded-[3rem] p-10 shadow-[0_0_50px_rgba(99,102,241,0.2)] text-center relative overflow-hidden">
+                        {/* Background Decorations */}
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
+                        
+                        <div className="w-24 h-24 bg-gradient-to-tr from-indigo-500 to-purple-600 rounded-3xl rotate-12 flex items-center justify-center mx-auto mb-8 shadow-2xl relative">
+                            <Sparkles className="text-white -rotate-12" size={48} />
+                        </div>
+
+                        <h3 className="text-3xl font-black tracking-tight mb-2 uppercase italic">{t('room.private_summary_title') || "Session Terminée"}</h3>
+                        <p className="text-indigo-300/80 text-xs font-bold tracking-[0.3em] uppercase mb-8">{t('room.private_summary_subtitle') || "Rapport de gains"}</p>
+                        
+                        <div className="bg-black/40 rounded-[2rem] p-8 mb-8 border border-white/5">
+                            <div className="flex flex-col gap-1 mb-6">
+                                <span className="text-[10px] text-white/40 uppercase font-black tracking-widest leading-none">{t('room.earned_amount_label')}</span>
+                                <span className="text-5xl font-mono font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-neutral-500">
+                                    ${parseFloat(privateSummary.earned).toFixed(2)}
+                                </span>
+                            </div>
+                            
+                            <div className="h-px bg-white/5 w-1/2 mx-auto mb-6" />
+                            
+                            <div className="grid grid-cols-2 gap-4 text-left">
+                                <div className="flex flex-col">
+                                    <span className="text-[8px] text-white/30 uppercase font-bold tracking-widest">{t('room.duration_label')}</span>
+                                    <span className="text-sm font-bold text-white/90">{Math.floor(privateSummary.durationSec / 60)} min {privateSummary.durationSec % 60}s</span>
+                                </div>
+                                <div className="flex flex-col text-right">
+                                    <span className="text-[8px] text-white/30 uppercase font-bold tracking-widest">{t('room.status_label')}</span>
+                                    <span className="text-sm font-bold text-indigo-400 capitalize">{privateSummary.reason.replace('_', ' ')}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => {
+                                setPrivateSummary(null);
+                                setIsRequeuingBlocked(false);
+                                handleNext(true); // Now join next partner
+                            }}
+                            className="w-full py-5 bg-white text-black rounded-2xl font-black uppercase tracking-widest hover:bg-indigo-50 transition-all shadow-xl active:scale-95 flex items-center justify-center gap-3"
+                        >
+                            {t('room.private_summary_close') || "Continuer"}
+                            <SkipForward size={20} fill="currentColor" />
+                        </button>
                     </div>
                 </div>
             )}
