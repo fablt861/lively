@@ -202,6 +202,23 @@ function setupMatching(io, socket) {
                 await socket.join(`email:${socket.userEmail}`);
             }
             await socket.join(roomId);
+
+            // CRITICAL: Remove from any matching queues now that they are in a direct room
+            // 1. Remove this specific socket
+            await redis.lrem(role === 'model' ? QUEUE_MODELS : QUEUE_USERS, 0, socket.id);
+            
+            // 2. Remove any other socket for this same email (ensure one socket per email in queue)
+            if (socket.userEmail) {
+                const oldSocketId = await redis.get(`queue_socket:${socket.userEmail}`);
+                if (oldSocketId && oldSocketId !== socket.id) {
+                    console.log(`[DirectCall Cleanup] Removing old queue socket ${oldSocketId} for email ${socket.userEmail}`);
+                    await redis.lrem(role === 'model' ? QUEUE_MODELS : QUEUE_USERS, 0, oldSocketId);
+                }
+                // Store this new socket as the "current" one (even if not in queue, it's the active one)
+                await redis.set(`queue_socket:${socket.userEmail}`, socket.id, 'EX', 86400);
+            }
+
+            await updateQueuePositions(io, role);
             
             // Notify the room that someone joined
             const myPseudo = socket.userEmail ? (await redis.hget(`profile:${socket.userEmail}`, 'pseudo') || socket.userEmail) : 'Guest';
