@@ -149,13 +149,6 @@ export default function CustomerDashboard() {
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto">
                         <LanguageSelector />
                         <button
-                            onClick={() => setIsProfileOpen(true)}
-                            className="px-6 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-full transition-all duration-300 text-sm font-black uppercase tracking-widest flex items-center justify-center gap-2"
-                        >
-                            <Settings size={18} className="text-indigo-400" />
-                            {t('dashboard.profile_settings_title')}
-                        </button>
-                        <button
                             onClick={() => window.location.href = `/${language}/live`}
                             className="px-8 py-4 bg-gradient-to-tr from-pink-500 to-violet-500 hover:scale-105 active:scale-95 text-white rounded-full transition-all duration-300 text-sm font-black uppercase tracking-widest flex items-center justify-center gap-3 w-full sm:w-auto text-center shadow-lg shadow-pink-500/20"
                         >
@@ -178,12 +171,20 @@ export default function CustomerDashboard() {
                             <div className="text-6xl md:text-8xl font-black text-white mb-8 tracking-tighter">
                                 {userInfo?.credits?.toFixed(0) || "0"}<span className="text-xl md:text-2xl text-white/40 ml-4 font-light uppercase tracking-[0.3em]">{t('common.credits')}</span>
                             </div>
-                            <button 
-                                onClick={() => setShowPaywall(true)}
-                                className="group flex items-center justify-center gap-4 bg-white text-black px-10 py-5 rounded-full font-black text-base transition-all duration-300 shadow-xl hover:scale-105 active:scale-95"
-                            >
-                                <CreditCard size={20} /> {t('nav.menu.buy')}
-                            </button>
+                            <div className="flex flex-col sm:flex-row items-center gap-4">
+                                <button 
+                                    onClick={() => setShowPaywall(true)}
+                                    className="group flex items-center justify-center gap-4 bg-white text-black px-10 py-5 rounded-full font-black text-base transition-all duration-300 shadow-xl hover:scale-105 active:scale-95 w-full sm:w-auto"
+                                >
+                                    <CreditCard size={20} /> {t('nav.menu.buy')}
+                                </button>
+                                <button
+                                    onClick={() => setIsProfileOpen(true)}
+                                    className="group flex items-center justify-center gap-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white px-10 py-5 rounded-full font-black text-base transition-all duration-300 hover:scale-105 active:scale-95 w-full sm:w-auto"
+                                >
+                                    <Settings size={20} className="text-indigo-400" /> {t('dashboard.profile_settings_title')}
+                                </button>
+                            </div>
                         </div>
                     </div>
 

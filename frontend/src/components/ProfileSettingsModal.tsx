@@ -263,18 +263,20 @@ export function ProfileSettingsModal({ isOpen, onClose, userEmail, role, onProfi
                                 </div>
 
                                 {/* Phone */}
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
-                                        <Phone size={12} /> {t('auth.phone')}
-                                    </label>
-                                    <input 
-                                        type="tel"
-                                        required
-                                        value={info.phone}
-                                        onChange={e => setInfo({...info, phone: e.target.value})}
-                                        className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-pink-500 transition-all"
-                                    />
-                                </div>
+                                {role === 'model' && (
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
+                                            <Phone size={12} /> {t('auth.phone')}
+                                        </label>
+                                        <input 
+                                            type="tel"
+                                            required
+                                            value={info.phone}
+                                            onChange={e => setInfo({...info, phone: e.target.value})}
+                                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-pink-500 transition-all"
+                                        />
+                                    </div>
+                                )}
 
                                 {/* Email */}
                                 <div className="space-y-2 col-span-1 md:col-span-2">
