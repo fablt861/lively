@@ -71,17 +71,18 @@ const adminRoutes = require('./admin');
 const authRoutes = require('./auth');
 const modelRoutes = require('./model');
 const reportRoutes = require('./report');
+const favoritesRoutes = require('./favorites');
 
 // Initialize settings if empty
-console.log('--- Starting startup sequence ---');
+// ... (rest of existing logic)
 initSettings();
 
 // Start the billing interval
-console.log('=> Starting billing loop...');
 initBillingLoop(io);
 
 // Registering Routes
 app.use('/api/report', reportRoutes);
+app.use('/api/favorites', favoritesRoutes);
 
 app.use('/api/admin', adminRoutes(io));
 app.use('/api/auth', authRoutes);

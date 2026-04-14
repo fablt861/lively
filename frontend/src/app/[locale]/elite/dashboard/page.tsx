@@ -484,7 +484,8 @@ export default function DashboardPage() {
             <ProfileSettingsModal 
                 isOpen={isProfileOpen}
                 onClose={() => setIsProfileOpen(false)}
-                modelEmail={id}
+                userEmail={id}
+                role="model"
                 onProfileUpdate={handleProfileUpdate}
             />
         </div>

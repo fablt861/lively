@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles, Lock, Timer, Check, Plus } from "lucide-react";
+import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles, Lock, Timer, Check, Plus, Heart } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 import { MaintenanceGuard } from "./MaintenanceGuard";
 import { LaunchPage } from "./LaunchPage";
@@ -113,6 +113,8 @@ export function VideoRoom({
     const [showNextConfirm, setShowNextConfirm] = useState(false);
     const [privateSummary, setPrivateSummary] = useState<any>(null);
     const [isRequeuingBlocked, setIsRequeuingBlocked] = useState(false);
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
     const [showBlockRefused, setShowBlockRefused] = useState(false);
     const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const isBlockedRef = useRef(isBlocked);
@@ -147,6 +149,44 @@ export function VideoRoom({
     const handleStartMatch = () => {
         setHasStartedMatch(true);
         joinQueue();
+    };
+
+    // Favorites Management
+    useEffect(() => {
+        if (role === 'user' && partnerInfo?.email) {
+            const userEmail = localStorage.getItem('kinky_user_email');
+            if (userEmail) {
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/favorites/check?userEmail=${userEmail}&modelEmail=${partnerInfo.email}`)
+                    .then(res => res.json())
+                    .then(data => setIsFavorite(data.isFavorite))
+                    .catch(console.error);
+            }
+        } else {
+            setIsFavorite(false);
+        }
+    }, [partnerInfo?.email, role]);
+
+    const toggleFavorite = async () => {
+        if (role !== 'user' || !partnerInfo?.email || isTogglingFavorite) return;
+        const userEmail = localStorage.getItem('kinky_user_email');
+        if (!userEmail) return;
+
+        setIsTogglingFavorite(true);
+        const action = isFavorite ? 'remove' : 'add';
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/favorites/${action}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userEmail, modelEmail: partnerInfo.email })
+            });
+            if (res.ok) {
+                setIsFavorite(!isFavorite);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsTogglingFavorite(false);
+        }
     };
 
     // Load state from localStorage on mount
@@ -300,6 +340,7 @@ export function VideoRoom({
                 console.log("[Auto-Next] Private session ended, re-queueing gated by summary modal");
             }
         };
+        
 
         const handlePrivateSummary = (data: any) => {
             console.log("[Block] Received private summary:", data);
@@ -807,6 +848,16 @@ export function VideoRoom({
                             <Lock size={20} />
                         </button>
                     )}
+                    {/* Favorite Button */}
+                    {role === 'user' && partnerInfo?.email && (
+                        <button
+                            onClick={toggleFavorite}
+                            disabled={isTogglingFavorite}
+                            className={`w-12 h-12 flex items-center justify-center rounded-2xl border backdrop-blur-md transition-all ${isFavorite ? "bg-red-500 border-red-400 text-white" : "bg-white/10 border-white/5 text-white/40"}`}
+                        >
+                            <Heart size={20} fill={isFavorite ? "currentColor" : "none"} className={isTogglingFavorite ? "animate-pulse" : ""} />
+                        </button>
+                    )}
                 </div>
 
                 {/* NEXT Button (Above Input on mobile, Bottom Center on desktop) */}
@@ -830,6 +881,17 @@ export function VideoRoom({
                         <ShieldAlert size={24} />
                     </button>
                     <button onClick={() => setShowExitConfirm(true)} className="p-4 rounded-full bg-red-600 hover:bg-red-500 transition-colors shadow-lg"><PhoneOff size={24} /></button>
+                    {/* Favorite Button Desktop */}
+                    {role === 'user' && partnerInfo?.email && (
+                        <button
+                            onClick={toggleFavorite}
+                            disabled={isTogglingFavorite}
+                            className={`p-4 rounded-full transition-all border ${isFavorite ? "bg-red-500 border-red-400 text-white" : "bg-white/10 border-white/5 text-white/40 hover:bg-white/20 hover:text-white"}`}
+                            title={isFavorite ? t('favorite.remove') : t('favorite.add')}
+                        >
+                            <Heart size={24} fill={isFavorite ? "currentColor" : "none"} className={isTogglingFavorite ? "animate-pulse" : ""} />
+                        </button>
+                    )}
                     {/* User Block Button Desktop */}
                     {role === 'user' && isConnected && !isBlocked && (
                         <button

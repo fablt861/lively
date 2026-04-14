@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Camera, ShieldCheck, Flame, Play, Video, ChevronDown, CreditCard, Wallet, Activity } from "lucide-react";
+import { Camera, ShieldCheck, Flame, Play, Video, ChevronDown, CreditCard, Wallet, Activity, User } from "lucide-react";
 import Link from "next/link";
 import { GenderModal } from "@/components/GenderModal";
 import { OnlineGauge } from "@/components/OnlineGauge";
@@ -146,18 +146,29 @@ export default function Home() {
                                                     <span className="text-xs font-bold uppercase tracking-wider">{t('nav.dashboard')}</span>
                                                 </button>
                                             ) : (
-                                                <button
-                                                    onClick={() => {
-                                                        setShowPaywall(true);
-                                                        setIsMenuOpen(false);
-                                                    }}
-                                                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-white transition-colors group"
-                                                >
-                                                    <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all">
-                                                        <CreditCard size={16} />
-                                                    </div>
-                                                    <span className="text-xs font-bold uppercase tracking-wider">{t('nav.menu.buy')}</span>
-                                                </button>
+                                                <>
+                                                    <button
+                                                        onClick={() => {
+                                                            setShowPaywall(true);
+                                                            setIsMenuOpen(false);
+                                                        }}
+                                                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-white transition-colors group"
+                                                    >
+                                                        <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all">
+                                                            <CreditCard size={16} />
+                                                        </div>
+                                                        <span className="text-xs font-bold uppercase tracking-wider">{t('nav.menu.buy')}</span>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => window.location.href = `/${language}/dashboard`}
+                                                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-white transition-colors group"
+                                                    >
+                                                        <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all">
+                                                            <User size={16} />
+                                                        </div>
+                                                        <span className="text-xs font-bold uppercase tracking-wider">{t('nav.dashboard')}</span>
+                                                    </button>
+                                                </>
                                             )}
                                             <button
                                                 onClick={handleLogout}

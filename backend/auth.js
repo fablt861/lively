@@ -243,4 +243,48 @@ router.post('/elite/register', async (req, res) => {
     }
 });
 
+// User Profile Update (Pseudo, Email, Password)
+router.put('/profile', async (req, res) => {
+    const { currentEmail, pseudo, newEmail, oldPassword, newPassword } = req.body;
+    
+    if (!currentEmail) return res.status(400).json({ error: 'Missing current email' });
+
+    try {
+        // 1. Fetch current user
+        const userRes = await query('SELECT * FROM users WHERE email = $1', [currentEmail]);
+        if (userRes.rows.length === 0) return res.status(404).json({ error: 'User not found' });
+        const user = userRes.rows[0];
+
+        // 2. Validate password if provided
+        if (newPassword) {
+            if (user.password !== oldPassword) {
+                return res.status(401).json({ error: 'profile.error.invalid_current_password' });
+            }
+        }
+
+        // 3. Check email uniqueness if changing
+        if (newEmail && newEmail !== currentEmail) {
+            const emailCheck = await query('SELECT email FROM users WHERE email = $1 UNION SELECT email FROM models WHERE email = $1', [newEmail]);
+            if (emailCheck.rows.length > 0) {
+                return res.status(400).json({ error: 'auth.error.email_in_use' });
+            }
+        }
+
+        // 4. Update
+        const updatedPseudo = pseudo || user.pseudo;
+        const updatedEmail = newEmail || currentEmail;
+        const updatedPassword = newPassword || user.password;
+
+        await query(
+            'UPDATE users SET pseudo = $1, email = $2, password = $3 WHERE email = $4',
+            [updatedPseudo, updatedEmail, updatedPassword, currentEmail]
+        );
+
+        res.json({ success: true, user: { email: updatedEmail, pseudo: updatedPseudo } });
+    } catch (err) {
+        console.error('[Profile Update Error]', err);
+        res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+
 module.exports = router;
