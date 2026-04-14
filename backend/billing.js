@@ -249,6 +249,10 @@ async function stopBilling(roomId, reason = 'unknown') {
     const userSpentCredits = (session.spentCredits || 0);
     const userSpentUsd = parseFloat(userSpentCredits) / 10.0;
     
+    // 4. Check if it's a private session (block)
+    const blockDataRaw = await redis.get(`billing:is_blocked:${roomId}`);
+    const blockData = blockDataRaw ? JSON.parse(blockDataRaw) : null;
+    
     let totalModelEarned = parseFloat(session.earnedUsd || 0);
     let privateEarned = 0;
 
@@ -279,13 +283,12 @@ async function stopBilling(roomId, reason = 'unknown') {
         await redis.incrbyfloat(`model:${modelId}:total_gains`, privateEarned);
         
         // Notify model about the summary
-        const ioInstance = require('./server').getIO();
         if (ioInstance) {
             ioInstance.to(roomId).emit('private_session_summary', {
                 reason,
                 earned: privateEarned,
                 totalPossible: totalBlockGain,
-                durationSec: Math.min(totalBlockSec, durationSec)
+                durationSec: Math.floor(elapsedSinceBlockStart)
             });
         }
 
