@@ -691,5 +691,16 @@
   "terms.updated": "Voimaantulo: 27. maaliskuuta 2024",
   "terms.withdrawal_content": "Services are provided immediately upon registration. Consequently, Users expressly waive their 14-day right of withdrawal.",
   "terms.withdrawal_section": "9. Waiver of Withdrawal\nUsers are informed of the principle 14-day withdrawal period but expressly accept that Services are fully performed before expiry. Consequently, they expressly waive their right of withdrawal.",
-  "terms.withdrawal_title": "10. Waiver of Withdrawal"
+  "terms.withdrawal_title": "10. Waiver of Withdrawal",
+  "room.next_confirm_title": "Lopetetaanko yksityinen istunto?",
+  "room.next_confirm_user_desc": "Olet tällä hetkellä yksityisessä istunnossa. Oletko varma, että haluat siirtyä seuraavaan?",
+  "room.next_confirm_model_desc": "Varoitus: Jos lähdet nyt, et ansaitse mitään tästä yksityisestä istunnosta.",
+  "room.private_summary_title": "Istunto päättynyt",
+  "room.private_summary_subtitle": "Tuloraportti",
+  "room.earned_amount_label": "ANSAITTU SUMMA",
+  "room.duration_label": "KESTO",
+  "room.status_label": "TILA",
+  "room.private_summary_close": "Jatka",
+  "room.exit_confirm_private_model": "Varoitus: Olet yksityisessä istunnossa. Jos lähdet nyt, ansiosi tästä istunnosta ovat 0$.",
+  "common.confirm": "Vahvista"
 }

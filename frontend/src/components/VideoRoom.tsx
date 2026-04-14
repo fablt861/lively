@@ -882,7 +882,10 @@ export function VideoRoom({
 
                         <h2 className="text-2xl font-black mb-2 text-center">{t('room.exit_confirm_title')}</h2>
                         <p className="text-white/60 text-sm mb-8 leading-relaxed text-center">
-                            {t('room.exit_confirm_desc')}
+                            {(isBlocked && role === 'model') 
+                                ? t('room.exit_confirm_private_model') 
+                                : t('room.exit_confirm_desc')
+                            }
                         </p>
 
                         <div className="grid grid-cols-2 gap-4">
@@ -1061,11 +1064,11 @@ export function VideoRoom({
                         <div className="w-16 h-16 bg-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
                             <Lock className="text-pink-500" size={32} />
                         </div>
-                        <h3 className="text-xl font-bold mb-4">{t('room.next_confirm_title') || "Quitter la session privée ?"}</h3>
+                        <h3 className="text-xl font-bold mb-4">{t('room.next_confirm_title')}</h3>
                         <p className="text-white/60 text-sm mb-8 leading-relaxed">
                             {role === 'user' 
-                                ? (t('room.next_confirm_user_desc') || "Vous êtes actuellement en session privée. Êtes-vous sûr de vouloir passer au suivant ?")
-                                : (t('room.next_confirm_model_desc') || "Attention, si vous quittez maintenant, vous ne gagnerez rien sur cette session privée.")
+                                ? t('room.next_confirm_user_desc')
+                                : t('room.next_confirm_model_desc')
                             }
                         </p>
                         <div className="flex flex-col gap-3">
@@ -1097,8 +1100,8 @@ export function VideoRoom({
                             <Sparkles className="text-white -rotate-12" size={48} />
                         </div>
 
-                        <h3 className="text-3xl font-black tracking-tight mb-2 uppercase italic">{t('room.private_summary_title') || "Session Terminée"}</h3>
-                        <p className="text-indigo-300/80 text-xs font-bold tracking-[0.3em] uppercase mb-8">{t('room.private_summary_subtitle') || "Rapport de gains"}</p>
+                        <h3 className="text-3xl font-black tracking-tight mb-2 uppercase italic">{t('room.private_summary_title')}</h3>
+                        <p className="text-indigo-300/80 text-xs font-bold tracking-[0.3em] uppercase mb-8">{t('room.private_summary_subtitle')}</p>
                         
                         <div className="bg-black/40 rounded-[2rem] p-8 mb-8 border border-white/5">
                             <div className="flex flex-col gap-1 mb-6">
@@ -1130,7 +1133,7 @@ export function VideoRoom({
                             }}
                             className="w-full py-5 bg-white text-black rounded-2xl font-black uppercase tracking-widest hover:bg-indigo-50 transition-all shadow-xl active:scale-95 flex items-center justify-center gap-3"
                         >
-                            {t('room.private_summary_close') || "Continuer"}
+                            {t('room.private_summary_close')}
                             <SkipForward size={20} fill="currentColor" />
                         </button>
                     </div>

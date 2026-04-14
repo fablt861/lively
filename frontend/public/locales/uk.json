@@ -691,5 +691,16 @@
   "terms.updated": "Набрання чинності: 27 березня 2024 р.",
   "terms.withdrawal_content": "Послуги надаються негайно. Користувачі відмовляються від 14-денного права на відмову.",
   "terms.withdrawal_section": "9. Відмова від права на відкликання\nКористувачі експрес-методом приймають, що Послуги виконуються в повному обсязі негайно після реєстрації, і відмовляються від права на відмову.",
-  "terms.withdrawal_title": "10. Waiver of Withdrawal"
+  "terms.withdrawal_title": "10. Waiver of Withdrawal",
+  "room.next_confirm_title": "Завершити приватну сесію?",
+  "room.next_confirm_user_desc": "Ви зараз перебуваєте на приватній сесії. Ви впевнені, що хочете перейти до наступного?",
+  "room.next_confirm_model_desc": "Попередження: якщо ви підете зараз, ви нічого не заробите за цю приватну сесію.",
+  "room.private_summary_title": "Сесію закінчено",
+  "room.private_summary_subtitle": "Звіт про доходи",
+  "room.earned_amount_label": "ЗАРОБЛЕНА СУМА",
+  "room.duration_label": "ТРИВАЛІСТЬ",
+  "room.status_label": "СТАТУС",
+  "room.private_summary_close": "Продовжити",
+  "room.exit_confirm_private_model": "Попередження: ви перебуваєте на приватній сесії. Якщо ви підете зараз, ваш заробіток за цю сесію складе 0$.",
+  "common.confirm": "Підтвердити"
 }

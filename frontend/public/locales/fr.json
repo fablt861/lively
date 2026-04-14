@@ -691,5 +691,16 @@
   "terms.updated": "Entrée en vigueur : 27 mars 2024",
   "terms.withdrawal_content": "Les Services sont fournis dès l'inscription. En conséquence, les Utilisateurs renoncent expressément à leur droit de rétractation de 14 jours.",
   "terms.withdrawal_section": "9. Renonciation au Droit de Rétractation\nLes Utilisateurs sont informés du délai de rétractation de 14 jours mais acceptent que les Services soient pleinement exécutés avant l'expiration. Ils y renoncent donc expressément.",
-  "terms.withdrawal_title": "10. Renonciation au Droit de Rétractation"
+  "terms.withdrawal_title": "10. Renonciation au Droit de Rétractation",
+  "room.next_confirm_title": "Quitter la session privée ?",
+  "room.next_confirm_user_desc": "Vous êtes actuellement en session privée. Êtes-vous sûr de vouloir passer au suivant ?",
+  "room.next_confirm_model_desc": "Attention, si vous quittez maintenant, vous ne gagnerez rien sur cette session privée.",
+  "room.private_summary_title": "Session Terminée",
+  "room.private_summary_subtitle": "Rapport de gains",
+  "room.earned_amount_label": "MONTANT GAGNÉ",
+  "room.duration_label": "DURÉE",
+  "room.status_label": "STATUT",
+  "room.private_summary_close": "Continuer",
+  "room.exit_confirm_private_model": "Attention : Vous êtes en session privée. Si vous quittez maintenant, vos gains pour cette session seront de 0$.",
+  "common.confirm": "Confirmer"
 }

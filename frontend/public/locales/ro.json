@@ -691,5 +691,16 @@
   "terms.updated": "Intrare în vigoare: 27 martie 2024",
   "terms.withdrawal_content": "Services are provided immediately upon registration. Consequently, Users expressly waive their 14-day right of withdrawal.",
   "terms.withdrawal_section": "9. Waiver of Withdrawal\nUsers are informed of the principle 14-day withdrawal period but expressly accept that Services are fully performed before expiry. Consequently, they expressly waive their right of withdrawal.",
-  "terms.withdrawal_title": "10. Waiver of Withdrawal"
+  "terms.withdrawal_title": "10. Waiver of Withdrawal",
+  "room.next_confirm_title": "Închideți sesiunea privată?",
+  "room.next_confirm_user_desc": "Sunteți în prezent într-o sesiune privată. Sigur doriți să treceți la următorul?",
+  "room.next_confirm_model_desc": "Avertisment: Dacă plecați acum, nu veți câștiga nimic pentru această sesiune privată.",
+  "room.private_summary_title": "Sesiune încheiată",
+  "room.private_summary_subtitle": "Raport de câștiguri",
+  "room.earned_amount_label": "SUMA CÂȘTIGATĂ",
+  "room.duration_label": "DURATĂ",
+  "room.status_label": "STATUT",
+  "room.private_summary_close": "Continuă",
+  "room.exit_confirm_private_model": "Avertisment: Sunteți într-o sesiune privată. Dacă plecați acum, câștigurile pentru această sesiune vor fi 0$.",
+  "common.confirm": "Confirmă"
 }

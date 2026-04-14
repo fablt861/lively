@@ -691,5 +691,16 @@
   "terms.updated": "Entry into force: 2024, March 27",
   "terms.withdrawal_content": "Services are provided immediately upon registration. Consequently, Users expressly waive their 14-day right of withdrawal.",
   "terms.withdrawal_section": "9. Waiver of Withdrawal\nUsers are informed of the principle 14-day withdrawal period but expressly accept that Services are fully performed before expiry. Consequently, they expressly waive their right of withdrawal.",
-  "terms.withdrawal_title": "10. Waiver of Withdrawal"
+  "terms.withdrawal_title": "10. Waiver of Withdrawal",
+  "room.next_confirm_title": "Quit private session?",
+  "room.next_confirm_user_desc": "You are currently in a private session. Are you sure you want to go to the next one?",
+  "room.next_confirm_model_desc": "Warning: If you leave now, you will earn nothing for this private session.",
+  "room.private_summary_title": "Session Ended",
+  "room.private_summary_subtitle": "Earnings Report",
+  "room.earned_amount_label": "AMOUNT EARNED",
+  "room.duration_label": "DURATION",
+  "room.status_label": "STATUS",
+  "room.private_summary_close": "Continue",
+  "room.exit_confirm_private_model": "Warning: You are in a private session. If you leave now, your earnings for this session will be $0.",
+  "common.confirm": "Confirm"
 }

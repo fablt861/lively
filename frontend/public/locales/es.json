@@ -691,5 +691,16 @@
   "terms.updated": "Entrada en vigor: 27 de marzo de 2024",
   "terms.withdrawal_content": "Los servicios se prestan inmediatamente después del registro. En consecuencia, los usuarios renuncian expresamente a su derecho de desistimiento de 14 días.",
   "terms.withdrawal_section": "9. Renuncia al retiro\nSe informa a los usuarios del período de desistimiento de 14 días mencionado en principio, pero aceptan expresamente que los servicios se realicen íntegramente antes del vencimiento. En consecuencia, renuncian expresamente a su derecho de desistimiento.",
-  "terms.withdrawal_title": "10. Renuncia al Retiro"
+  "terms.withdrawal_title": "10. Renuncia al Retiro",
+  "room.next_confirm_title": "¿Cerrar sesión privada?",
+  "room.next_confirm_user_desc": "Actualmente estás en una sesión privada. ¿Estás seguro de que quieres pasar al siguiente?",
+  "room.next_confirm_model_desc": "Advertencia: si te vas ahora, no ganarás nada por esta sesión privada.",
+  "room.private_summary_title": "Sesión terminada",
+  "room.private_summary_subtitle": "Informe de ganancias",
+  "room.earned_amount_label": "CANTIDAD GANADA",
+  "room.duration_label": "DURACIÓN",
+  "room.status_label": "ESTADO",
+  "room.private_summary_close": "Continuar",
+  "room.exit_confirm_private_model": "Advertencia: estás en una sesión privada. Si te vas ahora, tus ganancias para esta sesión serán de 0$.",
+  "common.confirm": "Confirmar"
 }

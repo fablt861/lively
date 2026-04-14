@@ -691,5 +691,16 @@
   "terms.updated": "Ikrafttredelse: 27. mars 2024",
   "terms.withdrawal_content": "Services are provided immediately upon registration. Consequently, Users expressly waive their 14-day right of withdrawal.",
   "terms.withdrawal_section": "9. Waiver of Withdrawal\nUsers are informed of the principle 14-day withdrawal period but expressly accept that Services are fully performed before expiry. Consequently, they expressly waive their right of withdrawal.",
-  "terms.withdrawal_title": "10. Waiver of Withdrawal"
+  "terms.withdrawal_title": "10. Waiver of Withdrawal",
+  "room.next_confirm_title": "Avslutte privat økt?",
+  "room.next_confirm_user_desc": "Du er for øyeblikket i en privat økt. Er du sikker på at du vil gå til neste?",
+  "room.next_confirm_model_desc": "Advarsel: Hvis du drar nå, vil du ikke tjene noe på denne private økten.",
+  "room.private_summary_title": "Økt avsluttet",
+  "room.private_summary_subtitle": "Inntjeningsrapport",
+  "room.earned_amount_label": "OPPTJENT BELØP",
+  "room.duration_label": "VARIGHET",
+  "room.status_label": "STATUS",
+  "room.private_summary_close": "Fortsett",
+  "room.exit_confirm_private_model": "Advarsel: Du er i en privat økt. Hvis du drar nå, vil inntjeningen din for denne økten være 0$.",
+  "common.confirm": "Bekreft"
 }

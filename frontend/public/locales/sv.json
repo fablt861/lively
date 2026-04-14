@@ -691,5 +691,16 @@
   "terms.updated": "Ikraftträdande: 27 mars 2024",
   "terms.withdrawal_content": "Services are provided immediately upon registration. Consequently, Users expressly waive their 14-day right of withdrawal.",
   "terms.withdrawal_section": "9. Waiver of Withdrawal\nUsers are informed of the principle 14-day withdrawal period but expressly accept that Services are fully performed before expiry. Consequently, they expressly waive their right of withdrawal.",
-  "terms.withdrawal_title": "10. Waiver of Withdrawal"
+  "terms.withdrawal_title": "10. Waiver of Withdrawal",
+  "room.next_confirm_title": "Avsluta privat session?",
+  "room.next_confirm_user_desc": "Du är för närvarande i en privat session. Är du säker på att du vill gå till nästa?",
+  "room.next_confirm_model_desc": "Varning: Om du lämnar nu kommer du inte att tjäna någonting för denna privata session.",
+  "room.private_summary_title": "Session avslutad",
+  "room.private_summary_subtitle": "Intäktsrapport",
+  "room.earned_amount_label": "INTJÄNAT BELOPP",
+  "room.duration_label": "VARAKTIGHET",
+  "room.status_label": "STATUS",
+  "room.private_summary_close": "Fortsätt",
+  "room.exit_confirm_private_model": "Varning: Du är i en privat session. Om du lämnar nu kommer dina intäkter för denna session att vara 0$.",
+  "common.confirm": "Bekräfta"
 }
