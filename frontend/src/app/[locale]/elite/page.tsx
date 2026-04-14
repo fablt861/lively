@@ -158,7 +158,7 @@ export default function ModelLandingPage() {
                             </div>
                         </div>
                         <div className="group relative overflow-hidden rounded-3xl bg-white/5 border border-white/10 aspect-[4/3] hover:border-indigo-500/50 transition-all duration-500">
-                            <img src="/images/live_cam_mockup_3.png" alt="Pro Camera Setup" className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
+                            <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&auto=format&fit=crop&q=60" alt="Wealth and Success" className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
                             <div className="absolute bottom-6 left-6">
                                 <p className="text-[10px] font-black text-white uppercase tracking-widest">{t('model.landing.live_cam_feat3')}</p>
