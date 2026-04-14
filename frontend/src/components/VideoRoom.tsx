@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles, Lock, Timer, Check, Plus, Heart, Smile } from "lucide-react";
+import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles, Lock, Timer, Check, Plus, Heart, Smile, Signal, Wifi } from "lucide-react";
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import { CallListener } from './CallListener';
 import { useTranslation } from "@/context/LanguageContext";
@@ -14,18 +14,43 @@ import { UnifiedAuthModal } from "./UnifiedAuthModal";
 import { PreMatchModal } from "./PreMatchModal";
 import { OrientationGuard } from "./OrientationGuard";
 
+function ConnectionQualityBadge({ quality }: { quality: 'excellent' | 'good' | 'fair' | 'poor' | 'reconnecting' }) {
+    if (quality === 'reconnecting') return null;
+    
+    const colors = {
+        excellent: 'text-green-400',
+        good: 'text-blue-400',
+        fair: 'text-yellow-400',
+        poor: 'text-red-400'
+    };
+    
+    const icons = {
+        excellent: <Signal size={12} />,
+        good: <Signal size={12} />,
+        fair: <Wifi size={12} />,
+        poor: <Wifi size={12} className="animate-pulse" />
+    };
+
+    return (
+        <div className={`flex items-center gap-1.5 px-2 py-1 rounded-md bg-black/20 backdrop-blur-md border border-white/5 ${colors[quality as keyof typeof colors]}`}>
+            {icons[quality as keyof typeof icons]}
+            <span className="text-[10px] font-black uppercase tracking-widest leading-none">
+                {quality}
+            </span>
+        </div>
+    );
+}
+
 
 function EarningsCounter({ hasVideo, currentRate, totalEarned }: { hasVideo: boolean; currentRate: number; totalEarned: number }) {
     const { t } = useTranslation();
 
     return (
-        <div className="absolute top-[160px] right-4 md:top-6 md:right-6 z-30 flex flex-col items-end gap-2">
-            <div className="flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 shadow-2xl transition-all">
-                <span className="text-white/80 text-xs font-semibold tracking-wider uppercase hidden sm:block">{t('room.earnings_call')}</span>
-                <span className="text-green-400 font-mono text-base sm:text-lg font-bold">
-                    ${totalEarned.toFixed(2)}
-                </span>
-            </div>
+        <div className="flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 shadow-2xl transition-all">
+            <span className="text-white/80 text-xs font-semibold tracking-wider uppercase hidden sm:block">{t('room.earnings_call')}</span>
+            <span className="text-green-400 font-mono text-base sm:text-lg font-bold">
+                ${totalEarned.toFixed(2)}
+            </span>
         </div>
     );
 }
@@ -56,6 +81,7 @@ interface VideoRoomProps {
     packs?: any[];
     onPurchase?: (credits: number, priceUsd: number) => Promise<void>;
     isDirectCall?: boolean;
+    connectionQuality?: 'excellent' | 'good' | 'fair' | 'poor' | 'reconnecting';
 }
 
 export function VideoRoom({
@@ -81,7 +107,8 @@ export function VideoRoom({
     isLaunchOverride,
     packs,
     onPurchase,
-    isDirectCall
+    isDirectCall,
+    connectionQuality = 'excellent'
 }: VideoRoomProps) {
     const { t, language } = useTranslation();
     const router = useRouter();
@@ -778,15 +805,21 @@ export function VideoRoom({
                                 </span>
                             </div>
                         )}
+                        <div className="ml-3 pl-3 border-l border-white/10">
+                            <ConnectionQualityBadge quality={connectionQuality} />
+                        </div>
                     </div>
                 )}
                 {/* Model Earning Counter */}
                 {role === "model" && isConnected && (
-                    <EarningsCounter 
-                        hasVideo={!!remoteStream} 
-                        currentRate={payoutInfo.rate} 
-                        totalEarned={payoutInfo.earned} 
-                    />
+                    <div className="absolute top-[160px] right-4 md:top-6 md:right-6 z-30 flex flex-col items-end gap-2">
+                        <EarningsCounter 
+                            hasVideo={!!remoteStream} 
+                            currentRate={payoutInfo.rate} 
+                            totalEarned={payoutInfo.earned} 
+                        />
+                        <ConnectionQualityBadge quality={connectionQuality} />
+                    </div>
                 )}
 
 
@@ -815,6 +848,19 @@ export function VideoRoom({
                                     </div>
                                 )}
                             </h2>
+                        </div>
+                    )}
+
+                    {/* Reconnecting Overlay */}
+                    {connectionQuality === 'reconnecting' && isConnected && (
+                        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/60 backdrop-blur-xl transition-all duration-500">
+                             <div className="w-16 h-16 border-4 border-white/5 border-t-yellow-500 rounded-full animate-spin mb-6"></div>
+                             <h2 className="text-xl font-black text-white uppercase tracking-widest animate-pulse">
+                                 {t('room.reconnecting') || "Reconnecting..."}
+                             </h2>
+                             <p className="text-white/40 text-sm mt-2 uppercase tracking-tighter">
+                                 {t('room.stabilizing') || "Stabilizing your connection"}
+                             </p>
                         </div>
                     )}
                 </div>

@@ -20,11 +20,14 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
     const [isLaunch, setIsLaunch] = useState(false);
     const [cameraPermissionError, setCameraPermissionError] = useState(false);
     const [retryCount, setRetryCount] = useState(0);
-
+    const [connectionQuality, setConnectionQuality] = useState<'excellent' | 'good' | 'fair' | 'poor' | 'reconnecting'>('excellent');
 
     const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
+    const statsIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    const lastStatsRef = useRef<{ timestamp: number; bytesReceived: number; packetsLost: number } | null>(null);
     const iceServersRef = useRef<any[]>(DEFAULT_ICE_SERVERS);
     const localStreamRef = useRef<MediaStream | null>(null);
+    const currentRoomRef = useRef<string | null>(null);
 
     // Sync ref with state
     useEffect(() => {
@@ -59,7 +62,18 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
 
         // 2. Initialize Media Stream
         navigator.mediaDevices
-            .getUserMedia({ video: true, audio: true })
+            .getUserMedia({ 
+                video: {
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 },
+                    frameRate: { ideal: 30 }
+                }, 
+                audio: {
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: true
+                } 
+            })
             .then((stream) => {
                 setLocalStream(stream);
                 setCameraPermissionError(false);
@@ -119,6 +133,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
                     }
                 });
 
+                currentRoomRef.current = directRoom;
                 newSocket.emit("join_direct_room", { 
                     roomId: directRoom, 
                     role, 
@@ -136,6 +151,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
                     console.log(`[WebRTC Cleanup] Stopped track: ${track.kind}`);
                 });
             }
+            stopStatsMonitoring();
             newSocket.disconnect();
         };
     }, [isEnabled, retryCount]);
@@ -170,13 +186,118 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
         };
 
         pc.oniceconnectionstatechange = () => {
+            console.log(`[WebRTC] ICE state changed to: ${pc.iceConnectionState}`);
             if (pc.iceConnectionState === "disconnected" || pc.iceConnectionState === "failed") {
-                setIsCallConnected(false);
-                setRemoteStream(null);
+                setConnectionQuality('reconnecting');
+                // Don't kill the call immediately, wait for auto-recovery or ICE restart
+                setTimeout(() => {
+                    if (peerConnectionRef.current && (peerConnectionRef.current.iceConnectionState === "disconnected" || peerConnectionRef.current.iceConnectionState === "failed")) {
+                        console.log('[WebRTC] Connection remains down, attempting ICE restart...');
+                        handleIceRestart();
+                    }
+                }, 5000);
+            } else if (pc.iceConnectionState === "connected" || pc.iceConnectionState === "completed") {
+                console.log('[WebRTC] ICE Connection success!');
+                socket?.emit('connection_success', { roomId: currentRoomRef.current });
+                setIsCallConnected(true);
+                startStatsMonitoring();
             }
         };
 
         return pc;
+    };
+
+    const handleIceRestart = async () => {
+        const pc = peerConnectionRef.current;
+        if (pc && socket && pc.signalingState !== "closed") {
+            try {
+                const offer = await pc.createOffer({ iceRestart: true });
+                await pc.setLocalDescription(offer);
+                socket.emit("offer", offer);
+                console.log('[WebRTC] ICE Restart offer sent');
+            } catch (err) {
+                console.error('[WebRTC] Failed to create ICE Restart offer:', err);
+            }
+        }
+    };
+
+    const startStatsMonitoring = () => {
+        if (statsIntervalRef.current) clearInterval(statsIntervalRef.current);
+        
+        statsIntervalRef.current = setInterval(async () => {
+            const pc = peerConnectionRef.current;
+            if (!pc || pc.iceConnectionState !== 'connected') return;
+
+            const stats = await pc.getStats();
+            let currentBytes = 0;
+            let currentPacketsLost = 0;
+
+            stats.forEach(report => {
+                if (report.type === 'inbound-rtp' && report.kind === 'video') {
+                    currentBytes = report.bytesReceived;
+                    currentPacketsLost = report.packetsLost;
+                }
+            });
+
+            if (lastStatsRef.current && currentBytes > 0) {
+                const deltaBytes = currentBytes - lastStatsRef.current.bytesReceived;
+                const deltaPacketsLost = currentPacketsLost - lastStatsRef.current.packetsLost;
+                const bitrateMbps = (deltaBytes * 8) / 1000000; // Simplified for 1s interval
+
+                // Quality Logic
+                if (deltaPacketsLost > 5 || bitrateMbps < 0.2) {
+                    setConnectionQuality('poor');
+                    updateQualityParameters(0.2); // Limit to 200kbps and downscale
+                } else if (deltaPacketsLost > 2 || bitrateMbps < 0.5) {
+                    setConnectionQuality('fair');
+                    updateQualityParameters(0.5);
+                } else {
+                    setConnectionQuality('excellent');
+                    updateQualityParameters(1.5); // Back to 1.5Mbps
+                }
+            }
+
+            lastStatsRef.current = {
+                timestamp: Date.now(),
+                bytesReceived: currentBytes,
+                packetsLost: currentPacketsLost
+            };
+        }, 2000);
+    };
+
+    const stopStatsMonitoring = () => {
+        if (statsIntervalRef.current) {
+            clearInterval(statsIntervalRef.current);
+            statsIntervalRef.current = null;
+        }
+        lastStatsRef.current = null;
+    };
+
+    const updateQualityParameters = async (bitrateMbps: number) => {
+        const pc = peerConnectionRef.current;
+        if (!pc) return;
+
+        const senders = pc.getSenders();
+        const videoSender = senders.find(s => s.track?.kind === 'video');
+
+        if (videoSender) {
+            const params = videoSender.getParameters();
+            if (!params.encodings || params.encodings.length === 0) return;
+
+            const maxBitrate = bitrateMbps * 1000000;
+            const scaleDown = bitrateMbps < 0.5 ? 2.0 : 1.0;
+
+            if (params.encodings[0].maxBitrate !== maxBitrate || params.encodings[0].scaleResolutionDownBy !== scaleDown) {
+                console.log(`[WebRTC] Optimizing quality: ${bitrateMbps}Mbps, Scale: ${scaleDown}`);
+                params.encodings[0].maxBitrate = maxBitrate;
+                params.encodings[0].scaleResolutionDownBy = scaleDown;
+                try {
+                    await videoSender.setParameters(params);
+                } catch (err) {
+                    console.error('[WebRTC] Failed to update quality parameters:', err);
+                }
+            }
+        }
     };
 
     useEffect(() => {
@@ -195,7 +316,8 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
         });
 
         socket.on("matched", async (data: any) => {
-            const { initiator, partnerEmail, partnerRole, partnerName, isRecovery } = data;
+            const { roomId, initiator, partnerEmail, partnerRole, partnerName, isRecovery } = data;
+            currentRoomRef.current = roomId;
             console.log('[WebRTC] Matched event received. Initiator:', initiator, 'Recovery:', !!isRecovery);
             setRemoteStream(null); // Clear previous stream to avoid stale visuals
             console.log('[WebRTC] Matched -> setting isMatching: false, isCallConnected: true');
@@ -353,6 +475,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
     };
 
     const nextPartner = () => {
+        setIsMatching(true); // Show "Searching..." immediately in the UI
         endCall();
     };
 
@@ -372,6 +495,12 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
         if (socket && text.trim()) {
             socket.emit("chat_message", text);
             setMessages((prev) => [...prev, { senderId: socket.id || "me", text, timestamp: Date.now() }]);
+        }
+    };
+
+    const handleSendIceCandidate = (candidate: RTCIceCandidate) => {
+        if (socket) {
+            socket.emit("ice-candidate", candidate);
         }
     };
 
@@ -396,7 +525,8 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
         isLaunch,
         cameraPermissionError,
         isDirectCall: !!(typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('room')),
-        retryCamera: () => setRetryCount(prev => prev + 1)
+        retryCamera: () => setRetryCount(prev => prev + 1),
+        connectionQuality
     };
 }
 

@@ -1,7 +1,35 @@
 const { translateText } = require('./translate');
 
+const handshakeTimeouts = new Map();
+
 function setupSignaling(io, socket) {
+    socket.on('connection_success', ({ roomId }) => {
+        if (!roomId) return;
+        console.log(`[Handshake] Room ${roomId} confirmed success for ${socket.id}`);
+        const timeout = handshakeTimeouts.get(roomId);
+        if (timeout) {
+            clearTimeout(timeout);
+            handshakeTimeouts.delete(roomId);
+        }
+    });
+
     socket.on('offer', (payload) => {
+        if (!socket.currentRoom) return;
+
+        // --- HANDSHAKE WATCHDOG ---
+        // If an offer is sent, we expect a successful connection within 15 seconds.
+        if (!handshakeTimeouts.has(socket.currentRoom)) {
+            console.log(`[Handshake] Starting watchdog for Room ${socket.currentRoom}`);
+            const timeout = setTimeout(async () => {
+                console.warn(`[Handshake] TIMEOUT for Room ${socket.currentRoom}. Dissolving...`);
+                const { disconnectFromRoom } = require('./matching');
+                // We emit a special reason so frontend can tell the difference
+                await disconnectFromRoom(io, socket, 'handshake_timeout');
+                handshakeTimeouts.delete(socket.currentRoom);
+            }, 15000);
+            handshakeTimeouts.set(socket.currentRoom, timeout);
+        }
+
         socket.to(socket.currentRoom).emit('offer', payload);
     });
 
