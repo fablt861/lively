@@ -710,5 +710,8 @@
   "room.summary_reason_model_next": "Sie haben verlassen",
   "room.summary_reason_user_disconnect": "Kunde getrennt",
   "room.summary_reason_model_disconnect": "Verbindung getrennt",
-  "room.summary_reason_billing_stop": "Sitzung beendet"
+  "room.summary_reason_billing_stop": "Sitzung beendet",
+  "room.summary_reason_user_stop": "Kunde hat aufgelegt",
+  "room.summary_reason_model_stop": "Sie haben aufgelegt",
+  "room.summary_reason_timer_ended": "Zeit abgelaufen"
 }

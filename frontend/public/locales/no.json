@@ -710,5 +710,8 @@
   "room.summary_reason_model_next": "Du dro",
   "room.summary_reason_user_disconnect": "Klienten koblet fra",
   "room.summary_reason_model_disconnect": "Du ble koblet fra",
-  "room.summary_reason_billing_stop": "Sesjonen avsluttet"
+  "room.summary_reason_billing_stop": "Sesjonen avsluttet",
+  "room.summary_reason_user_stop": "Klienten la på",
+  "room.summary_reason_model_stop": "Du la på",
+  "room.summary_reason_timer_ended": "Tiden er ute"
 }

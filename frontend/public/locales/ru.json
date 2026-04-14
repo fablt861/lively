@@ -710,5 +710,8 @@
   "room.summary_reason_model_next": "Вы ушли",
   "room.summary_reason_user_disconnect": "Клиент отключился",
   "room.summary_reason_model_disconnect": "Вы отключились",
-  "room.summary_reason_billing_stop": "Сессия завершена"
+  "room.summary_reason_billing_stop": "Сессия завершена",
+  "room.summary_reason_user_stop": "Клиент положил трубку",
+  "room.summary_reason_model_stop": "Вы положили трубку",
+  "room.summary_reason_timer_ended": "Время вышло"
 }
