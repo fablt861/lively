@@ -212,38 +212,40 @@ export function ProfileSettingsModal({ isOpen, onClose, userEmail, role, onProfi
                     ) : (
                         <div className="space-y-6">
                             {/* Profile Image Section */}
-                            <div className="flex flex-col items-center gap-6 mb-8">
-                                <div className="relative group cursor-pointer" onClick={() => document.getElementById('profile-photo-upload')?.click()}>
-                                    <div className="w-32 h-32 rounded-[2.5rem] bg-neutral-800 border-2 border-white/10 overflow-hidden ring-4 ring-pink-500/10 ring-offset-4 ring-offset-neutral-900 group-hover:ring-pink-500/30 transition-all duration-500 shadow-2xl">
-                                        <div className={`absolute inset-0 z-10 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${compressing ? 'opacity-100' : ''}`}>
-                                            {compressing ? (
-                                                <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                            ) : (
-                                                <Camera size={24} className="text-white" />
-                                            )}
+                            {role === 'model' && (
+                                <div className="flex flex-col items-center gap-6 mb-8">
+                                    <div className="relative group cursor-pointer" onClick={() => document.getElementById('profile-photo-upload')?.click()}>
+                                        <div className="w-32 h-32 rounded-[2.5rem] bg-neutral-800 border-2 border-white/10 overflow-hidden ring-4 ring-pink-500/10 ring-offset-4 ring-offset-neutral-900 group-hover:ring-pink-500/30 transition-all duration-500 shadow-2xl">
+                                            <div className={`absolute inset-0 z-10 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${compressing ? 'opacity-100' : ''}`}>
+                                                {compressing ? (
+                                                    <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                                ) : (
+                                                    <Camera size={24} className="text-white" />
+                                                )}
+                                            </div>
+                                            <img 
+                                                src={info.photoProfile || "/images/avatars/model_1.png"} 
+                                                alt="Profile" 
+                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                            />
                                         </div>
-                                        <img 
-                                            src={info.photoProfile || "/images/avatars/model_1.png"} 
-                                            alt="Profile" 
-                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        <div className="absolute -bottom-1 -right-1 w-10 h-10 rounded-2xl bg-pink-500 flex items-center justify-center text-white shadow-lg shadow-pink-500/40 border-2 border-neutral-900 group-hover:scale-110 transition-transform">
+                                            <Camera size={18} />
+                                        </div>
+                                        <input 
+                                            type="file"
+                                            id="profile-photo-upload"
+                                            accept="image/*"
+                                            className="hidden"
+                                            onChange={handleFileChange}
                                         />
                                     </div>
-                                    <div className="absolute -bottom-1 -right-1 w-10 h-10 rounded-2xl bg-pink-500 flex items-center justify-center text-white shadow-lg shadow-pink-500/40 border-2 border-neutral-900 group-hover:scale-110 transition-transform">
-                                        <Camera size={18} />
+                                    <div className="text-center">
+                                        <p className="text-white font-medium text-sm mb-1">{t('model.signup.step4_change')}</p>
+                                        <p className="text-neutral-500 text-[10px] uppercase tracking-widest font-black">{t('model.signup.step4_upload')}</p>
                                     </div>
-                                    <input 
-                                        type="file"
-                                        id="profile-photo-upload"
-                                        accept="image/*"
-                                        className="hidden"
-                                        onChange={handleFileChange}
-                                    />
                                 </div>
-                                <div className="text-center">
-                                    <p className="text-white font-medium text-sm mb-1">{t('model.signup.step4_change')}</p>
-                                    <p className="text-neutral-500 text-[10px] uppercase tracking-widest font-black">{t('model.signup.step4_upload')}</p>
-                                </div>
-                            </div>
+                            )}
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {/* Pseudo */}

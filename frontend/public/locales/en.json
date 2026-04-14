@@ -280,6 +280,7 @@
   "common.iban": "IBAN",
   "common.id_check": "ID Check",
   "common.loading": "Loading...",
+  "common.offline": "Offline",
   "common.premium": "Premium",
   "common.retry": "Retry",
   "common.secure": "SECURE",

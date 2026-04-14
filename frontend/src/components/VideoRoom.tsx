@@ -858,7 +858,7 @@ export function VideoRoom({
                         <button
                             onClick={toggleFavorite}
                             disabled={isTogglingFavorite}
-                            className={`w-12 h-12 flex items-center justify-center rounded-2xl border shadow-lg transition-all duration-300 ${isFavorite ? "bg-red-500 border-red-400 text-white scale-110" : "bg-white border-neutral-200 text-neutral-400"}`}
+                            className={`w-12 h-12 flex items-center justify-center rounded-2xl border shadow-lg transition-all duration-300 ${isFavorite ? "bg-violet-600 border-violet-400 text-white scale-110" : "bg-white border-neutral-200 text-neutral-400"}`}
                         >
                             <Heart size={20} fill={isFavorite ? "currentColor" : "none"} className={`${isTogglingFavorite ? "animate-pulse" : ""} ${isFavorite ? "drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" : ""}`} />
                         </button>
@@ -891,7 +891,7 @@ export function VideoRoom({
                         <button
                             onClick={toggleFavorite}
                             disabled={isTogglingFavorite}
-                            className={`p-4 rounded-full transition-all duration-300 border shadow-xl flex items-center justify-center ${isFavorite ? "bg-red-500 border-red-400 text-white scale-110" : "bg-white border-neutral-200 text-neutral-400 hover:text-red-500 hover:border-red-200"}`}
+                            className={`p-4 rounded-full transition-all duration-300 border shadow-xl flex items-center justify-center ${isFavorite ? "bg-violet-600 border-violet-400 text-white scale-110" : "bg-white border-neutral-200 text-neutral-400 hover:text-violet-500 hover:border-violet-200"}`}
                             title={isFavorite ? t('favorite.remove') : t('favorite.add')}
                         >
                             <Heart size={24} fill={isFavorite ? "currentColor" : "none"} className={`${isTogglingFavorite ? "animate-pulse" : ""} ${isFavorite ? "drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]" : ""}`} />

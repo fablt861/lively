@@ -11,6 +11,7 @@ interface FavoriteModel {
     email: string;
     pseudo: string;
     photo_profile: string;
+    isOnline?: boolean;
 }
 
 interface UserInfo {
@@ -116,18 +117,10 @@ export default function CustomerDashboard() {
                 {/* Header */}
                 <header className="flex flex-col md:flex-row items-center justify-between gap-8 mb-16">
                     <div className="flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
-                        <div className="relative group">
-                            <div className="w-24 h-24 md:w-32 md:h-32 rounded-[2.5rem] bg-neutral-900 border-2 border-white/10 overflow-hidden ring-4 ring-indigo-500/10 ring-offset-4 ring-offset-neutral-950 shadow-2xl">
-                                <div className="w-full h-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-4xl font-black">
-                                    {(userInfo?.pseudo || "U").substring(0, 1).toUpperCase()}
-                                </div>
+                        <div className="w-24 h-24 md:w-32 md:h-32 rounded-[2.5rem] bg-neutral-900 border-2 border-white/10 overflow-hidden ring-4 ring-indigo-500/10 ring-offset-4 ring-offset-neutral-950 shadow-2xl flex items-center justify-center">
+                            <div className="w-full h-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-4xl font-black">
+                                {(userInfo?.pseudo || "U").substring(0, 1).toUpperCase()}
                             </div>
-                            <button 
-                                onClick={() => setIsProfileOpen(true)}
-                                className="absolute -bottom-1 -right-1 w-10 h-10 rounded-2xl bg-indigo-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/40 border-2 border-neutral-950 hover:scale-110 transition-transform active:scale-95 z-20"
-                            >
-                                <Settings size={18} />
-                            </button>
                         </div>
                         
                         <div className="space-y-1">
@@ -141,6 +134,13 @@ export default function CustomerDashboard() {
 
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto">
                         <LanguageSelector />
+                        <button
+                            onClick={() => setIsProfileOpen(true)}
+                            className="px-6 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-full transition-all duration-300 text-sm font-black uppercase tracking-widest flex items-center justify-center gap-2"
+                        >
+                            <Settings size={18} className="text-indigo-400" />
+                            {t('dashboard.profile_settings_title')}
+                        </button>
                         <button
                             onClick={() => window.location.href = `/${language}`}
                             className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-full transition-all duration-300 text-sm font-black uppercase tracking-widest flex items-center justify-center gap-3 w-full sm:w-auto text-center"
@@ -233,8 +233,10 @@ export default function CustomerDashboard() {
 
                                     <div className="absolute bottom-6 left-6 right-6">
                                         <div className="flex items-center gap-2 mb-2">
-                                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
-                                            <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">EN LIGNE</span>
+                                            <div className={`w-2 h-2 rounded-full ${model.isOnline ? 'bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-red-500/50'}`} />
+                                            <span className={`text-[10px] font-black uppercase tracking-widest ${model.isOnline ? 'text-white/60' : 'text-white/30'}`}>
+                                                {model.isOnline ? t('gauge.live') : t('common.offline')}
+                                            </span>
                                         </div>
                                         <h3 className="text-2xl font-black text-white tracking-tight uppercase group-hover:text-indigo-400 transition-colors">{model.pseudo}</h3>
                                         <button 

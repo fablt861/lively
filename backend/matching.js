@@ -45,6 +45,9 @@ function setupMatching(io, socket) {
 
             socket.language = language || 'en';
             socket.userEmail = email?.toLowerCase(); // Persistent ID for registered users
+            if (role === 'model' && socket.userEmail) {
+                await redis.sadd('online_models', socket.userEmail);
+            }
 
             // Get IP for guest tracking
             const userIp = socket.handshake.headers['x-forwarded-for'] || socket.handshake.address;
@@ -152,6 +155,9 @@ function setupMatching(io, socket) {
             socket.to(socket.currentRoom).emit('partner_disconnected');
             socket.leave(socket.currentRoom);
             socket.currentRoom = null;
+        }
+        if (socket.role === 'model' && socket.userEmail) {
+            await redis.srem('online_models', socket.userEmail);
         }
         await updateQueuePositions(io, socket.role);
     });

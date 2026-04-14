@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { query } = require('./db');
+const { getRedisClient } = require('./redis');
+const redis = getRedisClient();
 
 // Add to favorites
 router.post('/add', async (req, res) => {
@@ -71,7 +73,17 @@ router.get('/:email', async (req, res) => {
              ORDER BY f.created_at DESC`,
             [email]
         );
-        res.json(result.rows);
+
+        // Check online status for each model
+        const models = await Promise.all(result.rows.map(async (model) => {
+            const isOnline = await redis.sismember('online_models', model.email);
+            return {
+                ...model,
+                isOnline: isOnline === 1
+            };
+        }));
+
+        res.json(models);
     } catch (err) {
         console.error('[Favorites List]', err);
         res.status(500).json({ error: 'api.error.internal_server_error' });
