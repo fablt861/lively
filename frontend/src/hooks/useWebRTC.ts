@@ -88,13 +88,30 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
             
             newSocket.on('connect', () => {
                 console.log('[DirectCall] Socket connected, joining room:', directRoom);
-                newSocket.on('direct_matched_ready', async () => {
-                    console.log('[DirectCall] Both parties ready, starting handshake');
+                newSocket.on('direct_matched_ready', async (data: any) => {
+                    console.log('[DirectCall] Both parties ready:', data);
+                    
+                    if (data?.partnerEmail) {
+                        setPartnerInfo({
+                            email: data.partnerEmail,
+                            role: data.partnerRole,
+                            name: data.partnerPseudo || data.partnerEmail
+                        });
+                    }
+
                     setIsMatching(false);
                     setIsCallConnected(true);
                     
                     if (isInit) {
-                        // Create PC and offer
+                        // WAIT FOR LOCAL STREAM (Critical for media lines in SDP)
+                        let attempts = 0;
+                        while (!localStreamRef.current && attempts < 10) {
+                            console.log('[DirectCall] Waiting for localStream...');
+                            await new Promise(r => setTimeout(r, 500));
+                            attempts++;
+                        }
+
+                        console.log('[DirectCall] Starting handshake as initiator');
                         const pc = createPeerConnection();
                         const offer = await pc.createOffer();
                         await pc.setLocalDescription(offer);

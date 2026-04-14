@@ -200,14 +200,30 @@ function setupMatching(io, socket) {
         // Start billing if it's a model-user pair and both are in
         const roomSockets = await io.in(roomId).fetchSockets();
         if (roomSockets.length === 2) {
-            console.log(`[DirectCall] Both parties in room ${roomId}. Emitting direct_matched_ready.`);
-            io.to(roomId).emit('direct_matched_ready');
-
             const userSocket = roomSockets.find(s => s.role === 'user');
             const modelSocket = roomSockets.find(s => s.role === 'model');
+
             if (userSocket && modelSocket) {
+                console.log(`[DirectCall] Both parties in room ${roomId}. Emitting direct_matched_ready.`);
+                
+                // Fetch pseudo for both to include in the payload
+                const userPseudo = await redis.hget(`profile:${userSocket.userEmail}`, 'pseudo') || userSocket.userEmail;
+                const modelPseudo = await redis.hget(`profile:${modelSocket.userEmail}`, 'pseudo') || modelSocket.userEmail;
+
+                userSocket.emit('direct_matched_ready', {
+                    partnerEmail: modelSocket.userEmail,
+                    partnerPseudo: modelPseudo,
+                    partnerRole: 'model'
+                });
+
+                modelSocket.emit('direct_matched_ready', {
+                    partnerEmail: userSocket.userEmail,
+                    partnerPseudo: userPseudo,
+                    partnerRole: 'user'
+                });
+
                 console.log(`[DirectBilling] Starting billing for room ${roomId}`);
-                await startBilling(io, roomId, userSocket.userEmail, modelSocket.userEmail);
+                await startBilling(roomId, userSocket.userEmail, modelSocket.userEmail, userSocket.id, modelSocket.id);
             }
         }
     });
