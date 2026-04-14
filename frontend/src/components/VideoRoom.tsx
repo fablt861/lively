@@ -327,6 +327,8 @@ export function VideoRoom({
                 }));
             } else {
                 // Clear any stale block state from a previous session
+                setIsBlocked(false);
+                setBlockEndTime(null);
                 localStorage.removeItem(`active_block_${role}`);
             }
         };

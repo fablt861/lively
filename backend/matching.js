@@ -343,14 +343,18 @@ async function handleJoinQueue(io, socket) {
                 initiator: socket.id, 
                 partnerEmail: partnerSocket.userEmail || partnerSocket.userIp, 
                 partnerRole: partnerSocket.role,
-                partnerName: partnerSocket.pseudo || partnerSocket.userEmail?.split('@')[0] || 'Partner'
+                partnerName: partnerSocket.pseudo || partnerSocket.userEmail?.split('@')[0] || 'Partner',
+                isBlocked: false,
+                blockEnd: null
             });
             partnerSocket.emit('matched', { 
                 roomId, 
                 initiator: socket.id, 
                 partnerEmail: socket.userEmail || socket.userIp, 
                 partnerRole: socket.role,
-                partnerName: socket.pseudo || socket.userEmail?.split('@')[0] || 'Partner'
+                partnerName: socket.pseudo || socket.userEmail?.split('@')[0] || 'Partner',
+                isBlocked: false,
+                blockEnd: null
             });
 
             console.log(`[Match EMITTED] ${socket.id} <-> ${partnerId}`);
