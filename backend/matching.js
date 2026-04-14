@@ -378,6 +378,9 @@ async function disconnectFromRoom(io, socket, reason = 'unknown') {
     if (socket.currentRoom) {
         const roomId = socket.currentRoom;
         
+        // --- NEW: Capture private session status BEFORE cleanup ---
+        const blockDataRaw = await redis.get(`billing:is_blocked:${roomId}`);
+
         // Find partner socket ID before we clear anything
         const roomDataStr = await redis.hget('billing:active_rooms', roomId);
         let partnerSocket = null;
@@ -390,6 +393,7 @@ async function disconnectFromRoom(io, socket, reason = 'unknown') {
         }
 
         // Stop billing for this room - this emits private_session_summary if needed
+        // Note: stopBilling will delete the billing:is_blocked key
         await stopBilling(roomId, reason);
 
         // Notify the room that a partner left
@@ -401,9 +405,8 @@ async function disconnectFromRoom(io, socket, reason = 'unknown') {
         // --- NEW: Automatically put the partner back in the queue ---
         // UNLESS it was a private session! We want the model to see their report first.
         if (partnerSocket) {
-            const blockData = await redis.get(`billing:is_blocked:${roomId}`);
-            if (blockData) {
-                console.log(`[Auto-Next] Gating auto-requeue for partner ${partnerSocket.id} (Private Session)`);
+            if (blockDataRaw) {
+                console.log(`[Auto-Next] Gating auto-requeue for partner ${partnerSocket.id} (Private Session detected)`);
                 partnerSocket.leave(roomId);
                 partnerSocket.currentRoom = null;
                 // Partner (model) will call handleJoinQueue themselves when they close the summary modal
