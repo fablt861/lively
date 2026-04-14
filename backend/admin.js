@@ -198,15 +198,20 @@ router.get('/users', requireAuth, async (req, res) => {
             LIMIT $1 OFFSET $2
         `, [limit, offset]);
 
-        const users = userRes.rows.map(u => ({
-            email: u.email,
-            pseudo: u.pseudo,
-            registeredAt: u.registered_at,
-            lastLogin: u.last_login || u.registered_at,
-            totalSpent: parseFloat(u.total_spent),
-            credits: parseFloat(u.credits),
-            isBuyer: parseFloat(u.total_spent) > 0 || parseFloat(u.credits) > 5,
-            status: u.status
+        const users = await Promise.all(userRes.rows.map(async u => {
+            const redisCredits = await redis.get(`user:${u.email.toLowerCase()}:credits`);
+            const credits = redisCredits !== null ? parseFloat(redisCredits) : parseFloat(u.credits);
+            
+            return {
+                email: u.email,
+                pseudo: u.pseudo,
+                registeredAt: u.registered_at,
+                lastLogin: u.last_login || u.registered_at,
+                totalSpent: parseFloat(u.total_spent),
+                credits: credits,
+                isBuyer: parseFloat(u.total_spent) > 0 || credits > 5,
+                status: u.status
+            };
         }));
 
         res.json({ users, total, page, totalPages: Math.ceil(total / limit) });
@@ -264,16 +269,21 @@ router.get('/elite', requireAuth, async (req, res) => {
             LIMIT $2 OFFSET $3
         `, ['pending', limit, offset]);
 
-        const models = modelRes.rows.map(m => ({
-            email: m.email,
-            pseudo: m.pseudo || m.first_name,
-            phone: m.phone,
-            registeredAt: m.registered_at,
-            lastLogin: m.last_login || m.registered_at,
-            balance: parseFloat(m.balance),
-            totalGains: parseFloat(m.total_gains),
-            totalPayouts: parseFloat(m.total_payouts),
-            status: m.status
+        const models = await Promise.all(modelRes.rows.map(async m => {
+            const redisBalance = await redis.get(`model:${m.email.toLowerCase()}:balance`);
+            const balance = redisBalance !== null ? parseFloat(redisBalance) : parseFloat(m.balance);
+
+            return {
+                email: m.email,
+                pseudo: m.pseudo || m.first_name,
+                phone: m.phone,
+                registeredAt: m.registered_at,
+                lastLogin: m.last_login || m.registered_at,
+                balance: balance,
+                totalGains: parseFloat(m.total_gains),
+                totalPayouts: parseFloat(m.total_payouts),
+                status: m.status
+            };
         }));
 
         res.json({ models, total, page, totalPages: Math.ceil(total / limit) });
