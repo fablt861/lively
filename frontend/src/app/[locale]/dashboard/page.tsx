@@ -6,6 +6,10 @@ import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { ProfileSettingsModal } from "@/components/ProfileSettingsModal";
 import { PaywallModal } from "@/components/PaywallModal";
+import { io, Socket } from "socket.io-client";
+import { Phone, PhoneOff, X } from "lucide-react";
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live";
 
 interface FavoriteModel {
     email: string;
@@ -28,6 +32,41 @@ export default function CustomerDashboard() {
     const [loading, setLoading] = useState(true);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [showPaywall, setShowPaywall] = useState(false);
+    const [socket, setSocket] = useState<Socket | null>(null);
+    const [callingModel, setCallingModel] = useState<FavoriteModel | null>(null);
+    const [callStatus, setCallStatus] = useState<'calling' | 'rejected' | 'accepted' | null>(null);
+
+    useEffect(() => {
+        const newSocket = io(BACKEND_URL);
+        setSocket(newSocket);
+        
+        newSocket.on('direct_call_accepted', ({ roomId }) => {
+            setCallStatus('accepted');
+            setTimeout(() => {
+                window.location.href = `/${language}/live?room=${roomId}`;
+            }, 1500);
+        });
+
+        newSocket.on('direct_call_rejected', () => {
+            setCallStatus('rejected');
+            setTimeout(() => {
+                setCallingModel(null);
+                setCallStatus(null);
+            }, 3000);
+        });
+
+        newSocket.on('direct_call_error', ({ reason }) => {
+            if (reason === 'insufficient_credits') {
+                setShowPaywall(true);
+            }
+            setCallingModel(null);
+            setCallStatus(null);
+        });
+
+        return () => {
+            newSocket.disconnect();
+        }
+    }, [language]);
 
     useEffect(() => {
         const email = localStorage.getItem('kinky_user_email');
@@ -49,11 +88,16 @@ export default function CustomerDashboard() {
 
     const fetchFavorites = () => {
         if (!userEmail) return;
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/favorites/${userEmail}`)
+        fetch(`${BACKEND_URL}/api/favorites/${userEmail}`)
             .then(res => res.json())
             .then(data => {
                 if (Array.isArray(data)) {
-                    setFavorites(data);
+                    // Sort: Online models first
+                    const sorted = [...data].sort((a, b) => {
+                        if (a.isOnline === b.isOnline) return 0;
+                        return a.isOnline ? -1 : 1;
+                    });
+                    setFavorites(sorted);
                 }
             })
             .catch(console.error)
@@ -98,6 +142,28 @@ export default function CustomerDashboard() {
         } catch (err) {
             console.error(err);
         }
+    };
+
+    const handleDirectCall = (model: FavoriteModel) => {
+        if (!userInfo || userInfo.credits < 150) {
+            setShowPaywall(true);
+            return;
+        }
+        if (!socket) return;
+
+        setCallingModel(model);
+        setCallStatus('calling');
+
+        socket.emit('direct_call_request', {
+            targetEmail: model.email,
+            userEmail: userInfo.email,
+            userPseudo: userInfo.pseudo
+        });
+    };
+
+    const handleCancelCall = () => {
+        setCallingModel(null);
+        setCallStatus(null);
     };
 
     const handleProfileUpdate = (newEmail: string, newPseudo: string) => {
@@ -254,16 +320,14 @@ export default function CustomerDashboard() {
                                             </span>
                                         </div>
                                         <h3 className="text-2xl font-black text-white tracking-tight uppercase group-hover:text-indigo-400 transition-colors">{model.pseudo}</h3>
-                                        <button 
-                                            onClick={() => {
-                                                // Trigger matchmaking with specific model preference? 
-                                                // For now just go to live. 
-                                                window.location.href = `/${language}/live`;
-                                            }}
-                                            className="mt-4 flex items-center gap-2 text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] group/btn"
-                                        >
-                                            REJOINDRE <ChevronRight size={12} className="group-hover/btn:translate-x-1 transition-transform" />
-                                        </button>
+                                        {model.isOnline && (
+                                            <button 
+                                                onClick={() => handleDirectCall(model)}
+                                                className="mt-4 flex items-center gap-2 text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] group/btn hover:text-white transition-colors"
+                                            >
+                                                REJOINDRE <ChevronRight size={12} className="group-hover/btn:translate-x-1 transition-transform" />
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             ))}
@@ -282,6 +346,65 @@ export default function CustomerDashboard() {
             />
 
             {showPaywall && <PaywallModal onClose={() => setShowPaywall(false)} onPurchase={handlePurchase} />}
+
+            {/* Calling Overlay */}
+            {callingModel && (
+                <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-2xl flex flex-col items-center justify-center animate-in fade-in duration-500">
+                    <div className="relative">
+                        <div className="absolute inset-0 bg-indigo-500 rounded-full blur-[100px] opacity-20 animate-pulse" />
+                        <div className="relative w-48 h-48 md:w-64 md:h-64 rounded-[3rem] overflow-hidden border-2 border-white/10 shadow-2xl mb-12 transform hover:scale-105 transition-transform duration-700">
+                            <img 
+                                src={callingModel.photo_profile || "/images/avatars/model_1.png"} 
+                                alt={callingModel.pseudo}
+                                className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                        </div>
+                        
+                        {/* Pulse Ring */}
+                        {callStatus === 'calling' && (
+                            <>
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 border-2 border-white/5 rounded-full animate-ping" />
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 border border-white/5 rounded-full animate-ping [animation-delay:0.5s]" />
+                            </>
+                        )}
+                    </div>
+
+                    <div className="text-center space-y-4 max-w-md px-6">
+                        <h3 className="text-4xl md:text-6xl font-black tracking-tight text-white mb-2 uppercase">
+                            {callStatus === 'calling' ? 'APPELEE...' : 
+                             callStatus === 'rejected' ? 'OCCUPÉE' : 
+                             'ACCEPTÉ !'}
+                        </h3>
+                        <p className="text-indigo-400 font-black uppercase tracking-[0.3em] text-sm md:text-base">
+                            {callingModel.pseudo}
+                        </p>
+                        <p className="text-white/40 text-xs md:text-sm font-medium leading-relaxed mt-4">
+                            {callStatus === 'calling' ? 'Nous connectons votre session privée. Veuillez patienter...' :
+                             callStatus === 'rejected' ? 'La modèle est actuellement indisponible. Réessayez plus tard.' :
+                             'Préparation du chat vidéo...'}
+                        </p>
+                    </div>
+
+                    <div className="mt-16">
+                        {callStatus === 'calling' ? (
+                            <button 
+                                onClick={handleCancelCall}
+                                className="group flex items-center gap-4 bg-red-500/10 border border-red-500/20 text-red-500 px-10 py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all duration-300 transform active:scale-95"
+                            >
+                                <PhoneOff size={20} /> Annuler l'appel
+                            </button>
+                        ) : (
+                            <button 
+                                onClick={() => { setCallingModel(null); setCallStatus(null); }}
+                                className="flex items-center gap-4 bg-white/5 border border-white/10 text-white px-10 py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300"
+                            >
+                                <X size={20} /> Fermer
+                            </button>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

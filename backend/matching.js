@@ -47,6 +47,9 @@ function setupMatching(io, socket) {
             socket.userEmail = email?.toLowerCase(); // Persistent ID for registered users
             if (role === 'model' && socket.userEmail) {
                 await redis.sadd('online_models', socket.userEmail);
+                await redis.set(`user_socket:${socket.userEmail}`, socket.id, 'EX', 86400);
+            } else if (role === 'user' && socket.userEmail) {
+                await redis.set(`user_socket:${socket.userEmail}`, socket.id, 'EX', 86400);
             }
 
             // Get IP for guest tracking
@@ -160,6 +163,35 @@ function setupMatching(io, socket) {
             await redis.srem('online_models', socket.userEmail);
         }
         await updateQueuePositions(io, socket.role);
+    });
+
+    socket.on('join_direct_room', async ({ roomId, role, email, language }) => {
+        console.log(`[DirectCall] Socket ${socket.id} joining room ${roomId} as ${role}`);
+        socket.role = role;
+        socket.language = language || 'en';
+        socket.userEmail = email?.toLowerCase();
+        socket.currentRoom = roomId;
+        
+        await socket.join(roomId);
+        
+        // Notify the room that someone joined
+        socket.to(roomId).emit('partner_joined', { 
+            socketId: socket.id, 
+            role, 
+            email: socket.userEmail, 
+            name: socket.userEmail ? (await redis.hget(`profile:${socket.userEmail}`, 'pseudo') || socket.userEmail) : 'Guest'
+        });
+
+        // Start billing if it's a model-user pair and both are in
+        const roomSockets = await io.in(roomId).fetchSockets();
+        if (roomSockets.length === 2) {
+            const userSocket = roomSockets.find(s => s.role === 'user');
+            const modelSocket = roomSockets.find(s => s.role === 'model');
+            if (userSocket && modelSocket) {
+                console.log(`[DirectBilling] Starting billing for room ${roomId}`);
+                await startBilling(io, roomId, userSocket.userEmail, modelSocket.userEmail);
+            }
+        }
     });
 }
 

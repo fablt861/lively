@@ -79,6 +79,22 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
 
         setSocket(newSocket);
 
+        // Check for direct room parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const directRoom = urlParams.get('room');
+
+        if (directRoom) {
+            const email = localStorage.getItem("kinky_user_email") || null;
+            newSocket.emit("join_direct_room", { 
+                roomId: directRoom, 
+                role, 
+                email, 
+                language: navigator.language || "en" 
+            });
+            setIsMatching(false);
+            setIsCallConnected(true);
+        }
+
         return () => {
             console.log('[WebRTC Cleanup] Stopping local stream and disconnecting socket');
             if (localStreamRef.current) {

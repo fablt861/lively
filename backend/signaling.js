@@ -93,6 +93,47 @@ function setupSignaling(io, socket) {
             accepted: payload.accepted
         });
     });
+
+    socket.on('direct_call_request', async (payload) => {
+        const { targetEmail, userEmail, userPseudo } = payload;
+        const { getRedisClient } = require('./redis');
+        const redis = getRedisClient();
+
+        // 1. Verify Credits (min 150 for direct call)
+        const { hydrateUserCredits } = require('./balance');
+        const currentCredits = await hydrateUserCredits(userEmail);
+        if (currentCredits < 150) {
+            return socket.emit('direct_call_error', { reason: 'insufficient_credits' });
+        }
+
+        // 2. Find Model Socket
+        const modelSocketId = await redis.get(`user_socket:${targetEmail.toLowerCase()}`);
+        if (!modelSocketId) {
+            return socket.emit('direct_call_error', { reason: 'offline' });
+        }
+
+        // 3. Notify Model
+        io.to(modelSocketId).emit('direct_call_incoming', {
+            requestorEmail: userEmail,
+            requestorPseudo: userPseudo,
+            requestorSocketId: socket.id
+        });
+    });
+
+    socket.on('direct_call_response', async (payload) => {
+        const { requestorSocketId, accepted, modelEmail } = payload;
+        
+        if (accepted) {
+            // Create a custom private room name
+            const roomId = `direct-call-${Date.now()}`;
+            
+            // Notify both to join this room
+            io.to(requestorSocketId).emit('direct_call_accepted', { roomId, modelEmail });
+            socket.emit('direct_call_accepted', { roomId, requestorEmail: payload.requestorEmail });
+        } else {
+            io.to(requestorSocketId).emit('direct_call_rejected', { reason: 'busy' });
+        }
+    });
 }
 
 module.exports = { setupSignaling };

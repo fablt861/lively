@@ -65,6 +65,7 @@ export const viewport = {
 
 import { Suspense } from "react";
 import { MarketingTracker } from "@/components/MarketingTracker";
+import { CallListener } from "@/components/CallListener";
 
 export default async function RootLayout({
   children,
@@ -86,6 +87,7 @@ export default async function RootLayout({
           <Suspense fallback={null}>
             <MarketingTracker />
           </Suspense>
+          <CallListener />
           {children}
           <Footer />
         </LanguageProvider>
