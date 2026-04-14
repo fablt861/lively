@@ -42,9 +42,14 @@ function setupMatching(io, socket) {
             }
 
             socket.role = role;
+            socket.data.role = role;
 
             socket.language = language || 'en';
+            socket.data.language = socket.language;
+            
             socket.userEmail = email?.toLowerCase(); // Persistent ID for registered users
+            socket.data.userEmail = socket.userEmail;
+
             if (socket.userEmail) {
                 await socket.join(`email:${socket.userEmail}`);
                 if (role === 'model') {
@@ -56,6 +61,7 @@ function setupMatching(io, socket) {
             // Get IP for guest tracking
             const userIp = socket.handshake.headers['x-forwarded-for'] || socket.handshake.address;
             socket.userIp = userIp;
+            socket.data.userIp = userIp;
 
             console.log(`[Queue] Socket ${socket.id} joined as ${role}. IP: ${userIp}, Email: ${email}`);
 
@@ -178,53 +184,68 @@ function setupMatching(io, socket) {
     });
 
     socket.on('join_direct_room', async ({ roomId, role, email, language }) => {
-        console.log(`[DirectCall] Socket ${socket.id} joining room ${roomId} as ${role}`);
-        socket.role = role;
-        socket.language = language || 'en';
-        socket.userEmail = email?.toLowerCase();
-        socket.currentRoom = roomId;
-        
-        if (socket.userEmail) {
-            await socket.join(`email:${socket.userEmail}`);
-        }
-        await socket.join(roomId);
-        
-        // Notify the room that someone joined
-        socket.to(roomId).emit('partner_joined', { 
-            socketId: socket.id, 
-            role, 
-            email: socket.userEmail, 
-            name: socket.userEmail ? (await redis.hget(`profile:${socket.userEmail}`, 'pseudo') || socket.userEmail) : 'Guest'
-        });
+        try {
+            console.log(`[DirectCall] Socket ${socket.id} joining room ${roomId} as ${role}`);
+            socket.role = role;
+            socket.data.role = role;
+            
+            socket.language = language || 'en';
+            socket.data.language = socket.language;
 
-        // Start billing if it's a model-user pair and both are in
-        const roomSockets = await io.in(roomId).fetchSockets();
-        if (roomSockets.length === 2) {
-            const userSocket = roomSockets.find(s => s.role === 'user');
-            const modelSocket = roomSockets.find(s => s.role === 'model');
+            socket.userEmail = email?.toLowerCase();
+            socket.data.userEmail = socket.userEmail;
 
-            if (userSocket && modelSocket) {
-                console.log(`[DirectCall] Both parties in room ${roomId}. Emitting direct_matched_ready.`);
-                
-                // Fetch pseudo for both to include in the payload
-                const userPseudo = await redis.hget(`profile:${userSocket.userEmail}`, 'pseudo') || userSocket.userEmail;
-                const modelPseudo = await redis.hget(`profile:${modelSocket.userEmail}`, 'pseudo') || modelSocket.userEmail;
-
-                userSocket.emit('direct_matched_ready', {
-                    partnerEmail: modelSocket.userEmail,
-                    partnerPseudo: modelPseudo,
-                    partnerRole: 'model'
-                });
-
-                modelSocket.emit('direct_matched_ready', {
-                    partnerEmail: userSocket.userEmail,
-                    partnerPseudo: userPseudo,
-                    partnerRole: 'user'
-                });
-
-                console.log(`[DirectBilling] Starting billing for room ${roomId}`);
-                await startBilling(roomId, userSocket.userEmail, modelSocket.userEmail, userSocket.id, modelSocket.id);
+            socket.currentRoom = roomId;
+            socket.data.currentRoom = roomId;
+            
+            if (socket.userEmail) {
+                await socket.join(`email:${socket.userEmail}`);
             }
+            await socket.join(roomId);
+            
+            // Notify the room that someone joined
+            const myPseudo = socket.userEmail ? (await redis.hget(`profile:${socket.userEmail}`, 'pseudo') || socket.userEmail) : 'Guest';
+            socket.to(roomId).emit('partner_joined', { 
+                socketId: socket.id, 
+                role, 
+                email: socket.userEmail, 
+                name: myPseudo
+            });
+
+            // Start billing if it's a model-user pair and both are in
+            const roomSockets = await io.in(roomId).fetchSockets();
+            if (roomSockets.length === 2) {
+                const userSocket = roomSockets.find(s => s.data.role === 'user');
+                const modelSocket = roomSockets.find(s => s.data.role === 'model');
+
+                if (userSocket && modelSocket) {
+                    console.log(`[DirectCall] Both parties in room ${roomId}. Emitting direct_matched_ready.`);
+                    
+                    // Fetch pseudo for both to include in the payload
+                    const userEmail = userSocket.data.userEmail;
+                    const modelEmail = modelSocket.data.userEmail;
+
+                    const userPseudo = await redis.hget(`profile:${userEmail}`, 'pseudo') || userEmail;
+                    const modelPseudo = await redis.hget(`profile:${modelEmail}`, 'pseudo') || modelEmail;
+
+                    userSocket.emit('direct_matched_ready', {
+                        partnerEmail: modelEmail,
+                        partnerPseudo: modelPseudo,
+                        partnerRole: 'model'
+                    });
+
+                    modelSocket.emit('direct_matched_ready', {
+                        partnerEmail: userEmail,
+                        partnerPseudo: userPseudo,
+                        partnerRole: 'user'
+                    });
+
+                    console.log(`[DirectBilling] Starting billing for room ${roomId}`);
+                    await startBilling(roomId, userEmail, modelEmail, userSocket.id, modelSocket.id);
+                }
+            }
+        } catch (err) {
+            console.error('[DirectCall Error] Crash in join_direct_room:', err);
         }
     });
 }
