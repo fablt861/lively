@@ -382,11 +382,11 @@ async function disconnectFromRoom(io, socket, reason = 'unknown') {
             }
         }
 
+        // Stop billing for this room - this emits private_session_summary if needed
+        await stopBilling(roomId, reason);
+
         // Notify the room that a partner left
         socket.to(roomId).emit('partner_left', { reason });
-
-        // Stop billing for this room
-        await stopBilling(roomId, reason);
 
         socket.leave(roomId);
         socket.currentRoom = null;

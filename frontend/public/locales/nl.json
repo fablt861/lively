@@ -702,5 +702,8 @@
   "room.status_label": "STATUS",
   "room.private_summary_close": "Doorgaan",
   "room.exit_confirm_private_model": "Waarschuwing: je bent in een privésessie. Als je nu weggaat, zijn je inkomsten voor deze sessie 0$.",
-  "common.confirm": "Bevestigen"
+  "common.confirm": "Bevestigen",
+  "room.block_refused_title": "Verzoek afgewezen",
+  "room.block_refused_desc": "Het model heeft uw verzoek om een privésessie afgewezen.",
+  "common.close": "Sluiten"
 }

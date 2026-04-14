@@ -702,5 +702,8 @@
   "room.status_label": "СТАТУС",
   "room.private_summary_close": "Продолжить",
   "room.exit_confirm_private_model": "Предупреждение: вы находитесь на частной сессии. Если вы уйдете сейчас, ваш заработок за эту сессию составит 0$.",
-  "common.confirm": "Подтвердить"
+  "common.confirm": "Подтвердить",
+  "room.block_refused_title": "Запрос отклонен",
+  "room.block_refused_desc": "Модель отклонила ваш запрос на частную сессию.",
+  "common.close": "Закрыть"
 }

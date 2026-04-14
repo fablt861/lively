@@ -702,5 +702,8 @@
   "room.status_label": "STATUS",
   "room.private_summary_close": "Continue",
   "room.exit_confirm_private_model": "Warning: You are in a private session. If you leave now, your earnings for this session will be $0.",
-  "common.confirm": "Confirm"
+  "common.confirm": "Confirm",
+  "room.block_refused_title": "Request Declined",
+  "room.block_refused_desc": "The model has declined your private session request.",
+  "common.close": "Close"
 }

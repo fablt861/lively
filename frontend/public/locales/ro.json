@@ -702,5 +702,8 @@
   "room.status_label": "STATUT",
   "room.private_summary_close": "Continuă",
   "room.exit_confirm_private_model": "Avertisment: Sunteți într-o sesiune privată. Dacă plecați acum, câștigurile pentru această sesiune vor fi 0$.",
-  "common.confirm": "Confirmă"
+  "common.confirm": "Confirmă",
+  "room.block_refused_title": "Cerere refuzată",
+  "room.block_refused_desc": "Modelul a refuzat cererea dumneavoastră de sesiune privată.",
+  "common.close": "Închide"
 }

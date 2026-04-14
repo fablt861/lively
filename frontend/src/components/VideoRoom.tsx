@@ -113,6 +113,7 @@ export function VideoRoom({
     const [showNextConfirm, setShowNextConfirm] = useState(false);
     const [privateSummary, setPrivateSummary] = useState<any>(null);
     const [isRequeuingBlocked, setIsRequeuingBlocked] = useState(false);
+    const [showBlockRefused, setShowBlockRefused] = useState(false);
     const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     console.log(`[VideoRoom Render] isConnected: ${isConnected}, isMatching: ${isMatching}, remoteStream (bool): ${!!remoteStream}`);
@@ -226,7 +227,7 @@ export function VideoRoom({
             if (role === 'user') {
                 setIsWaitingForBlockResponse(false);
                 if (!payload.accepted) {
-                    alert(t('room.block_refused'));
+                    setShowBlockRefused(true);
                 }
             }
         };
@@ -1097,6 +1098,27 @@ export function VideoRoom({
                                 {t('common.cancel') || "Annuler"}
                             </button>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* BLOCK REFUSED MODAL (USER SIDE) */}
+            {showBlockRefused && (
+                <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+                    <div className="w-full max-w-sm bg-neutral-900 border border-white/10 rounded-[2rem] p-8 shadow-2xl text-center">
+                        <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <X className="text-red-500" size={32} />
+                        </div>
+                        <h3 className="text-xl font-bold mb-4">{t('room.block_refused_title')}</h3>
+                        <p className="text-white/60 text-sm mb-8 leading-relaxed">
+                            {t('room.block_refused_desc')}
+                        </p>
+                        <button
+                            onClick={() => setShowBlockRefused(false)}
+                            className="w-full py-4 bg-white/10 hover:bg-white/20 rounded-2xl font-bold transition-all text-white"
+                        >
+                            {t('common.close')}
+                        </button>
                     </div>
                 </div>
             )}

@@ -702,5 +702,8 @@
   "room.status_label": "СТАТУС",
   "room.private_summary_close": "Продовжити",
   "room.exit_confirm_private_model": "Попередження: ви перебуваєте на приватній сесії. Якщо ви підете зараз, ваш заробіток за цю сесію складе 0$.",
-  "common.confirm": "Підтвердити"
+  "common.confirm": "Підтвердити",
+  "room.block_refused_title": "Запит відхилено",
+  "room.block_refused_desc": "Модель відхилила ваш запит на приватну сесію.",
+  "common.close": "Закрити"
 }

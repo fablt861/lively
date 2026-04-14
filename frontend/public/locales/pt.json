@@ -702,5 +702,8 @@
   "room.status_label": "STATUS",
   "room.private_summary_close": "Continuar",
   "room.exit_confirm_private_model": "Aviso: Você está em uma sessão privada. Se você sair agora, seus ganhos para esta sessão serão de 0$.",
-  "common.confirm": "Confirmar"
+  "common.confirm": "Confirmar",
+  "room.block_refused_title": "Pedido recusado",
+  "room.block_refused_desc": "A modelo recusou o seu pedido de sessão privada.",
+  "common.close": "Fechar"
 }

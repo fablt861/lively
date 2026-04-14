@@ -702,5 +702,8 @@
   "room.status_label": "STATUS",
   "room.private_summary_close": "Fortsett",
   "room.exit_confirm_private_model": "Advarsel: Du er i en privat økt. Hvis du drar nå, vil inntjeningen din for denne økten være 0$.",
-  "common.confirm": "Bekreft"
+  "common.confirm": "Bekreft",
+  "room.block_refused_title": "Forespørsel avvist",
+  "room.block_refused_desc": "Modellen har avvist din forespørsel om en privat økt.",
+  "common.close": "Lukk"
 }

@@ -702,5 +702,8 @@
   "room.status_label": "STATUS",
   "room.private_summary_close": "Weiter",
   "room.exit_confirm_private_model": "Warnung: Sie befinden sich in einer privaten Sitzung. Wenn Sie jetzt gehen, beträgt Ihr Verdienst für diese Sitzung 0$.",
-  "common.confirm": "Bestätigen"
+  "common.confirm": "Bestätigen",
+  "room.block_refused_title": "Anfrage abgelehnt",
+  "room.block_refused_desc": "Das Modell hat Ihre private Sitzungsanfrage abgelehnt.",
+  "common.close": "Schließen"
 }

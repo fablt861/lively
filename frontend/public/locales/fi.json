@@ -702,5 +702,8 @@
   "room.status_label": "TILA",
   "room.private_summary_close": "Jatka",
   "room.exit_confirm_private_model": "Varoitus: Olet yksityisessä istunnossa. Jos lähdet nyt, ansiosi tästä istunnosta ovat 0$.",
-  "common.confirm": "Vahvista"
+  "common.confirm": "Vahvista",
+  "room.block_refused_title": "Pyyntö hylätty",
+  "room.block_refused_desc": "Malli on hylännyt yksityisistuntopyyntösi.",
+  "common.close": "Sulje"
 }

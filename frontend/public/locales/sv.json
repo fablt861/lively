@@ -702,5 +702,8 @@
   "room.status_label": "STATUS",
   "room.private_summary_close": "Fortsätt",
   "room.exit_confirm_private_model": "Varning: Du är i en privat session. Om du lämnar nu kommer dina intäkter för denna session att vara 0$.",
-  "common.confirm": "Bekräfta"
+  "common.confirm": "Bekräfta",
+  "room.block_refused_title": "Begäran avslogs",
+  "room.block_refused_desc": "Modellen har avböjt din begäran om en privat session.",
+  "common.close": "Stäng"
 }
