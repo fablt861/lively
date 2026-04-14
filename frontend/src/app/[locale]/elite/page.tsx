@@ -201,10 +201,12 @@ export default function ModelLandingPage() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 {[
                                     { icon: Lock, title: t('model.benefit.anon_title'), desc: t('model.benefit.anon_desc'), color: 'indigo' },
-                                    { icon: DollarSign, title: t('model.benefit.payout_title'), desc: t('model.benefit.payout_desc'), color: 'pink' },
-                                    { icon: Zap, title: t('model.benefit.flex_title'), desc: t('model.benefit.flex_desc'), color: 'purple' },
-                                    { icon: Globe, title: t('model.landing.hero_badge'), desc: t('model.landing.hero_desc'), color: 'blue' }
-                                ].slice(0, 3).map((item, i) => (
+                                    { icon: ShieldOff, title: t('model.benefit.geoblock_title'), desc: t('model.benefit.geoblock_desc'), color: 'blue' },
+                                    { icon: Star, title: t('model.benefit.private_title'), desc: t('model.benefit.private_desc'), color: 'purple' },
+                                    { icon: Heart, title: t('model.benefit.favorites_title'), desc: t('model.benefit.favorites_desc'), color: 'pink' },
+                                    { icon: DollarSign, title: t('model.benefit.payout_title'), desc: t('model.benefit.payout_desc'), color: 'indigo' },
+                                    { icon: Zap, title: t('model.benefit.flex_title'), desc: t('model.benefit.flex_desc'), color: 'purple' }
+                                ].map((item, i) => (
                                     <div key={i} className="space-y-3">
                                         <div className={`w-10 h-10 rounded-xl bg-${item.color}-500/20 border border-${item.color}-500/30 flex items-center justify-center text-${item.color}-400`}>
                                             <item.icon size={20} />
