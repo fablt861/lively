@@ -513,13 +513,13 @@
   "model.signup.step2_title": "Contact Direct",
   "model.signup.step2_title_short": "Contact",
   "model.signup.step3_btn": "Créer le profil",
-  "model.signup.step3_desc": "Ces informations seront visibles par les clients (sauf email/pass).",
+  "model.signup.step3_desc": "Rejoignez notre communauté de créatrices d'élite. Vos informations personnelles restent strictement confidentielles.",
   "model.signup.step3_dob": "NÉ(E) LE",
   "model.signup.step3_email": "Adresse Email",
   "model.signup.step3_firstName": "Prénom",
   "model.signup.step3_lastName": "Nom",
   "model.signup.step3_password": "Mot de passe",
-  "model.signup.step3_title": "Identité publique",
+  "model.signup.step3_title": "Votre Profil Privé",
   "model.signup.step3_title_short": "Identité",
   "model.signup.step4_btn": "Envoyer ma demande",
   "model.signup.step4_change": "Changer la photo",
@@ -771,5 +771,8 @@
   "seo.dashboard.title": "Tableau de Bord | Gérez votre Expérience Kinky.live",
   "seo.dashboard.description": "Accédez à votre profil, vérifiez votre solde et gérez vos interactions sur Kinky.live.",
   "seo.live.title": "Live Match | Chat Vidéo Privé Kinky.live",
-  "seo.live.description": "Entrez dans le salon pour une session vidéo privée sécurisée et anonyme. Vivez une expérience unique avec des partenaires haut de gamme."
+  "seo.live.description": "Entrez dans le salon pour une session vidéo privée sécurisée et anonyme. Vivez une expérience unique avec des partenaires haut de gamme.",
+  "model.signup.step3_password_confirm": "Confirmer le mot de passe",
+  "model.signup.error.password_mismatch": "Les mots de passe ne correspondent pas.",
+  "model.signup.error.terms_required": "Vous devez accepter les conditions générales."
 }

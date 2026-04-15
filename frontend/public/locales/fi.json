@@ -493,13 +493,13 @@
   "model.signup.step2_title": "Suora kontakti",
   "model.signup.step2_title_short": "Yhteystiedot",
   "model.signup.step3_btn": "Luo profiili",
-  "model.signup.step3_desc": "Nämä tiedot näkyvät asiakkaille (paitsi sähköposti/salasana).",
+  "model.signup.step3_desc": "Liity eliittiluojien yhteisöömme. Henkilökohtaiset tietosi pidetään tiukan luottamuksellisina.",
   "model.signup.step3_dob": "SYNTYNYT",
   "model.signup.step3_email": "Sähköpostiosoite",
   "model.signup.step3_firstName": "First Name",
   "model.signup.step3_lastName": "Last Name",
   "model.signup.step3_password": "Salasana",
-  "model.signup.step3_title": "Julkinen identiteetti",
+  "model.signup.step3_title": "Yksityinen profiilisi",
   "model.signup.step3_title_short": "Henkilöllisyys",
   "model.signup.step4_btn": "Lähetä pyyntöni",
   "model.signup.step4_change": "Vaihda kuva",
@@ -751,5 +751,8 @@
   "seo.dashboard.title": "Dashboard | Hallitse Kinky.live-kokemustasi",
   "seo.dashboard.description": "Pääset profiiliisi, tarkista saldosi ja hallitse vuorovaikutustasi Kinky.livessä.",
   "seo.live.title": "Live Match | Kinky.live yksityinen videochat",
-  "seo.live.description": "Astu huoneeseen turvallista ja anonyymiä yksityistä videoistuntoa varten. Koe todellinen taika huippuluokan kumppaneiden kanssa."
+  "seo.live.description": "Astu huoneeseen turvallista ja anonyymiä yksityistä videoistuntoa varten. Koe todellinen taika huippuluokan kumppaneiden kanssa.",
+  "model.signup.step3_password_confirm": "Vahvista salasana",
+  "model.signup.error.password_mismatch": "Salasanat eivät täsmää.",
+  "model.signup.error.terms_required": "Sinun on hyväksyttävä ehdot."
 }

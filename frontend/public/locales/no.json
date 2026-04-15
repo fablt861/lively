@@ -493,13 +493,13 @@
   "model.signup.step2_title": "Direkte kontakt",
   "model.signup.step2_title_short": "Kontakt",
   "model.signup.step3_btn": "Opprett profil",
-  "model.signup.step3_desc": "Denne informasjonen vil være synlig for kunder (unntatt e-post/passord).",
+  "model.signup.step3_desc": "Bli med i vårt fellesskap av elite-skapere. Dine personopplysninger holdes strengt konfidentielle.",
   "model.signup.step3_dob": "FØDT DEN",
   "model.signup.step3_email": "E-postadresse",
   "model.signup.step3_firstName": "First Name",
   "model.signup.step3_lastName": "Last Name",
   "model.signup.step3_password": "Passord",
-  "model.signup.step3_title": "Offentlig identitet",
+  "model.signup.step3_title": "Din private profil",
   "model.signup.step3_title_short": "Identitet",
   "model.signup.step4_btn": "Send min forespørsel",
   "model.signup.step4_change": "Bytt bilde",
@@ -751,5 +751,8 @@
   "seo.dashboard.title": "Dashbord | Administrer din Kinky.live-opplevelse",
   "seo.dashboard.description": "Få tilgang til profilen din, sjekk saldoen din og administrer interaksjonene dine på Kinky.live.",
   "seo.live.title": "Live Match | Kinky.live privat videochat",
-  "seo.live.description": "Gå inn i rommet for en sikker og anonym privat videosesjon. Opplev ekte magi med eksklusive partnere."
+  "seo.live.description": "Gå inn i rommet for en sikker og anonym privat videosesjon. Opplev ekte magi med eksklusive partnere.",
+  "model.signup.step3_password_confirm": "Bekreft passord",
+  "model.signup.error.password_mismatch": "Passordene samsvarer ikke.",
+  "model.signup.error.terms_required": "Du må godta vilkårene."
 }

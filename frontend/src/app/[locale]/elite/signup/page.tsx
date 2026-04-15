@@ -39,6 +39,8 @@ export default function ModelSignupPage() {
     const [dob, setDob] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [agreedToTerms, setAgreedToTerms] = useState(false);
     const [photoProfile, setPhotoProfile] = useState<string | null>(null);
     const [photoId, setPhotoId] = useState<string | null>(null);
     const [photoIdSelfie, setPhotoIdSelfie] = useState<string | null>(null);
@@ -104,6 +106,16 @@ export default function ModelSignupPage() {
             // Password length
             if (password.length < 8) {
                 setValidationError(t('model.signup.error.password_short'));
+                return false;
+            }
+            // Password confirmation check
+            if (password !== confirmPassword) {
+                setValidationError(t('model.signup.error.password_mismatch') || "Passwords do not match");
+                return false;
+            }
+            // CGV Check
+            if (!agreedToTerms) {
+                setValidationError(t('model.signup.error.terms_required') || "You must agree to the terms and conditions");
                 return false;
             }
             // Age Check (18+)
@@ -388,8 +400,8 @@ export default function ModelSignupPage() {
                                         <input type="text" value={pseudo} onChange={e => setPseudo(e.target.value)} placeholder={t('login.pseudo_placeholder')} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" />
                                     </div>
                                     <div className="relative group">
-                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 text-xs font-bold uppercase tracking-widest">{t('model.signup.step3_dob')}</div>
-                                        <input type="date" value={dob} onChange={e => setDob(e.target.value)} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-24 pr-4 text-white/90 focus:outline-none focus:border-white/40 transition-all [&::-webkit-calendar-picker-indicator]:filter-[invert(0.5)]" />
+                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 text-[9px] sm:text-xs font-bold uppercase tracking-widest pointer-events-none truncate max-w-[80px] sm:max-w-none">{t('model.signup.step3_dob')}</div>
+                                        <input type="date" value={dob} onChange={e => setDob(e.target.value)} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-24 sm:pl-32 pr-4 text-white/90 focus:outline-none focus:border-white/40 transition-all [&::-webkit-calendar-picker-indicator]:filter-[invert(0.5)] text-xs sm:text-sm" />
                                     </div>
 
                                     <div className="h-px bg-white/5 w-full my-4"></div>
@@ -402,11 +414,33 @@ export default function ModelSignupPage() {
                                         <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
                                         <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder={t('model.signup.step3_password')} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" />
                                     </div>
+                                    <div className="relative group">
+                                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
+                                        <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder={t('model.signup.step3_password_confirm') || "Confirm Password"} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" />
+                                    </div>
+
+                                    {/* CGV Checkbox */}
+                                    <div className="pt-4 px-2">
+                                        <label className="flex items-start gap-3 cursor-pointer group">
+                                            <div className="relative flex items-center mt-1">
+                                                <input 
+                                                    type="checkbox" 
+                                                    className="peer appearance-none w-5 h-5 rounded-md border border-white/20 bg-black/40 checked:bg-pink-500 checked:border-pink-500 transition-all cursor-pointer"
+                                                    checked={agreedToTerms}
+                                                    onChange={e => setAgreedToTerms(e.target.checked)}
+                                                />
+                                                <Check className="absolute w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity left-[3px] pointer-events-none" />
+                                            </div>
+                                            <span className="text-[10px] sm:text-xs text-white/50 leading-relaxed font-medium group-hover:text-white/70 transition-colors">
+                                                {t('signup.terms_label_prefix')} <Link href={`/${language}/terms`} target="_blank" className="text-pink-400 hover:underline font-bold">{t('signup.terms_label_link')}</Link> {t('signup.terms_label_suffix')}
+                                            </span>
+                                        </label>
+                                    </div>
                                 </div>
 
                                 <button
                                     onClick={handleNext}
-                                    disabled={!firstName || !lastName || !pseudo || !dob || !email || !password}
+                                    disabled={!firstName || !lastName || !pseudo || !dob || !email || !password || !confirmPassword || !agreedToTerms}
                                     className="w-full mt-6 bg-gradient-to-r from-indigo-500 to-purple-600 hover:opacity-90 text-white font-bold py-5 rounded-full flex items-center justify-center gap-3 transition-all disabled:opacity-30 shadow-xl active:scale-95"
                                 >
                                     {t('model.signup.step3_btn')} <ArrowRight size={20} />

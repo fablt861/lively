@@ -87,7 +87,7 @@ export default function ModelLandingPage() {
                             <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
                                 <Star size={20} className="fill-purple-400" />
                             </div>
-                            <span className="text-sm md:text-base font-black text-white leading-none tracking-tight">
+                            <span className="text-xl font-black text-white leading-none tracking-tight">
                                 {t('model.stat.best_market')}
                             </span>
                         </div>
@@ -158,7 +158,7 @@ export default function ModelLandingPage() {
                             </div>
                         </div>
                         <div className="group relative overflow-hidden rounded-3xl bg-white/5 border border-white/10 aspect-[4/3] hover:border-indigo-500/50 transition-all duration-500">
-                            <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&auto=format&fit=crop&q=60" alt="Wealth and Success" className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
+                            <img src="/images/girls_success.png" alt="High Earnings" className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
                             <div className="absolute bottom-6 left-6">
                                 <p className="text-[10px] font-black text-white uppercase tracking-widest">{t('model.landing.live_cam_feat3')}</p>
@@ -228,7 +228,7 @@ export default function ModelLandingPage() {
                     <div className="space-y-6">
                         <h2 className="text-5xl md:text-6xl font-black tracking-tight leading-[0.95]">
                             {t('model.landing.footer_title_line1')} <br /> 
-                            <span className="text-white/20">{t('model.landing.footer_title_line2')}</span>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 drop-shadow-[0_0_15px_rgba(168,85,247,0.3)]">{t('model.landing.footer_title_line2')}</span>
                         </h2>
                     </div>
 

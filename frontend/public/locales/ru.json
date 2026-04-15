@@ -493,13 +493,13 @@
   "model.signup.step2_title": "Прямой контакт",
   "model.signup.step2_title_short": "Контакт",
   "model.signup.step3_btn": "Создать профиль",
-  "model.signup.step3_desc": "Эта информация будет видна клиентам (кроме email/пароля).",
+  "model.signup.step3_desc": "Присоединяйтесь к нашему сообществу элитных создателей. Ваши личные данные строго конфиденциальны.",
   "model.signup.step3_dob": "ДАТА РОЖДЕНИЯ",
   "model.signup.step3_email": "Адрес электронной почты",
   "model.signup.step3_firstName": "First Name",
   "model.signup.step3_lastName": "Last Name",
   "model.signup.step3_password": "Пароль",
-  "model.signup.step3_title": "Публичная личность",
+  "model.signup.step3_title": "Ваш личный профиль",
   "model.signup.step3_title_short": "Личность",
   "model.signup.step4_btn": "Отправить мой запрос",
   "model.signup.step4_change": "Сменить фото",
@@ -751,5 +751,8 @@
   "seo.dashboard.title": "Панель управления | Управляйте своим аккаунтом Kinky.live",
   "seo.dashboard.description": "Доступ к профилю, проверка баланса и управление общением на Kinky.live.",
   "seo.live.title": "Live Match | Приватный видеочат Kinky.live",
-  "seo.live.description": "Войдите в комнату для безопасного и анонимного приватного видеосеанса. Ощутите настоящую магию."
+  "seo.live.description": "Войдите в комнату для безопасного и анонимного приватного видеосеанса. Ощутите настоящую магию.",
+  "model.signup.step3_password_confirm": "Подтвердите пароль",
+  "model.signup.error.password_mismatch": "Пароли не совпадают.",
+  "model.signup.error.terms_required": "Вы должны согласиться с условиями и положениями."
 }

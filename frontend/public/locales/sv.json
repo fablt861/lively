@@ -493,13 +493,13 @@
   "model.signup.step2_title": "Direktkontakt",
   "model.signup.step2_title_short": "Kontakt",
   "model.signup.step3_btn": "Skapa profil",
-  "model.signup.step3_desc": "Denna information kommer att vara synlig för kunder (förutom e-post/lösenord).",
+  "model.signup.step3_desc": "Gå med i vår gemenskap av elitkreatörer. Dina personuppgifter hålls strikt konfidentiella.",
   "model.signup.step3_dob": "FÖDD DEN",
   "model.signup.step3_email": "E-postadress",
   "model.signup.step3_firstName": "First Name",
   "model.signup.step3_lastName": "Last Name",
   "model.signup.step3_password": "Lösenord",
-  "model.signup.step3_title": "Offentlig identitet",
+  "model.signup.step3_title": "Din privata profil",
   "model.signup.step3_title_short": "Identitet",
   "model.signup.step4_btn": "Skicka min ansökan",
   "model.signup.step4_change": "Byt foto",
@@ -751,5 +751,8 @@
   "seo.dashboard.title": "Instrumentpanel | Hantera din Kinky.live-upplevelse",
   "seo.dashboard.description": "Få tillgång till din profil, kontrollera ditt saldo och hantera dina interaktioner på Kinky.live.",
   "seo.live.title": "Live Match | Kinky.live privat videochatt",
-  "seo.live.description": "Gå in i rummet för en säker och anonym privat videosession. Upplev äkta magi med exklusiva partners."
+  "seo.live.description": "Gå in i rummet för en säker och anonym privat videosession. Upplev äkta magi med exklusiva partners.",
+  "model.signup.step3_password_confirm": "Bekräfta lösenord",
+  "model.signup.error.password_mismatch": "Lösenorden matchar inte.",
+  "model.signup.error.terms_required": "Du måste godkänna villkoren."
 }

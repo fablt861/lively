@@ -493,13 +493,13 @@
   "model.signup.step2_title": "Direct Contact",
   "model.signup.step2_title_short": "Contact",
   "model.signup.step3_btn": "Profiel aanmaken",
-  "model.signup.step3_desc": "Deze informatie is zichtbaar voor klanten (behalve e-mail/wachtwoord).",
+  "model.signup.step3_desc": "Word lid van onze gemeenschap van elite-creators. Je persoonlijke gegevens worden strikt vertrouwelijk behandeld.",
   "model.signup.step3_dob": "GEBOREN OP",
   "model.signup.step3_email": "E-mailadres",
   "model.signup.step3_firstName": "First Name",
   "model.signup.step3_lastName": "Last Name",
   "model.signup.step3_password": "Wachtwoord",
-  "model.signup.step3_title": "Publieke identiteit",
+  "model.signup.step3_title": "Je privéprofiel",
   "model.signup.step3_title_short": "Identiteit",
   "model.signup.step4_btn": "Mijn aanvraag verzenden",
   "model.signup.step4_change": "Foto wijzigen",
@@ -751,5 +751,8 @@
   "seo.dashboard.title": "Dashboard | Beheer uw Kinky.live-ervaring",
   "seo.dashboard.description": "Toegang tot uw profiel, controleer uw saldo en beheer uw interacties op Kinky.live.",
   "seo.live.title": "Live Match | Kinky.live Privé Video Chat",
-  "seo.live.description": "Betreed de kamer voor een veilige en anonieme privé videosessie. Ervaar echte magie met high-end partners."
+  "seo.live.description": "Betreed de kamer voor een veilige en anonieme privé videosessie. Ervaar echte magie met high-end partners.",
+  "model.signup.step3_password_confirm": "Wachtwoord bevestigen",
+  "model.signup.error.password_mismatch": "Wachtwoorden komen niet overeen.",
+  "model.signup.error.terms_required": "Je moet akkoord gaan met de voorwaarden."
 }
