@@ -1191,7 +1191,7 @@ export default function AdminPage() {
                                             >
                                                 <CheckCircle size={18} /> {t('admin.validations.validate')}
                                             </button>
-                                        </div>                </div>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -1262,6 +1262,7 @@ export default function AdminPage() {
                                                 <div className="text-[10px] font-mono text-neutral-500 whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]" title={`${u.marketing?.src || 'direct'} / ${u.marketing?.camp || '-'} / ${u.marketing?.ad || '-'}`}>
                                                     {u.marketing?.src || 'direct'} / {u.marketing?.camp || '-'} / {u.marketing?.ad || '-'}
                                                 </div>
+                                             </td>
                                              <td className="p-5 text-right space-x-2">
                                                 <button
                                                     onClick={async () => {
@@ -1386,6 +1387,7 @@ export default function AdminPage() {
                                                 <div className="text-[10px] font-mono text-neutral-500 whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]" title={`${m.marketing?.src || 'direct'} / ${m.marketing?.camp || '-'} / ${m.marketing?.ad || '-'}`}>
                                                     {m.marketing?.src || 'direct'} / {m.marketing?.camp || '-'} / {m.marketing?.ad || '-'}
                                                 </div>
+                                             </td>
                                              <td className="p-5 text-right space-x-2">
                                                 <button
                                                     onClick={async () => {
