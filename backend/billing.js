@@ -310,7 +310,7 @@ async function stopBilling(roomId, reason = 'unknown') {
 
     if (parseFloat(totalModelEarned) > 0 || parseFloat(userSpentCredits) > 0 || session.isBlocked) {
         await logRevenue(userSpentUsd);
-        await logModelPayout(parseFloat(normalEarned));
+        await logModelPayout(parseFloat(totalModelEarned));
         await redis.incrbyfloat(`model:${modelId}:balance`, 0); // Trigger balance sync if needed
         await redis.incrbyfloat(`user:${userId}:total_spent`, userSpentUsd);
         
@@ -407,7 +407,7 @@ async function transitionFromBlock(roomId, session, blockData) {
         }
 
         // 7. Log Partial Payout
-        await logModelPayout(totalBlockGain);
+        // logModelPayout removed to prevent double-counting when session finally stops
         
         console.log(`[Billing Transition] Room ${roomId}: Successfully transitioned back to normal billing.`);
     } catch (err) {
