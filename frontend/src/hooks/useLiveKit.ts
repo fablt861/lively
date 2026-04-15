@@ -72,6 +72,9 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     const lkRoom = new Room({
       adaptiveStream: true,
       dynacast: true,
+      videoCaptureDefaults: {
+        resolution: VideoPresets.h720.resolution,
+      },
       publishDefaults: {
         simulcast: true,
         videoCodec: 'vp8',
@@ -138,13 +141,8 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
 
         await room.connect("wss://live.kinky.live", token);
         
-        // Publish local tracks
-        // Publish local tracks with HD 720p preset
-        await room.localParticipant.enableCameraAndMicrophone({
-          video: {
-            resolution: VideoPresets.h720.resolution,
-          }
-        });
+        // Publish local tracks (uses the HD 720p defaults set in constructor)
+        await room.localParticipant.enableCameraAndMicrophone();
         console.log("[LiveKit] Tracks published");
       } catch (err) {
         console.error("[LiveKit] Connection error:", err);
