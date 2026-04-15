@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles, Lock, Timer, Check, Plus, Heart, Smile, Signal, Wifi } from "lucide-react";
 import EmojiPicker, { Theme } from 'emoji-picker-react';
-import { LiveKitRoom, VideoTrack, useTracks, AudioConference, TrackLoop } from '@livekit/components-react';
+import { LiveKitRoom, VideoTrack, useTracks, AudioConference, TrackLoop, isTrackReference } from '@livekit/components-react';
 import { Track, RemoteParticipant, LocalParticipant } from 'livekit-client';
 import { CallListener } from './CallListener';
 import { useTranslation } from "@/context/LanguageContext";
@@ -130,8 +130,8 @@ export function VideoRoom({
         { room, onlySubscribed: true },
     );
 
-    const remoteVideoTrack = tracks.find(t => t.participant instanceof RemoteParticipant && t.source === Track.Source.Camera);
-    const localVideoTrack = tracks.find(t => t.participant instanceof LocalParticipant && t.source === Track.Source.Camera);
+    const remoteVideoTrack = tracks.find(t => isTrackReference(t) && t.participant instanceof RemoteParticipant && t.source === Track.Source.Camera);
+    const localVideoTrack = tracks.find(t => isTrackReference(t) && t.participant instanceof LocalParticipant && t.source === Track.Source.Camera);
 
     const [isAudioMuted, setIsAudioMuted] = useState(false);
     const [isVideoMuted, setIsVideoMuted] = useState(false);
