@@ -63,7 +63,7 @@ const { setupSignaling } = require('./signaling');
 const { initBillingLoop, getModelStats } = require('./billing');
 const { initSettings } = require('./settings');
 app.get('/health', (req, res) => {
-  res.json({ status: 'OK', version: '2026-04-15_v13_deploy_fix', timestamp: new Date().toISOString() });
+  res.json({ status: 'OK', version: '2026-04-15_v14_syntax_fix', timestamp: new Date().toISOString() });
 });
 
 // Load and mount routes

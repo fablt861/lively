@@ -139,7 +139,6 @@ function initBillingLoop(io) {
                             await stopBilling(roomId);
                             continue;
                         }
-                        }
                     } else {
                         // Guest user: increment time used (no block logic for guests usually, but we keep it safe)
                         const used = await redis.incrby(`free_secs:${session.userId}`, 1);
