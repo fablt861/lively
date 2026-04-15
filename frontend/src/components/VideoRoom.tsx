@@ -1460,7 +1460,7 @@ function ChatMessage({ message, isMe }: { message: any; isMe: boolean }) {
                     <div className="flex flex-col gap-1">
                         <span className="leading-relaxed">
                             {message.senderPseudo && (
-                                <span className={`font-black mr-1.5 ${
+                                <span className={`font-black mr-1.5 capitalize ${
                                     message.senderRole === 'model' 
                                     ? 'text-pink-600' 
                                     : 'text-sky-600'
