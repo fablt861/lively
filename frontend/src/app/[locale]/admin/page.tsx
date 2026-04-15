@@ -1172,6 +1172,7 @@ export default function AdminPage() {
                                                     />
                                                 </div>
                                             ))}
+                                        </div>
                                          <div className="flex gap-4 mt-2">
                                             <button
                                                 onClick={async () => {
@@ -1193,8 +1194,7 @@ export default function AdminPage() {
                                             </button>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
                             </div>
                         )}
                     </div>
