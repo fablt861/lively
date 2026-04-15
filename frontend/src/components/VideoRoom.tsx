@@ -124,7 +124,7 @@ export function VideoRoom({
     // LiveKit Track hooks (must be used inside LiveKitRoom or passed room)
     const tracks = useTracks(
         [
-            { source: Track.Source.Camera, withPlaceholder: true },
+            { source: Track.Source.Camera, withPlaceholder: false },
             { source: Track.Source.ScreenShare, withPlaceholder: false },
         ],
         { room, onlySubscribed: true },
