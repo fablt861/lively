@@ -127,11 +127,11 @@ export function VideoRoom({
             { source: Track.Source.Camera, withPlaceholder: false },
             { source: Track.Source.ScreenShare, withPlaceholder: false },
         ],
-        { room, onlySubscribed: true },
-    );
+        { room: room || undefined, onlySubscribed: true },
+    ).filter(t => isTrackReference(t)); // Ensure we only have valid tracks
 
-    const remoteVideoTrack = tracks.find(t => isTrackReference(t) && t.participant instanceof RemoteParticipant && t.source === Track.Source.Camera) as any;
-    const localVideoTrack = tracks.find(t => isTrackReference(t) && t.participant instanceof LocalParticipant && t.source === Track.Source.Camera) as any;
+    const remoteVideoTrack = room ? tracks.find(t => t.participant instanceof RemoteParticipant && t.source === Track.Source.Camera) : null;
+    const localVideoTrack = room ? tracks.find(t => t.participant instanceof LocalParticipant && t.source === Track.Source.Camera) : null;
 
     const [isAudioMuted, setIsAudioMuted] = useState(false);
     const [isVideoMuted, setIsVideoMuted] = useState(false);
@@ -729,7 +729,11 @@ export function VideoRoom({
 
 
     return (
-        <div className="flex flex-col md:flex-row h-[100dvh] w-full bg-neutral-950 text-white font-sans overflow-hidden no-scroll overscroll-none touch-none">
+        <LiveKitRoom
+            room={room || undefined}
+            data-testid="livekit-room"
+        >
+            <div className="flex flex-col md:flex-row h-[100dvh] w-full bg-neutral-950 text-white font-sans overflow-hidden no-scroll overscroll-none touch-none">
             {!hasStartedMatch && (
                 <PreMatchModal localStream={localStream} onJoin={handleStartMatch} role={role as any} />
             )}
@@ -903,7 +907,13 @@ export function VideoRoom({
                             className={`w-full h-full object-cover ${isVideoMuted ? "opacity-0" : "opacity-100"}`}
                         />
                     ) : (
-                        <div className="w-full h-full bg-neutral-800" />
+                        <video
+                            ref={localVideoRef}
+                            autoPlay
+                            playsInline
+                            muted
+                            className={`w-full h-full object-cover ${(isVideoMuted || !localStream) ? "opacity-0" : "opacity-100"}`}
+                        />
                     )}
                     
                     {/* Mobile Mic Toggle Overlay */}
@@ -1465,7 +1475,7 @@ export function VideoRoom({
             <CallListener />
             {/* LiveKit Audio Handling */}
             {isConnected && room && <AudioConference />}
-        </div>
+        </LiveKitRoom>
     );
 }
 
