@@ -74,7 +74,7 @@ interface VideoRoomProps {
     socket: any;
     role: "user" | "model" | null;
     onNext: () => void;
-    handleOutOfCredits: () => void;
+    handleOutOfCredits?: () => void;
     partnerInfo: { id: string; role: string; name: string } | null;
     language: string;
     onCreditsUpdate: (credits: number) => void;

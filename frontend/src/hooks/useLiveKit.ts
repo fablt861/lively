@@ -235,6 +235,7 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     cameraPermissionError,
     connectionQuality,
     previewStream,
+    handleOutOfCredits: () => {}, // Compatibility stub
     retryCamera: () => {}, // Handled by LiveKit internally or via re-connect
   };
 }
