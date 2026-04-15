@@ -72,14 +72,16 @@ function setupSignaling(io, socket) {
 
         // 4. Get Sender Pseudo and Role
         let senderPseudo = 'Guest';
-        const senderRole = socket.role || 'user';
+        // Use socket.data.role as primary, fallback to socket.role or 'user'
+        const senderRole = socket.data?.role || socket.role || 'user';
+        const userEmail = socket.data?.userEmail || socket.userEmail;
 
-        if (socket.userEmail) {
-            const cachedPseudo = await redis.hget(`profile:${socket.userEmail.toLowerCase()}`, 'pseudo');
+        if (userEmail) {
+            const cachedPseudo = await redis.hget(`profile:${userEmail.toLowerCase()}`, 'pseudo');
             if (cachedPseudo) {
                 senderPseudo = cachedPseudo;
             } else {
-                senderPseudo = socket.userEmail.split('@')[0];
+                senderPseudo = userEmail.split('@')[0];
             }
         }
 
