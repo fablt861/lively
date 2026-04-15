@@ -373,6 +373,9 @@ export default function AdminPage() {
                         <button onClick={() => setActiveTab('settings')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'settings' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                             <Settings size={20} /> {t('admin.nav.settings')}
                         </button>
+                        <button onClick={() => setActiveTab('maintenance')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'maintenance' ? 'bg-red-500/20 text-red-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                            <Activity size={20} /> {t('admin.nav.maintenance') || 'Maintenance'}
+                        </button>
                         <button
                             onClick={() => {
                                 localStorage.removeItem("kinky_admin_token");
@@ -868,6 +871,69 @@ export default function AdminPage() {
                         </div>
                     </div>
                 )}
+
+                {activeTab === 'maintenance' && (
+                    <div className="space-y-8 max-w-3xl animate-in fade-in duration-500">
+                        <div className="flex items-center gap-4 mb-8">
+                            <h2 className="text-3xl font-light">Maintenance Système</h2>
+                            <span className="px-3 py-1 bg-red-500/10 text-red-400 text-[10px] font-black uppercase tracking-widest rounded-full border border-red-500/20">Outils Critiques</span>
+                        </div>
+
+                        <div className="bg-neutral-900 border border-white/5 p-8 rounded-[2.5rem] space-y-6 shadow-2xl relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl -mr-32 -mt-32" />
+                            
+                            <div className="relative z-10 flex items-start gap-6">
+                                <div className="p-4 bg-indigo-500/20 rounded-2xl text-indigo-400 shadow-lg shadow-indigo-500/10">
+                                    <Zap size={32} />
+                                </div>
+                                <div className="space-y-2 flex-1">
+                                    <h3 className="text-xl font-bold text-white uppercase tracking-tight">Synchroniser tous les Pseudos</h3>
+                                    <p className="text-neutral-400 text-sm leading-relaxed">
+                                        Force un rafraîchissement complet du cache Redis à partir de la base de données SQL. Cela corrige les problèmes d'affichage "User2/Model2" en alignant Redis sur les entrées officielles de la base de données.
+                                    </p>
+                                    
+                                    <div className="pt-4">
+                                        <button 
+                                            disabled={backendStatus === 'offline'}
+                                            onClick={async () => {
+                                                if (!window.confirm('Lancer la synchronisation massive des pseudos ? Cela peut impacter la latence pendant quelques secondes.')) return;
+                                                
+                                                try {
+                                                    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/maintenance/sync-pseudos`, {
+                                                        method: "POST",
+                                                        headers: { Authorization: `Bearer ${token}` }
+                                                    });
+                                                    const data = await res.json();
+                                                    if (data.success) {
+                                                        alert(`Synchronisation terminée : ${data.updated} comptes mis à jour.`);
+                                                    } else {
+                                                        alert('Erreur lors de la synchronisation.');
+                                                    }
+                                                } catch (err) {
+                                                    alert('Erreur réseau lors de la synchronisation.');
+                                                }
+                                            }}
+                                            className="group relative px-6 py-3 bg-indigo-500 hover:bg-indigo-400 text-white disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-xl shadow-indigo-500/20 flex items-center gap-3"
+                                        >
+                                            <Activity size={16} className="group-hover:animate-spin" />
+                                            Lancer la Synchronisation Massive
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-neutral-900/50 border border-white/5 p-6 rounded-3xl">
+                            <div className="flex items-center gap-3 text-amber-500 text-[10px] font-black uppercase tracking-widest mb-2">
+                                <AlertCircle size={14} /> Attention
+                            </div>
+                            <p className="text-neutral-500 text-xs italic">
+                                Utilisez ces outils uniquement lorsque c'est nécessaire.
+                            </p>
+                        </div>
+                    </div>
+                )}
+
 
                 {activeTab === 'validations' && (
                     <div className="space-y-8 animate-in fade-in duration-500 pb-20">
