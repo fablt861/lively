@@ -22,7 +22,7 @@ async function resolvePseudo(email, role) {
     // 2. Try Database
     try {
         const table = role === 'model' ? 'models' : 'users';
-        const res = await query(`SELECT pseudo, first_name, last_name FROM ${table} WHERE email = $1`, [cleanEmail]);
+        const res = await query(`SELECT pseudo, first_name, last_name FROM ${table} WHERE LOWER(email) = $1`, [cleanEmail]);
         if (res.rows.length > 0) {
             const user = res.rows[0];
             const pseudo = user.pseudo || (user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : null) || cleanEmail.split('@')[0];
@@ -34,7 +34,7 @@ async function resolvePseudo(email, role) {
         
         // Check alternate table if first one failed (e.g. model role mismatch)
         const altTable = role === 'model' ? 'users' : 'models';
-        const altRes = await query(`SELECT pseudo, first_name, last_name FROM ${altTable} WHERE email = $1`, [cleanEmail]);
+        const altRes = await query(`SELECT pseudo, first_name, last_name FROM ${altTable} WHERE LOWER(email) = $1`, [cleanEmail]);
         if (altRes.rows.length > 0) {
             const user = altRes.rows[0];
             const pseudo = user.pseudo || (user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : null) || cleanEmail.split('@')[0];
