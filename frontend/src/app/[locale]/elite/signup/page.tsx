@@ -82,6 +82,11 @@ export default function ModelSignupPage() {
         localStorage.setItem('kinky_model_signup_draft', JSON.stringify(data));
     }, [country, phonePrefix, phone, firstName, lastName, pseudo, dob, email, step]);
 
+    // Scroll to top on step change
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, [step]);
+
     const validateStep = () => {
         setValidationError("");
         setApiError("");
