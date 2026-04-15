@@ -887,16 +887,16 @@ export default function AdminPage() {
                                     <Zap size={32} />
                                 </div>
                                 <div className="space-y-2 flex-1">
-                                    <h3 className="text-xl font-bold text-white uppercase tracking-tight">Synchroniser tous les Pseudos</h3>
+                                    <h3 className="text-xl font-bold text-white uppercase tracking-tight">{t('admin.maintenance.sync_all_title') || 'Synchronisation Totale (SQL → Redis)'}</h3>
                                     <p className="text-neutral-400 text-sm leading-relaxed">
-                                        Force un rafraîchissement complet du cache Redis à partir de la base de données SQL. Cela corrige les problèmes d'affichage "User2/Model2" en alignant Redis sur les entrées officielles de la base de données.
+                                        {t('admin.maintenance.sync_all_desc') || 'Transfère toutes les données critiques de la base SQL (Pseudos, Crédits, Balances) vers votre nouvelle instance Redis. Indispensable après un changement de serveur Redis.'}
                                     </p>
                                     
                                     <div className="pt-4">
                                         <button 
                                             disabled={backendStatus === 'offline'}
                                             onClick={async () => {
-                                                if (!window.confirm('Lancer la synchronisation massive des pseudos ? Cela peut impacter la latence pendant quelques secondes.')) return;
+                                                if (!window.confirm(t('admin.maintenance.sync_confirm_all') || 'Lancer la synchronisation TOTALE ? Cela va remplir votre nouveau Redis avec les pseudos, crédits et soldes de tous les comptes.')) return;
                                                 
                                                 try {
                                                     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/maintenance/sync-pseudos`, {
@@ -905,9 +905,9 @@ export default function AdminPage() {
                                                     });
                                                     const data = await res.json();
                                                     if (data.success) {
-                                                        alert(`Synchronisation terminée : ${data.updated} comptes mis à jour.`);
+                                                        alert(`${t('admin.maintenance.sync_success') || 'Synchronisation réussie !'} : ${data.updated} comptes synchronisés.`);
                                                     } else {
-                                                        alert('Erreur lors de la synchronisation.');
+                                                        alert(t('admin.maintenance.sync_error') || 'Erreur lors de la synchronisation.');
                                                     }
                                                 } catch (err) {
                                                     alert('Erreur réseau lors de la synchronisation.');
@@ -916,7 +916,7 @@ export default function AdminPage() {
                                             className="group relative px-6 py-3 bg-indigo-500 hover:bg-indigo-400 text-white disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-xl shadow-indigo-500/20 flex items-center gap-3"
                                         >
                                             <Activity size={16} className="group-hover:animate-spin" />
-                                            Lancer la Synchronisation Massive
+                                            {t('admin.maintenance.sync_btn_all') || 'Lancer la Synchronisation Totale'}
                                         </button>
                                     </div>
                                 </div>

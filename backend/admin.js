@@ -502,11 +502,25 @@ router.post('/maintenance/sync-pseudos', requireAuth, async (req, res) => {
         let updated = 0;
         for (const account of sqlRes.rows) {
             const email = account.email.toLowerCase();
+            
+            // 1. Sync Pseudos
             const pseudo = account.pseudo || (account.first_name ? `${account.first_name} ${account.last_name || ''}`.trim() : null) || email.split('@')[0];
             await redis.hset(`profile:${email}`, 'pseudo', pseudo);
+            
+            // 2. Sync Balances / Credits
+            if (account.role === 'user') {
+                const creditsRes = await query(`SELECT credits FROM users WHERE LOWER(email) = $1`, [email]);
+                const credits = creditsRes.rows[0]?.credits || 0;
+                await redis.set(`user:${email}:credits`, credits);
+            } else {
+                const balanceRes = await query(`SELECT balance FROM models WHERE LOWER(email) = $1`, [email]);
+                const balance = balanceRes.rows[0]?.balance || 0;
+                await redis.set(`model:${email}:balance`, balance);
+            }
+
             updated++;
         }
-        res.json({ success: true, updated });
+        res.json({ success: true, updated, message: 'Full synchronization complete: Pseudos, Credits, and Balances.' });
     } catch (err) {
         console.error('[Maintenance Error] Pseudo Sync failed', err);
         res.status(500).json({ error: 'admin.error.sync_failed' });
