@@ -4,8 +4,13 @@ const { startBilling, stopBilling } = require('./billing');
 const { getSettings } = require('./settings');
 const { markAsSeen } = require('./moderation');
 const { hydrateUserCredits } = require('./balance');
-const geoip = require('geoip-lite');
 const { query } = require('./db');
+const geoip = require('geoip-lite');
+
+// Constants
+const QUEUE_MODELS = 'queue:models';
+const QUEUE_USERS = 'queue:users';
+const RATE_LIMIT_COOLDOWN = 2; // seconds
 
 redis.on('error', (err) => {
     console.error('[Redis Error] Could not connect. Is Redis running?', err.message);
