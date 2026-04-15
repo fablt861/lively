@@ -725,30 +725,5 @@ router.get('/realtime', requireAuth, async (req, res) => {
     }
 });
 
-// --- SUPER ADMIN NUKE (Temporary for architecture transition) ---
-router.post('/maintenance/nuke-database', requireAuth, async (req, res) => {
-    try {
-        const { confirm } = req.body;
-        if (confirm !== 'NUKE_CONFIRM_2026') {
-            return res.status(403).json({ error: 'Invalid confirmation code' });
-        }
-
-        console.log('[Maintenance] !!! DATABASE NUKE INITIATED !!!');
-        
-        // 1. Flush Redis
-        await redis.flushall();
-        console.log('[Maintenance] Redis flushed successfully.');
-
-        // 2. Truncate SQL Tables
-        await query('TRUNCATE TABLE users, models, payouts, platform_settings, favorites CASCADE');
-        console.log('[Maintenance] SQL Tables truncated successfully.');
-
-        res.json({ success: true, message: 'Databases (SQL + Redis) have been completely reset.' });
-    } catch (err) {
-        console.error('[Maintenance Error] DATABASE NUKE FAILED', err);
-        res.status(500).json({ error: 'Nuke operation failed' });
-    }
-});
-
     return router;
 };
