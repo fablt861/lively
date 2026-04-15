@@ -230,7 +230,7 @@
   "auth.error.network": "Anslutningsfel",
   "auth.error.password_match": "Lösenorden matchar inte",
   "auth.error.pseudo_short": "Användarnamnet är för kort",
-  "auth.error.request_pending": "En förfrågan väntar redan.",
+  "auth.error.request_pending": "En begäran väntar redan.",
   "auth.loading": "Laddar...",
   "auth.login_btn": "Logga in",
   "auth.login_desc": "Logga in på ditt konto.",

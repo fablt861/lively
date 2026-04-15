@@ -230,7 +230,7 @@
   "auth.error.network": "Error de conexión",
   "auth.error.password_match": "Las contraseñas no coinciden",
   "auth.error.pseudo_short": "Usuario demasiado corto",
-  "auth.error.request_pending": "Ya hay una solicitud pendiente.",
+  "auth.error.request_pending": "Una solicitud ya está pendiente.",
   "auth.loading": "Cargando...",
   "auth.login_btn": "Entrar",
   "auth.login_desc": "Inicia sesión en tu cuenta.",

@@ -230,7 +230,7 @@
   "auth.error.network": "Yhteysvirhe",
   "auth.error.password_match": "Salasanat eivät täsmää",
   "auth.error.pseudo_short": "Käyttäjänimi on liian lyhyt",
-  "auth.error.request_pending": "Pyyntö on jo käsittelyssä.",
+  "auth.error.request_pending": "Pyyntö on jo vireillä.",
   "auth.loading": "Ladataan...",
   "auth.login_btn": "Kirjaudu",
   "auth.login_desc": "Kirjaudu tilillesi.",

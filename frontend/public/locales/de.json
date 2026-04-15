@@ -230,7 +230,7 @@
   "auth.error.network": "Verbindungsfehler",
   "auth.error.password_match": "Passwörter stimmen nicht überein",
   "auth.error.pseudo_short": "Benutzername zu kurz",
-  "auth.error.request_pending": "Eine Anfrage ist bereits ausstehend.",
+  "auth.error.request_pending": "Eine Anfrage steht bereits aus.",
   "auth.loading": "Laden...",
   "auth.login_btn": "Anmelden",
   "auth.login_desc": "Melden Sie sich bei Ihrem Konto an.",

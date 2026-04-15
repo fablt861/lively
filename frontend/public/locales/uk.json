@@ -230,7 +230,7 @@
   "auth.error.network": "Помилка з'єднання",
   "auth.error.password_match": "Паролі не збігаються",
   "auth.error.pseudo_short": "Ім'я користувача занадто коротке",
-  "auth.error.request_pending": "Запит уже на розгляді.",
+  "auth.error.request_pending": "Запит уже перебуває на розгляді.",
   "auth.loading": "Завантаження...",
   "auth.login_btn": "Увійти",
   "auth.login_desc": "Увійдіть до свого облікового запису.",

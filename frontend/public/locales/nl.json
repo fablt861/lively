@@ -230,7 +230,7 @@
   "auth.error.network": "Verbindingsfout",
   "auth.error.password_match": "Wachtwoorden komen niet overeen",
   "auth.error.pseudo_short": "Gebruikersnaam te kort",
-  "auth.error.request_pending": "Er is al een aanvraag in behandeling.",
+  "auth.error.request_pending": "Er is al een verzoek in behandeling.",
   "auth.loading": "Laden...",
   "auth.login_btn": "Inloggen",
   "auth.login_desc": "Log in op je account.",

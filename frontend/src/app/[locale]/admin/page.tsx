@@ -9,6 +9,33 @@ import { countries } from "@/utils/countries";
 
 export default function AdminPage() {
     const { t } = useTranslation();
+
+    const calculateAge = (dobString: string) => {
+        if (!dobString) return null;
+        try {
+            const birthDate = new Date(dobString);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        } catch (e) {
+            return null;
+        }
+    };
+
+    const formatDate = (dateString: string) => {
+        if (!dateString) return 'N/A';
+        try {
+            const date = new Date(dateString);
+            return date.toISOString().split('T')[0].replace(/-/g, '/');
+        } catch (e) {
+            return dateString;
+        }
+    };
+
     const [token, setToken] = useState("");
     const [isLogged, setIsLogged] = useState(false);
     const [username, setUsername] = useState("");
@@ -1114,7 +1141,10 @@ export default function AdminPage() {
                                                 </div>
                                                 <div className="space-y-0.5">
                                                     <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">{t('admin.model.dob')}</p>
-                                                    <p className="text-sm font-bold text-white">{model.dob}</p>
+                                                    <p className="text-sm font-bold text-white">
+                                                        {formatDate(model.dob)} 
+                                                        <span className="text-pink-500 ml-2">({calculateAge(model.dob)} {t('common.years_old') || 'ans'})</span>
+                                                    </p>
                                                 </div>
                                                 <div className="space-y-0.5">
                                                     <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">{t('admin.model.email')}</p>
@@ -1142,13 +1172,11 @@ export default function AdminPage() {
                                                     />
                                                 </div>
                                             ))}
-                                        </div>
-
-                                        <div className="flex gap-4 mt-2">
+                                         <div className="flex gap-4 mt-2">
                                             <button
                                                 onClick={async () => {
-                                                    await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite/${encodeURIComponent(model.email)}/reject`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
-                                                    setPendingModels(prev => prev.filter(m => m.email !== model.email));
+                                                    await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite/${model.id}/reject`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+                                                    setPendingModels(prev => prev.filter(m => m.id !== model.id));
                                                 }}
                                                 className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 rounded-xl py-4 font-bold transition-all flex items-center justify-center gap-2"
                                             >
@@ -1156,14 +1184,14 @@ export default function AdminPage() {
                                             </button>
                                             <button
                                                 onClick={async () => {
-                                                    await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite/${encodeURIComponent(model.email)}/validate`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
-                                                    setPendingModels(prev => prev.filter(m => m.email !== model.email));
+                                                    await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite/${model.id}/validate`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+                                                    setPendingModels(prev => prev.filter(m => m.id !== model.id));
                                                 }}
                                                 className="flex-1 bg-green-500 hover:bg-green-400 text-white shadow-lg shadow-green-500/20 rounded-xl py-4 font-bold transition-all flex items-center justify-center gap-2"
                                             >
                                                 <CheckCircle size={18} /> {t('admin.validations.validate')}
                                             </button>
-                                        </div>
+                                        </div>                </div>
                                     </div>
                                 ))}
                             </div>
@@ -1234,13 +1262,12 @@ export default function AdminPage() {
                                                 <div className="text-[10px] font-mono text-neutral-500 whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]" title={`${u.marketing?.src || 'direct'} / ${u.marketing?.camp || '-'} / ${u.marketing?.ad || '-'}`}>
                                                     {u.marketing?.src || 'direct'} / {u.marketing?.camp || '-'} / {u.marketing?.ad || '-'}
                                                 </div>
-                                            </td>
-                                            <td className="p-5 text-right space-x-2">
+                                             <td className="p-5 text-right space-x-2">
                                                 <button
                                                     onClick={async () => {
                                                         const amount = prompt(t('admin.users.edit_credits_prompt', { pseudo: u.pseudo }), u.credits || 0);
                                                         if (amount !== null && !isNaN(parseFloat(amount))) {
-                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/users/${encodeURIComponent(u.email)}/credits`, {
+                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/users/${u.id}/credits`, {
                                                                 method: "POST",
                                                                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                                                                 body: JSON.stringify({ credits: parseFloat(amount) })
@@ -1259,7 +1286,7 @@ export default function AdminPage() {
                                                 <button
                                                     onClick={async () => {
                                                         if (confirm(t('common.confirm_action'))) {
-                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/users/${encodeURIComponent(u.email)}/toggle-status`, {
+                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/users/${u.id}/toggle-status`, {
                                                                 method: "POST",
                                                                 headers: { Authorization: `Bearer ${token}` }
                                                             });
@@ -1359,13 +1386,12 @@ export default function AdminPage() {
                                                 <div className="text-[10px] font-mono text-neutral-500 whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]" title={`${m.marketing?.src || 'direct'} / ${m.marketing?.camp || '-'} / ${m.marketing?.ad || '-'}`}>
                                                     {m.marketing?.src || 'direct'} / {m.marketing?.camp || '-'} / {m.marketing?.ad || '-'}
                                                 </div>
-                                            </td>
-                                            <td className="p-5 text-right space-x-2">
+                                             <td className="p-5 text-right space-x-2">
                                                 <button
                                                     onClick={async () => {
                                                         const amount = prompt(t('admin.models.payout_prompt', { name: m.pseudo, balance: m.balance.toFixed(2) }));
                                                         if (amount && parseFloat(amount) > 0) {
-                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite/${encodeURIComponent(m.email)}/payout`, {
+                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite/${m.id}/payout`, {
                                                                 method: "POST",
                                                                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                                                                 body: JSON.stringify({ amount: parseFloat(amount) })
@@ -1382,7 +1408,7 @@ export default function AdminPage() {
                                                     onClick={async () => {
                                                         const amount = prompt(t('admin.models.reset_balance_prompt', { name: m.pseudo }));
                                                         if (amount !== null) {
-                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite/${encodeURIComponent(m.email)}/reset-balance`, {
+                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite/${m.id}/reset-balance`, {
                                                                 method: "POST",
                                                                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                                                                 body: JSON.stringify({ amount: parseFloat(amount) })
@@ -1402,7 +1428,7 @@ export default function AdminPage() {
                                                 <button
                                                     onClick={async () => {
                                                         if (confirm(t('common.confirm_action'))) {
-                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite/${encodeURIComponent(m.email)}/toggle-status`, {
+                                                            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite/${m.id}/toggle-status`, {
                                                                 method: "POST",
                                                                 headers: { Authorization: `Bearer ${token}` }
                                                             });

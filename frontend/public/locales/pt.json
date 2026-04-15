@@ -230,7 +230,7 @@
   "auth.error.network": "Erro de ligação",
   "auth.error.password_match": "As palavras-passe não coincidem",
   "auth.error.pseudo_short": "Nome de utilizador demasiado curto",
-  "auth.error.request_pending": "Já existe um pedido pendente.",
+  "auth.error.request_pending": "Um pedido já está pendente.",
   "auth.loading": "Carregando...",
   "auth.login_btn": "Entrar",
   "auth.login_desc": "Inicie sessão na sua conta.",

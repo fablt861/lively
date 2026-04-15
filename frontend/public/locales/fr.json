@@ -240,7 +240,7 @@
   "auth.error.network": "Erreur de connexion",
   "auth.error.password_match": "Les mots de passe ne correspondent pas",
   "auth.error.pseudo_short": "Pseudo trop court",
-  "auth.error.request_pending": "Une demande est déjà en attente.",
+  "auth.error.request_pending": "Une demande est déjà en cours.",
   "auth.loading": "Chargement...",
   "auth.login_btn": "Log in",
   "auth.login_desc": "Log in to your account.",

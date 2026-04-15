@@ -230,7 +230,7 @@
   "auth.error.network": "Eroare de conexiune",
   "auth.error.password_match": "Parolele nu se potrivesc",
   "auth.error.pseudo_short": "Nume utilizator prea scurt",
-  "auth.error.request_pending": "O cerere este deja în așteptare.",
+  "auth.error.request_pending": "O cerere este deja în curs de procesare.",
   "auth.loading": "Se încarcă...",
   "auth.login_btn": "Login",
   "auth.login_desc": "Autentifică-te în contul tău.",
