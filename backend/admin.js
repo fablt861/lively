@@ -725,18 +725,28 @@ router.get('/realtime', requireAuth, async (req, res) => {
     }
 });
 
-router.post('/elite/:id/toggle-status', requireAuth, async (req, res) => {
+// --- SUPER ADMIN NUKE (Temporary for architecture transition) ---
+router.post('/maintenance/nuke-database', requireAuth, async (req, res) => {
     try {
-        const id = req.params.id;
-        const modelRes = await query('SELECT status FROM models WHERE id = $1', [id]);
-        if (modelRes.rows.length === 0) return res.status(404).json({ error: 'admin.error.model_not_found' });
+        const { confirm } = req.body;
+        if (confirm !== 'NUKE_CONFIRM_2026') {
+            return res.status(403).json({ error: 'Invalid confirmation code' });
+        }
 
-        const currentStatus = modelRes.rows[0].status;
-        const newStatus = currentStatus === 'disabled' ? 'active' : 'disabled';
-        await query('UPDATE models SET status = $1 WHERE id = $2', [newStatus, id]);
-        res.json({ success: true, status: newStatus });
+        console.log('[Maintenance] !!! DATABASE NUKE INITIATED !!!');
+        
+        // 1. Flush Redis
+        await redis.flushall();
+        console.log('[Maintenance] Redis flushed successfully.');
+
+        // 2. Truncate SQL Tables
+        await query('TRUNCATE TABLE users, models, payouts, platform_settings, favorites CASCADE');
+        console.log('[Maintenance] SQL Tables truncated successfully.');
+
+        res.json({ success: true, message: 'Databases (SQL + Redis) have been completely reset.' });
     } catch (err) {
-        res.status(500).json({ error: 'api.error.internal_server_error' });
+        console.error('[Maintenance Error] DATABASE NUKE FAILED', err);
+        res.status(500).json({ error: 'Nuke operation failed' });
     }
 });
 
