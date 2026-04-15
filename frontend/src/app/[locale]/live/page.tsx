@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { VideoRoom } from "@/components/VideoRoom";
-import { useWebRTC } from "@/hooks/useWebRTC";
+import { useLiveKit } from "@/hooks/useLiveKit";
 import { MaintenanceGuard } from "@/components/MaintenanceGuard";
 import { CameraPermissionGuard } from "@/components/CameraPermissionGuard";
 
@@ -29,10 +29,10 @@ export default function LivePage({ params }: { params: { locale: string } }) {
             .finally(() => setIsChecking(false));
     }, []);
 
-    const webRTC = useWebRTC(role || "user", !isMaintenance && !isLaunch && !isChecking);
+    const videoSession = useLiveKit(role || "user", !isMaintenance && !isLaunch && !isChecking);
 
-    const activeMaintenance = isMaintenance || webRTC.isMaintenance;
-    const activeLaunch = isLaunch || webRTC.isLaunch;
+    const activeMaintenance = isMaintenance || videoSession.isMaintenance;
+    const activeLaunch = isLaunch || videoSession.isLaunch;
     
     const handlePurchase = async (credits: number, priceUsd: number) => {
         const id = localStorage.getItem('kinky_user_id');
@@ -50,11 +50,13 @@ export default function LivePage({ params }: { params: { locale: string } }) {
     };
 
     if (activeMaintenance) return <MaintenanceGuard />;
-    if (webRTC.cameraPermissionError) return <CameraPermissionGuard onRetry={webRTC.retryCamera} />;
-    if (activeLaunch) return <VideoRoom {...webRTC} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={webRTC.endCall} onNext={webRTC.nextPartner} onPurchase={handlePurchase} isLaunchOverride={true} packs={settings?.packs} isDirectCall={webRTC.isDirectCall} />;
+    if (videoSession.cameraPermissionError) return <CameraPermissionGuard onRetry={videoSession.retryCamera} />;
+    
+    // We pass previewStream for localStream to allow the PreMatchModal to show the camera check
+    if (activeLaunch) return <VideoRoom {...videoSession} localStream={videoSession.previewStream} remoteStream={null} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={videoSession.endCall} onNext={videoSession.nextPartner} onPurchase={handlePurchase} isLaunchOverride={true} packs={settings?.packs} isDirectCall={false} />;
     if (isChecking || !role) return <div className="min-h-screen bg-[#050505]"></div>;
 
-    return <VideoRoom {...webRTC} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={webRTC.endCall} onNext={webRTC.nextPartner} onPurchase={handlePurchase} packs={settings?.packs} isDirectCall={webRTC.isDirectCall} />;
+    return <VideoRoom {...videoSession} localStream={videoSession.previewStream} remoteStream={null} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={videoSession.endCall} onNext={videoSession.nextPartner} onPurchase={handlePurchase} packs={settings?.packs} isDirectCall={false} />;
 }
 
 

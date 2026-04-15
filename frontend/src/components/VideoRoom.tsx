@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles, Lock, Timer, Check, Plus, Heart, Smile, Signal, Wifi } from "lucide-react";
 import EmojiPicker, { Theme } from 'emoji-picker-react';
+import { LiveKitRoom, VideoTrack, useTracks, AudioConference, TrackLoop } from '@livekit/components-react';
+import { Track } from 'livekit-client';
 import { CallListener } from './CallListener';
 import { useTranslation } from "@/context/LanguageContext";
 import { MaintenanceGuard } from "./MaintenanceGuard";
@@ -84,6 +86,7 @@ interface VideoRoomProps {
     onPurchase?: (credits: number, priceUsd: number) => Promise<void>;
     isDirectCall?: boolean;
     connectionQuality?: 'excellent' | 'good' | 'fair' | 'poor' | 'reconnecting';
+    room?: any; // LiveKit Room
 }
 
 export function VideoRoom({
@@ -110,12 +113,25 @@ export function VideoRoom({
     packs,
     onPurchase,
     isDirectCall,
-    connectionQuality = 'excellent'
+    connectionQuality = 'excellent',
+    room
 }: VideoRoomProps) {
     const { t, language } = useTranslation();
     const router = useRouter();
     const localVideoRef = useRef<HTMLVideoElement>(null);
     const remoteVideoRef = useRef<HTMLVideoElement>(null);
+    
+    // LiveKit Track hooks (must be used inside LiveKitRoom or passed room)
+    const tracks = useTracks(
+        [
+            { source: Track.Source.Camera, withPlaceholder: true },
+            { source: Track.Source.ScreenShare, withPlaceholder: false },
+        ],
+        { room, onlySubscribed: true },
+    );
+
+    const remoteVideoTrack = tracks.find(t => t.participant.isRemote && t.source === Track.Source.Camera);
+    const localVideoTrack = tracks.find(t => t.participant.isLocal && t.source === Track.Source.Camera);
 
     const [isAudioMuted, setIsAudioMuted] = useState(false);
     const [isVideoMuted, setIsVideoMuted] = useState(false);
@@ -166,7 +182,7 @@ export function VideoRoom({
     useEffect(() => { isBlockedRef.current = isBlocked; }, [isBlocked]);
     useEffect(() => { privateSummaryRef.current = privateSummary; }, [privateSummary]);
 
-    console.log(`[VideoRoom Render] isConnected: ${isConnected}, isMatching: ${isMatching}, remoteStream (bool): ${!!remoteStream}`);
+    console.log(`[VideoRoom Render] isConnected: ${isConnected}, isMatching: ${isMatching}, remoteVideoTrack (bool): ${!!remoteVideoTrack}`);
 
     const handleNext = (force = false) => {
         if (!force && isBlockedRef.current) {
@@ -406,15 +422,15 @@ export function VideoRoom({
         };
 
         const handleCloseSummary = () => {
-            console.log("[Block] Closing summary modal. Current state - isMatching:", isMatching, "remoteStream:", !!remoteStream);
+            console.log("[Block] Closing summary modal. Current state - isMatching:", isMatching, "remoteVideoTrack:", !!remoteVideoTrack);
             setPrivateSummary(null);
             setIsRequeuingBlocked(false);
             
             // Safety: If someone already matched us while we were on the summary,
             // we are already "in a match" (even if the video hasn't arrived).
             // In that case, DO NOT call handleNext, otherwise we skip the person.
-            // But if we are clearly IDLE (not matching and no stream), then we must rejoin.
-            const isIdle = !isMatching && !remoteStream;
+            // But if we are clearly IDLE (not matching and no track), then we must rejoin.
+            const isIdle = !isMatching && !remoteVideoTrack;
             
             if (isIdle) {
                 console.log("[Block] Summary closed and idle, re-joining queue");
@@ -592,7 +608,7 @@ export function VideoRoom({
 
     // Visual Throttling: Sync displayedCredits with userCredits every 20 seconds
     useEffect(() => {
-        if (role !== 'user' || !isConnected || isMatching || !remoteStream) {
+        if (role !== 'user' || !isConnected || isMatching || !remoteVideoTrack) {
             // Not in an active call, keep sync
             if (userCredits !== null && (displayedCredits === null || Math.abs((displayedCredits || 0) - userCredits) > 5)) {
                 setDisplayedCredits(userCredits);
@@ -606,7 +622,7 @@ export function VideoRoom({
         }, 20000);
 
         return () => clearInterval(interval);
-    }, [role, isConnected, isMatching, !!remoteStream]);
+    }, [role, isConnected, isMatching, !!remoteVideoTrack]);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -827,7 +843,7 @@ export function VideoRoom({
                 {role === "model" && isConnected && (
                     <div className="absolute top-[160px] right-4 md:top-6 md:right-6 z-30 flex flex-col items-end gap-2">
                         <EarningsCounter 
-                            hasVideo={!!remoteStream} 
+                            hasVideo={!!remoteVideoTrack} 
                             currentRate={payoutInfo.rate} 
                             totalBalance={payoutInfo.totalBalance} 
                         />
@@ -838,14 +854,15 @@ export function VideoRoom({
 
                 {/* Remote Video (Full Screen) */}
                 <div className="absolute inset-0 z-0 h-[100dvh]">
-                    <video
-                        ref={remoteVideoRef}
-                        autoPlay
-                        playsInline
-                        className={`w-full h-full object-cover transition-all duration-700 ease-in-out ${((!isConnected && !remoteStream) || isMatching || showPaywall) ? "blur-2xl opacity-40 scale-105" : "blur-0 opacity-100 scale-100"
-                            }`}
-                    />
-                    {!remoteStream && (isConnected === false || isMatching === true) && !showPaywall && (
+                    {remoteVideoTrack ? (
+                        <VideoTrack
+                            trackRef={remoteVideoTrack}
+                            className={`w-full h-full object-cover transition-all duration-700 ease-in-out ${(isMatching || showPaywall) ? "blur-2xl opacity-40 scale-105" : "blur-0 opacity-100 scale-100"}`}
+                        />
+                    ) : (
+                        <div className="w-full h-full bg-neutral-950" />
+                    )}
+                    {!remoteVideoTrack && (isConnected === false || isMatching === true) && !showPaywall && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#050505]/95 backdrop-blur-2xl transition-all duration-1000 overflow-hidden">
                             {/* Glowing Orbs for Sexy Vibe */}
                             <div className="absolute w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none animate-pulse" />
@@ -880,13 +897,14 @@ export function VideoRoom({
 
                 {/* Local Video (Top Right on Mobile) */}
                 <div className="absolute top-4 right-4 md:top-auto md:bottom-24 md:left-6 md:right-auto z-40 w-24 md:w-48 aspect-[3/4] bg-neutral-900 rounded-2xl md:rounded-[2rem] overflow-hidden shadow-2xl border border-white/20 transition-all duration-500">
-                    <video
-                        ref={localVideoRef}
-                        autoPlay
-                        playsInline
-                        muted
-                        className={`w-full h-full object-cover ${isVideoMuted ? "opacity-0" : "opacity-100"}`}
-                    />
+                    {localVideoTrack ? (
+                        <VideoTrack
+                            trackRef={localVideoTrack}
+                            className={`w-full h-full object-cover ${isVideoMuted ? "opacity-0" : "opacity-100"}`}
+                        />
+                    ) : (
+                        <div className="w-full h-full bg-neutral-800" />
+                    )}
                     
                     {/* Mobile Mic Toggle Overlay */}
                     <div className="md:hidden absolute bottom-2 right-2">
@@ -1445,6 +1463,8 @@ export function VideoRoom({
 
             {/* DIRECT CALL LISTENER (MODEL SIDE) */}
             <CallListener />
+            {/* LiveKit Audio Handling */}
+            {isConnected && room && <AudioConference />}
         </div>
     );
 }

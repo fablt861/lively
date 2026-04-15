@@ -88,6 +88,38 @@ app.use('/api/admin', adminRoutes(io));
 app.use('/api/auth', authRoutes);
 app.use('/api/elite', modelRoutes);
 
+app.get('/api/video/token', async (req, res) => {
+  const { room, identity } = req.query;
+  if (!room || !identity) {
+    return res.status(400).json({ error: 'Missing room or identity' });
+  }
+
+  try {
+    const { AccessToken } = require('livekit-server-sdk');
+    const apiKey = process.env.LIVEKIT_API_KEY;
+    const apiSecret = process.env.LIVEKIT_API_SECRET;
+
+    if (!apiKey || !apiSecret) {
+      console.error('LiveKit credentials missing');
+      return res.status(500).json({ error: 'Server configuration error' });
+    }
+
+    const at = new AccessToken(apiKey, apiSecret, { identity });
+    at.addGrant({ 
+      roomJoin: true, 
+      room: room,
+      canPublish: true,
+      canSubscribe: true 
+    });
+
+    const token = await at.toJwt();
+    res.json({ token });
+  } catch (err) {
+    console.error('Error generating LiveKit token:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.get('/api/ice-servers', async (req, res) => {
   try {
     const twilio = require('twilio');
