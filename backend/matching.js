@@ -37,6 +37,11 @@ function setupMatching(io, socket) {
 
             if (socket.userEmail) {
                 await socket.join(`email:${socket.userEmail}`);
+                
+                const cachedPseudo = await redis.hget(`profile:${socket.userEmail}`, 'pseudo');
+                socket.pseudo = cachedPseudo || socket.userEmail.split('@')[0];
+                socket.data.pseudo = socket.pseudo;
+
                 if (role === 'model') {
                     await redis.sadd('online_models', socket.userEmail);
                     // Fetch blocked countries
@@ -46,6 +51,9 @@ function setupMatching(io, socket) {
                     }
                 }
                 const isNew = await redis.set(`user_socket:${socket.userEmail}`, socket.id, 'EX', 86400);
+            } else {
+                socket.pseudo = 'Guest';
+                socket.data.pseudo = 'Guest';
             }
         } catch (err) {
             console.error('[Identify Error]', err);
@@ -81,6 +89,11 @@ function setupMatching(io, socket) {
 
             if (socket.userEmail) {
                 await socket.join(`email:${socket.userEmail}`);
+                
+                const cachedPseudo = await redis.hget(`profile:${socket.userEmail}`, 'pseudo');
+                socket.pseudo = cachedPseudo || socket.userEmail.split('@')[0];
+                socket.data.pseudo = socket.pseudo;
+
                 if (role === 'model') {
                     await redis.sadd('online_models', socket.userEmail);
                     // Fetch blocked countries
@@ -90,6 +103,11 @@ function setupMatching(io, socket) {
                     }
                 }
                 await redis.set(`user_socket:${socket.userEmail}`, socket.id, 'EX', 86400);
+            } else {
+                if (!socket.pseudo) {
+                    socket.pseudo = 'Guest';
+                    socket.data.pseudo = 'Guest';
+                }
             }
 
             // Get IP for guest tracking
@@ -533,7 +551,7 @@ async function handleJoinQueue(io, socket) {
                 initiator: socket.id, 
                 partnerEmail: socket.userEmail || socket.userIp, 
                 partnerRole: socket.role,
-                partnerName: socket.pseudo || socket.userEmail?.split('@')[0] || 'Partner',
+                partnerName: socket.pseudo || 'Guest',
                 isBlocked: false,
                 blockEnd: null
             });
