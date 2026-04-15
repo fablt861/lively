@@ -3,7 +3,7 @@ import { MetadataRoute } from 'next';
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://kinky.live';
   const locales = ['de', 'en', 'es', 'fi', 'fr', 'it', 'nl', 'no', 'pt', 'ro', 'ru', 'sv', 'uk'];
-  const routes = ['', '/login'];
+  const routes = ['', '/login', '/contact', '/legal', '/terms', '/slavery'];
 
   const sitemapData: MetadataRoute.Sitemap = [];
 

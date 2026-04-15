@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/admin/', '/private/'], // Protect admin areas
+      disallow: ['/admin/', '/private/', '/*/elite', '/*/elite/'], // Protect admin and model recruitment areas
     },
     sitemap: 'https://kinky.live/sitemap.xml',
   };
