@@ -58,6 +58,38 @@ async function resolvePseudo(email, role) {
     return cleanEmail.split('@')[0];
 }
 
+function detectCountry(socket) {
+    try {
+        // Handle proxies like Vercel/Render
+        const forwarded = socket.handshake.headers['x-forwarded-for'];
+        const ip = forwarded ? forwarded.split(',')[0].trim() : socket.handshake.address;
+        
+        const geo = geoip.lookup(ip);
+        if (geo && geo.country) {
+            return geo.country;
+        }
+    } catch (err) {
+        console.error('[GeoIP Error]', err.message);
+    }
+    return 'Unknown';
+}
+
+function detectCountry(socket) {
+    try {
+        // Handle proxies like Vercel/Render
+        const forwarded = socket.handshake.headers['x-forwarded-for'];
+        const ip = forwarded ? forwarded.split(',')[0].trim() : socket.handshake.address;
+        
+        const geo = geoip.lookup(ip);
+        if (geo && geo.country) {
+            return geo.country;
+        }
+    } catch (err) {
+        console.error('[GeoIP Error]', err.message);
+    }
+    return 'Unknown';
+}
+
 async function checkRateLimit(identifier) {
     if (!identifier) return false;
     const key = `ratelimit:matching:${identifier.toLowerCase()}`;
@@ -78,6 +110,12 @@ function setupMatching(io, socket) {
             socket.userEmail = email?.toLowerCase();
             socket.data.userEmail = socket.userEmail;
 
+            // Detect IP and Country
+            const forwarded = socket.handshake.headers['x-forwarded-for'];
+            socket.userIp = forwarded ? forwarded.split(',')[0].trim() : socket.handshake.address;
+            socket.countryCode = detectCountry(socket);
+            socket.data.countryCode = socket.countryCode;
+
             if (socket.userEmail) {
                 await socket.join(`email:${socket.userEmail}`);
                 
@@ -97,6 +135,7 @@ function setupMatching(io, socket) {
                 socket.pseudo = 'Guest';
                 socket.data.pseudo = 'Guest';
             }
+            console.log(`[Identify] Socket ${socket.id} IP: ${socket.userIp}, Country: ${socket.countryCode}`);
         } catch (err) {
             console.error('[Identify Error]', err);
         }
@@ -359,7 +398,8 @@ function setupMatching(io, socket) {
                     });
 
                     console.log(`[DirectBilling] Starting billing for room ${roomId}`);
-                    await startBilling(roomId, userEmail, modelEmail, userSocket.id, modelSocket.id);
+                    const userCountryCode = userSocket.data.countryCode || 'Unknown';
+                    await startBilling(roomId, userEmail, modelEmail, userSocket.id, modelSocket.id, userCountryCode);
                 }
             }
         } catch (err) {
@@ -568,14 +608,16 @@ async function handleJoinQueue(io, socket) {
                 await redis.set(`seen:${pIdentifier.toLowerCase()}:${myIdentifier.toLowerCase()}`, '1', 'EX', 5);
             }
 
-            const userId = isModel ? partnerId : socket.id;
-            const modelId = isModel ? socket.id : partnerId;
+            const userSocket = isModel ? partnerSocket : socket;
+            const userCountryCode = userSocket.data.countryCode || 'Unknown';
+            const settings = await getSettings();
+            const isRestricted = settings.restrictedCountries && settings.restrictedCountries.includes(userCountryCode);
 
             // Pass billing ID: Email if registered, IP if guest
             const userBillingId = (isModel ? (partnerSocket.userEmail || partnerSocket.userIp) : (socket.userEmail || socket.userIp))?.toLowerCase();
             const modelBillingId = (isModel ? (socket.userEmail || socket.id) : (partnerSocket.userEmail || partnerId))?.toLowerCase();
             
-            await startBilling(roomId, userBillingId, modelBillingId, isModel ? partnerId : socket.id, isModel ? socket.id : partnerId);
+            await startBilling(roomId, userBillingId, modelBillingId, isModel ? partnerId : socket.id, isModel ? socket.id : partnerId, userCountryCode);
 
             // Notify both parties with partner info for reporting
             socket.emit('matched', { 
@@ -585,7 +627,8 @@ async function handleJoinQueue(io, socket) {
                 partnerRole: partnerSocket.role,
                 partnerName: partnerSocket.pseudo || partnerSocket.userEmail?.split('@')[0] || 'Partner',
                 isBlocked: false,
-                blockEnd: null
+                blockEnd: null,
+                isRestricted: socket.role === 'user' ? isRestricted : false
             });
             partnerSocket.emit('matched', { 
                 roomId, 
@@ -594,7 +637,8 @@ async function handleJoinQueue(io, socket) {
                 partnerRole: socket.role,
                 partnerName: socket.pseudo || 'Guest',
                 isBlocked: false,
-                blockEnd: null
+                blockEnd: null,
+                isRestricted: partnerSocket.role === 'user' ? isRestricted : false
             });
 
             console.log(`[Match EMITTED] ${socket.id} <-> ${partnerId}`);

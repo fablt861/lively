@@ -140,11 +140,16 @@ function initBillingLoop(io) {
                     } else {
                         // Guest user: increment time used (no block logic for guests usually, but we keep it safe)
                         const used = await redis.incrby(`free_secs:${session.userId}`, 1);
-                        remaining = 30 - used;
+                        
+                        // RESTRICTED COUNTRY LOGIC
+                        const isRestricted = settings.restrictedCountries && settings.restrictedCountries.includes(session.userCountryCode);
+                        const limit = isRestricted ? 0 : 30; // 0 seconds for restricted countries
+                        
+                        remaining = limit - used;
                         if (ioInstance) {
                             ioInstance.to(roomId).emit('credits_update', Math.max(0, remaining));
                         }
-                        if (used >= 30) {
+                        if (used >= limit) {
                             if (ioInstance) {
                                 ioInstance.to(roomId).emit('out_of_credits', { reason: 'guest_limit_reached' });
                                 ioInstance.to(roomId).emit('partner_out_of_credits');
@@ -185,7 +190,7 @@ function initBillingLoop(io) {
     console.log('[Billing] Per-second billing loop initialized.');
 }
 
-async function startBilling(roomId, userId, modelId, userSocketId, modelSocketId) {
+async function startBilling(roomId, userId, modelId, userSocketId, modelSocketId, userCountryCode = 'Unknown') {
     // Safety: Ensure no stale block data exists for this roomId (Defense-in-depth)
     await redis.del(`billing:is_blocked:${roomId}`);
     await redis.del(`billing:is_blocked_pending:${roomId}`);
@@ -212,7 +217,8 @@ async function startBilling(roomId, userId, modelId, userSocketId, modelSocketId
         modelSocketId,
         startTime: Date.now(),
         earnedUsd: 0,
-        spentCredits: 0
+        spentCredits: 0,
+        userCountryCode
     });
     await redis.hset(ACTIVE_ROOMS_KEY, roomId, sessionData);
     

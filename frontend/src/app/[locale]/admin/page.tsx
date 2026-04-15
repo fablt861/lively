@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { Users, Video, DollarSign, Activity, Settings, Lock, CheckCircle, XCircle, Clock, Globe, Mail, Zap, UserCheck, ShieldCheck, ChevronLeft, ChevronRight, AlertCircle, ShieldAlert, Sparkles, FileText, History as HistoryIcon } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { countries } from "@/utils/countries";
 
 export default function AdminPage() {
     const { t } = useTranslation();
@@ -43,6 +44,8 @@ export default function AdminPage() {
     const [selectedImage, setSelectedImage] = useState<{ images: string[], index: number } | null>(null);
     const [blockedKeywords, setBlockedKeywords] = useState<string[]>([]);
     const [newKeyword, setNewKeyword] = useState("");
+    const [countrySearch, setCountrySearch] = useState("");
+    const [showCountryResults, setShowCountryResults] = useState(false);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -804,6 +807,102 @@ export default function AdminPage() {
                                     {t('admin.settings.block_notice')}
                                 </div>
                             )}
+                        </div>
+
+                        {/* Restricted Countries Section */}
+                        <div className="bg-neutral-900 border border-white/5 p-8 rounded-3xl space-y-6 shadow-2xl relative overflow-hidden group">
+                            <div className="flex flex-col gap-2">
+                                <h3 className="text-xl font-medium text-amber-500 border-b border-white/5 pb-4 flex items-center gap-2">
+                                    <Globe className="text-amber-500" size={20} />
+                                    {t('admin.settings.restricted_countries_title') || "Restrictions Géographiques (Non-Freemium)"}
+                                </h3>
+                                <p className="text-xs text-neutral-500">
+                                    {t('admin.settings.restricted_countries_desc') || "Les utilisateurs de ces pays ne bénéficieront pas des 30s gratuites et devront s'inscrire/payer immédiatement."}
+                                </p>
+                            </div>
+
+                            <div className="relative">
+                                <div className="flex gap-4">
+                                    <input 
+                                        type="text" 
+                                        placeholder={t('admin.settings.country_search_placeholder') || "Rechercher un pays (ex: Inde, Pakistan...)"} 
+                                        className="flex-1 bg-black/50 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-amber-500 transition-colors"
+                                        value={countrySearch}
+                                        onChange={(e) => {
+                                            setCountrySearch(e.target.value);
+                                            setShowCountryResults(true);
+                                        }}
+                                        onFocus={() => setShowCountryResults(true)}
+                                    />
+                                </div>
+
+                                {showCountryResults && countrySearch && (
+                                    <div className="absolute z-50 w-full mt-2 bg-neutral-800 border border-white/10 rounded-2xl shadow-2xl max-h-60 overflow-y-auto backdrop-blur-xl">
+                                        {countries
+                                            .filter(c => 
+                                                c.nameFr.toLowerCase().includes(countrySearch.toLowerCase()) || 
+                                                c.nameEn.toLowerCase().includes(countrySearch.toLowerCase()) ||
+                                                c.code.toLowerCase().includes(countrySearch.toLowerCase())
+                                            )
+                                            .slice(0, 10)
+                                            .map(c => (
+                                                <button
+                                                    key={c.code}
+                                                    onClick={() => {
+                                                        const currentCodes = settings.restrictedCountries || [];
+                                                        if (!currentCodes.includes(c.code)) {
+                                                            setSettings({ ...settings, restrictedCountries: [...currentCodes, c.code] });
+                                                        }
+                                                        setCountrySearch("");
+                                                        setShowCountryResults(false);
+                                                    }}
+                                                    className="w-full text-left p-4 hover:bg-white/5 flex items-center justify-between border-b border-white/5 group"
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="text-2xl">{c.flag}</span>
+                                                        <div>
+                                                            <div className="text-sm font-bold text-white group-hover:text-amber-400 transition-colors">{c.nameFr}</div>
+                                                            <div className="text-[10px] text-neutral-500 uppercase font-black">{c.code}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-amber-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <Zap size={16} />
+                                                    </div>
+                                                </button>
+                                            ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Restricted Tags */}
+                            <div className="flex flex-wrap gap-2 pt-2">
+                                {(settings.restrictedCountries || []).map((code: string) => {
+                                    const country = countries.find(c => c.code === code);
+                                    return (
+                                        <div key={code} className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-full group hover:border-amber-500/40 transition-all">
+                                            <span className="text-sm">{country?.flag}</span>
+                                            <span className="text-xs font-bold text-amber-500 flex items-center gap-1">
+                                                {country?.nameFr || code}
+                                                <span className="text-[10px] opacity-40 font-black">{code}</span>
+                                            </span>
+                                            <button 
+                                                onClick={() => {
+                                                    const updated = settings.restrictedCountries.filter((c: string) => c !== code);
+                                                    setSettings({ ...settings, restrictedCountries: updated });
+                                                }}
+                                                className="text-amber-500/30 hover:text-amber-500 transition-colors"
+                                            >
+                                                <XCircle size={14} />
+                                            </button>
+                                        </div>
+                                    );
+                                })}
+                                {(settings.restrictedCountries || []).length === 0 && (
+                                    <div className="text-center py-4 text-neutral-600 italic text-xs w-full">
+                                        {t('admin.settings.no_restricted_countries') || "Aucun pays restreint pour le moment."}
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         {/* Launch Mode */}

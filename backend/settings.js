@@ -22,7 +22,8 @@ const DEFAULT_SETTINGS = {
     blockDurationMin: 30,
     blockCreditsCost: 600,
     blockModelGain: 25,
-    blockSpecialPackPrice: 59
+    blockSpecialPackPrice: 59,
+    restrictedCountries: []
 };
 
 

@@ -136,6 +136,7 @@ export function VideoRoom({
     const [settings, setSettings] = useState<any>(null);
     const [isBlocked, setIsBlocked] = useState(false);
     const [blockEndTime, setBlockEndTime] = useState<number | null>(null);
+    const [isRestricted, setIsRestricted] = useState(false);
     const [showBlockRequestModal, setShowBlockRequestModal] = useState(false);
     const [showSpecialPackModal, setShowSpecialPackModal] = useState(false);
     const [incomingBlockRequest, setIncomingBlockRequest] = useState<any>(null);
@@ -428,6 +429,12 @@ export function VideoRoom({
                     blockEnd: data.blockEnd,
                     timestamp: Date.now()
                 }));
+            }
+            if (data.isRestricted && role === 'user') {
+                console.log("[GeoRestricted] Fast-tracking paywall for restricted country");
+                setIsRestricted(true);
+                if (accountStatus === 'guest') setShowAuthModal(true);
+                else setShowPaywall(true);
             } else {
                 // Clear any stale block state from a previous session
                 setIsBlocked(false);
@@ -545,6 +552,8 @@ export function VideoRoom({
 
         // --- 0 CREDITS TEASER (on initial connect only) ---
         if (userCredits <= 0) {
+            if (isRestricted) return; // Already handled by immediate paywall
+
             console.log("[Teaser] Starting 4s teaser countdown");
             teaserTimerRef.current = setTimeout(() => {
                 console.log("[Teaser] Teaser ended");
