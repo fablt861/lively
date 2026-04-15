@@ -120,25 +120,6 @@ app.get('/api/video/token', async (req, res) => {
   }
 });
 
-app.get('/api/ice-servers', async (req, res) => {
-  try {
-    const twilio = require('twilio');
-    const accountSid = process.env.TWILIO_ACCOUNT_SID;
-    const authToken = process.env.TWILIO_AUTH_TOKEN;
-
-    if (!accountSid || !authToken) {
-      console.warn('Twilio credentials missing, returning default STUN servers');
-      return res.json({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
-    }
-
-    const client = twilio(accountSid, authToken);
-    const token = await client.tokens.create();
-    res.json({ iceServers: token.iceServers });
-  } catch (err) {
-    console.error('Error generating Twilio token:', err);
-    res.json({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
-  }
-});
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', version: '1.0.5', timestamp: Date.now() });
