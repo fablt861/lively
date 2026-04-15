@@ -199,7 +199,7 @@ router.get('/users', requireAuth, async (req, res) => {
         `, [limit, offset]);
 
         const users = await Promise.all(userRes.rows.map(async u => {
-            const redisCredits = await redis.get(`user:${u.email.toLowerCase()}:credits`);
+            const redisCredits = await redis.get(`user:${u.id}:credits`);
             const credits = redisCredits !== null ? parseFloat(redisCredits) : parseFloat(u.credits);
             
             return {
@@ -230,11 +230,7 @@ router.post('/users/:id/credits', requireAuth, async (req, res) => {
         if (credits === undefined || credits < 0) return res.status(400).json({ error: 'admin.error.invalid_amount' });
         
         await query('UPDATE users SET credits = $1 WHERE id = $2', [credits, id]);
-        // Also update redis if email is available for lookup (legacy) or just use ID
-        const userRes = await query('SELECT email FROM users WHERE id = $1', [id]);
-        if (userRes.rows.length > 0) {
-            await redis.set(`user:${userRes.rows[0].email.toLowerCase()}:credits`, credits.toString());
-        }
+        await redis.set(`user:${id}:credits`, credits.toString());
         
         res.json({ success: true });
     } catch (err) {
@@ -276,7 +272,7 @@ router.get('/elite', requireAuth, async (req, res) => {
         `, ['pending', limit, offset]);
 
         const models = await Promise.all(modelRes.rows.map(async m => {
-            const redisBalance = await redis.get(`model:${m.email.toLowerCase()}:balance`);
+            const redisBalance = await redis.get(`model:${m.id}:balance`);
             const balance = redisBalance !== null ? parseFloat(redisBalance) : parseFloat(m.balance);
 
             return {
@@ -315,10 +311,10 @@ router.post('/elite/:id/payout', requireAuth, async (req, res) => {
         if (modelRes.rows.length === 0) return res.status(404).json({ error: 'api.error.not_found' });
         const email = modelRes.rows[0].email.toLowerCase();
 
-        const balance = parseFloat(await redis.get(`model:${email}:balance`) || '0');
+        const balance = parseFloat(await redis.get(`model:${id}:balance`) || '0');
         if (amount > balance) return res.status(400).json({ error: 'admin.error.insufficient_balance' });
 
-        await redis.incrbyfloat(`model:${email}:balance`, -amount);
+        await redis.incrbyfloat(`model:${id}:balance`, -amount);
         await query('UPDATE models SET balance = balance - $1, total_payouts = total_payouts + $1 WHERE id = $2', [amount, id]);
 
         res.json({ success: true });
@@ -376,12 +372,8 @@ router.post('/elite/:id/reset-balance', requireAuth, async (req, res) => {
         const { amount } = req.body;
         if (amount === undefined || amount < 0) return res.status(400).json({ error: 'admin.error.invalid_amount' });
         
-        const modelRes = await query('SELECT email FROM models WHERE id = $1', [id]);
-        if (modelRes.rows.length === 0) return res.status(404).json({ error: 'api.error.not_found' });
-        const email = modelRes.rows[0].email.toLowerCase();
-
         await query('UPDATE models SET balance = $1 WHERE id = $2', [amount, id]);
-        await redis.set(`model:${email}:balance`, amount.toString());
+        await redis.set(`model:${id}:balance`, amount.toString());
         
         res.json({ success: true });
     } catch (err) {
@@ -447,12 +439,12 @@ router.post('/payouts/:id/approve', requireAuth, async (req, res) => {
         const modelRes = await query('SELECT billing_info FROM models WHERE email = $1', [email]);
         const billingInfo = modelRes.rows[0]?.billing_info || {};
 
-        // 1. Get or Generate Model Numeric ID (Use Redis for counters to avoid gaps)
-        let modelNumericId = await redis.get(`model:${email}:numeric_id`);
+        // 1. Get or Generate Model Numeric ID
+        let modelNumericId = await redis.get(`model:${payout.model_id}:numeric_id`);
         if (!modelNumericId) {
             const nextId = await redis.incr('models:global_id_counter');
             modelNumericId = `M${String(nextId).padStart(3, '0')}`;
-            await redis.set(`model:${email}:numeric_id`, modelNumericId);
+            await redis.set(`model:${payout.model_id}:numeric_id`, modelNumericId);
         }
 
         // 2. Generate Sequential Invoice Number
@@ -522,21 +514,21 @@ router.post('/maintenance/sync-pseudos', requireAuth, async (req, res) => {
         
         let updated = 0;
         for (const account of sqlRes.rows) {
-            const email = account.email.toLowerCase();
+            const id = account.id;
             
             // 1. Sync Pseudos
-            const pseudo = account.pseudo || (account.first_name ? `${account.first_name} ${account.last_name || ''}`.trim() : null) || email.split('@')[0];
-            await redis.hset(`profile:${email}`, 'pseudo', pseudo);
+            const pseudo = account.pseudo || (account.first_name ? `${account.first_name} ${account.last_name || ''}`.trim() : null) || account.email.split('@')[0];
+            await redis.hset(`profile:${id}`, 'pseudo', pseudo);
             
             // 2. Sync Balances / Credits
             if (account.role === 'user') {
-                const creditsRes = await query(`SELECT credits FROM users WHERE LOWER(email) = $1`, [email]);
+                const creditsRes = await query(`SELECT credits FROM users WHERE id = $1`, [id]);
                 const credits = creditsRes.rows[0]?.credits || 0;
-                await redis.set(`user:${email}:credits`, credits);
+                await redis.set(`user:${id}:credits`, credits);
             } else {
-                const balanceRes = await query(`SELECT balance FROM models WHERE LOWER(email) = $1`, [email]);
+                const balanceRes = await query(`SELECT balance FROM models WHERE id = $1`, [id]);
                 const balance = balanceRes.rows[0]?.balance || 0;
-                await redis.set(`model:${email}:balance`, balance);
+                await redis.set(`model:${id}:balance`, balance);
             }
 
             updated++;
@@ -623,6 +615,60 @@ router.post('/maintenance/reconstruct-stats', requireAuth, async (req, res) => {
     } catch (err) {
         console.error('[Maintenance Error] Stats Reconstruction failed', err);
         res.status(500).json({ error: 'admin.error.reconstruction_failed' });
+    }
+});
+
+router.post('/maintenance/migrate-redis-uuid', requireAuth, async (req, res) => {
+    try {
+        console.log('[Maintenance] Starting on-the-fly Redis UUID Migration...');
+        let userCount = 0;
+        let modelCount = 0;
+
+        // 1. Migrate Users
+        const userRes = await query('SELECT id, email FROM users');
+        for (const user of userRes.rows) {
+            const id = user.id;
+            const email = user.email.toLowerCase();
+            const mappings = [
+                { old: `user:${email}:credits`, new: `user:${id}:credits` },
+                { old: `user:${email}:last_login`, new: `user:${id}:last_login` },
+                { old: `user:${email}:total_spent`, new: `user:${id}:total_spent` },
+                { old: `user:${email}:history`, new: `user:${id}:history` },
+                { old: `profile:${email}`, new: `profile:${id}` }
+            ];
+            for (const map of mappings) {
+                if (await redis.exists(map.old) && !(await redis.exists(map.new))) {
+                    await redis.rename(map.old, map.new);
+                }
+            }
+            userCount++;
+        }
+
+        // 2. Migrate Models
+        const modelRes = await query('SELECT id, email FROM models');
+        for (const model of modelRes.rows) {
+            const id = model.id;
+            const email = model.email.toLowerCase();
+            const mappings = [
+                { old: `model:${email}:balance`, new: `model:${id}:balance` },
+                { old: `model:${email}:total_gains`, new: `model:${id}:total_gains` },
+                { old: `model:${email}:last_login`, new: `model:${id}:last_login` },
+                { old: `model:${email}:numeric_id`, new: `model:${id}:numeric_id` },
+                { old: `model:${email}:history`, new: `model:${id}:history` },
+                { old: `profile:${email}`, new: `profile:${id}` }
+            ];
+            for (const map of mappings) {
+                if (await redis.exists(map.old) && !(await redis.exists(map.new))) {
+                    await redis.rename(map.old, map.new);
+                }
+            }
+            modelCount++;
+        }
+
+        res.json({ success: true, userCount, modelCount, message: 'Redis UUID migration completed successfully.' });
+    } catch (err) {
+        console.error('[Maintenance Error] Redis UUID Migration failed', err);
+        res.status(500).json({ error: 'admin.error.migration_failed' });
     }
 });
 

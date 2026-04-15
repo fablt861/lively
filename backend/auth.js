@@ -25,9 +25,9 @@ router.post('/login', async (req, res) => {
             if (model.password === password) {
                 // Update last login in SQL & Redis (shared key for compatibility)
                 const now = new Date().toISOString();
-                await query('UPDATE models SET last_login = $1 WHERE email = $2', [now, email]);
-                await redis.set(`user:${email}:last_login`, now);
-                await redis.hset(`profile:${email}`, 'pseudo', model.pseudo || `${model.first_name} ${model.last_name}`);
+                await query('UPDATE models SET last_login = $1 WHERE id = $2', [now, model.id]);
+                await redis.set(`user:${model.id}:last_login`, now);
+                await redis.hset(`profile:${model.id}`, 'pseudo', model.pseudo || `${model.first_name} ${model.last_name}`);
                 
                 return res.json({
                     success: true,
@@ -52,9 +52,9 @@ router.post('/login', async (req, res) => {
             if (user.password === password) {
                 // Update last login
                 const now = new Date().toISOString();
-                await query('UPDATE users SET last_login = $1 WHERE email = $2', [now, email]);
-                await redis.set(`user:${email}:last_login`, now);
-                await redis.hset(`profile:${email}`, 'pseudo', user.pseudo);
+                await query('UPDATE users SET last_login = $1 WHERE id = $2', [now, user.id]);
+                await redis.set(`user:${user.id}:last_login`, now);
+                await redis.hset(`profile:${user.id}`, 'pseudo', user.pseudo);
                 
                 return res.json({
                     success: true,
@@ -104,8 +104,8 @@ router.post('/register', async (req, res) => {
 
         // Sync initial credits to Redis for fast access in billing logic
         const redis = getRedisClient();
-        await redis.set(`user:${email}:credits`, "5");
-        await redis.hset(`profile:${email}`, 'pseudo', pseudo);
+        await redis.set(`user:${id}:credits`, "5");
+        await redis.hset(`profile:${id}`, 'pseudo', pseudo);
         
         await logNewUser();
         await trackMarketingSignup('user', src, camp, ad);
@@ -132,7 +132,7 @@ router.get('/me', async (req, res) => {
         if (userRes.rows.length > 0) {
             const user = userRes.rows[0];
             const redis = getRedisClient();
-            const credits = await redis.get(`user:${email}:credits`) || user.credits;
+            const credits = await redis.get(`user:${user.id}:credits`) || user.credits;
             
             return res.json({
                 id: user.id,
@@ -185,13 +185,13 @@ router.post('/add-credits', async (req, res) => {
         
         // Rapid credit update (Redis is primary for per-second billing)
         let newCredits;
-        const currentCredits = parseFloat((await redis.get(`user:${email}:credits`)) || '0');
+        const currentCredits = parseFloat((await redis.get(`user:${user.id}:credits`)) || '0');
         
         if (currentCredits < 0) {
             newCredits = parseFloat(amount);
-            await redis.set(`user:${email}:credits`, newCredits.toString());
+            await redis.set(`user:${user.id}:credits`, newCredits.toString());
         } else {
-            newCredits = await redis.incrbyfloat(`user:${email}:credits`, amount);
+            newCredits = await redis.incrbyfloat(`user:${user.id}:credits`, amount);
         }
 
         // Persist to SQL (source of truth for long term)
