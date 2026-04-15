@@ -17,7 +17,12 @@ async function resolvePseudo(email, role) {
     
     // 1. Try Redis Cache
     const cached = await redis.hget(`profile:${cleanEmail}`, 'pseudo');
-    if (cached) return cached;
+    
+    // CACHE BUSTER: If the cached value is just the email prefix, it might be a stale fallback.
+    // Force a DB refresh in this case to recover the real pseudo from SQL.
+    const isSuspicious = cached && cached.toLowerCase() === cleanEmail.split('@')[0].toLowerCase();
+    
+    if (cached && !isSuspicious) return cached;
 
     // 2. Try Database
     try {
