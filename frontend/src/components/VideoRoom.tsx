@@ -1451,18 +1451,19 @@ function ChatMessage({ message, isMe }: { message: any; isMe: boolean }) {
         <div className="flex flex-row justify-start w-full animate-chat-bubble">
             <div className="flex flex-col gap-1.5 max-w-[85%]">
                 <div
-                    className={`px-4 py-2 rounded-2xl text-[13px] text-left break-words ${isMe
-                        ? "bg-indigo-600/80 text-white border border-white/10 shadow-lg"
-                        : "bg-neutral-800/80 text-white border border-white/10 backdrop-blur-sm"
-                        }`}
+                    className={`px-4 py-2 rounded-2xl text-[13px] text-left break-words bg-white text-neutral-900 shadow-sm border-[1.5px] ${
+                        message.senderRole === 'model' 
+                        ? 'border-pink-500/50' 
+                        : 'border-sky-500/50'
+                    }`}
                 >
                     <div className="flex flex-col gap-1">
                         <span className="leading-relaxed">
                             {message.senderPseudo && (
                                 <span className={`font-black mr-1.5 ${
                                     message.senderRole === 'model' 
-                                    ? 'text-pink-400' 
-                                    : 'text-sky-400'
+                                    ? 'text-pink-600' 
+                                    : 'text-sky-600'
                                 }`}>
                                     {message.senderPseudo}:
                                 </span>
@@ -1470,7 +1471,7 @@ function ChatMessage({ message, isMe }: { message: any; isMe: boolean }) {
                             {decodeHTML(message.text)}
                         </span>
                         {hasTranslation && (
-                            <span className="text-[11px] text-white/40 italic leading-tight border-t border-white/5 pt-1 mt-1">
+                            <span className="text-[11px] text-neutral-400 italic leading-tight border-t border-neutral-100 pt-1 mt-1">
                                 {decodeHTML(message.originalText)}
                             </span>
                         )}

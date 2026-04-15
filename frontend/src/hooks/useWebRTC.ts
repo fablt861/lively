@@ -466,8 +466,14 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
             }
         });
 
-        socket.on("chat_message", (msg) => {
-            setMessages((prev) => [...prev, msg]);
+        socket.on("chat_message", (msg: any) => {
+            // Ensure pseudo/role are present even if missing in payload (graceful fallback)
+            const enhancedMsg = {
+                ...msg,
+                senderPseudo: msg.senderPseudo || partnerInfo?.name || "Partner",
+                senderRole: msg.senderRole || partnerInfo?.role || "user"
+            };
+            setMessages((prev) => [...prev, enhancedMsg]);
         });
 
         return () => {
