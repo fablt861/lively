@@ -11,9 +11,42 @@ redis.on('error', (err) => {
     console.error('[Redis Error] Could not connect. Is Redis running?', err.message);
 });
 
-const QUEUE_MODELS = 'queue:models';
-const QUEUE_USERS = 'queue:users';
-const RATE_LIMIT_COOLDOWN = 1.5; // seconds
+async function resolvePseudo(email, role) {
+    if (!email) return 'Guest';
+    const cleanEmail = email.toLowerCase();
+    
+    // 1. Try Redis Cache
+    const cached = await redis.hget(`profile:${cleanEmail}`, 'pseudo');
+    if (cached) return cached;
+
+    // 2. Try Database
+    try {
+        const table = role === 'model' ? 'models' : 'users';
+        const res = await query(`SELECT pseudo, first_name, last_name FROM ${table} WHERE email = $1`, [cleanEmail]);
+        if (res.rows.length > 0) {
+            const user = res.rows[0];
+            const pseudo = user.pseudo || (user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : null) || cleanEmail.split('@')[0];
+            
+            // Sync Cave: Save to Redis for next time
+            await redis.hset(`profile:${cleanEmail}`, 'pseudo', pseudo);
+            return pseudo;
+        }
+        
+        // Check alternate table if first one failed (e.g. model role mismatch)
+        const altTable = role === 'model' ? 'users' : 'models';
+        const altRes = await query(`SELECT pseudo, first_name, last_name FROM ${altTable} WHERE email = $1`, [cleanEmail]);
+        if (altRes.rows.length > 0) {
+            const user = altRes.rows[0];
+            const pseudo = user.pseudo || (user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : null) || cleanEmail.split('@')[0];
+            await redis.hset(`profile:${cleanEmail}`, 'pseudo', pseudo);
+            return pseudo;
+        }
+    } catch (err) {
+        console.error('[resolvePseudo Error]', err);
+    }
+
+    return cleanEmail.split('@')[0];
+}
 
 async function checkRateLimit(identifier) {
     if (!identifier) return false;
@@ -38,8 +71,7 @@ function setupMatching(io, socket) {
             if (socket.userEmail) {
                 await socket.join(`email:${socket.userEmail}`);
                 
-                const cachedPseudo = await redis.hget(`profile:${socket.userEmail}`, 'pseudo');
-                socket.pseudo = cachedPseudo || socket.userEmail.split('@')[0];
+                socket.pseudo = await resolvePseudo(socket.userEmail, role);
                 socket.data.pseudo = socket.pseudo;
 
                 if (role === 'model') {
@@ -90,8 +122,7 @@ function setupMatching(io, socket) {
             if (socket.userEmail) {
                 await socket.join(`email:${socket.userEmail}`);
                 
-                const cachedPseudo = await redis.hget(`profile:${socket.userEmail}`, 'pseudo');
-                socket.pseudo = cachedPseudo || socket.userEmail.split('@')[0];
+                socket.pseudo = await resolvePseudo(socket.userEmail, role);
                 socket.data.pseudo = socket.pseudo;
 
                 if (role === 'model') {

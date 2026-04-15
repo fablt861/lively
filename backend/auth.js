@@ -27,6 +27,7 @@ router.post('/login', async (req, res) => {
                 const now = new Date().toISOString();
                 await query('UPDATE models SET last_login = $1 WHERE email = $2', [now, email]);
                 await redis.set(`user:${email}:last_login`, now);
+                await redis.hset(`profile:${email}`, 'pseudo', model.pseudo || `${model.first_name} ${model.last_name}`);
                 
                 return res.json({
                     success: true,
@@ -52,6 +53,7 @@ router.post('/login', async (req, res) => {
                 const now = new Date().toISOString();
                 await query('UPDATE users SET last_login = $1 WHERE email = $2', [now, email]);
                 await redis.set(`user:${email}:last_login`, now);
+                await redis.hset(`profile:${email}`, 'pseudo', user.pseudo);
                 
                 return res.json({
                     success: true,
@@ -101,6 +103,7 @@ router.post('/register', async (req, res) => {
         // Sync initial credits to Redis for fast access in billing logic
         const redis = getRedisClient();
         await redis.set(`user:${email}:credits`, "5");
+        await redis.hset(`profile:${email}`, 'pseudo', pseudo);
         
         await logNewUser();
         await trackMarketingSignup('user', src, camp, ad);
