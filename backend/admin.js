@@ -490,6 +490,29 @@ router.post('/maintenance/reset', requireAuth, async (req, res) => {
     }
 });
 
+router.post('/maintenance/sync-pseudos', requireAuth, async (req, res) => {
+    try {
+        console.log('[Maintenance] Manual pseudo synchronization requested.');
+        const sqlRes = await query(`
+            SELECT email, pseudo, NULL as first_name, NULL as last_name, 'user' as role FROM users
+            UNION
+            SELECT email, pseudo, first_name, last_name, 'model' as role FROM models
+        `);
+        
+        let updated = 0;
+        for (const account of sqlRes.rows) {
+            const email = account.email.toLowerCase();
+            const pseudo = account.pseudo || (account.first_name ? `${account.first_name} ${account.last_name || ''}`.trim() : null) || email.split('@')[0];
+            await redis.hset(`profile:${email}`, 'pseudo', pseudo);
+            updated++;
+        }
+        res.json({ success: true, updated });
+    } catch (err) {
+        console.error('[Maintenance Error] Pseudo Sync failed', err);
+        res.status(500).json({ error: 'admin.error.sync_failed' });
+    }
+});
+
 router.get('/realtime', requireAuth, async (req, res) => {
     try {
         const sockets = await io.fetchSockets();
