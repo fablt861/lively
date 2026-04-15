@@ -529,7 +529,17 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
     const sendMessage = (text: string) => {
         if (socket && text.trim()) {
             socket.emit("chat_message", text);
-            setMessages((prev) => [...prev, { senderId: socket.id || "me", text, timestamp: Date.now() }]);
+            
+            const localPseudo = localStorage.getItem('kinky_user_pseudo') || (role === 'model' ? 'Model' : 'Guest');
+            const localRole = role || 'user';
+
+            setMessages((prev) => [...prev, { 
+                senderId: socket.id || "me", 
+                senderPseudo: localPseudo,
+                senderRole: localRole,
+                text, 
+                timestamp: Date.now() 
+            }]);
         }
     };
 

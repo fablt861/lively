@@ -70,9 +70,24 @@ function setupSignaling(io, socket) {
             translated = filterMessage(translated, keywords);
         }
 
-        // 4. Emit filtered message
+        // 4. Get Sender Pseudo and Role
+        let senderPseudo = 'Guest';
+        const senderRole = socket.role || 'user';
+
+        if (socket.userEmail) {
+            const cachedPseudo = await redis.hget(`profile:${socket.userEmail.toLowerCase()}`, 'pseudo');
+            if (cachedPseudo) {
+                senderPseudo = cachedPseudo;
+            } else {
+                senderPseudo = socket.userEmail.split('@')[0];
+            }
+        }
+
+        // 5. Emit filtered message
         socket.to(socket.currentRoom).emit('chat_message', {
             senderId: socket.id,
+            senderPseudo,
+            senderRole,
             text: translated, 
             originalText: sanitizedMessage, 
             timestamp: Date.now()

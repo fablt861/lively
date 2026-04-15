@@ -1457,7 +1457,18 @@ function ChatMessage({ message, isMe }: { message: any; isMe: boolean }) {
                         }`}
                 >
                     <div className="flex flex-col gap-1">
-                        <span>{decodeHTML(message.text)}</span>
+                        <span className="leading-relaxed">
+                            {message.senderPseudo && (
+                                <span className={`font-black mr-1.5 ${
+                                    message.senderRole === 'model' 
+                                    ? 'text-pink-400' 
+                                    : 'text-sky-400'
+                                }`}>
+                                    {message.senderPseudo}:
+                                </span>
+                            )}
+                            {decodeHTML(message.text)}
+                        </span>
                         {hasTranslation && (
                             <span className="text-[11px] text-white/40 italic leading-tight border-t border-white/5 pt-1 mt-1">
                                 {decodeHTML(message.originalText)}
