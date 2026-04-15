@@ -77,9 +77,11 @@ router.get('/:email', async (req, res) => {
         // Check online status for each model
         const models = await Promise.all(result.rows.map(async (model) => {
             const isOnline = await redis.sismember('online_models', model.email);
+            const activeRoom = await redis.get(`user_active_room:${model.email}`);
             return {
                 ...model,
-                isOnline: isOnline === 1
+                isOnline: isOnline === 1,
+                isBusy: !!activeRoom
             };
         }));
 

@@ -16,6 +16,7 @@ interface FavoriteModel {
     pseudo: string;
     photo_profile: string;
     isOnline?: boolean;
+    isBusy?: boolean;
 }
 
 interface UserInfo {
@@ -339,12 +340,18 @@ export default function CustomerDashboard() {
                                         </div>
                                         <h3 className="text-2xl font-black text-white tracking-tight uppercase group-hover:text-indigo-400 transition-colors">{model.pseudo}</h3>
                                         {model.isOnline && (
-                                            <button 
-                                                onClick={() => handleDirectCall(model)}
-                                                className="mt-4 flex items-center gap-2 text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] group/btn hover:text-white transition-colors"
-                                            >
-                                                REJOINDRE <ChevronRight size={12} className="group-hover/btn:translate-x-1 transition-transform" />
-                                            </button>
+                                            model.isBusy ? (
+                                                <div className="mt-4 text-[10px] font-black text-orange-500 uppercase tracking-[0.2em]">
+                                                    {t('dashboard.model_busy') || "EN SESSION PRIVÉE"}
+                                                </div>
+                                            ) : (
+                                                <button 
+                                                    onClick={() => handleDirectCall(model)}
+                                                    className="mt-4 flex items-center gap-2 text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] group/btn hover:text-white transition-colors"
+                                                >
+                                                    {t('dashboard.join') || "REJOINDRE"} <ChevronRight size={12} className="group-hover/btn:translate-x-1 transition-transform" />
+                                                </button>
+                                            )
                                         )}
                                     </div>
                                 </div>
