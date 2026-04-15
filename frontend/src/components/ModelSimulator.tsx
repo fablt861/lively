@@ -7,7 +7,7 @@ export function ModelSimulator() {
     const [hours, setHours] = useState(4);
     const [monthlyEarnings, setMonthlyEarnings] = useState(0);
 
-    const MINUTE_RATE = 0.50;
+    const MINUTE_RATE = 0.40;
     const HOURLY_RATE = MINUTE_RATE * 60; // 30$
     const DAYS_PER_MONTH = 30; // 30 days calculation base
 
