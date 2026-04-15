@@ -17,10 +17,14 @@ module.exports = (io) => {
 
     // Initialize blocklist if empty
     (async () => {
-        const count = await redis.scard(BLOCKLIST_KEYWORDS);
-        if (count === 0) {
-            await redis.sadd(BLOCKLIST_KEYWORDS, 'paypal');
-            console.log('[Admin] Blocking keyword initialized: paypal');
+        try {
+            const count = await redis.scard(BLOCKLIST_KEYWORDS);
+            if (count === 0) {
+                await redis.sadd(BLOCKLIST_KEYWORDS, 'paypal');
+                console.log('[Admin] Blocking keyword initialized: paypal');
+            }
+        } catch (err) {
+            console.error('[Admin] Failed to initialize blocklist:', err.message);
         }
     })();
 
@@ -429,7 +433,12 @@ router.get('/payouts/history', requireAuth, async (req, res) => {
 router.post('/payouts/:id/approve', requireAuth, async (req, res) => {
     try {
         const id = req.params.id;
-        const payoutRes = await query('SELECT * FROM payouts WHERE id = $1', [id]);
+        const payoutRes = await query(`
+            SELECT p.*, m.id as model_id 
+            FROM payouts p 
+            JOIN models m ON p.model_email = m.email 
+            WHERE p.id = $1
+        `, [id]);
         if (payoutRes.rows.length === 0) return res.status(404).json({ error: 'api.error.not_found' });
 
         const payout = payoutRes.rows[0];
@@ -507,9 +516,9 @@ router.post('/maintenance/sync-pseudos', requireAuth, async (req, res) => {
     try {
         console.log('[Maintenance] Manual pseudo synchronization requested.');
         const sqlRes = await query(`
-            SELECT email, pseudo, NULL as first_name, NULL as last_name, 'user' as role FROM users
+            SELECT id, email, pseudo, NULL as first_name, NULL as last_name, 'user' as role FROM users
             UNION
-            SELECT email, pseudo, first_name, last_name, 'model' as role FROM models
+            SELECT id, email, pseudo, first_name, last_name, 'model' as role FROM models
         `);
         
         let updated = 0;
