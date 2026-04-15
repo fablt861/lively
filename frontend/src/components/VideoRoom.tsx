@@ -350,6 +350,11 @@ export function VideoRoom({
             setIsBlocked(true);
             setBlockEndTime(payload.blockEnd);
             setIncomingBlockRequest(null);
+
+            // Close all request-related modals on start
+            setShowBlockRequestModal(false);
+            setShowSpecialPackModal(false);
+            setIsWaitingForBlockResponse(false);
             
             // Persist for recovery
             localStorage.setItem(`active_block_${role}`, JSON.stringify({
