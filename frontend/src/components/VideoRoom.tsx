@@ -130,8 +130,8 @@ export function VideoRoom({
         { room, onlySubscribed: true },
     );
 
-    const remoteVideoTrack = tracks.find(t => isTrackReference(t) && t.participant instanceof RemoteParticipant && t.source === Track.Source.Camera);
-    const localVideoTrack = tracks.find(t => isTrackReference(t) && t.participant instanceof LocalParticipant && t.source === Track.Source.Camera);
+    const remoteVideoTrack = tracks.find(t => isTrackReference(t) && t.participant instanceof RemoteParticipant && t.source === Track.Source.Camera) as any;
+    const localVideoTrack = tracks.find(t => isTrackReference(t) && t.participant instanceof LocalParticipant && t.source === Track.Source.Camera) as any;
 
     const [isAudioMuted, setIsAudioMuted] = useState(false);
     const [isVideoMuted, setIsVideoMuted] = useState(false);
