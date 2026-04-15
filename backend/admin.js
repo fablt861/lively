@@ -210,7 +210,8 @@ router.get('/users', requireAuth, async (req, res) => {
                 totalSpent: parseFloat(u.total_spent),
                 credits: credits,
                 isBuyer: parseFloat(u.total_spent) > 0 || credits > 5,
-                status: u.status
+                status: u.status,
+                marketing: { src: u.marketing_src, camp: u.marketing_camp, ad: u.marketing_ad }
             };
         }));
 
@@ -282,7 +283,12 @@ router.get('/elite', requireAuth, async (req, res) => {
                 balance: balance,
                 totalGains: parseFloat(m.total_gains),
                 totalPayouts: parseFloat(m.total_payouts),
-                status: m.status
+                status: m.status,
+                marketing: { src: m.marketing_src, camp: m.marketing_camp, ad: m.marketing_ad },
+                photoProfile: m.photo_profile,
+                photoProfileReg: m.photo_profile_reg || m.photo_profile,
+                photoId: m.photo_id,
+                photoIdSelfie: m.photo_id_selfie
             };
         }));
 

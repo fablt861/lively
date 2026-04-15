@@ -1,4 +1,5 @@
 -- PostgreSQL Schema for Lively Platform
+-- UPDATE 2026-04-15: Added photo_profile_reg to store original registration photo
 
 -- 1. Models Table (Persists model accounts)
 CREATE TABLE IF NOT EXISTS models (
@@ -12,6 +13,7 @@ CREATE TABLE IF NOT EXISTS models (
     phone VARCHAR(50),
     country VARCHAR(100),
     photo_profile TEXT,
+    photo_profile_reg TEXT,
     photo_id TEXT,
     photo_id_selfie TEXT,
     lang VARCHAR(10) DEFAULT 'en',

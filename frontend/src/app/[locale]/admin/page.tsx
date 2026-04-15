@@ -1204,6 +1204,7 @@ export default function AdminPage() {
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.credits')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.common.type')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.status')}</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.tracking')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase text-right">{t('admin.table.action')}</th>
                                     </tr>
                                 </thead>
@@ -1228,6 +1229,11 @@ export default function AdminPage() {
                                                 <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-md border ${u.status === 'disabled' ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-green-500/10 text-green-400 border-green-500/20'}`}>
                                                     {u.status === 'disabled' ? t('admin.status.disabled') : t('admin.status.active')}
                                                 </span>
+                                            </td>
+                                            <td className="p-5">
+                                                <div className="text-[10px] font-mono text-neutral-500 whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]" title={`${u.marketing?.src || 'direct'} / ${u.marketing?.camp || '-'} / ${u.marketing?.ad || '-'}`}>
+                                                    {u.marketing?.src || 'direct'} / {u.marketing?.camp || '-'} / {u.marketing?.ad || '-'}
+                                                </div>
                                             </td>
                                             <td className="p-5 text-right space-x-2">
                                                 <button
@@ -1312,6 +1318,7 @@ export default function AdminPage() {
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.paid_out')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.unpaid_balance')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.status')}</th>
+                                        <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.tracking')}</th>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase text-right">{t('admin.table.action')}</th>
                                     </tr>
                                 </thead>
@@ -1319,7 +1326,21 @@ export default function AdminPage() {
                                     {models.map((m, i) => (
                                         <tr key={i} className="hover:bg-white/[0.01] transition-colors">
                                             <td className="p-5 font-medium">
-                                                <div className="text-pink-400 font-bold">{m.pseudo || 'N/A'}</div>
+                                                <div 
+                                                    className="text-pink-400 font-bold cursor-pointer hover:underline flex items-center gap-2"
+                                                    onClick={() => {
+                                                        const galleryImages = [
+                                                            { url: m.photoProfile, label: t('admin.validations.current_profile') },
+                                                            { url: m.photoProfileReg, label: t('admin.validations.reg_profile') },
+                                                            { url: m.photoId, label: t('admin.validations.reg_id') },
+                                                            { url: m.photoIdSelfie, label: t('admin.validations.reg_selfie') }
+                                                        ].filter(img => img.url);
+                                                        setSelectedImage({ images: galleryImages as any, index: 0 });
+                                                    }}
+                                                >
+                                                    {m.pseudo || 'N/A'}
+                                                    <Sparkles size={12} className="text-pink-500/50" />
+                                                </div>
                                                 <div className="text-[10px] text-neutral-500">{m.firstName} {m.lastName}</div>
                                             </td>
                                             <td className="p-5">
@@ -1333,6 +1354,11 @@ export default function AdminPage() {
                                                 <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-md border ${m.status === 'disabled' ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-green-500/10 text-green-400 border-green-500/20'}`}>
                                                     {m.status === 'disabled' ? t('admin.status.disabled') : t('admin.status.active')}
                                                 </span>
+                                            </td>
+                                            <td className="p-5">
+                                                <div className="text-[10px] font-mono text-neutral-500 whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]" title={`${m.marketing?.src || 'direct'} / ${m.marketing?.camp || '-'} / ${m.marketing?.ad || '-'}`}>
+                                                    {m.marketing?.src || 'direct'} / {m.marketing?.camp || '-'} / {m.marketing?.ad || '-'}
+                                                </div>
                                             </td>
                                             <td className="p-5 text-right space-x-2">
                                                 <button
@@ -2026,11 +2052,17 @@ export default function AdminPage() {
                         </button>
 
                         <img 
-                            src={selectedImage.images[selectedImage.index]} 
+                            src={typeof selectedImage.images[selectedImage.index] === 'string' ? (selectedImage.images[selectedImage.index] as any) : (selectedImage.images[selectedImage.index] as any).url} 
                             alt="Enlarged view" 
-                            className="max-w-full max-h-full object-contain shadow-2xl rounded-3xl border border-white/10"
+                            className="max-w-full max-h-[80vh] object-contain shadow-2xl rounded-3xl border border-white/10"
                             onClick={(e) => e.stopPropagation()} 
                         />
+
+                        {typeof selectedImage.images[selectedImage.index] !== 'string' && (selectedImage.images[selectedImage.index] as any).label && (
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-12 bg-pink-600 text-white px-6 py-2 rounded-full font-bold text-sm shadow-xl animate-in slide-in-from-top-4 duration-300">
+                                {(selectedImage.images[selectedImage.index] as any).label}
+                            </div>
+                        )}
                         
                         {/* Info / Close */}
                         <button 

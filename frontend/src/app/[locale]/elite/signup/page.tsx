@@ -22,9 +22,11 @@ import Link from "next/link";
 import { useTranslation } from "@/context/LanguageContext";
 import { countries } from "@/utils/countries";
 import CameraCapture from "@/components/CameraCapture";
+import { useSearchParams } from "next/navigation";
 
 export default function ModelSignupPage() {
     const { t, language } = useTranslation();
+    const searchParams = useSearchParams();
     const [step, setStep] = useState(1);
 
     // Form State
@@ -187,7 +189,14 @@ export default function ModelSignupPage() {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/elite/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ lang: language, country, phone: `${phonePrefix}${phone}`, firstName, lastName, pseudo, dob, email, password, photoProfile, photoId, photoIdSelfie })
+                body: JSON.stringify({ 
+                    lang: language, country, phone: `${phonePrefix}${phone}`, 
+                    firstName, lastName, pseudo, dob, email, password, 
+                    photoProfile, photoId, photoIdSelfie,
+                    src: searchParams.get('src') || localStorage.getItem('kinky_marketing_src') || 'direct',
+                    camp: searchParams.get('camp') || localStorage.getItem('kinky_marketing_camp') || '-',
+                    ad: searchParams.get('ad') || localStorage.getItem('kinky_marketing_ad') || '-'
+                })
             });
             const data = await res.json();
             if (data.success) {
