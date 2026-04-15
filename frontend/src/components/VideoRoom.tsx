@@ -1475,6 +1475,7 @@ export function VideoRoom({
             <CallListener />
             {/* LiveKit Audio Handling */}
             {isConnected && room && <AudioConference />}
+            </div>
         </LiveKitRoom>
     );
 }
