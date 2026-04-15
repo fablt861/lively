@@ -923,6 +923,50 @@ export default function AdminPage() {
                             </div>
                         </div>
 
+                        <div className="bg-neutral-900 border border-white/5 p-8 rounded-[2.5rem] space-y-6 shadow-2xl relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl -mr-32 -mt-32" />
+                            
+                            <div className="relative z-10 flex items-start gap-6">
+                                <div className="p-4 bg-amber-500/20 rounded-2xl text-amber-400 shadow-lg shadow-amber-500/10">
+                                    <History size={32} />
+                                </div>
+                                <div className="space-y-2 flex-1">
+                                    <h3 className="text-xl font-bold text-white uppercase tracking-tight">{t('admin.maintenance.reconstruct_stats_title') || "Reconstruire l'Historique des Stats"}</h3>
+                                    <p className="text-neutral-400 text-sm leading-relaxed">
+                                        {t('admin.maintenance.reconstruct_stats_desc') || "Recrée les compteurs journaliers (inscriptions, modèles, payouts) et marketing dans Redis à partir de SQL. Indispensable pour retrouver vos graphiques après une migration Redis."}
+                                    </p>
+                                    
+                                    <div className="pt-4">
+                                        <button 
+                                            disabled={backendStatus === 'offline'}
+                                            onClick={async () => {
+                                                if (!window.confirm(t('admin.maintenance.reconstruct_confirm') || "Lancer la reconstruction de l'historique ? Cela peut prendre quelques secondes.")) return;
+                                                
+                                                try {
+                                                    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/maintenance/reconstruct-stats`, {
+                                                        method: "POST",
+                                                        headers: { Authorization: `Bearer ${token}` }
+                                                    });
+                                                    const data = await res.json();
+                                                    if (data.success) {
+                                                        alert(`${t('admin.maintenance.reconstruct_success') || 'Reconstruction terminée !'}`);
+                                                    } else {
+                                                        alert(t('admin.maintenance.reconstruct_error') || 'Erreur lors de la reconstruction.');
+                                                    }
+                                                } catch (err) {
+                                                    alert('Erreur réseau lors de la reconstruction.');
+                                                }
+                                            }}
+                                            className="group relative px-6 py-3 bg-amber-500 hover:bg-amber-400 text-white disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-xl shadow-amber-500/20 flex items-center gap-3"
+                                        >
+                                            <Activity size={16} className="group-hover:animate-spin" />
+                                            {t('admin.maintenance.reconstruct_btn') || "Lancer la Reconstruction de l'Historique"}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div className="bg-neutral-900/50 border border-white/5 p-6 rounded-3xl">
                             <div className="flex items-center gap-3 text-amber-500 text-[10px] font-black uppercase tracking-widest mb-2">
                                 <AlertCircle size={14} /> Attention

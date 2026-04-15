@@ -527,6 +527,84 @@ router.post('/maintenance/sync-pseudos', requireAuth, async (req, res) => {
     }
 });
 
+router.post('/maintenance/reconstruct-stats', requireAuth, async (req, res) => {
+    const { getRedisClient } = require('./redis');
+    const redis = getRedisClient();
+    
+    try {
+        console.log('[Maintenance] Starting full stats reconstruction...');
+        
+        // 1. Reconstruct User Stats & Marketing
+        const userStats = await query(`
+            SELECT 
+                registered_at::date as date, 
+                marketing_src, marketing_camp, marketing_ad, 
+                COUNT(*) as count 
+            FROM users 
+            GROUP BY registered_at::date, marketing_src, marketing_camp, marketing_ad
+        `);
+        
+        for (const row of userStats.rows) {
+            const dateStr = row.date.toISOString().split('T')[0];
+            const src = row.marketing_src || '';
+            const camp = row.marketing_camp || '';
+            const ad = row.marketing_ad || '';
+            const key = (src || camp || ad) ? `src:${src}|camp:${camp}|ad:${ad}` : 'direct';
+            
+            // Daily stats
+            await redis.hincrby(`stats:${dateStr}`, 'new_users', parseInt(row.count));
+            
+            // Marketing stats
+            await redis.hincrby(`marketing:users:stats:${key}`, 'signups', parseInt(row.count));
+            await redis.sadd('marketing:users:active_keys', key);
+        }
+
+        // 2. Reconstruct Model Stats & Marketing
+        const modelStats = await query(`
+            SELECT 
+                registered_at::date as date, 
+                marketing_src, marketing_camp, marketing_ad, 
+                COUNT(*) as count 
+            FROM models 
+            GROUP BY registered_at::date, marketing_src, marketing_camp, marketing_ad
+        `);
+        
+        for (const row of modelStats.rows) {
+            const dateStr = row.date.toISOString().split('T')[0];
+            const src = row.marketing_src || '';
+            const camp = row.marketing_camp || '';
+            const ad = row.marketing_ad || '';
+            const key = (src || camp || ad) ? `src:${src}|camp:${camp}|ad:${ad}` : 'direct';
+            
+            // Daily stats
+            await redis.hincrby(`stats:${dateStr}`, 'new_models', parseInt(row.count));
+            
+            // Marketing stats
+            await redis.hincrby(`marketing:models:stats:${key}`, 'signups', parseInt(row.count));
+            await redis.sadd('marketing:models:active_keys', key);
+        }
+
+        // 3. Reconstruct Payout Stats
+        const payoutStats = await query(`
+            SELECT created_at::date as date, SUM(amount) as total 
+            FROM payouts 
+            WHERE status = 'paid'
+            GROUP BY created_at::date
+        `);
+        
+        for (const row of payoutStats.rows) {
+            const dateStr = row.date.toISOString().split('T')[0];
+            await redis.hincrbyfloat(`stats:${dateStr}`, 'model_payout_usd', parseFloat(row.total));
+        }
+
+        console.log('[Maintenance] Stats reconstruction completed successfully.');
+        res.json({ success: true, message: 'Reconstruction completed for Signups, Marketing, and Payouts.' });
+    } catch (err) {
+        console.error('[Maintenance Error] Stats Reconstruction failed', err);
+        res.status(500).json({ error: 'admin.error.reconstruction_failed' });
+    }
+});
+
 router.get('/realtime', requireAuth, async (req, res) => {
     try {
         const sockets = await io.fetchSockets();
