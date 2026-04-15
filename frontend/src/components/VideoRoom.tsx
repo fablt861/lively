@@ -731,6 +731,8 @@ export function VideoRoom({
     return (
         <LiveKitRoom
             room={room || undefined}
+            token=""
+            serverUrl=""
             data-testid="livekit-room"
         >
             <div className="flex flex-col md:flex-row h-[100dvh] w-full bg-neutral-950 text-white font-sans overflow-hidden no-scroll overscroll-none touch-none">
