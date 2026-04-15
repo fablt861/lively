@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles, Lock, Timer, Check, Plus, Heart, Smile, Signal, Wifi } from "lucide-react";
 import EmojiPicker, { Theme } from 'emoji-picker-react';
-import { LiveKitRoom, VideoTrack, useTracks, AudioConference, TrackLoop, isTrackReference } from '@livekit/components-react';
+import { LiveKitRoom, VideoTrack, useTracks, RoomAudioRenderer, TrackLoop, isTrackReference } from '@livekit/components-react';
 import { Track, RemoteParticipant, LocalParticipant } from 'livekit-client';
 import { CallListener } from './CallListener';
 import { useTranslation } from "@/context/LanguageContext";
@@ -1475,8 +1475,8 @@ export function VideoRoom({
 
             {/* DIRECT CALL LISTENER (MODEL SIDE) */}
             <CallListener />
-            {/* LiveKit Audio Handling */}
-            {isConnected && room && <AudioConference />}
+            {/* LiveKit Audio Handling (Silent) */}
+            {isConnected && room && <RoomAudioRenderer />}
             </div>
         </LiveKitRoom>
     );
