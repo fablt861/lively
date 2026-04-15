@@ -83,8 +83,8 @@ function initBillingLoop(io) {
                         const blockEndNum = Number(blockData.blockEnd);
                         if (Date.now() >= blockEndNum) {
                             // Block ended naturally!
-                            console.log(`[Billing] Block session in room ${roomId} ended naturally.`);
-                            await stopBilling(roomId, 'timer_ended');
+                            console.log(`[Billing] Block session in room ${roomId} ended naturally. Transitioning back to normal billing.`);
+                            await transitionFromBlock(roomId, session, blockData);
                             continue;
                         } else {
                             isBlockedActive = true;
@@ -337,6 +337,71 @@ async function stopBilling(roomId, reason = 'unknown') {
         console.log(`[Billing] Stopped room ${roomId}. Duration: ${durationSec}s. Earned: $${totalModelEarned.toFixed(2)}`);
     } catch (err) {
         console.error('[Billing Stop Error]', err.message);
+    }
+}
+
+/**
+ * Transition from a private block back to normal billing without stopping the session
+ */
+async function transitionFromBlock(roomId, session, blockData) {
+    try {
+        const modelId = String(session.modelId).toLowerCase();
+        const userId = String(session.userId).toLowerCase();
+        const settings = await getSettings();
+
+        // 1. Calculate Payout (Natural end = Full gain)
+        const totalBlockGain = parseFloat(blockData?.blockGain || settings.blockModelGain || 25);
+        const durationMin = parseInt(blockData?.blockDurationMin || settings.blockDurationMin || 30);
+        
+        console.log(`[Billing Transition] Room ${roomId}: Block ended. Crediting model ${modelId} with $${totalBlockGain}`);
+
+        // 2. Credit Model in Redis
+        await redis.incrbyfloat(`model:${modelId}:balance`, totalBlockGain);
+        await redis.incrbyfloat(`model:${modelId}:total_gains`, totalBlockGain);
+        
+        // 3. Update Session Object
+        session.earnedUsd = (session.earnedUsd || 0) + totalBlockGain;
+        // Clean up block flags so normal billing resumes
+        delete session.isBlocked;
+        delete session.blockEnd;
+        delete session.blockGain;
+        delete session.blockCreditsCost;
+        delete session.blockDurationMin;
+
+        // 4. Clean up Redis block keys
+        await redis.del(`billing:is_blocked:${roomId}`);
+        await redis.del(`billing:is_blocked_pending:${roomId}`);
+
+        // 5. Save updated session to ACTIVE_ROOMS_KEY
+        await redis.hset(ACTIVE_ROOMS_KEY, roomId, JSON.stringify(session));
+
+        // 6. Notify both parties
+        if (ioInstance) {
+            // Summary for the model (Ok popup)
+            ioInstance.to(roomId).emit('private_session_summary', {
+                reason: 'timer_ended',
+                earned: totalBlockGain,
+                totalPossible: totalBlockGain,
+                durationSec: durationMin * 60
+            });
+
+            // Signal end of block to resume normal UI
+            ioInstance.to(roomId).emit('block_session_ended');
+
+            // Force update of displayed balances
+            ioInstance.to(roomId).emit('payout_update', { 
+                rate: settings.modelPayoutPerMinute || 0.40, 
+                earned: session.earnedUsd,
+                durationSec: Math.floor((Date.now() - session.startTime) / 1000)
+            });
+        }
+
+        // 7. Log Partial Payout
+        await logModelPayout(totalBlockGain);
+        
+        console.log(`[Billing Transition] Room ${roomId}: Successfully transitioned back to normal billing.`);
+    } catch (err) {
+        console.error(`[Billing Transition Error] Room ${roomId}:`, err.message);
     }
 }
 
