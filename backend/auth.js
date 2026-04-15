@@ -186,12 +186,13 @@ router.post('/add-credits', async (req, res) => {
     }
 
     try {
-        const { priceUsd } = req.body;
+        const { priceUsd, userId } = req.body;
+        const targetId = id || userId;
         const { trackMarketingRevenue } = require('./stats');
 
         let userRes;
-        if (id) {
-            userRes = await query('SELECT * FROM users WHERE id = $1', [id]);
+        if (targetId) {
+            userRes = await query('SELECT * FROM users WHERE id = $1', [targetId]);
         } else {
             userRes = await query('SELECT * FROM users WHERE email = $1', [email]);
         }
@@ -213,8 +214,8 @@ router.post('/add-credits', async (req, res) => {
             newCredits = await redis.incrbyfloat(`user:${user.id}:credits`, amount);
         }
 
-        // Persist to SQL (source of truth for long term)
-        await query('UPDATE users SET credits = $1 WHERE email = $2', [newCredits, email]);
+        // Persist to SQL (source of truth for long term) - Update by ID (UUID)
+        await query('UPDATE users SET credits = $1 WHERE id = $2', [newCredits, user.id]);
 
         await trackMarketingRevenue(user.marketing_src, user.marketing_camp, user.marketing_ad, priceUsd || parseFloat(amount) / 10, user.id);
         const { logPurchase } = require('./stats');
