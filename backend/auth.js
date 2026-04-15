@@ -177,11 +177,11 @@ router.get('/me', async (req, res) => {
 });
 
 router.post('/add-credits', async (req, res) => {
-    const { email: rawEmail, id, amount } = req.body;
+    const { email: rawEmail, id, amount, userId } = req.body;
     const email = rawEmail?.toLowerCase();
     const redis = getRedisClient();
 
-    if ((!email && !id) || !amount) {
+    if ((!email && !id && !userId) || !amount) {
         return res.status(400).json({ error: 'auth.error.missing_fields' });
     }
 
