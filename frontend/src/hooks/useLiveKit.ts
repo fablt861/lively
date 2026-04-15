@@ -90,9 +90,8 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
         if (state === ConnectionState.Reconnecting) setConnectionQuality('reconnecting');
         else if (state === ConnectionState.Connected) setConnectionQuality('excellent');
       })
-      .on(RoomEvent.SignalQualityChanged, (quality) => {
-        // Map LiveKit quality to our scale
-        // LiveKit uses 0-1-2
+      .on(RoomEvent.ConnectionQualityChanged, (quality, participant) => {
+        // Handle connection quality changes if needed
       });
 
     setRoom(lkRoom);
