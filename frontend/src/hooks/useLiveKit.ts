@@ -12,6 +12,7 @@ import {
   LocalAudioTrack,
   ConnectionState,
   Track,
+  VideoPresets,
 } from "livekit-client";
 
 export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = true) {
@@ -138,7 +139,12 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
         await room.connect("wss://live.kinky.live", token);
         
         // Publish local tracks
-        await room.localParticipant.enableCameraAndMicrophone();
+        // Publish local tracks with HD 720p preset
+        await room.localParticipant.enableCameraAndMicrophone({
+          video: {
+            resolution: VideoPresets.h720.resolution,
+          }
+        });
         console.log("[LiveKit] Tracks published");
       } catch (err) {
         console.error("[LiveKit] Connection error:", err);
