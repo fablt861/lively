@@ -8,10 +8,10 @@ import { COUNTRIES } from "@/constants/countries";
 interface GeoBlockModalProps {
     isOpen: boolean;
     onClose: () => void;
-    userEmail: string;
+    userId: string;
 }
 
-export function GeoBlockModal({ isOpen, onClose, userEmail }: GeoBlockModalProps) {
+export function GeoBlockModal({ isOpen, onClose, userId }: GeoBlockModalProps) {
     const { t } = useTranslation();
     const [blockedCountries, setBlockedCountries] = useState<string[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -23,10 +23,10 @@ export function GeoBlockModal({ isOpen, onClose, userEmail }: GeoBlockModalProps
     const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live";
 
     useEffect(() => {
-        if (isOpen && userEmail) {
+        if (isOpen && userId) {
             setLoading(true);
-            fetch(`${BACKEND_URL}/api/elite/${userEmail}/geoblock`, {
-                headers: { 'Authorization': `Bearer model-token-${userEmail}` }
+            fetch(`${BACKEND_URL}/api/elite/${userId}/geoblock`, {
+                headers: { 'Authorization': `Bearer model-token-${userId}` }
             })
             .then(res => res.json())
             .then(data => {
@@ -38,7 +38,7 @@ export function GeoBlockModal({ isOpen, onClose, userEmail }: GeoBlockModalProps
                 setLoading(false);
             });
         }
-    }, [isOpen, userEmail, BACKEND_URL]);
+    }, [isOpen, userId, BACKEND_URL]);
 
     const handleToggleCountry = (code: string) => {
         if (blockedCountries.includes(code)) {
@@ -57,11 +57,11 @@ export function GeoBlockModal({ isOpen, onClose, userEmail }: GeoBlockModalProps
         setSaving(true);
         setError(null);
         try {
-            const res = await fetch(`${BACKEND_URL}/api/elite/${userEmail}/geoblock`, {
+            const res = await fetch(`${BACKEND_URL}/api/elite/${userId}/geoblock`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer model-token-${userEmail}`
+                    'Authorization': `Bearer model-token-${userId}`
                 },
                 body: JSON.stringify({ blockedCountries })
             });

@@ -16,46 +16,30 @@ redis.on('error', (err) => {
     console.error('[Redis Error] Could not connect. Is Redis running?', err.message);
 });
 
-async function resolvePseudo(email, role) {
-    if (!email) return 'Guest';
-    const cleanEmail = email.toLowerCase();
+async function resolvePseudo(id, role, emailFallback) {
+    if (!id) return emailFallback ? emailFallback.split('@')[0] : 'Guest';
     
-    // 1. Try Redis Cache
-    const cached = await redis.hget(`profile:${cleanEmail}`, 'pseudo');
-    
-    // CACHE BUSTER: If the cached value is just the email prefix, it might be a stale fallback.
-    // Force a DB refresh in this case to recover the real pseudo from SQL.
-    const isSuspicious = cached && cached.toLowerCase() === cleanEmail.split('@')[0].toLowerCase();
-    
-    if (cached && !isSuspicious) return cached;
+    // 1. Try Redis Cache by ID
+    const cached = await redis.hget(`profile:${id}`, 'pseudo');
+    if (cached) return cached;
 
     // 2. Try Database
     try {
         const table = role === 'model' ? 'models' : 'users';
-        const res = await query(`SELECT pseudo, first_name, last_name FROM ${table} WHERE LOWER(email) = $1`, [cleanEmail]);
+        const res = await query(`SELECT pseudo, first_name, last_name, email FROM ${table} WHERE id = $1`, [id]);
         if (res.rows.length > 0) {
             const user = res.rows[0];
-            const pseudo = user.pseudo || (user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : null) || cleanEmail.split('@')[0];
+            const pseudo = user.pseudo || (user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : null) || user.email.split('@')[0];
             
             // Sync Cave: Save to Redis for next time
-            await redis.hset(`profile:${cleanEmail}`, 'pseudo', pseudo);
-            return pseudo;
-        }
-        
-        // Check alternate table if first one failed (e.g. model role mismatch)
-        const altTable = role === 'model' ? 'users' : 'models';
-        const altRes = await query(`SELECT pseudo, first_name, last_name FROM ${altTable} WHERE LOWER(email) = $1`, [cleanEmail]);
-        if (altRes.rows.length > 0) {
-            const user = altRes.rows[0];
-            const pseudo = user.pseudo || (user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : null) || cleanEmail.split('@')[0];
-            await redis.hset(`profile:${cleanEmail}`, 'pseudo', pseudo);
+            await redis.hset(`profile:${id}`, 'pseudo', pseudo);
             return pseudo;
         }
     } catch (err) {
         console.error('[resolvePseudo Error]', err);
     }
 
-    return cleanEmail.split('@')[0];
+    return emailFallback ? emailFallback.split('@')[0] : 'Guest';
 }
 
 function detectCountry(socket) {
@@ -100,8 +84,8 @@ async function checkRateLimit(identifier) {
 function setupMatching(io, socket) {
     let isProcessing = false;
 
-    socket.on('identify', async ({ role, email, language }) => {
-        console.log(`[Identify] Socket ${socket.id} identifies as ${role} (${email})`);
+    socket.on('identify', async ({ role, email, language, id }) => {
+        console.log(`[Identify] Socket ${socket.id} identifies as ${role} (${id || email || 'Guest'})`);
         try {
             socket.role = role;
             socket.data.role = role;
@@ -109,6 +93,8 @@ function setupMatching(io, socket) {
             socket.data.language = socket.language;
             socket.userEmail = email?.toLowerCase();
             socket.data.userEmail = socket.userEmail;
+            socket.userId = id;
+            socket.data.userId = id;
 
             // Detect IP and Country
             const forwarded = socket.handshake.headers['x-forwarded-for'];
@@ -116,21 +102,21 @@ function setupMatching(io, socket) {
             socket.countryCode = detectCountry(socket);
             socket.data.countryCode = socket.countryCode;
 
-            if (socket.userEmail) {
-                await socket.join(`email:${socket.userEmail}`);
+            if (socket.userId) {
+                await socket.join(`id:${socket.userId}`);
                 
-                socket.pseudo = await resolvePseudo(socket.userEmail, role);
+                socket.pseudo = await resolvePseudo(socket.userId, role, socket.userEmail);
                 socket.data.pseudo = socket.pseudo;
 
                 if (role === 'model') {
-                    await redis.sadd('online_models', socket.userEmail);
+                    await redis.sadd('online_models', socket.userId);
                     // Fetch blocked countries
-                    const modelRes = await query('SELECT blocked_countries FROM models WHERE email = $1', [socket.userEmail]);
+                    const modelRes = await query('SELECT blocked_countries FROM models WHERE id = $1', [socket.userId]);
                     if (modelRes.rows.length > 0) {
                         socket.data.blockedCountries = modelRes.rows[0].blocked_countries || [];
                     }
                 }
-                const isNew = await redis.set(`user_socket:${socket.userEmail}`, socket.id, 'EX', 86400);
+                await redis.set(`user_socket:${socket.userId}`, socket.id, 'EX', 86400);
             } else {
                 socket.pseudo = 'Guest';
                 socket.data.pseudo = 'Guest';
@@ -142,8 +128,8 @@ function setupMatching(io, socket) {
     });
 
     // Join role queue
-    socket.on('join_queue', async ({ role, language, email }) => {
-        console.log(`[Queue] Received join_queue from ${socket.id}. Role: ${role}, Email: ${email}`);
+    socket.on('join_queue', async ({ role, language, email, id }) => {
+        console.log(`[Queue] Received join_queue from ${socket.id}. Role: ${role}, ID: ${id}`);
         if (isProcessing) return;
         isProcessing = true;
         try {
@@ -165,24 +151,26 @@ function setupMatching(io, socket) {
             socket.language = language || 'en';
             socket.data.language = socket.language;
             
-            socket.userEmail = email?.toLowerCase(); // Persistent ID for registered users
+            socket.userEmail = email?.toLowerCase();
             socket.data.userEmail = socket.userEmail;
+            socket.userId = id;
+            socket.data.userId = id;
 
-            if (socket.userEmail) {
-                await socket.join(`email:${socket.userEmail}`);
+            if (socket.userId) {
+                await socket.join(`id:${socket.userId}`);
                 
-                socket.pseudo = await resolvePseudo(socket.userEmail, role);
+                socket.pseudo = await resolvePseudo(socket.userId, role, socket.userEmail);
                 socket.data.pseudo = socket.pseudo;
 
                 if (role === 'model') {
-                    await redis.sadd('online_models', socket.userEmail);
+                    await redis.sadd('online_models', socket.userId);
                     // Fetch blocked countries
-                    const modelRes = await query('SELECT blocked_countries FROM models WHERE email = $1', [socket.userEmail]);
+                    const modelRes = await query('SELECT blocked_countries FROM models WHERE id = $1', [socket.userId]);
                     if (modelRes.rows.length > 0) {
                         socket.data.blockedCountries = modelRes.rows[0].blocked_countries || [];
                     }
                 }
-                await redis.set(`user_socket:${socket.userEmail}`, socket.id, 'EX', 86400);
+                await redis.set(`user_socket:${socket.userId}`, socket.id, 'EX', 86400);
             } else {
                 if (!socket.pseudo) {
                     socket.pseudo = 'Guest';
@@ -200,29 +188,25 @@ function setupMatching(io, socket) {
             socket.country = geo ? geo.country : 'Unknown';
             socket.data.country = socket.country;
             console.log(`[GeoIP] Socket ${socket.id} (IP: ${userIp}) detected from: ${socket.country}`);
-            
-            if (socket.country === 'Unknown') {
-                console.log(`[GeoIP] Warning: Could not detect country for IP ${userIp}. This usually happens on localhost or internal networks.`);
-            }
 
-            // Rate Limit Check (IP or Email)
-            const identifier = email || userIp;
+            // Rate Limit Check (IP or ID)
+            const identifier = id || userIp;
             if (await checkRateLimit(identifier)) {
                 console.log(`[RateLimit] Throttling join_queue for ${identifier}`);
                 return;
             }
 
             // Hydrate and Check Credits for Registered Users
-            if (role === 'user' && email) {
-                const credits = await hydrateUserCredits(email);
+            if (role === 'user' && id) {
+                const credits = await hydrateUserCredits(id);
                 if (credits <= 0) {
-                    console.log(`[Limit] Registered User ${email} has 0 credits.`);
+                    console.log(`[Limit] Registered User ${id} has 0 credits.`);
                     return socket.emit('out_of_credits', { reason: 'balance_exhausted' });
                 }
             }
 
             // If Guest: check free limit (30s)
-            if (role === 'user' && !email) {
+            if (role === 'user' && !id) {
                 const freeUsed = await redis.get(`free_secs:${userIp}`) || 0;
                 if (parseInt(freeUsed) >= 30) {
                     console.log(`[Limit] IP ${userIp} reached free guest limit (30s).`);
@@ -232,14 +216,14 @@ function setupMatching(io, socket) {
 
             const isNew = await redis.set(`has_joined:${socket.id}`, '1', 'NX', 'EX', 86400);
             
-            // ENSURE ONE SOCKET PER EMAIL IN QUEUE
-            if (socket.userEmail) {
-                const oldSocketId = await redis.get(`queue_socket:${socket.userEmail}`);
+            // ENSURE ONE SOCKET PER ID IN QUEUE
+            if (socket.userId) {
+                const oldSocketId = await redis.get(`queue_socket:${socket.userId}`);
                 if (oldSocketId && oldSocketId !== socket.id) {
-                    console.log(`[Queue Cleanup] Removing old socket ${oldSocketId} for email ${socket.userEmail}`);
+                    console.log(`[Queue Cleanup] Removing old socket ${oldSocketId} for ID ${socket.userId}`);
                     await redis.lrem(role === 'model' ? QUEUE_MODELS : QUEUE_USERS, 0, oldSocketId);
                 }
-                await redis.set(`queue_socket:${socket.userEmail}`, socket.id, 'EX', 86400);
+                await redis.set(`queue_socket:${socket.userId}`, socket.id, 'EX', 86400);
             }
 
             await redis.lrem(role === 'model' ? QUEUE_MODELS : QUEUE_USERS, 0, socket.id);
@@ -317,29 +301,29 @@ function setupMatching(io, socket) {
             socket.leave(socket.currentRoom);
             socket.currentRoom = null;
         }
-        if (socket.role === 'model' && socket.userEmail) {
-            await redis.srem('online_models', socket.userEmail);
+        if (socket.role === 'model' && socket.userId) {
+            await redis.srem('online_models', socket.userId);
         }
         await updateQueuePositions(io, socket.role);
     });
 
-    socket.on('join_direct_room', async ({ roomId, role, email, language }) => {
+    socket.on('join_direct_room', async ({ roomId, role, id, language }) => {
         try {
-            console.log(`[DirectCall] Socket ${socket.id} joining room ${roomId} as ${role}`);
+            console.log(`[DirectCall] Socket ${socket.id} joining room ${roomId} as ${role} (ID: ${id})`);
             socket.role = role;
             socket.data.role = role;
             
             socket.language = language || 'en';
             socket.data.language = socket.language;
 
-            socket.userEmail = email?.toLowerCase();
-            socket.data.userEmail = socket.userEmail;
+            socket.userId = id;
+            socket.data.userId = id;
 
             socket.currentRoom = roomId;
             socket.data.currentRoom = roomId;
             
-            if (socket.userEmail) {
-                await socket.join(`email:${socket.userEmail}`);
+            if (socket.userId) {
+                await socket.join(`id:${socket.userId}`);
             }
             await socket.join(roomId);
 
@@ -347,25 +331,25 @@ function setupMatching(io, socket) {
             // 1. Remove this specific socket
             await redis.lrem(role === 'model' ? QUEUE_MODELS : QUEUE_USERS, 0, socket.id);
             
-            // 2. Remove any other socket for this same email (ensure one socket per email in queue)
-            if (socket.userEmail) {
-                const oldSocketId = await redis.get(`queue_socket:${socket.userEmail}`);
+            // 2. Remove any other socket for this same ID
+            if (socket.userId) {
+                const oldSocketId = await redis.get(`queue_socket:${socket.userId}`);
                 if (oldSocketId && oldSocketId !== socket.id) {
-                    console.log(`[DirectCall Cleanup] Removing old queue socket ${oldSocketId} for email ${socket.userEmail}`);
+                    console.log(`[DirectCall Cleanup] Removing old queue socket ${oldSocketId} for ID ${socket.userId}`);
                     await redis.lrem(role === 'model' ? QUEUE_MODELS : QUEUE_USERS, 0, oldSocketId);
                 }
-                // Store this new socket as the "current" one (even if not in queue, it's the active one)
-                await redis.set(`queue_socket:${socket.userEmail}`, socket.id, 'EX', 86400);
+                // Store this new socket as the "current" one
+                await redis.set(`queue_socket:${socket.userId}`, socket.id, 'EX', 86400);
             }
 
             await updateQueuePositions(io, role);
             
             // Notify the room that someone joined
-            const myPseudo = socket.userEmail ? (await redis.hget(`profile:${socket.userEmail}`, 'pseudo') || socket.userEmail) : 'Guest';
+            const myPseudo = socket.userId ? (await resolvePseudo(socket.userId, role) || 'Partner') : 'Guest';
             socket.to(roomId).emit('partner_joined', { 
                 socketId: socket.id, 
                 role, 
-                email: socket.userEmail, 
+                userId: socket.userId, 
                 name: myPseudo
             });
 
@@ -378,28 +362,27 @@ function setupMatching(io, socket) {
                 if (userSocket && modelSocket) {
                     console.log(`[DirectCall] Both parties in room ${roomId}. Emitting direct_matched_ready.`);
                     
-                    // Fetch pseudo for both to include in the payload
-                    const userEmail = userSocket.data.userEmail;
-                    const modelEmail = modelSocket.data.userEmail;
+                    const userId = userSocket.data.userId;
+                    const modelId = modelSocket.data.userId;
 
-                    const userPseudo = await redis.hget(`profile:${userEmail}`, 'pseudo') || userEmail;
-                    const modelPseudo = await redis.hget(`profile:${modelEmail}`, 'pseudo') || modelEmail;
+                    const userPseudo = await resolvePseudo(userId, 'user');
+                    const modelPseudo = await resolvePseudo(modelId, 'model');
 
                     userSocket.emit('direct_matched_ready', {
-                        partnerEmail: modelEmail,
+                        partnerId: modelId,
                         partnerPseudo: modelPseudo,
                         partnerRole: 'model'
                     });
 
                     modelSocket.emit('direct_matched_ready', {
-                        partnerEmail: userEmail,
+                        partnerId: userId,
                         partnerPseudo: userPseudo,
                         partnerRole: 'user'
                     });
 
                     console.log(`[DirectBilling] Starting billing for room ${roomId}`);
                     const userCountryCode = userSocket.data.countryCode || 'Unknown';
-                    await startBilling(roomId, userEmail, modelEmail, userSocket.id, modelSocket.id, userCountryCode);
+                    await startBilling(roomId, userId, modelId, userSocket.id, modelSocket.id, userCountryCode);
                 }
             }
         } catch (err) {
@@ -434,7 +417,7 @@ async function updateQueuePositions(io, role) {
 }
 
 async function handleJoinQueue(io, socket) {
-    const myIdentifier = (socket.userEmail || `${socket.role}:${socket.userIp || 'unknown'}`).toLowerCase();
+    const myIdentifier = (socket.userId || `${socket.role}:${socket.userIp || 'unknown'}`).toLowerCase();
     const isModel = socket.role === 'model';
     const myQueue = isModel ? QUEUE_MODELS : QUEUE_USERS;
     const targetQueue = isModel ? QUEUE_USERS : QUEUE_MODELS;
@@ -454,7 +437,7 @@ async function handleJoinQueue(io, socket) {
                 socket.currentRoom = existingRoomId;
                 
                 const isModel = socket.role === 'model';
-                const partnerEmail = isModel ? roomData.userId : roomData.modelId;
+                const partnerId = isModel ? roomData.userId : roomData.modelId;
 
                 if (isModel) {
                     roomData.modelSocketId = socket.id;
@@ -470,10 +453,10 @@ async function handleJoinQueue(io, socket) {
                 // Fetch initial balance if model
                 let modelBalance = 0;
                 if (isModel) {
-                    const balanceStr = await redis.get(`model:${socket.userEmail || socket.userIp}:balance`);
+                    const balanceStr = await redis.get(`model:${socket.userId || socket.userIp}:balance`);
                     modelBalance = parseFloat(balanceStr || 0);
-                } else if (partnerRole === 'model') {
-                     const balanceStr = await redis.get(`model:${partnerEmail}:balance`);
+                } else {
+                     const balanceStr = await redis.get(`model:${partnerId}:balance`);
                      modelBalance = parseFloat(balanceStr || 0);
                 }
 
@@ -481,9 +464,9 @@ async function handleJoinQueue(io, socket) {
                     roomId: existingRoomId,
                     initiator: socket.id,
                     isRecovery: true,
-                    partnerEmail: partnerEmail,
+                    partnerId: partnerId,
                     partnerRole: isModel ? 'user' : 'model',
-                    partnerName: partnerEmail.includes('@') ? partnerEmail.split('@')[0] : 'Partner',
+                    partnerName: await resolvePseudo(partnerId, isModel ? 'user' : 'model'),
                     isBlocked: !!blockData,
                     blockEnd: blockData?.blockEnd,
                     blockDurationMin: blockData?.blockDurationMin,
@@ -550,7 +533,7 @@ async function handleJoinQueue(io, socket) {
             const cId = allowedCandidates[i];
             const cSocket = io.sockets.sockets.get(cId);
             const cRole = cSocket.data.role || (targetQueue === QUEUE_MODELS ? 'model' : 'user');
-            const cIdentifier = (cSocket.data.userEmail || `${cRole}:${cSocket.data.userIp || 'unknown'}`).toLowerCase();
+            const cIdentifier = (cSocket.data.userId || `${cRole}:${cSocket.data.userIp || 'unknown'}`).toLowerCase();
             
             const alreadySeen = await redis.get(`seen:${myIdentifier.toLowerCase()}:${cIdentifier.toLowerCase()}`);
             if (!alreadySeen) {
@@ -594,7 +577,7 @@ async function handleJoinQueue(io, socket) {
 
         const partnerSocket = io.sockets.sockets.get(partnerId);
         if (partnerSocket) {
-            const pIdentifier = (partnerSocket.userEmail || partnerSocket.userIp || partnerSocket.id).toLowerCase();
+            const pIdentifier = (partnerSocket.userId || partnerSocket.userIp || partnerSocket.id).toLowerCase();
             const myIdentifierSorted = [myIdentifier.toLowerCase(), pIdentifier].sort();
             const roomId = `room_${myIdentifierSorted[0]}_${myIdentifierSorted[1]}_${Date.now()}`;
             
@@ -624,9 +607,9 @@ async function handleJoinQueue(io, socket) {
             const settings = await getSettings();
             const isRestricted = settings.restrictedCountries && settings.restrictedCountries.includes(userCountryCode);
 
-            // Pass billing ID: Email if registered, IP if guest
-            const userBillingId = (isModel ? (partnerSocket.userEmail || partnerSocket.userIp) : (socket.userEmail || socket.userIp))?.toLowerCase();
-            const modelBillingId = (isModel ? (socket.userEmail || socket.id) : (partnerSocket.userEmail || partnerId))?.toLowerCase();
+            // Pass billing ID: UUID if registered, IP if guest
+            const userBillingId = (isModel ? (partnerSocket.userId || partnerSocket.userIp) : (socket.userId || socket.userIp))?.toLowerCase();
+            const modelBillingId = (isModel ? (socket.userId || socket.id) : (partnerSocket.userId || partnerId))?.toLowerCase();
             
             await startBilling(roomId, userBillingId, modelBillingId, isModel ? partnerId : socket.id, isModel ? socket.id : partnerId, userCountryCode);
 
@@ -637,9 +620,9 @@ async function handleJoinQueue(io, socket) {
             socket.emit('matched', { 
                 roomId, 
                 initiator: socket.id, 
-                partnerEmail: partnerSocket.userEmail || partnerSocket.userIp, 
+                partnerId: partnerSocket.userId || partnerSocket.userIp, 
                 partnerRole: partnerSocket.role,
-                partnerName: partnerSocket.pseudo || partnerSocket.userEmail?.split('@')[0] || 'Partner',
+                partnerName: partnerSocket.pseudo || 'Partner',
                 isBlocked: false,
                 blockEnd: null,
                 isRestricted: socket.role === 'user' ? isRestricted : false,
@@ -648,7 +631,7 @@ async function handleJoinQueue(io, socket) {
             partnerSocket.emit('matched', { 
                 roomId, 
                 initiator: socket.id, 
-                partnerEmail: socket.userEmail || socket.userIp, 
+                partnerId: socket.userId || socket.userIp, 
                 partnerRole: socket.role,
                 partnerName: socket.pseudo || 'Guest',
                 isBlocked: false,

@@ -33,6 +33,7 @@ router.post('/login', async (req, res) => {
                     success: true,
                     token: `model-token-${email}`,
                     user: { 
+                        id: model.id,
                         email, 
                         role: 'model', 
                         name: model.pseudo || `${model.first_name} ${model.last_name}` 
@@ -59,6 +60,7 @@ router.post('/login', async (req, res) => {
                     success: true,
                     token: `user-token-${email}`,
                     user: { 
+                        id: user.id,
                         email, 
                         role: 'user', 
                         name: user.pseudo, 
@@ -111,7 +113,7 @@ router.post('/register', async (req, res) => {
         res.json({
             success: true,
             token: `user-token-${email}`,
-            user: { email, role: 'user', name: pseudo, credits: 5 }
+            user: { id, email, role: 'user', name: pseudo, credits: 5 }
         });
     } catch (err) {
         console.error('[Register Error]', err);
@@ -133,6 +135,7 @@ router.get('/me', async (req, res) => {
             const credits = await redis.get(`user:${email}:credits`) || user.credits;
             
             return res.json({
+                id: user.id,
                 email,
                 pseudo: user.pseudo,
                 role: 'user',
@@ -145,6 +148,7 @@ router.get('/me', async (req, res) => {
         if (modelRes.rows.length > 0) {
             const model = modelRes.rows[0];
             return res.json({
+                id: model.id,
                 email,
                 pseudo: model.pseudo || `${model.first_name} ${model.last_name}`,
                 role: 'model',

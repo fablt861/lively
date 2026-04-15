@@ -17,12 +17,12 @@ interface ProfileInfo {
 interface ProfileSettingsModalProps {
     isOpen: boolean;
     onClose: () => void;
-    userEmail: string;
+    userId: string;
     role: 'user' | 'model';
-    onProfileUpdate: (newEmail: string, newPseudo: string) => void;
+    onProfileUpdate: (newId: string | undefined, newEmail: string, newPseudo: string) => void;
 }
 
-export function ProfileSettingsModal({ isOpen, onClose, userEmail, role, onProfileUpdate }: ProfileSettingsModalProps) {
+export function ProfileSettingsModal({ isOpen, onClose, userId, role, onProfileUpdate }: ProfileSettingsModalProps) {
     const { t } = useTranslation();
     const [info, setInfo] = useState<ProfileInfo>({
         pseudo: "",
@@ -41,16 +41,16 @@ export function ProfileSettingsModal({ isOpen, onClose, userEmail, role, onProfi
     const [showConfirmPass, setShowConfirmPass] = useState(false);
 
     useEffect(() => {
-        if (isOpen && userEmail) {
+        if (isOpen && userId) {
             setLoading(true);
             setError(null);
 
             const url = role === 'model' 
-                ? `${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/elite/${userEmail}/profile`
-                : `${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/me?email=${userEmail}`;
+                ? `${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/elite/${userId}/profile`
+                : `${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/me?id=${userId}`;
 
             fetch(url, {
-                headers: { 'Authorization': `Bearer ${role}-token-${userEmail}` }
+                headers: { 'Authorization': `Bearer ${role}-token-${userId}` }
             })
                 .then(res => {
                     if (!res.ok) throw new Error("Failed to fetch profile");
@@ -71,7 +71,7 @@ export function ProfileSettingsModal({ isOpen, onClose, userEmail, role, onProfi
                     setLoading(false);
                 });
         }
-    }, [isOpen, userEmail, t, role]);
+    }, [isOpen, userId, t, role]);
     
     const compressImage = (file: File): Promise<string> => {
         return new Promise((resolve) => {
@@ -132,11 +132,11 @@ export function ProfileSettingsModal({ isOpen, onClose, userEmail, role, onProfi
 
         try {
             const url = role === 'model'
-                ? `${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/elite/${userEmail}/profile`
+                ? `${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/elite/${userId}/profile`
                 : `${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/profile`;
 
             const payload = role === 'model' ? info : {
-                currentEmail: userEmail,
+                userId: userId,
                 pseudo: info.pseudo,
                 newEmail: info.email,
                 oldPassword: info.oldPassword,
@@ -147,7 +147,7 @@ export function ProfileSettingsModal({ isOpen, onClose, userEmail, role, onProfi
                 method: role === 'model' ? 'PUT' : 'PUT',
                 headers: { 
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${role}-token-${userEmail}`
+                    'Authorization': `Bearer ${role}-token-${userId}`
                 },
                 body: JSON.stringify(payload)
             });
@@ -156,9 +156,7 @@ export function ProfileSettingsModal({ isOpen, onClose, userEmail, role, onProfi
 
             if (res.ok) {
                 setSuccess(true);
-                if (info.email !== userEmail || info.pseudo) {
-                    onProfileUpdate(info.email, info.pseudo);
-                }
+                onProfileUpdate(data.id || userId, info.email, info.pseudo);
                 setTimeout(() => {
                     setSuccess(false);
                     // Clear password fields if they were used

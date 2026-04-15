@@ -203,6 +203,7 @@ router.get('/users', requireAuth, async (req, res) => {
             const credits = redisCredits !== null ? parseFloat(redisCredits) : parseFloat(u.credits);
             
             return {
+                id: u.id,
                 email: u.email,
                 pseudo: u.pseudo,
                 registeredAt: u.registered_at,
@@ -222,14 +223,18 @@ router.get('/users', requireAuth, async (req, res) => {
     }
 });
 
-router.post('/users/:email/credits', requireAuth, async (req, res) => {
+router.post('/users/:id/credits', requireAuth, async (req, res) => {
     try {
-        const email = req.params.email.toLowerCase();
+        const id = req.params.id;
         const { credits } = req.body;
         if (credits === undefined || credits < 0) return res.status(400).json({ error: 'admin.error.invalid_amount' });
         
-        await query('UPDATE users SET credits = $1 WHERE email = $2', [credits, email]);
-        await redis.set(`user:${email}:credits`, credits.toString());
+        await query('UPDATE users SET credits = $1 WHERE id = $2', [credits, id]);
+        // Also update redis if email is available for lookup (legacy) or just use ID
+        const userRes = await query('SELECT email FROM users WHERE id = $1', [id]);
+        if (userRes.rows.length > 0) {
+            await redis.set(`user:${userRes.rows[0].email.toLowerCase()}:credits`, credits.toString());
+        }
         
         res.json({ success: true });
     } catch (err) {
@@ -237,16 +242,16 @@ router.post('/users/:email/credits', requireAuth, async (req, res) => {
     }
 });
 
-router.post('/users/:email/toggle-status', requireAuth, async (req, res) => {
+router.post('/users/:id/toggle-status', requireAuth, async (req, res) => {
     try {
-        const email = req.params.email.toLowerCase();
-        const userRes = await query('SELECT status FROM users WHERE email = $1', [email]);
+        const id = req.params.id;
+        const userRes = await query('SELECT status FROM users WHERE id = $1', [id]);
         if (userRes.rows.length === 0) return res.status(404).json({ error: 'admin.error.user_not_found' });
 
         const currentStatus = userRes.rows[0].status;
         const newStatus = currentStatus === 'disabled' ? 'active' : 'disabled';
         
-        await query('UPDATE users SET status = $1 WHERE email = $2', [newStatus, email]);
+        await query('UPDATE users SET status = $1 WHERE id = $2', [newStatus, id]);
         res.json({ success: true, status: newStatus });
     } catch (err) {
         res.status(500).json({ error: 'api.error.internal_server_error' });
@@ -275,6 +280,7 @@ router.get('/elite', requireAuth, async (req, res) => {
             const balance = redisBalance !== null ? parseFloat(redisBalance) : parseFloat(m.balance);
 
             return {
+                id: m.id,
                 email: m.email,
                 pseudo: m.pseudo || m.first_name,
                 phone: m.phone,
@@ -299,17 +305,21 @@ router.get('/elite', requireAuth, async (req, res) => {
     }
 });
 
-router.post('/elite/:email/payout', requireAuth, async (req, res) => {
+router.post('/elite/:id/payout', requireAuth, async (req, res) => {
     try {
-        const email = req.params.email.toLowerCase();
+        const id = req.params.id;
         const { amount } = req.body;
         if (!amount || amount <= 0) return res.status(400).json({ error: 'admin.error.invalid_amount' });
+
+        const modelRes = await query('SELECT email FROM models WHERE id = $1', [id]);
+        if (modelRes.rows.length === 0) return res.status(404).json({ error: 'api.error.not_found' });
+        const email = modelRes.rows[0].email.toLowerCase();
 
         const balance = parseFloat(await redis.get(`model:${email}:balance`) || '0');
         if (amount > balance) return res.status(400).json({ error: 'admin.error.insufficient_balance' });
 
         await redis.incrbyfloat(`model:${email}:balance`, -amount);
-        await query('UPDATE models SET balance = balance - $1, total_payouts = total_payouts + $1 WHERE email = $2', [amount, email]);
+        await query('UPDATE models SET balance = balance - $1, total_payouts = total_payouts + $1 WHERE id = $2', [amount, id]);
 
         res.json({ success: true });
     } catch (err) {
@@ -317,14 +327,15 @@ router.post('/elite/:email/payout', requireAuth, async (req, res) => {
     }
 });
 
-router.post('/elite/:email/validate', requireAuth, async (req, res) => {
+router.post('/elite/:id/validate', requireAuth, async (req, res) => {
     try {
-        const email = req.params.email.toLowerCase();
-        const modelRes = await query('SELECT * FROM models WHERE email = $1', [email]);
+        const id = req.params.id;
+        const modelRes = await query('SELECT * FROM models WHERE id = $1', [id]);
         if (modelRes.rows.length === 0) return res.status(404).json({ error: 'api.error.not_found' });
 
         const model = modelRes.rows[0];
-        await query('UPDATE models SET status = $1, validated_at = CURRENT_TIMESTAMP WHERE email = $2', ['active', email]);
+        const email = model.email.toLowerCase();
+        await query('UPDATE models SET status = $1, validated_at = CURRENT_TIMESTAMP WHERE id = $2', ['active', id]);
         
         await logNewModel();
         
@@ -349,23 +360,27 @@ router.post('/elite/:email/validate', requireAuth, async (req, res) => {
     }
 });
 
-router.post('/elite/:email/reject', requireAuth, async (req, res) => {
+router.post('/elite/:id/reject', requireAuth, async (req, res) => {
     try {
-        const email = req.params.email.toLowerCase();
-        await query('DELETE FROM models WHERE email = $1 AND status = $2', [email, 'pending']);
+        const id = req.params.id;
+        await query('DELETE FROM models WHERE id = $1 AND status = $2', [id, 'pending']);
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });
 
-router.post('/elite/:email/reset-balance', requireAuth, async (req, res) => {
+router.post('/elite/:id/reset-balance', requireAuth, async (req, res) => {
     try {
-        const email = req.params.email.toLowerCase();
+        const id = req.params.id;
         const { amount } = req.body;
         if (amount === undefined || amount < 0) return res.status(400).json({ error: 'admin.error.invalid_amount' });
         
-        await query('UPDATE models SET balance = $1 WHERE email = $2', [amount, email]);
+        const modelRes = await query('SELECT email FROM models WHERE id = $1', [id]);
+        if (modelRes.rows.length === 0) return res.status(404).json({ error: 'api.error.not_found' });
+        const email = modelRes.rows[0].email.toLowerCase();
+
+        await query('UPDATE models SET balance = $1 WHERE id = $2', [amount, id]);
         await redis.set(`model:${email}:balance`, amount.toString());
         
         res.json({ success: true });
@@ -655,15 +670,15 @@ router.get('/realtime', requireAuth, async (req, res) => {
     }
 });
 
-router.post('/elite/:email/toggle-status', requireAuth, async (req, res) => {
+router.post('/elite/:id/toggle-status', requireAuth, async (req, res) => {
     try {
-        const email = req.params.email.toLowerCase();
-        const modelRes = await query('SELECT status FROM models WHERE email = $1', [email]);
+        const id = req.params.id;
+        const modelRes = await query('SELECT status FROM models WHERE id = $1', [id]);
         if (modelRes.rows.length === 0) return res.status(404).json({ error: 'admin.error.model_not_found' });
 
         const currentStatus = modelRes.rows[0].status;
         const newStatus = currentStatus === 'disabled' ? 'active' : 'disabled';
-        await query('UPDATE models SET status = $1 WHERE email = $2', [newStatus, email]);
+        await query('UPDATE models SET status = $1 WHERE id = $2', [newStatus, id]);
         res.json({ success: true, status: newStatus });
     } catch (err) {
         res.status(500).json({ error: 'api.error.internal_server_error' });

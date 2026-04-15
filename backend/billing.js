@@ -121,7 +121,9 @@ function initBillingLoop(io) {
 
                     // 2. Decrement User Credits
                     let remaining = 0;
-                    if (session.userId.includes('@')) {
+                    const isRegisteredUser = session.userId && session.userId.length > 20; // UUID vs IP heuristic
+ 
+                    if (isRegisteredUser) {
                         remaining = await redis.incrbyfloat(`user:${session.userId}:credits`, -rateUserCreditsPerSec);
                         
                         if (ioInstance) {
@@ -136,6 +138,7 @@ function initBillingLoop(io) {
                             }
                             await stopBilling(roomId);
                             continue;
+                        }
                         }
                     } else {
                         // Guest user: increment time used (no block logic for guests usually, but we keep it safe)
@@ -419,7 +422,7 @@ async function getModelStats(modelId) {
     const historyStrs = await redis.lrange(`model:${normalizedId}:history`, 0, 50);
     
     // FETCH PROFILE FROM SQL (Source of Truth)
-    const modelRes = await query('SELECT pseudo, photo_profile FROM models WHERE email = $1', [normalizedId]);
+    const modelRes = await query('SELECT pseudo, photo_profile FROM models WHERE id = $1', [normalizedId]);
     const profile = modelRes.rows[0] || {};
 
     return {

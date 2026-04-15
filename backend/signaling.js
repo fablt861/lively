@@ -129,33 +129,34 @@ function setupSignaling(io, socket) {
     });
 
     socket.on('direct_call_request', async (payload) => {
-        const { targetEmail, userEmail, userPseudo } = payload;
+        const { targetId, userId, userPseudo } = payload;
         const { getRedisClient } = require('./redis');
         const redis = getRedisClient();
 
         // 1. Verify Credits (min 150 for direct call)
         const { hydrateUserCredits } = require('./balance');
-        const currentCredits = await hydrateUserCredits(userEmail);
+        const idToHydrate = userId || socket.userId;
+        const currentCredits = await hydrateUserCredits(idToHydrate);
         if (currentCredits < 150) {
             return socket.emit('direct_call_error', { reason: 'insufficient_credits' });
         }
 
         // 2. Find Model Socket
-        const modelSocketId = await redis.get(`user_socket:${targetEmail.toLowerCase()}`);
+        const modelSocketId = await redis.get(`user_socket:${targetId}`);
         if (!modelSocketId) {
             return socket.emit('direct_call_error', { reason: 'offline' });
         }
 
-        // 3. Notify Model (via their personal email room to reach all tabs/components)
-        io.to(`email:${targetEmail.toLowerCase()}`).emit('direct_call_incoming', {
-            requestorEmail: userEmail,
+        // 3. Notify Model (via their personal ID room to reach all tabs/components)
+        io.to(`id:${targetId}`).emit('direct_call_incoming', {
+            requestorId: userId,
             requestorPseudo: userPseudo,
             requestorSocketId: socket.id
         });
     });
 
     socket.on('direct_call_response', async (payload) => {
-        const { requestorSocketId, accepted, modelEmail, requestorEmail } = payload;
+        const { requestorSocketId, accepted, modelId, userId } = payload;
         
         if (accepted) {
             // Create a custom private room name
@@ -163,9 +164,9 @@ function setupSignaling(io, socket) {
             
             // Notify both to join this room
             // Client gets it via their socket (requestorSocketId). They are the INTITIATOR.
-            io.to(requestorSocketId).emit('direct_call_accepted', { roomId, modelEmail, initiatorRole: 'user' });
-            // Model gets it via their personal email room. They are NOT the initiator.
-            io.to(`email:${modelEmail.toLowerCase()}`).emit('direct_call_accepted', { roomId, requestorEmail: requestorEmail, initiatorRole: 'user' });
+            io.to(requestorSocketId).emit('direct_call_accepted', { roomId, partnerId: modelId, initiatorRole: 'user' });
+            // Model gets it via their personal ID room. They are NOT the initiator.
+            io.to(`id:${modelId}`).emit('direct_call_accepted', { roomId, partnerId: userId, initiatorRole: 'user' });
         } else {
             io.to(requestorSocketId).emit('direct_call_rejected', { reason: 'busy' });
         }

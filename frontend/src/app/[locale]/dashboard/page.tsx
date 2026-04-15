@@ -12,7 +12,7 @@ import { Phone, PhoneOff, X, LogOut } from "lucide-react";
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live";
 
 interface FavoriteModel {
-    email: string;
+    id: string;
     pseudo: string;
     photo_profile: string;
     isOnline?: boolean;
@@ -20,6 +20,7 @@ interface FavoriteModel {
 }
 
 interface UserInfo {
+    id: string;
     email: string;
     pseudo: string;
     credits: number;
@@ -28,6 +29,7 @@ interface UserInfo {
 export default function CustomerDashboard() {
     const { t, language } = useTranslation();
     const [userEmail, setUserEmail] = useState<string | null>(null);
+    const [userId, setUserId] = useState<string | null>(null);
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
     const [favorites, setFavorites] = useState<FavoriteModel[]>([]);
     const [loading, setLoading] = useState(true);
@@ -71,7 +73,9 @@ export default function CustomerDashboard() {
 
     useEffect(() => {
         const email = localStorage.getItem('kinky_user_email');
+        const id = localStorage.getItem('kinky_user_id');
         setUserEmail(email);
+        setUserId(id);
     }, []);
 
     const fetchUserInfo = () => {
@@ -80,6 +84,10 @@ export default function CustomerDashboard() {
             .then(res => res.json())
             .then(data => {
                 setUserInfo(data);
+                if (data.id) {
+                    setUserId(data.id);
+                    localStorage.setItem('kinky_user_id', data.id);
+                }
                 if (data.credits !== undefined) {
                     localStorage.setItem('kinky_credits', data.credits.toString());
                 }
@@ -88,8 +96,8 @@ export default function CustomerDashboard() {
     };
 
     const fetchFavorites = () => {
-        if (!userEmail) return;
-        fetch(`${BACKEND_URL}/api/favorites/${userEmail}`)
+        if (!userId) return;
+        fetch(`${BACKEND_URL}/api/favorites/${userId}`)
             .then(res => res.json())
             .then(data => {
                 if (Array.isArray(data)) {
@@ -106,22 +114,22 @@ export default function CustomerDashboard() {
     };
 
     useEffect(() => {
-        if (userEmail) {
+        if (userId) {
             fetchUserInfo();
             fetchFavorites();
         }
-    }, [userEmail]);
+    }, [userId]);
 
-    const handleRemoveFavorite = async (modelEmail: string) => {
-        if (!userEmail) return;
+    const handleRemoveFavorite = async (modelId: string) => {
+        if (!userId) return;
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/favorites/remove`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userEmail, modelEmail })
+                body: JSON.stringify({ userId, modelId })
             });
             if (res.ok) {
-                setFavorites(prev => prev.filter(f => f.email !== modelEmail));
+                setFavorites(prev => prev.filter(f => f.id !== modelId));
             }
         } catch (err) {
             console.error(err);
@@ -156,8 +164,8 @@ export default function CustomerDashboard() {
         setCallStatus('calling');
 
         socket.emit('direct_call_request', {
-            targetEmail: model.email,
-            userEmail: userInfo.email,
+            targetId: model.id,
+            userId: userInfo.id,
             userPseudo: userInfo.pseudo
         });
     };
@@ -169,6 +177,7 @@ export default function CustomerDashboard() {
 
     const handleLogout = () => {
         localStorage.removeItem('kinky_token');
+        localStorage.removeItem('kinky_user_id');
         localStorage.removeItem('kinky_user_pseudo');
         localStorage.removeItem('kinky_user_email');
         localStorage.removeItem('kinky_user_role');
@@ -179,7 +188,8 @@ export default function CustomerDashboard() {
         window.location.href = `/${language}/`;
     };
 
-    const handleProfileUpdate = (newEmail: string, newPseudo: string) => {
+    const handleProfileUpdate = (newId: string | undefined, newEmail: string, newPseudo: string) => {
+        if (newId) localStorage.setItem('kinky_user_id', newId);
         localStorage.setItem('kinky_user_email', newEmail);
         localStorage.setItem('kinky_user_pseudo', newPseudo);
         if (newEmail !== userEmail) {
@@ -314,7 +324,7 @@ export default function CustomerDashboard() {
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                             {favorites.map((model) => (
-                                <div key={model.email} className="group relative aspect-[3/4] rounded-[2rem] overflow-hidden border border-white/10 bg-neutral-900 shadow-2xl transition-all duration-500 hover:border-indigo-500/50 hover:-translate-y-2">
+                                <div key={model.id} className="group relative aspect-[3/4] rounded-[2rem] overflow-hidden border border-white/10 bg-neutral-900 shadow-2xl transition-all duration-500 hover:border-indigo-500/50 hover:-translate-y-2">
                                     <img 
                                         src={model.photo_profile || "/images/avatars/model_1.png"} 
                                         alt={model.pseudo}
@@ -324,7 +334,7 @@ export default function CustomerDashboard() {
                                     
                                     <div className="absolute top-4 right-4 z-20">
                                         <button 
-                                            onClick={() => handleRemoveFavorite(model.email)}
+                                            onClick={() => handleRemoveFavorite(model.id)}
                                             className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white/60 hover:text-red-500 hover:bg-white transition-all transform hover:rotate-12"
                                         >
                                             <Trash2 size={18} />
@@ -365,7 +375,7 @@ export default function CustomerDashboard() {
             <ProfileSettingsModal 
                 isOpen={isProfileOpen}
                 onClose={() => setIsProfileOpen(false)}
-                userEmail={userEmail}
+                userId={userId!}
                 role="user"
                 onProfileUpdate={handleProfileUpdate}
             />

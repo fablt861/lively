@@ -23,10 +23,10 @@ interface BillingInfo {
 interface ModelBillingModalProps {
     isOpen: boolean;
     onClose: () => void;
-    modelEmail: string;
+    modelId: string;
 }
 
-export function ModelBillingModal({ isOpen, onClose, modelEmail }: ModelBillingModalProps) {
+export function ModelBillingModal({ isOpen, onClose, modelId }: ModelBillingModalProps) {
     const { t, language } = useTranslation();
     const [info, setInfo] = useState<BillingInfo>({
         name: "",
@@ -40,10 +40,10 @@ export function ModelBillingModal({ isOpen, onClose, modelEmail }: ModelBillingM
     const [success, setSuccess] = useState(false);
 
     useEffect(() => {
-        if (isOpen && modelEmail) {
+        if (isOpen && modelId) {
             setLoading(true);
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/elite/${modelEmail}/billing`, {
-                headers: { 'Authorization': `Bearer model-token-${modelEmail}` }
+            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/elite/${modelId}/billing`, {
+                headers: { 'Authorization': `Bearer model-token-${modelId}` }
             })
                 .then(res => res.json())
                 .then(data => {
@@ -55,7 +55,7 @@ export function ModelBillingModal({ isOpen, onClose, modelEmail }: ModelBillingM
                     setLoading(false);
                 });
         }
-    }, [isOpen, modelEmail]);
+    }, [isOpen, modelId]);
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -64,11 +64,11 @@ export function ModelBillingModal({ isOpen, onClose, modelEmail }: ModelBillingM
         setSuccess(false);
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/elite/${modelEmail}/billing`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/elite/${modelId}/billing`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer model-token-${modelEmail}`
+                    'Authorization': `Bearer model-token-${modelId}`
                 },
                 body: JSON.stringify(info)
             });

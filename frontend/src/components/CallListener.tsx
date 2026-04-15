@@ -11,25 +11,25 @@ export function CallListener() {
     const { t, language } = useTranslation();
     const [socket, setSocket] = useState<Socket | null>(null);
     const [incomingCall, setIncomingCall] = useState<{
-        requestorEmail: string;
+        requestorId: string;
         requestorPseudo: string;
         requestorSocketId: string;
     } | null>(null);
 
     useEffect(() => {
         const role = localStorage.getItem('kinky_user_role');
-        const email = localStorage.getItem('kinky_user_email');
+        const id = localStorage.getItem('kinky_user_id');
         
-        console.log('[CallListener] Initializing...', { role, email });
+        console.log('[CallListener] Initializing...', { role, id });
         
-        if (role !== 'model' || !email) return;
+        if (role !== 'model' || !id) return;
 
         const newSocket = io(BACKEND_URL);
         setSocket(newSocket);
 
-        // Tell backend who we are so it can map our email to this socket 
+        // Tell backend who we are so it can map our ID to this socket 
         // without joining the matching queue
-        newSocket.emit('identify', { role: 'model', email, language });
+        newSocket.emit('identify', { role: 'model', id, language });
 
         newSocket.on('direct_call_incoming', (payload) => {
             console.log('[CallListener] Incoming call:', payload);
@@ -52,12 +52,12 @@ export function CallListener() {
     const handleResponse = (accepted: boolean) => {
         if (!socket || !incomingCall) return;
 
-        const email = localStorage.getItem('kinky_user_email');
+        const id = localStorage.getItem('kinky_user_id');
         socket.emit('direct_call_response', {
             requestorSocketId: incomingCall.requestorSocketId,
-            requestorEmail: incomingCall.requestorEmail,
+            requestorId: incomingCall.requestorId,
             accepted,
-            modelEmail: email
+            modelId: id
         });
 
         if (accepted) {

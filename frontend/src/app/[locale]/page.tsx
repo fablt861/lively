@@ -38,13 +38,13 @@ export default function Home() {
         }
 
         const role = localStorage.getItem('kinky_user_role');
-        const email = localStorage.getItem('kinky_user_email');
+        const id = localStorage.getItem('kinky_user_id');
         setUserRole(role);
 
         if (role === 'model') {
-            if (email) {
-                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/elite/${email}/stats`, {
-                    headers: { 'Authorization': `Bearer model-token-${email}` }
+            if (id) {
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/elite/${id}/stats`, {
+                    headers: { 'Authorization': `Bearer model-token-${id}` }
                 })
                 .then(res => res.json())
                 .then(data => {
@@ -54,9 +54,9 @@ export default function Home() {
                 })
                 .catch(console.error);
             }
-        } else if (email) {
+        } else if (id) {
             // For regular users, sync credits from backend on mount
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/me?email=${email}`)
+            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/me?id=${id}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data && data.credits !== undefined) {
@@ -70,6 +70,7 @@ export default function Home() {
 
     const handleLogout = () => {
         localStorage.removeItem('kinky_token');
+        localStorage.removeItem('kinky_user_id');
         localStorage.removeItem('kinky_user_pseudo');
         localStorage.removeItem('kinky_user_email');
         localStorage.removeItem('kinky_user_role');
@@ -315,13 +316,13 @@ export default function Home() {
                 <PaywallModal
                     onClose={() => setShowPaywall(false)}
                     onPurchase={async (credits, priceUsd) => {
-                        const email = localStorage.getItem('kinky_user_email');
-                        if (email) {
+                        const userId = localStorage.getItem('kinky_user_id');
+                        if (userId) {
                             try {
                                 const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/add-credits`, {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ email, amount: credits, priceUsd })
+                                    body: JSON.stringify({ userId, amount: credits, priceUsd })
                                 });
                                 if (!res.ok) {
                                     console.error('[Purchase] Failed to sync credits with backend from Home:', await res.text());

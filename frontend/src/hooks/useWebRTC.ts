@@ -15,7 +15,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
     const [isCallConnected, setIsCallConnected] = useState(false);
     const [messages, setMessages] = useState<{ senderId: string; text: string; originalText?: string; timestamp: number }[]>([]);
     const [queuePosition, setQueuePosition] = useState<number | null>(null);
-    const [partnerInfo, setPartnerInfo] = useState<{ email: string; role: string; name: string } | null>(null);
+    const [partnerInfo, setPartnerInfo] = useState<{ id: string; role: string; name: string } | null>(null);
     const [isMaintenance, setIsMaintenance] = useState(false);
     const [isLaunch, setIsLaunch] = useState(false);
     const [cameraPermissionError, setCameraPermissionError] = useState(false);
@@ -100,21 +100,21 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
         const isInit = urlParams.get('init') === 'true';
 
         if (directRoom) {
-            const email = localStorage.getItem("kinky_user_email") || null;
+            const id = localStorage.getItem("kinky_user_id") || null;
             
             newSocket.on('connect', () => {
                 console.log('[DirectCall] Socket connected, joining room:', directRoom);
                 newSocket.on('direct_matched_ready', async (data: any) => {
                     console.log('[DirectCall] Both parties ready:', data);
                     
-                    if (data?.partnerEmail) {
+                    if (data?.partnerId) {
                         setPartnerInfo({
-                            email: data.partnerEmail,
+                            id: data.partnerId,
                             role: data.partnerRole,
-                            name: data.partnerPseudo || data.partnerEmail
+                            name: data.partnerPseudo || data.partnerId
                         });
                     }
-
+// ... (rest of direct_matched_ready logic)
                     setIsMatching(false);
                     setIsCallConnected(true);
                     
@@ -139,7 +139,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
                 newSocket.emit("join_direct_room", { 
                     roomId: directRoom, 
                     role, 
-                    email, 
+                    id, 
                     language: navigator.language || "en" 
                 });
             });
@@ -163,8 +163,8 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
     const joinQueue = () => {
         if (!socket || !role) return;
         const language = navigator.language || "en";
-        const email = localStorage.getItem("kinky_user_email") || null;
-        socket.emit("join_queue", { role, language, email });
+        const id = localStorage.getItem("kinky_user_id") || null;
+        socket.emit("join_queue", { role, language, id });
         setIsMatching(true);
     };
 
@@ -351,7 +351,7 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
         });
 
         socket.on("matched", async (data: any) => {
-            const { roomId, initiator, partnerEmail, partnerRole, partnerName, isRecovery } = data;
+            const { roomId, initiator, partnerId, partnerRole, partnerName, isRecovery } = data;
             currentRoomRef.current = roomId;
             console.log('[WebRTC] Matched event received. Initiator:', initiator, 'Recovery:', !!isRecovery);
             setRemoteStream(null); // Clear previous stream to avoid stale visuals
@@ -363,9 +363,9 @@ export function useWebRTC(role: "user" | "model" | null, isEnabled: boolean = tr
                 setMessages([]);
             }
 
-            if (partnerEmail) {
+            if (partnerId) {
                 setPartnerInfo({
-                    email: partnerEmail,
+                    id: partnerId,
                     role: partnerRole,
                     name: partnerName
                 });

@@ -35,13 +35,13 @@ export default function LivePage({ params }: { params: { locale: string } }) {
     const activeLaunch = isLaunch || webRTC.isLaunch;
     
     const handlePurchase = async (credits: number, priceUsd: number) => {
-        const email = localStorage.getItem('kinky_user_email');
-        if (!email) return;
+        const id = localStorage.getItem('kinky_user_id');
+        if (!id) return;
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/add-credits`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, amount: credits, priceUsd })
+                body: JSON.stringify({ userId: id, amount: credits, priceUsd })
             });
             if (!res.ok) console.error('[Purchase] Error:', await res.text());
         } catch (err) {

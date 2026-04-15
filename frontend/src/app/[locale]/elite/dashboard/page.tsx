@@ -80,7 +80,7 @@ export default function DashboardPage() {
     };
 
     useEffect(() => {
-        setId(localStorage.getItem('kinky_user_email'));
+        setId(localStorage.getItem('kinky_user_id'));
     }, []);
 
     useEffect(() => {
@@ -127,6 +127,7 @@ export default function DashboardPage() {
 
     const handleLogout = () => {
         localStorage.removeItem('kinky_token');
+        localStorage.removeItem('kinky_user_id');
         localStorage.removeItem('kinky_user_pseudo');
         localStorage.removeItem('kinky_user_email');
         localStorage.removeItem('kinky_user_role');
@@ -137,8 +138,9 @@ export default function DashboardPage() {
         window.location.href = `/${language}/`;
     };
 
-    const handleProfileUpdate = (newEmail: string, newPseudo: string) => {
+    const handleProfileUpdate = (newId: string | undefined, newEmail: string, newPseudo: string) => {
         // Update localStorage
+        if (newId) localStorage.setItem('kinky_user_id', newId);
         localStorage.setItem('kinky_user_email', newEmail);
         localStorage.setItem('kinky_user_pseudo', newPseudo);
         
@@ -151,8 +153,8 @@ export default function DashboardPage() {
             localStorage.setItem('user', JSON.stringify(userData));
         }
         
-        if (newEmail !== id) {
-            setId(newEmail);
+        if (newId && newId !== id) {
+            setId(newId);
             window.location.reload();
         } else {
             setStats(prev => prev ? { ...prev, pseudo: newPseudo } : prev);
@@ -537,13 +539,13 @@ export default function DashboardPage() {
             <ModelBillingModal 
                 isOpen={isBillingOpen} 
                 onClose={() => setIsBillingOpen(false)} 
-                modelEmail={id} 
+                modelId={id} 
             />
 
             <ProfileSettingsModal 
                 isOpen={isProfileOpen}
                 onClose={() => setIsProfileOpen(false)}
-                userEmail={id}
+                userId={id!}
                 role="model"
                 onProfileUpdate={handleProfileUpdate}
             />
@@ -551,7 +553,7 @@ export default function DashboardPage() {
             <GeoBlockModal
                 isOpen={isGeoBlockOpen}
                 onClose={() => setIsGeoBlockOpen(false)}
-                userEmail={id}
+                userId={id}
             />
 
             <ModelRulesModal

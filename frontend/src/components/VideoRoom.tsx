@@ -73,7 +73,7 @@ interface VideoRoomProps {
     role: "user" | "model" | null;
     onNext: () => void;
     handleOutOfCredits: () => void;
-    partnerInfo: { email: string; role: string; name: string } | null;
+    partnerInfo: { id: string; role: string; name: string } | null;
     language: string;
     onCreditsUpdate: (credits: number) => void;
     onCallEnd: () => void;
@@ -195,10 +195,10 @@ export function VideoRoom({
 
     // Favorites Management
     useEffect(() => {
-        if (role === 'user' && partnerInfo?.email) {
-            const userEmail = localStorage.getItem('kinky_user_email');
-            if (userEmail) {
-                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/favorites/check?userEmail=${userEmail}&modelEmail=${partnerInfo.email}`)
+        if (role === 'user' && partnerInfo?.id) {
+            const userId = localStorage.getItem('kinky_user_id');
+            if (userId) {
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/favorites/check?userId=${userId}&modelId=${partnerInfo.id}`)
                     .then(res => res.json())
                     .then(data => setIsFavorite(data.isFavorite))
                     .catch(console.error);
@@ -206,21 +206,21 @@ export function VideoRoom({
         } else {
             setIsFavorite(false);
         }
-    }, [partnerInfo?.email, role]);
+    }, [partnerInfo?.id, role]);
 
     const toggleFavorite = async () => {
-        if (role !== 'user' || !partnerInfo?.email || isTogglingFavorite) return;
-        const userEmail = localStorage.getItem('kinky_user_email');
-        if (!userEmail) return;
+        if (role !== 'user' || !partnerInfo?.id || isTogglingFavorite) return;
+        const userId = localStorage.getItem('kinky_user_id');
+        if (!userId) return;
 
         setIsTogglingFavorite(true);
         const action = isFavorite ? 'remove' : 'add';
-        console.log(`[Favorites] Attempting to ${action}:`, { userEmail, modelEmail: partnerInfo.email });
+        console.log(`[Favorites] Attempting to ${action}:`, { userId, modelId: partnerInfo.id });
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/favorites/${action}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userEmail, modelEmail: partnerInfo.email })
+                body: JSON.stringify({ userId, modelId: partnerInfo.id })
             });
             const data = await res.json();
             if (res.ok && data.success) {
@@ -239,7 +239,7 @@ export function VideoRoom({
     // Load state from localStorage on mount
     useEffect(() => {
         const storedStatus = (localStorage.getItem('kinky_account_status') as any) || 'guest';
-        const storedEmail = localStorage.getItem('kinky_user_email');
+        const storedId = localStorage.getItem('kinky_user_id');
         setAccountStatus(storedStatus);
 
         let storedCredits = localStorage.getItem('kinky_credits');
@@ -249,8 +249,8 @@ export function VideoRoom({
         }
         setUserCredits(Number(storedCredits));
 
-        if (storedEmail) {
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/me?email=${storedEmail}`)
+        if (storedId) {
+            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/me?id=${storedId}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data && data.credits !== undefined) {
@@ -673,32 +673,21 @@ export function VideoRoom({
 
         try {
             const screenshots = await captureScreenshots();
-            const reporterEmail = localStorage.getItem('kinky_user_email') || 'Guest';
+            const reporterId = localStorage.getItem('kinky_user_id') || 'unknown';
             const reporterName = localStorage.getItem('kinky_user_pseudo') || 'Guest';
             const reporterRole = localStorage.getItem('kinky_user_role') || 'guest';
 
-            // We don't have the reported email directly in props, 
-            // but we can assume the backend knows who is in the room.
-            // However, the instructions say "capture screenshots of the reported party".
-            // For now, we send what we have. 
-            // In a real scenario, the signaling server would provide peer info.
-            // I'll use a placeholder 'peer@example.com' or similar if not available, 
-            // but ideally we should have it.
-            
-            // Let's check if we can get the peer info. 
-            // The backend report.js expects reportedEmail.
-            
             const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live";
             const response = await fetch(`${backendUrl}/api/report`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    reporterEmail,
+                    reporterId,
                     reporterName,
                     reporterRole,
                     reason: reportReason,
                     screenshots,
-                    reportedEmail: partnerInfo?.email || 'unknown@kinky.live',
+                    reportedId: partnerInfo?.id || 'unknown',
                     reportedName: partnerInfo?.name || 'Unknown',
                     reportedRole: partnerInfo?.role || (role === 'model' ? 'user' : 'model')
                 })
@@ -746,8 +735,9 @@ export function VideoRoom({
                                 router.push(`/${language}`);
                             }
                         }}
-                        onSuccess={(email, userRole, name, credits) => {
+                        onSuccess={(id, email, userRole, name, credits) => {
                             localStorage.setItem('kinky_account_status', 'registered');
+                            localStorage.setItem('kinky_user_id', id);
                             localStorage.setItem('kinky_user_email', email);
                             localStorage.setItem('kinky_user_pseudo', name);
                             localStorage.setItem('kinky_user_role', userRole);
@@ -768,13 +758,13 @@ export function VideoRoom({
                             }
                         }}
                         onPurchase={async (credits, priceUsd) => {
-                            const email = localStorage.getItem('kinky_user_email');
-                            if (email) {
+                            const userId = localStorage.getItem('kinky_user_id');
+                            if (userId) {
                                 try {
                                     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/add-credits`, {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ email, amount: credits, priceUsd })
+                                        body: JSON.stringify({ userId, amount: credits, priceUsd })
                                     });
                                     if (!res.ok) {
                                         console.error('[Purchase] Failed to sync credits with backend:', await res.text());
@@ -951,7 +941,7 @@ export function VideoRoom({
                         </button>
                     )}
                     {/* Favorite Button */}
-                    {role === 'user' && partnerInfo?.email && localStorage.getItem('kinky_user_email') && (
+                    {role === 'user' && partnerInfo?.id && localStorage.getItem('kinky_user_id') && (
                         <button
                             onClick={toggleFavorite}
                             disabled={isTogglingFavorite}
@@ -984,7 +974,7 @@ export function VideoRoom({
                     </button>
                     <button onClick={() => setShowExitConfirm(true)} className="p-4 rounded-full bg-red-600 hover:bg-red-500 transition-colors shadow-lg"><PhoneOff size={24} /></button>
                     {/* Favorite Button Desktop */}
-                    {role === 'user' && partnerInfo?.email && localStorage.getItem('kinky_user_email') && (
+                    {role === 'user' && partnerInfo?.id && localStorage.getItem('kinky_user_id') && (
                         <button
                             onClick={toggleFavorite}
                             disabled={isTogglingFavorite}
