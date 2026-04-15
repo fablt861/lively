@@ -172,9 +172,11 @@ function initBillingLoop(io) {
 
                     // 4. Sync Payout Info to Model
                     if (ioInstance) {
+                        const currentBalance = await redis.get(`model:${session.modelId}:balance`);
                         ioInstance.to(roomId).emit('payout_update', { 
                             rate: activeRate, 
                             earned: session.earnedUsd || 0,
+                            totalBalance: parseFloat(currentBalance || 0),
                             durationSec
                         });
                     }

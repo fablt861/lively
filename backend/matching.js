@@ -467,6 +467,16 @@ async function handleJoinQueue(io, socket) {
                 const blockDataRaw = await redis.get(`billing:is_blocked:${existingRoomId}`);
                 const blockData = blockDataRaw ? JSON.parse(blockDataRaw) : null;
 
+                // Fetch initial balance if model
+                let modelBalance = 0;
+                if (isModel) {
+                    const balanceStr = await redis.get(`model:${socket.userEmail || socket.userIp}:balance`);
+                    modelBalance = parseFloat(balanceStr || 0);
+                } else if (partnerRole === 'model') {
+                     const balanceStr = await redis.get(`model:${partnerEmail}:balance`);
+                     modelBalance = parseFloat(balanceStr || 0);
+                }
+
                 socket.emit('matched', {
                     roomId: existingRoomId,
                     initiator: socket.id,
@@ -476,7 +486,8 @@ async function handleJoinQueue(io, socket) {
                     partnerName: partnerEmail.includes('@') ? partnerEmail.split('@')[0] : 'Partner',
                     isBlocked: !!blockData,
                     blockEnd: blockData?.blockEnd,
-                    blockDurationMin: blockData?.blockDurationMin
+                    blockDurationMin: blockData?.blockDurationMin,
+                    modelBalance: modelBalance
                 });
                 
                 socket.to(existingRoomId).emit('partner_reconnected', {
@@ -619,6 +630,9 @@ async function handleJoinQueue(io, socket) {
             
             await startBilling(roomId, userBillingId, modelBillingId, isModel ? partnerId : socket.id, isModel ? socket.id : partnerId, userCountryCode);
 
+            // Fetch model balances for the matched event
+            const modelBalance = parseFloat(await redis.get(`model:${modelBillingId}:balance`) || 0);
+
             // Notify both parties with partner info for reporting
             socket.emit('matched', { 
                 roomId, 
@@ -628,7 +642,8 @@ async function handleJoinQueue(io, socket) {
                 partnerName: partnerSocket.pseudo || partnerSocket.userEmail?.split('@')[0] || 'Partner',
                 isBlocked: false,
                 blockEnd: null,
-                isRestricted: socket.role === 'user' ? isRestricted : false
+                isRestricted: socket.role === 'user' ? isRestricted : false,
+                modelBalance: socket.role === 'model' ? modelBalance : undefined
             });
             partnerSocket.emit('matched', { 
                 roomId, 
@@ -638,7 +653,8 @@ async function handleJoinQueue(io, socket) {
                 partnerName: socket.pseudo || 'Guest',
                 isBlocked: false,
                 blockEnd: null,
-                isRestricted: partnerSocket.role === 'user' ? isRestricted : false
+                isRestricted: partnerSocket.role === 'user' ? isRestricted : false,
+                modelBalance: partnerSocket.role === 'model' ? modelBalance : undefined
             });
 
             console.log(`[Match EMITTED] ${socket.id} <-> ${partnerId}`);

@@ -42,14 +42,16 @@ function ConnectionQualityBadge({ quality }: { quality: 'excellent' | 'good' | '
 }
 
 
-function EarningsCounter({ hasVideo, currentRate, totalEarned }: { hasVideo: boolean; currentRate: number; totalEarned: number }) {
+function EarningsCounter({ hasVideo, currentRate, totalBalance }: { hasVideo: boolean; currentRate: number; totalBalance: number }) {
     const { t } = useTranslation();
 
     return (
         <div className="flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 shadow-2xl transition-all">
-            <span className="text-white/80 text-xs font-semibold tracking-wider uppercase hidden sm:block">{t('room.earnings_call')}</span>
-            <span className="text-green-400 font-mono text-base sm:text-lg font-bold">
-                ${totalEarned.toFixed(2)}
+            <span className="text-white/80 text-[10px] md:text-xs font-bold tracking-wider uppercase hidden sm:block group-hover:text-green-400 transition-colors">
+                {t('room.balance')}
+            </span>
+            <span className="text-green-400 font-mono text-base sm:text-xl font-black drop-shadow-[0_0_10px_rgba(74,222,128,0.3)]">
+                ${totalBalance.toFixed(2)}
             </span>
         </div>
     );
@@ -131,7 +133,7 @@ export function VideoRoom({
     const [reportReason, setReportReason] = useState("");
     const [reportSuccess, setReportSuccess] = useState(false);
     const [reportError, setReportError] = useState("");
-    const [payoutInfo, setPayoutInfo] = useState({ rate: 0, earned: 0 });
+    const [payoutInfo, setPayoutInfo] = useState({ rate: 0, earned: 0, totalBalance: 0 });
     const [showExitConfirm, setShowExitConfirm] = useState(false);
     const [settings, setSettings] = useState<any>(null);
     const [isBlocked, setIsBlocked] = useState(false);
@@ -325,9 +327,12 @@ export function VideoRoom({
             }
         };
 
-        const handlePayoutUpdate = (data: { rate: number; earned: number }) => {
+        const handlePayoutUpdate = (data: { rate: number; earned: number; totalBalance: number }) => {
             if (role === 'model') {
-                setPayoutInfo(data);
+                setPayoutInfo(prev => ({ 
+                    ...data, 
+                    totalBalance: data.totalBalance !== undefined ? data.totalBalance : prev.totalBalance 
+                }));
             }
         };
 
@@ -421,6 +426,10 @@ export function VideoRoom({
 
         const handleMatched = (data: any) => {
             console.log("[Socket] Matched event received in VideoRoom:", data);
+            
+            if (data.modelBalance !== undefined && role === 'model') {
+                setPayoutInfo(prev => ({ ...prev, totalBalance: data.modelBalance }));
+            }
             if (data.isBlocked) {
                 console.log("[Block] Recovering active private session state from Matched event", data.blockEnd);
                 setIsBlocked(true);
@@ -830,7 +839,7 @@ export function VideoRoom({
                         <EarningsCounter 
                             hasVideo={!!remoteStream} 
                             currentRate={payoutInfo.rate} 
-                            totalEarned={payoutInfo.earned} 
+                            totalBalance={payoutInfo.totalBalance} 
                         />
                         <ConnectionQualityBadge quality={connectionQuality} />
                     </div>
