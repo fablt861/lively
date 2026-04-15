@@ -928,7 +928,7 @@ export default function AdminPage() {
                             
                             <div className="relative z-10 flex items-start gap-6">
                                 <div className="p-4 bg-amber-500/20 rounded-2xl text-amber-400 shadow-lg shadow-amber-500/10">
-                                    <History size={32} />
+                                    <HistoryIcon size={32} />
                                 </div>
                                 <div className="space-y-2 flex-1">
                                     <h3 className="text-xl font-bold text-white uppercase tracking-tight">{t('admin.maintenance.reconstruct_stats_title') || "Reconstruire l'Historique des Stats"}</h3>
