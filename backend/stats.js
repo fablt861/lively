@@ -93,12 +93,12 @@ async function trackMarketingSignup(type, src, camp, ad) {
     await redis.sadd(`marketing:${role}:active_keys`, key);
 }
 
-async function trackMarketingRevenue(src, camp, ad, amount, email) {
+async function trackMarketingRevenue(src, camp, ad, amount, id) {
     const key = (src || camp || ad) ? `src:${src || ''}|camp:${camp || ''}|ad:${ad || ''}` : 'direct';
     await redis.hincrbyfloat(`marketing:users:stats:${key}`, 'revenue', amount);
     
-    if (email) {
-        const added = await redis.sadd(`marketing:users:clients:${key}`, email);
+    if (id) {
+        const added = await redis.sadd(`marketing:users:clients:${key}`, id);
         if (added) {
             await redis.hincrby(`marketing:users:stats:${key}`, 'clients_count', 1);
         }

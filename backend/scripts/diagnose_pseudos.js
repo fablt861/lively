@@ -9,9 +9,9 @@ async function diagnose() {
     try {
         // 1. Fetch all identities from Postgres
         const sqlRes = await query(`
-            SELECT email, pseudo, 'user' as role FROM users
+            SELECT id, email, pseudo, 'user' as role FROM users
             UNION
-            SELECT email, pseudo, 'model' as role FROM models
+            SELECT id, email, pseudo, 'model' as role FROM models
         `);
         
         const instances = sqlRes.rows;
@@ -22,17 +22,18 @@ async function diagnose() {
         let missing = 0;
         
         for (const account of instances) {
+            const id = account.id;
             const email = account.email.toLowerCase();
             const sqlPseudo = account.pseudo || 'NULL';
             
             // Fetch from Redis
-            const redisPseudo = await redis.hget(`profile:${email}`, 'pseudo');
+            const redisPseudo = await redis.hget(`profile:${id}`, 'pseudo');
             
             if (!redisPseudo) {
-                console.log(`[MISSING] ${email} | SQL: ${sqlPseudo} | Redis: (Not in cache)`);
+                console.log(`[MISSING] ${id} (${email}) | SQL: ${sqlPseudo} | Redis: (Not in cache)`);
                 missing++;
             } else if (redisPseudo !== account.pseudo) {
-                console.log(`[MISMATCH] ${email} | SQL: ${sqlPseudo} | Redis: ${redisPseudo}`);
+                console.log(`[MISMATCH] ${id} (${email}) | SQL: ${sqlPseudo} | Redis: ${redisPseudo}`);
                 mismatches++;
             }
         }

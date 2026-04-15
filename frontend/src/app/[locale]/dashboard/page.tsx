@@ -79,8 +79,9 @@ export default function CustomerDashboard() {
     }, []);
 
     const fetchUserInfo = () => {
-        if (!userEmail) return;
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/me?email=${userEmail}`)
+        if (!userId && !userEmail) return;
+        const queryParam = userId ? `id=${userId}` : `email=${userEmail}`;
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/me?${queryParam}`)
             .then(res => res.json())
             .then(data => {
                 setUserInfo(data);
@@ -137,12 +138,17 @@ export default function CustomerDashboard() {
     };
 
     const handlePurchase = async (credits: number, priceUsd: number) => {
-        if (!userEmail) return;
+        if (!userId && !userEmail) return;
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/add-credits`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: userEmail, amount: credits, priceUsd })
+                body: JSON.stringify({ 
+                    id: userId, 
+                    email: userEmail, 
+                    amount: credits, 
+                    priceUsd 
+                })
             });
             if (res.ok) {
                 setShowPaywall(false);

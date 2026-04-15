@@ -31,7 +31,7 @@ router.post('/login', async (req, res) => {
                 
                 return res.json({
                     success: true,
-                    token: `model-token-${email}`,
+                    token: `model-token-${model.id}`,
                     user: { 
                         id: model.id,
                         email, 
@@ -58,7 +58,7 @@ router.post('/login', async (req, res) => {
                 
                 return res.json({
                     success: true,
-                    token: `user-token-${email}`,
+                    token: `user-token-${user.id}`,
                     user: { 
                         id: user.id,
                         email, 
@@ -112,7 +112,7 @@ router.post('/register', async (req, res) => {
 
         res.json({
             success: true,
-            token: `user-token-${email}`,
+            token: `user-token-${id}`,
             user: { id, email, role: 'user', name: pseudo, credits: 5 }
         });
     } catch (err) {
@@ -122,21 +122,28 @@ router.post('/register', async (req, res) => {
 });
 
 router.get('/me', async (req, res) => {
-    const { email: rawEmail } = req.query;
+    const { email: rawEmail, id } = req.query;
     const email = rawEmail?.toLowerCase();
-    if (!email) return res.status(400).json({ error: 'Missing email' });
-
+    
     try {
+        let user, model;
+
         // 1. Check in users table
-        const userRes = await query('SELECT * FROM users WHERE email = $1', [email]);
-        if (userRes.rows.length > 0) {
-            const user = userRes.rows[0];
+        if (id) {
+            const userRes = await query('SELECT * FROM users WHERE id = $1', [id]);
+            user = userRes.rows[0];
+        } else if (email) {
+            const userRes = await query('SELECT * FROM users WHERE email = $1', [email]);
+            user = userRes.rows[0];
+        }
+
+        if (user) {
             const redis = getRedisClient();
             const credits = await redis.get(`user:${user.id}:credits`) || user.credits;
             
             return res.json({
                 id: user.id,
-                email,
+                email: user.email,
                 pseudo: user.pseudo,
                 role: 'user',
                 credits: parseFloat(credits)
@@ -144,15 +151,21 @@ router.get('/me', async (req, res) => {
         }
 
         // 2. Check in models table
-        const modelRes = await query('SELECT * FROM models WHERE email = $1', [email]);
-        if (modelRes.rows.length > 0) {
-            const model = modelRes.rows[0];
+        if (id) {
+            const modelRes = await query('SELECT * FROM models WHERE id = $1', [id]);
+            model = modelRes.rows[0];
+        } else if (email) {
+            const modelRes = await query('SELECT * FROM models WHERE email = $1', [email]);
+            model = modelRes.rows[0];
+        }
+
+        if (model) {
             return res.json({
                 id: model.id,
-                email,
+                email: model.email,
                 pseudo: model.pseudo || `${model.first_name} ${model.last_name}`,
                 role: 'model',
-                credits: 0 // Models don't have credits, but providing a value prevents frontend errors
+                credits: 0
             });
         }
 
@@ -164,11 +177,11 @@ router.get('/me', async (req, res) => {
 });
 
 router.post('/add-credits', async (req, res) => {
-    const { email: rawEmail, amount } = req.body;
+    const { email: rawEmail, id, amount } = req.body;
     const email = rawEmail?.toLowerCase();
     const redis = getRedisClient();
 
-    if (!email || !amount) {
+    if ((!email && !id) || !amount) {
         return res.status(400).json({ error: 'auth.error.missing_fields' });
     }
 
@@ -176,7 +189,13 @@ router.post('/add-credits', async (req, res) => {
         const { priceUsd } = req.body;
         const { trackMarketingRevenue } = require('./stats');
 
-        const userRes = await query('SELECT * FROM users WHERE email = $1', [email]);
+        let userRes;
+        if (id) {
+            userRes = await query('SELECT * FROM users WHERE id = $1', [id]);
+        } else {
+            userRes = await query('SELECT * FROM users WHERE email = $1', [email]);
+        }
+
         if (userRes.rows.length === 0) {
             return res.status(404).json({ error: 'auth.error.user_not_found' });
         }
@@ -197,7 +216,7 @@ router.post('/add-credits', async (req, res) => {
         // Persist to SQL (source of truth for long term)
         await query('UPDATE users SET credits = $1 WHERE email = $2', [newCredits, email]);
 
-        await trackMarketingRevenue(user.marketing_src, user.marketing_camp, user.marketing_ad, priceUsd || parseFloat(amount) / 10, email);
+        await trackMarketingRevenue(user.marketing_src, user.marketing_camp, user.marketing_ad, priceUsd || parseFloat(amount) / 10, user.id);
         const { logPurchase } = require('./stats');
         await logPurchase(priceUsd || parseFloat(amount) / 10);
 

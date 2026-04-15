@@ -1,21 +1,40 @@
-const Redis = require('ioredis');
-const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+const { query } = require('./db');
+const { getRedisClient } = require('./redis');
+const redis = getRedisClient();
 
-async function diagnose(email) {
-    const balance = await redis.get(`model:${email}:balance`);
-    const totalGains = await redis.get(`model:${email}:total_gains`);
-    const history = await redis.lrange(`model:${email}:history`, 0, -1);
+async function diagnose(identifier) {
+    let id = identifier;
+    let email = identifier;
+
+    // Try to resolve identifier to ID if it's an email
+    if (identifier.includes('@')) {
+        const res = await query('SELECT id FROM models WHERE email = $1', [identifier.toLowerCase()]);
+        if (res.rows.length > 0) {
+            id = res.rows[0].id;
+        }
+    } else {
+        const res = await query('SELECT email FROM models WHERE id = $1', [identifier]);
+        if (res.rows.length > 0) {
+            email = res.rows[0].email;
+        }
+    }
+
+    const balance = await redis.get(`model:${id}:balance`);
+    const totalGains = await redis.get(`model:${id}:total_gains`);
+    const history = await redis.lrange(`model:${id}:history`, 0, -1);
     
-    console.log('--- Diagnosis for', email, '---');
-    console.log('Balance Key:', balance);
-    console.log('Total Gains Key:', totalGains);
+    console.log('--- Diagnosis for ID:', id, 'Email:', email, '---');
+    console.log('Balance:', balance);
+    console.log('Total Gains:', totalGains);
     console.log('History Entries:', history.length);
     
     let sumHistory = 0;
     history.forEach((h, i) => {
-        const entry = JSON.parse(h);
-        sumHistory += entry.modelEarned;
-        console.log(`Session ${i}: ${entry.durationSec}s -> $${entry.modelEarned}`);
+        try {
+            const entry = JSON.parse(h);
+            sumHistory += entry.modelEarned;
+            if (i < 10) console.log(`Session ${i}: ${entry.durationSec}s -> $${entry.modelEarned}`);
+        } catch (e) {}
     });
     
     console.log('Sum of History:', sumHistory);
@@ -24,5 +43,5 @@ async function diagnose(email) {
     process.exit(0);
 }
 
-const target = 'fablt86@hotmail.com'; // Assumed from context if it's the test user
+const target = process.argv[2] || 'fablt86@hotmail.com';
 diagnose(target);

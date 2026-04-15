@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const router = express.Router();
 
-// Middleware to mock model authentication (simplified for this context)
+// Middleware to authenticate model using UUID-based tokens
 const requireModelAuth = async (req, res, next) => {
     let auth = req.headers.authorization;
     if (!auth && req.query.token) {
@@ -13,7 +13,7 @@ const requireModelAuth = async (req, res, next) => {
     }
 
     if (auth && auth.startsWith('Bearer model-token-')) {
-        req.modelEmail = auth.replace('Bearer model-token-', '');
+        req.modelId = auth.replace('Bearer model-token-', '');
         next();
     } else {
         res.status(401).json({ error: 'model.error.unauthorized' });
@@ -21,12 +21,12 @@ const requireModelAuth = async (req, res, next) => {
 };
 
 // GET Billing Info
-router.get('/:email/billing', requireModelAuth, async (req, res) => {
+router.get('/:id/billing', requireModelAuth, async (req, res) => {
     try {
-        const email = req.params.email.toLowerCase();
-        if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
+        const id = req.params.id;
+        if (id !== req.modelId) return res.status(403).json({ error: 'Forbidden' });
 
-        const modelRes = await query('SELECT billing_info FROM models WHERE email = $1', [email]);
+        const modelRes = await query('SELECT billing_info FROM models WHERE id = $1', [id]);
         if (modelRes.rows.length === 0) return res.status(404).json({ error: 'Model not found' });
         
         res.json(modelRes.rows[0].billing_info || {});
@@ -37,17 +37,17 @@ router.get('/:email/billing', requireModelAuth, async (req, res) => {
 });
 
 // POST Save Billing Info
-router.post('/:email/billing', requireModelAuth, async (req, res) => {
+router.post('/:id/billing', requireModelAuth, async (req, res) => {
     try {
-        const email = req.params.email.toLowerCase();
-        if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
+        const id = req.params.id;
+        if (id !== req.modelId) return res.status(403).json({ error: 'Forbidden' });
 
         const billingInfo = req.body;
-        await query('UPDATE models SET billing_info = $1 WHERE email = $2', [JSON.stringify(billingInfo), email]);
+        await query('UPDATE models SET billing_info = $1 WHERE id = $2', [JSON.stringify(billingInfo), id]);
         
-        // Sync to Redis for temporary high-speed access if needed
+        // Sync to Redis for temporary high-speed access
         const redis = getRedisClient();
-        await redis.set(`model:${email}:billing_info`, JSON.stringify(billingInfo));
+        await redis.set(`model:${id}:billing_info`, JSON.stringify(billingInfo));
         
         res.json({ success: true });
     } catch (err) {
@@ -57,17 +57,17 @@ router.post('/:email/billing', requireModelAuth, async (req, res) => {
 });
 
 // POST Request Payout
-router.post('/:email/payout-request', requireModelAuth, async (req, res) => {
+router.post('/:id/payout-request', requireModelAuth, async (req, res) => {
     const crypto = require('crypto');
     try {
         const redis = getRedisClient();
-        const email = req.params.email.toLowerCase();
-        if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
+        const id = req.params.id;
+        if (id !== req.modelId) return res.status(403).json({ error: 'Forbidden' });
 
         // Balance is kept in Redis for real-time consistency
-        const balance = parseFloat(await redis.get(`model:${email}:balance`) || '0');
+        const balance = parseFloat(await redis.get(`model:${id}:balance`) || '0');
         
-        const modelRes = await query('SELECT billing_info FROM models WHERE email = $1', [email]);
+        const modelRes = await query('SELECT billing_info FROM models WHERE id = $1', [id]);
         if (modelRes.rows.length === 0) return res.status(404).json({ error: 'Model not found' });
         
         const billingInfo = modelRes.rows[0].billing_info;
@@ -81,22 +81,24 @@ router.post('/:email/payout-request', requireModelAuth, async (req, res) => {
         }
 
         const payoutId = crypto.randomUUID();
-        const transferFee = 5.0;
 
         // Start transaction in SQL for atomic update
         await query('BEGIN');
         try {
+            const modelEmailRes = await query('SELECT email FROM models WHERE id = $1', [id]);
+            const email = modelEmailRes.rows[0].email;
+
             await query(`
-                INSERT INTO payouts (id, model_email, amount, status, created_at)
-                VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
-            `, [payoutId, email, balance, 'pending']);
+                INSERT INTO payouts (id, model_id, model_email, amount, status, created_at)
+                VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP)
+            `, [payoutId, id, email, balance, 'pending']);
             
             // Deduct in Redis (Real-time source)
-            await redis.set(`model:${email}:balance`, '0');
-            await redis.incrbyfloat(`model:${email}:total_payout_requested`, balance);
+            await redis.set(`model:${id}:balance`, '0');
+            await redis.incrbyfloat(`model:${id}:total_payout_requested`, balance);
             
             // Sync balance in SQL (Audit trail)
-            await query('UPDATE models SET balance = 0, total_payouts = total_payouts + $1 WHERE email = $2', [balance, email]);
+            await query('UPDATE models SET balance = 0, total_payouts = total_payouts + $1 WHERE id = $2', [balance, id]);
             
             await query('COMMIT');
             res.json({ success: true, payoutId });
@@ -111,16 +113,15 @@ router.post('/:email/payout-request', requireModelAuth, async (req, res) => {
 });
 
 // GET Profile Info
-router.get('/:email/profile', requireModelAuth, async (req, res) => {
+router.get('/:id/profile', requireModelAuth, async (req, res) => {
     try {
-        const email = req.params.email.toLowerCase();
-        if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
+        const id = req.params.id;
+        if (id !== req.modelId) return res.status(403).json({ error: 'Forbidden' });
 
-        const modelRes = await query('SELECT * FROM models WHERE email = $1', [email]);
+        const modelRes = await query('SELECT * FROM models WHERE id = $1', [id]);
         if (modelRes.rows.length === 0) return res.status(404).json({ error: 'Model not found' });
 
         const model = modelRes.rows[0];
-        // Normalize fields for frontend (map snake_case to camelCase if needed)
         const profile = {
             id: model.id,
             email: model.email,
@@ -144,15 +145,15 @@ router.get('/:email/profile', requireModelAuth, async (req, res) => {
 });
 
 // PUT Update Profile Info
-router.put('/:email/profile', requireModelAuth, async (req, res) => {
+router.put('/:id/profile', requireModelAuth, async (req, res) => {
     try {
-        const oldEmail = req.params.email.toLowerCase();
-        if (oldEmail !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
+        const id = req.params.id;
+        if (id !== req.modelId) return res.status(403).json({ error: 'Forbidden' });
 
         const { email: newEmailRaw, phone, pseudo, photoProfile, oldPassword, newPassword, confirmPassword } = req.body;
         const newEmail = newEmailRaw?.toLowerCase();
 
-        const modelRes = await query('SELECT * FROM models WHERE email = $1', [oldEmail]);
+        const modelRes = await query('SELECT * FROM models WHERE id = $1', [id]);
         if (modelRes.rows.length === 0) return res.status(404).json({ error: 'Model not found' });
 
         let model = modelRes.rows[0];
@@ -174,14 +175,12 @@ router.put('/:email/profile', requireModelAuth, async (req, res) => {
         }
 
         // Handle Email Change
-        if (newEmail && newEmail !== oldEmail) {
+        if (newEmail && newEmail !== model.email) {
             const checkUser = await query('SELECT email FROM users WHERE email = $1', [newEmail]);
             const checkModel = await query('SELECT email FROM models WHERE email = $1', [newEmail]);
             if (checkUser.rows.length > 0 || checkModel.rows.length > 0) {
                 return res.status(400).json({ error: 'auth.error.email_in_use' });
             }
-            // If email changes, it requires a lot of updates in the legacy Redis logic too
-            // For now, let's just update SQL and sync keys if necessary
             model.email = newEmail;
         }
 
@@ -189,17 +188,16 @@ router.put('/:email/profile', requireModelAuth, async (req, res) => {
         await query(`
             UPDATE models SET 
                 email = $1, password = $2, phone = $3, pseudo = $4, photo_profile = $5
-            WHERE email = $6
+            WHERE id = $6
         `, [
             model.email, model.password, 
             phone !== undefined ? phone : model.phone, 
             pseudo !== undefined ? pseudo : model.pseudo, 
             photoProfile !== undefined ? photoProfile : model.photo_profile,
-            oldEmail
+            id
         ]);
 
-        const currentEmail = model.email;
-        res.json({ success: true, user: { email: currentEmail, name: pseudo || model.pseudo, role: 'model' } });
+        res.json({ success: true, user: { id: model.id, email: model.email, name: pseudo || model.pseudo, role: 'model' } });
     } catch (err) {
         console.error('Update profile error:', err);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -207,10 +205,13 @@ router.put('/:email/profile', requireModelAuth, async (req, res) => {
 });
 
 // GET Payout History
-router.get('/:email/payouts', requireModelAuth, async (req, res) => {
+router.get('/:id/payouts', requireModelAuth, async (req, res) => {
     try {
-        const email = req.params.email.toLowerCase();
-        if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
+        const id = req.params.id;
+        if (id !== req.modelId) return res.status(403).json({ error: 'Forbidden' });
+
+        const modelEmailRes = await query('SELECT email FROM models WHERE id = $1', [id]);
+        const email = modelEmailRes.rows[0].email;
 
         const payoutRes = await query('SELECT * FROM payouts WHERE model_email = $1 ORDER BY created_at DESC', [email]);
         res.json(payoutRes.rows.map(p => ({
@@ -230,13 +231,16 @@ router.get('/:email/payouts', requireModelAuth, async (req, res) => {
 });
 
 // Model Download Invoice
-router.get('/:email/payouts/:id/invoice', requireModelAuth, async (req, res) => {
+router.get('/:id/payouts/:payoutId/invoice', requireModelAuth, async (req, res) => {
     try {
-        const email = req.params.email.toLowerCase();
         const id = req.params.id;
-        if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
+        const payoutId = req.params.payoutId;
+        if (id !== req.modelId) return res.status(403).json({ error: 'Forbidden' });
 
-        const payoutRes = await query('SELECT * FROM payouts WHERE id = $1 AND model_email = $2', [id, email]);
+        const modelEmailRes = await query('SELECT email FROM models WHERE id = $1', [id]);
+        const email = modelEmailRes.rows[0].email;
+
+        const payoutRes = await query('SELECT * FROM payouts WHERE id = $1 AND model_email = $2', [payoutId, email]);
         if (payoutRes.rows.length === 0) return res.status(404).send('Invoice not found');
         
         const payout = payoutRes.rows[0];
@@ -255,12 +259,12 @@ router.get('/:email/payouts/:id/invoice', requireModelAuth, async (req, res) => 
 });
 
 // GET Geoblock Info
-router.get('/:email/geoblock', requireModelAuth, async (req, res) => {
+router.get('/:id/geoblock', requireModelAuth, async (req, res) => {
     try {
-        const email = req.params.email.toLowerCase();
-        if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
+        const id = req.params.id;
+        if (id !== req.modelId) return res.status(403).json({ error: 'Forbidden' });
 
-        const modelRes = await query('SELECT blocked_countries FROM models WHERE email = $1', [email]);
+        const modelRes = await query('SELECT blocked_countries FROM models WHERE id = $1', [id]);
         if (modelRes.rows.length === 0) return res.status(404).json({ error: 'Model not found' });
         
         res.json({ blockedCountries: modelRes.rows[0].blocked_countries || [] });
@@ -271,22 +275,17 @@ router.get('/:email/geoblock', requireModelAuth, async (req, res) => {
 });
 
 // POST Update Geoblock Info
-router.post('/:email/geoblock', requireModelAuth, async (req, res) => {
+router.post('/:id/geoblock', requireModelAuth, async (req, res) => {
     try {
-        const email = req.params.email.toLowerCase();
-        if (email !== req.modelEmail.toLowerCase()) return res.status(403).json({ error: 'Forbidden' });
+        const id = req.params.id;
+        if (id !== req.modelId) return res.status(403).json({ error: 'Forbidden' });
 
         const { blockedCountries } = req.body;
         if (!Array.isArray(blockedCountries) || blockedCountries.length > 3) {
             return res.status(400).json({ error: 'geoblock.error.invalid_limit' });
         }
 
-        await query('UPDATE models SET blocked_countries = $1 WHERE email = $2', [JSON.stringify(blockedCountries), email]);
-        
-        // Find active sockets for this model to update their data in real-time
-        // We can do this via global io if available, or just rely on re-fetch on join_queue
-        // But for consistency, let's assume matching.js will handle the next join_queue
-        
+        await query('UPDATE models SET blocked_countries = $1 WHERE id = $2', [JSON.stringify(blockedCountries), id]);
         res.json({ success: true });
     } catch (err) {
         console.error('[Update Geoblock Error]', err);

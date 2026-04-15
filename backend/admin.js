@@ -392,9 +392,10 @@ router.get('/payouts/pending', requireAuth, async (req, res) => {
         // Compatibility with frontend format (requires billing_info)
         const list = [];
         for (const p of payoutRes.rows) {
-            const modelRes = await query('SELECT billing_info FROM models WHERE email = $1', [p.model_email]);
+            const modelRes = await query('SELECT billing_info FROM models WHERE id = $1', [p.model_id]);
             list.push({
                 id: p.id,
+                modelId: p.model_id,
                 modelEmail: p.model_email,
                 amount: parseFloat(p.amount),
                 status: p.status,
@@ -433,19 +434,15 @@ router.get('/payouts/history', requireAuth, async (req, res) => {
 router.post('/payouts/:id/approve', requireAuth, async (req, res) => {
     try {
         const id = req.params.id;
-        const payoutRes = await query(`
-            SELECT p.*, m.id as model_id 
-            FROM payouts p 
-            JOIN models m ON p.model_email = m.email 
-            WHERE p.id = $1
-        `, [id]);
+        const payoutRes = await query('SELECT * FROM payouts WHERE id = $1', [id]);
         if (payoutRes.rows.length === 0) return res.status(404).json({ error: 'api.error.not_found' });
 
         const payout = payoutRes.rows[0];
+        const modelId = payout.model_id;
         const email = payout.model_email.toLowerCase();
         
         // Fetch billing info
-        const modelRes = await query('SELECT billing_info FROM models WHERE email = $1', [email]);
+        const modelRes = await query('SELECT billing_info FROM models WHERE id = $1', [modelId]);
         const billingInfo = modelRes.rows[0]?.billing_info || {};
 
         // 1. Get or Generate Model Numeric ID
