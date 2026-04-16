@@ -864,8 +864,6 @@ export function VideoRoom({
                                 </span>
                             </div>
                         )}
-                        <div className="ml-3 pl-3 border-l border-white/10">
-                        </div>
                     </div>
                 )}
                 {/* Model Earning Counter */}
