@@ -150,12 +150,12 @@ export function VideoRoom({
             console.log("[LiveKit] Requesting HIGH quality for remote track immediately");
             (remoteVideoTrack as any).publication.setVideoQuality(VideoQuality.HIGH);
 
-            // Wait for 800ms for the stream to stabilize (ramp-up + keyframe) 
+            // Wait for 1200ms for the stream to stabilize (ramp-up + keyframe) 
             // before telling the hook to hide the "Searching" overlay
             const timer = setTimeout(() => {
                 console.log("[LiveKit] Stream stabilized, hiding overlay");
                 finishMatching();
-            }, 800);
+            }, 1200);
 
             return () => clearTimeout(timer);
         }
@@ -888,7 +888,7 @@ export function VideoRoom({
                     ) : (
                         <div className="w-full h-full bg-neutral-950" />
                     )}
-                    {!remoteVideoTrack && (isConnected === false || isMatching === true) && !showPaywall && (
+                    {(isConnected === false || isMatching === true) && !showPaywall && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#050505]/95 backdrop-blur-2xl transition-all duration-1000 overflow-hidden">
                             {/* Glowing Orbs for Sexy Vibe */}
                             <div className="absolute w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none animate-pulse" />
