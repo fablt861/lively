@@ -90,6 +90,7 @@ interface VideoRoomProps {
     finishMatching: () => void;
     joinDirectRoom: (roomId: string) => void;
     isConnecting?: boolean;
+    isSocketConnected?: boolean;
     previewStream?: MediaStream | null;
 }
 
