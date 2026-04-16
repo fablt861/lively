@@ -937,7 +937,7 @@ export function VideoRoom({
                                 autoPlay
                                 playsInline
                                 muted
-                                className={`w-full h-full object-cover ${(isVideoMuted || !localStream) ? "opacity-0" : "opacity-100"}`}
+                                className={`w-full h-full object-cover ${(isVideoMuted || (!localStream && !previewStream)) ? "opacity-0" : "opacity-100"}`}
                             />
                         )}
                         
