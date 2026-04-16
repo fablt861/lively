@@ -19,6 +19,7 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
   const [socket, setSocket] = useState<Socket | null>(null);
   const [room, setRoom] = useState<Room | null>(null);
   const [isMatching, setIsMatching] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
   const [isCallConnected, setIsCallConnected] = useState(false);
   const [messages, setMessages] = useState<{ senderId: string; senderPseudo: string; senderRole: string; text: string; timestamp: number }[]>([]);
   const [queuePosition, setQueuePosition] = useState<number | null>(null);
@@ -116,6 +117,7 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
 
     socket.on("waiting", ({ position }) => {
       setIsMatching(true);
+      setIsConnecting(false);
       setIsCallConnected(false);
       setMessages([]);
       if (position) setQueuePosition(position);
@@ -125,11 +127,10 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
       setQueuePosition(position);
     });
 
-    socket.on("matched", async (data: any) => {
       const { roomId, initiator, partnerId, partnerRole, partnerName } = data;
       currentRoomIdRef.current = roomId;
-      // Note: We no longer auto-hide isMatching here. 
-      // The UI component will call finishMatching when video is warm.
+      setIsMatching(false);
+      setIsConnecting(true);
 
       if (partnerId) {
         setPartnerInfo({
@@ -228,6 +229,7 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     room, // Exposing the room for LiveKit components
     isMatching,
     isConnected: isCallConnected,
+    isConnecting,
     joinQueue,
     nextPartner,
     toggleAudio,
@@ -244,7 +246,7 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     cameraPermissionError,
     connectionQuality,
     previewStream,
-    finishMatching: () => setIsMatching(false),
+    finishMatching: () => setIsConnecting(false),
     handleOutOfCredits: () => {}, // Compatibility stub
     retryCamera: () => {}, // Handled by LiveKit internally or via re-connect
   };

@@ -88,6 +88,7 @@ interface VideoRoomProps {
     connectionQuality?: 'excellent' | 'good' | 'fair' | 'poor' | 'reconnecting';
     room?: any; // LiveKit Room
     finishMatching: () => void;
+    isConnecting?: boolean;
 }
 
 export function VideoRoom({
@@ -116,7 +117,8 @@ export function VideoRoom({
     isDirectCall,
     connectionQuality = 'excellent',
     room,
-    finishMatching
+    finishMatching,
+    isConnecting = false
 }: VideoRoomProps) {
     const { t, language } = useTranslation();
     const router = useRouter();
@@ -883,12 +885,12 @@ export function VideoRoom({
                     {remoteVideoTrack ? (
                         <VideoTrack
                             trackRef={remoteVideoTrack}
-                            className={`w-full h-full object-cover transition-all duration-700 ease-in-out ${(isMatching || showPaywall) ? "blur-2xl opacity-40 scale-105" : "blur-0 opacity-100 scale-100"}`}
+                            className={`w-full h-full object-cover transition-all duration-700 ease-in-out ${(isMatching || isConnecting || showPaywall) ? "blur-2xl opacity-40 scale-105" : "blur-0 opacity-100 scale-100"}`}
                         />
                     ) : (
                         <div className="w-full h-full bg-neutral-950" />
                     )}
-                    {(isConnected === false || isMatching === true) && !showPaywall && (
+                    {(isConnected === false || isMatching === true || isConnecting === true) && !showPaywall && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black transition-all duration-1000 overflow-hidden z-[60]">
                             {/* Glowing Orbs for Sexy Vibe */}
                             <div className="absolute w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none animate-pulse" />
@@ -897,7 +899,7 @@ export function VideoRoom({
                             <div className="w-20 h-20 md:w-28 md:h-28 border-[3px] border-white/5 border-t-indigo-500 rounded-full animate-spin mb-8 shadow-[0_0_30px_rgba(99,102,241,0.5)] relative z-10"></div>
 
                             <h2 className="text-sm sm:text-lg md:text-3xl font-extralight tracking-[0.2em] text-white/90 animate-pulse relative z-10 text-center px-12 uppercase leading-relaxed">
-                                {isMatching ? t('room.searching') : t('room.connecting')}
+                                {isConnecting ? t('room.connecting') : t('room.searching')}
                                 {isMatching && queuePosition !== null && (
                                     <div className="mt-4 text-xs md:text-sm font-bold text-pink-500/80 tracking-widest uppercase animate-pulse">
                                         {t('room.queue_position', { position: queuePosition })}
@@ -922,38 +924,40 @@ export function VideoRoom({
                 </div>
 
                 {/* Local Video (Top Right on Mobile) */}
-                <div className="absolute top-4 right-4 md:top-auto md:bottom-24 md:left-6 md:right-auto z-[100] w-24 md:w-48 aspect-[3/4] bg-neutral-900 rounded-2xl md:rounded-[2rem] overflow-hidden shadow-2xl border border-white/20 transition-all duration-500">
-                    {localVideoTrack ? (
-                        <VideoTrack
-                            trackRef={localVideoTrack}
-                            className={`w-full h-full object-cover ${isVideoMuted ? "opacity-0" : "opacity-100"}`}
-                        />
-                    ) : (
-                        <video
-                            ref={localVideoRef}
-                            autoPlay
-                            playsInline
-                            muted
-                            className={`w-full h-full object-cover ${(isVideoMuted || !localStream) ? "opacity-0" : "opacity-100"}`}
-                        />
-                    )}
-                    
-                    {/* Mobile Mic Toggle Overlay */}
-                    <div className="md:hidden absolute bottom-2 right-2">
-                        <button
-                            onClick={handleToggleAudio}
-                            className={`w-8 h-8 flex items-center justify-center rounded-xl transition-all backdrop-blur-md border ${isAudioMuted ? "bg-red-500/80 border-red-500/50 text-white" : "bg-black/40 border-white/10 text-white"}`}
-                        >
-                            {isAudioMuted ? <MicOff size={14} /> : <Mic size={14} />}
-                        </button>
-                    </div>
-
-                    {isVideoMuted && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-neutral-800">
-                            <VideoOff className="w-6 h-6 md:w-8 md:h-8 text-neutral-500" />
+                {hasStartedMatch && (
+                    <div className="absolute top-4 right-4 md:top-auto md:bottom-24 md:left-6 md:right-auto z-[100] w-24 md:w-48 aspect-[3/4] bg-neutral-900 rounded-2xl md:rounded-[2rem] overflow-hidden shadow-2xl border border-white/20 transition-all duration-500">
+                        {localVideoTrack ? (
+                            <VideoTrack
+                                trackRef={localVideoTrack}
+                                className={`w-full h-full object-cover ${isVideoMuted ? "opacity-0" : "opacity-100"}`}
+                            />
+                        ) : (
+                            <video
+                                ref={localVideoRef}
+                                autoPlay
+                                playsInline
+                                muted
+                                className={`w-full h-full object-cover ${(isVideoMuted || !localStream) ? "opacity-0" : "opacity-100"}`}
+                            />
+                        )}
+                        
+                        {/* Mobile Mic Toggle Overlay */}
+                        <div className="md:hidden absolute bottom-2 right-2">
+                            <button
+                                onClick={handleToggleAudio}
+                                className={`w-8 h-8 flex items-center justify-center rounded-xl transition-all backdrop-blur-md border ${isAudioMuted ? "bg-red-500/80 border-red-500/50 text-white" : "bg-black/40 border-white/10 text-white"}`}
+                            >
+                                {isAudioMuted ? <MicOff size={14} /> : <Mic size={14} />}
+                            </button>
                         </div>
-                    )}
-                </div>
+
+                        {isVideoMuted && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-neutral-800">
+                                <VideoOff className="w-6 h-6 md:w-8 md:h-8 text-neutral-500" />
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 {/* Block Session Timer (Overlaid on Video) */}
                 {isBlocked && (
@@ -1496,7 +1500,7 @@ export function VideoRoom({
             {/* DIRECT CALL LISTENER (MODEL SIDE) */}
             <CallListener />
             {/* LiveKit Audio Handling (Silent) */}
-            {isConnected && room && <RoomAudioRenderer />}
+            {isConnected && !isConnecting && !isMatching && room && <RoomAudioRenderer />}
             </div>
         </LiveKitRoom>
     );
