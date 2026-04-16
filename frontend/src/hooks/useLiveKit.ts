@@ -127,6 +127,7 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
       setQueuePosition(position);
     });
 
+    socket.on("matched", async (data: any) => {
       const { roomId, initiator, partnerId, partnerRole, partnerName } = data;
       currentRoomIdRef.current = roomId;
       setIsMatching(false);
