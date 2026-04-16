@@ -154,12 +154,12 @@ export function VideoRoom({
             console.log("[LiveKit] Requesting HIGH quality for remote track immediately");
             (remoteVideoTrack as any).publication.setVideoQuality(VideoQuality.HIGH);
 
-            // Wait for 2000ms for the stream to stabilize (ramp-up + keyframe) 
+            // Wait for 1200ms for the stream to stabilize (ramp-up + keyframe) 
             // before telling the hook to hide the "Searching" overlay
             const timer = setTimeout(() => {
                 console.log("[LiveKit] Stream stabilized, hiding overlay");
                 finishMatching();
-            }, 2000);
+            }, 1200);
 
             return () => clearTimeout(timer);
         }
@@ -865,7 +865,6 @@ export function VideoRoom({
                             </div>
                         )}
                         <div className="ml-3 pl-3 border-l border-white/10">
-                            <ConnectionQualityBadge quality={connectionQuality} />
                         </div>
                     </div>
                 )}
@@ -877,7 +876,6 @@ export function VideoRoom({
                             currentRate={payoutInfo.rate} 
                             totalBalance={payoutInfo.totalBalance} 
                         />
-                        <ConnectionQualityBadge quality={connectionQuality} />
                     </div>
                 )}
 
