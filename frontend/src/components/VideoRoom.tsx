@@ -697,7 +697,7 @@ export function VideoRoom({
     }, [showEmojiPicker]);
 
     // Detect if we're about to auto-start to avoid flickering the LaunchPage
-    const isAutoStarting = !hasStartedMatch && previewStream && isSocketConnected;
+    const isAutoStarting = !!(!hasStartedMatch && previewStream && isSocketConnected);
 
     if ((isLaunch || isLaunchOverride) && !isAutoStarting) {
         return <LaunchPage />;
