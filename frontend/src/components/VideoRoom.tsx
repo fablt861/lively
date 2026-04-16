@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles, Timer, Check, Plus, Heart, Smile, Signal, Wifi, Zap, RefreshCw, Home } from "lucide-react";
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import { LiveKitRoom, VideoTrack, useTracks, RoomAudioRenderer, TrackLoop, isTrackReference } from '@livekit/components-react';
-import { Track, RemoteParticipant, LocalParticipant, VideoQuality } from 'livekit-client';
+import { Track, RemoteParticipant, LocalParticipant, VideoQuality, Room } from 'livekit-client';
 import { CallListener } from './CallListener';
 import { useTranslation } from "@/context/LanguageContext";
 import { MaintenanceGuard } from "./MaintenanceGuard";
@@ -68,10 +68,11 @@ interface VideoRoomProps {
     nextPartner: () => void;
     toggleAudio: () => void;
     toggleVideo: () => void;
-    messages: { text: string; originalText?: string; sender?: string; timestamp?: number }[];
+    messages: { text: string; originalText?: string; sender?: string; senderId?: string; timestamp?: number }[];
     sendMessage: (text: string) => void;
     socketId: string | undefined;
-    socket: { on: (event: string, cb: (data: unknown) => void) => void; emit: (event: string, data?: unknown) => void; disconnect: () => void; connected: boolean } | null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    socket: { on: (event: string, cb: (data: any) => void) => void; off: (event: string, cb: (data: any) => void) => void; emit: (event: string, data?: any) => void; disconnect: () => void; connected: boolean } | null;
     role: "user" | "model" | null;
     onNext: () => void;
     handleOutOfCredits?: () => void;
@@ -86,7 +87,7 @@ interface VideoRoomProps {
     onPurchase?: (credits: number, priceUsd: number) => Promise<void>;
     isDirectCall?: boolean;
     connectionQuality?: 'excellent' | 'good' | 'fair' | 'poor' | 'reconnecting';
-    room?: { disconnect: () => void; state: string } | null; // LiveKit Room
+    room?: Room | null; // LiveKit Room
     finishMatching: () => void;
     joinDirectRoom: (roomId: string) => void;
     isConnecting?: boolean;
@@ -154,9 +155,9 @@ export function VideoRoom({
     // Force high quality subscription as soon as remote track is available
     // AND wait for stabilization before hiding the matching overlay
     useEffect(() => {
-        if (remoteVideoTrack && (remoteVideoTrack as { publication?: { setVideoQuality: (q: VideoQuality) => void } }).publication) {
+        if (remoteVideoTrack && (remoteVideoTrack as unknown as { publication?: { setVideoQuality: (q: VideoQuality) => void } }).publication) {
             console.log("[LiveKit] Requesting HIGH quality for remote track immediately");
-            (remoteVideoTrack as { publication: { setVideoQuality: (q: VideoQuality) => void } }).publication.setVideoQuality(VideoQuality.HIGH);
+            (remoteVideoTrack as unknown as { publication: { setVideoQuality: (q: VideoQuality) => void } }).publication.setVideoQuality(VideoQuality.HIGH);
 
             // Wait for 1200ms for the stream to stabilize (ramp-up + keyframe) 
             // before telling the hook to hide the "Searching" overlay
@@ -496,22 +497,25 @@ export function VideoRoom({
             }
         };
 
-        const handleMatched = (data: { modelBalance?: number; isBlocked?: boolean; blockEnd?: number }) => {
-            console.log("[Socket] Matched event received in VideoRoom:", data);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const handleMatched = (data: any) => {
+            const matchedData = data as { modelBalance?: number; isBlocked?: boolean; blockEnd?: number; isRestricted?: boolean };
+            console.log("[Socket] Matched event received in VideoRoom:", matchedData);
             
-            if (data.modelBalance !== undefined && role === 'model') {
-                setPayoutInfo(prev => ({ ...prev, totalBalance: data.modelBalance }));
+            if (matchedData.modelBalance !== undefined && role === 'model') {
+                const newBalance = matchedData.modelBalance;
+                setPayoutInfo(prev => ({ ...prev, totalBalance: newBalance }));
             }
-            if (data.isBlocked) {
-                console.log("[Block] Recovering active private session state from Matched event", data.blockEnd);
+            if (matchedData.isBlocked) {
+                console.log("[Block] Recovering active private session state from Matched event", matchedData.blockEnd);
                 setIsBlocked(true);
-                setBlockEndTime(data.blockEnd);
+                setBlockEndTime(matchedData.blockEnd ?? null);
                 localStorage.setItem(`active_block_${role}`, JSON.stringify({
-                    blockEnd: data.blockEnd,
+                    blockEnd: matchedData.blockEnd,
                     timestamp: Date.now()
                 }));
             }
-            if (data.isRestricted && role === 'user') {
+            if (matchedData.isRestricted && role === 'user') {
                 console.log("[GeoRestricted] Fast-tracking paywall for restricted country");
                 setIsRestricted(true);
                 if (accountStatus === 'guest') setShowAuthModal(true);
@@ -552,7 +556,7 @@ export function VideoRoom({
 
     const handleSendBlockRequest = () => {
         if (!socket) return;
-        const cost = settings?.blockCreditsCost || 600;
+        const cost = (settings?.blockCreditsCost as number) || 600;
         
         if ((userCredits || 0) < cost) {
             setShowSpecialPackModal(true);
@@ -821,7 +825,7 @@ export function VideoRoom({
                             localStorage.setItem('kinky_user_pseudo', name);
                             localStorage.setItem('kinky_user_role', userRole);
                             localStorage.setItem('kinky_credits', String(credits));
-                            setAccountStatus(userRole as 'user' | 'model');
+                            setAccountStatus('registered');
                             setUserCredits(credits);
                             setShowAuthModal(false);
                             
@@ -1303,7 +1307,7 @@ export function VideoRoom({
                         <div className="bg-white/5 rounded-2xl p-4 mb-8 flex items-center justify-between border border-white/5">
                             <div className="flex flex-col">
                                 <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">{t('room.block_cost_label')}</span>
-                                <span className="text-xl font-black text-white">{settings?.blockCreditsCost || 600} {t('room.block_credits_unit')}</span>
+                                <span className="text-xl font-black text-white">{(settings?.blockCreditsCost as number) || 600} {t('room.block_credits_unit')}</span>
                             </div>
                             <div className="flex flex-col items-end">
                                 <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">{t('common.premium')}</span>
@@ -1350,12 +1354,12 @@ export function VideoRoom({
                             <div className="absolute -top-3 -right-3 bg-pink-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg animate-bounce">{t('room.block_best_deal')}</div>
                             <div className="flex items-center justify-between">
                                 <div className="flex flex-col">
-                                    <span className="text-3xl font-black text-white">{settings?.blockCreditsCost || 600}</span>
+                                    <span className="text-3xl font-black text-white">{(settings?.blockCreditsCost as number) || 600}</span>
                                     <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em]">{t('room.block_credits_pack')}</span>
                                 </div>
                                 <div className="text-4xl font-light text-white/20">/</div>
                                 <div className="flex flex-col items-end">
-                                    <span className="text-3xl font-black text-white">${settings?.blockSpecialPackPrice || 59}</span>
+                                    <span className="text-3xl font-black text-white">${(settings?.blockSpecialPackPrice as number) || 59}</span>
                                     <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em]">{t('room.block_one_time_offer')}</span>
                                 </div>
                             </div>
@@ -1364,8 +1368,8 @@ export function VideoRoom({
                         <div className="space-y-3">
                             <button
                                 onClick={async () => {
-                                    const cost = settings?.blockCreditsCost || 600;
-                                    const price = settings?.blockSpecialPackPrice || 59;
+                                    const cost = (settings?.blockCreditsCost as number) || 600;
+                                    const price = (settings?.blockSpecialPackPrice as number) || 59;
                                     if (onPurchase) {
                                         await onPurchase(cost, price);
                                         setShowSpecialPackModal(false);
@@ -1412,7 +1416,7 @@ export function VideoRoom({
 
                         <div className="bg-pink-500/10 rounded-2xl p-6 mb-8 border border-pink-500/20 flex flex-col items-center gap-1">
                             <span className="text-[10px] font-black text-pink-400 uppercase tracking-widest">{t('room.block_bonus_label')}</span>
-                            <span className="text-4xl font-black text-white">${settings?.blockModelGain || 25}</span>
+                            <span className="text-4xl font-black text-white">${(settings?.blockModelGain as number) || 25}</span>
                         </div>
 
                         <div className="grid grid-cols-2 gap-3">
@@ -1505,7 +1509,7 @@ export function VideoRoom({
                             <div className="flex flex-col gap-1 mb-6">
                                 <span className="text-[10px] text-white/40 uppercase font-black tracking-widest leading-none">{t('room.earned_amount_label')}</span>
                                 <span className="text-5xl font-mono font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-neutral-500">
-                                    ${parseFloat(privateSummary.earned).toFixed(2)}
+                                    ${parseFloat(privateSummary.earned as string).toFixed(2)}
                                 </span>
                             </div>
                             
@@ -1514,7 +1518,7 @@ export function VideoRoom({
                             <div className="grid grid-cols-2 gap-4 text-left">
                                 <div className="flex flex-col">
                                     <span className="text-[8px] text-white/30 uppercase font-bold tracking-widest">{t('room.duration_label')}</span>
-                                    <span className="text-sm font-bold text-white/90">{Math.floor(privateSummary.durationSec / 60)} min {privateSummary.durationSec % 60}s</span>
+                                    <span className="text-sm font-bold text-white/90">{Math.floor((privateSummary.durationSec as number) / 60)} min {(privateSummary.durationSec as number) % 60}s</span>
                                 </div>
                                 <div className="flex flex-col text-right">
                                     <span className="text-[8px] text-white/30 uppercase font-bold tracking-widest">{t('room.status_label')}</span>
@@ -1549,7 +1553,7 @@ export function VideoRoom({
     );
 }
 
-function ChatMessage({ message, isMe }: { message: { text: string; originalText?: string }; isMe: boolean }) {
+function ChatMessage({ message, isMe }: { message: { text: string; originalText?: string; senderRole?: string; senderPseudo?: string }; isMe: boolean }) {
     const hasTranslation = !isMe && message.originalText && message.text !== message.originalText;
 
     // Browser-native decoder as a safeguard
@@ -1585,7 +1589,7 @@ function ChatMessage({ message, isMe }: { message: { text: string; originalText?
                         </span>
                         {hasTranslation && (
                             <span className="text-[11px] text-neutral-400 italic leading-tight border-t border-neutral-100 pt-1 mt-1">
-                                {decodeHTML(message.originalText)}
+                                {decodeHTML(message.originalText || "")}
                             </span>
                         )}
                     </div>
