@@ -7,7 +7,7 @@ import {
     Globe,
     Zap,
     Heart,
-    Lock,
+    Zap,
     DollarSign,
     Star,
     CheckCircle2,
