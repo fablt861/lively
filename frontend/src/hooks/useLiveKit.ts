@@ -144,6 +144,11 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
       currentRoomIdRef.current = roomId;
       // Keep isMatching true until room is connected to mask negotiation
       setIsConnecting(true);
+      // If it's a direct call, hide the searching overlay immediately to show the "Connecting" state
+      if (roomId.startsWith('direct-call-')) {
+          console.log("[LiveKit] Direct call matched, hiding searching overlay immediately");
+          setIsMatching(false);
+      }
 
       if (partnerId) {
         setPartnerInfo({
@@ -159,7 +164,9 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
         const resp = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/video/token?room=${roomId}&identity=${identity}`);
         const { token } = await resp.json();
 
-        await room.connect("wss://live.kinky.live", token);
+        const url = process.env.NEXT_PUBLIC_LIVEKIT_URL || "wss://live.kinky.live";
+        console.log(`[LiveKit] Connecting to ${url} for room ${roomId} (Identity: ${identity})`);
+        await room.connect(url, token);
         
         // Publish local tracks (uses the HD 720p defaults set in constructor)
         await room.localParticipant.enableCameraAndMicrophone();

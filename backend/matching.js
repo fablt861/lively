@@ -361,12 +361,16 @@ function setupMatching(io, socket) {
 
             // Start billing if it's a model-user pair and both are in
             const roomSockets = await io.in(roomId).fetchSockets();
+            console.log(`[DirectCall Status] Room ${roomId} now has ${roomSockets.length} sockets (Expected 2 for match)`);
+            
             if (roomSockets.length === 2) {
                 const userSocket = roomSockets.find(s => s.data.role === 'user');
                 const modelSocket = roomSockets.find(s => s.data.role === 'model');
 
+                console.log(`[DirectCall Detection] UserSocket: ${userSocket?.id || 'NOT FOUND'}, ModelSocket: ${modelSocket?.id || 'NOT FOUND'}`);
+
                 if (userSocket && modelSocket) {
-                    console.log(`[DirectCall] Both parties in room ${roomId}. Emitting matched events.`);
+                    console.log(`[DirectCall] Both parties detected in room ${roomId}. Emitting matched events.`);
                     
                     const userId = userSocket.data.userId;
                     const modelId = modelSocket.data.userId;
