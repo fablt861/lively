@@ -15,6 +15,7 @@ import {
   VideoPresets,
 } from "livekit-client";
 
+// DEPLOY CANARY: 2026-04-16T13:08:00Z - Robust Sync
 export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = true) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isSocketConnected, setIsSocketConnected] = useState(false);
