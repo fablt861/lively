@@ -176,11 +176,36 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
       }
     });
 
-    socket.on("partner_left", () => {
+    socket.on("partner_left", (data?: { reason?: string }) => {
       console.log("[LiveKit] Partner left, switching back to searching...");
       room.disconnect();
       setIsCallConnected(false);
       setIsMatching(true); // Return to searching state visually
+
+      // Automatically re-queue the user if they were in a standard call or it was a direct call handover.
+      // We check the roomId from currentRoomIdRef to decide if we should auto-requeue.
+      const lastRoomId = currentRoomIdRef.current;
+      const isPrivate = lastRoomId && (lastRoomId.includes('priv-') || lastRoomId.includes('private-'));
+      
+      if (!isPrivate) {
+          console.log("[LiveKit] Auto-requeuing partner...");
+          joinQueue();
+      }
+    });
+
+    socket.on("force_requeue", () => {
+        console.log("[LiveKit] Server forced a re-queue");
+        room.disconnect();
+        setIsCallConnected(false);
+        setIsMatching(true);
+        joinQueue();
+    });
+
+    socket.on("clean_room", () => {
+        console.log("[LiveKit] Server cleaned room state");
+        room.disconnect();
+        setIsCallConnected(false);
+        setIsMatching(true);
     });
 
     socket.on("chat_message", (msg: any) => {

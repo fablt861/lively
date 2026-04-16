@@ -712,29 +712,23 @@ async function disconnectFromRoom(io, socket, reason = 'unknown') {
         // Note: stopBilling will delete the billing:is_blocked key
         await stopBilling(roomId, reason);
 
-        // Notify the room that a partner left
+        // Notify the room that a partner left (works globally with Redis Adapter)
         socket.to(roomId).emit('partner_left', { reason });
 
         socket.leave(roomId);
         socket.currentRoom = null;
 
-        // --- NEW: Automatically put the partner back in the queue ---
-        // UNLESS it was a private session OR a direct call! 
-        // We want the participants to decide what to do next.
-        if (partnerSocket) {
+        // --- MULTI-SERVER SAFE RE-QUEUE ---
+        // We now emit to the partner by ID instead of manipulating their local socket object.
+        // This ensures it works if the partner is on a different Render instance.
+        if (partnerId) {
             const isDirectCall = roomId.startsWith('direct-call-');
             if (blockDataRaw || isDirectCall) {
-                console.log(`[Auto-Next] Gating auto-requeue for partner ${partnerSocket.id} (Private Session or Direct Call detected)`);
-                partnerSocket.leave(roomId);
-                partnerSocket.currentRoom = null;
-                if (partnerSocket.data) partnerSocket.data.currentRoom = null;
-                // Partner will handle it via their UI
+                console.log(`[Auto-Next] Gating auto-requeue for partner ID ${partnerId} (Private/Direct detected)`);
+                io.to(partnerId).emit('clean_room', { roomId }); // Tell remote partner to leave room state
             } else {
-                console.log(`[Auto-Next] Re-queueing partner ${partnerSocket.id} after disconnect by ${socket.id}`);
-                partnerSocket.leave(roomId);
-                partnerSocket.currentRoom = null;
-                if (partnerSocket.data) partnerSocket.data.currentRoom = null;
-                await handleJoinQueue(io, partnerSocket);
+                console.log(`[Auto-Next] Triggering re-queue signal for partner ID ${partnerId}`);
+                io.to(partnerId).emit('force_requeue', { lastRoomId: roomId });
             }
         }
     }
