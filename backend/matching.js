@@ -366,7 +366,7 @@ function setupMatching(io, socket) {
                 const modelSocket = roomSockets.find(s => s.data.role === 'model');
 
                 if (userSocket && modelSocket) {
-                    console.log(`[DirectCall] Both parties in room ${roomId}. Emitting direct_matched_ready.`);
+                    console.log(`[DirectCall] Both parties in room ${roomId}. Emitting matched events.`);
                     
                     const userId = userSocket.data.userId;
                     const modelId = modelSocket.data.userId;
@@ -374,16 +374,29 @@ function setupMatching(io, socket) {
                     const userPseudo = await resolvePseudo(userId, 'user');
                     const modelPseudo = await resolvePseudo(modelId, 'model');
 
-                    userSocket.emit('direct_matched_ready', {
+                    // Unified 'matched' event for full frontend compatibility
+                    userSocket.emit('matched', {
+                        roomId,
+                        initiator: userSocket.id, // Caller is initiator 
                         partnerId: modelId,
                         partnerPseudo: modelPseudo,
-                        partnerRole: 'model'
+                        partnerName: modelPseudo, // Compatibility
+                        partnerRole: 'model',
+                        isBlocked: false,
+                        blockEnd: null,
+                        isRestricted: false 
                     });
 
-                    modelSocket.emit('direct_matched_ready', {
+                    modelSocket.emit('matched', {
+                        roomId,
+                        initiator: userSocket.id,
                         partnerId: userId,
                         partnerPseudo: userPseudo,
-                        partnerRole: 'user'
+                        partnerName: userPseudo, // Compatibility
+                        partnerRole: 'user',
+                        isBlocked: false,
+                        blockEnd: null,
+                        isRestricted: false
                     });
 
                     console.log(`[DirectBilling] Starting billing for room ${roomId}`);

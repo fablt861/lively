@@ -159,8 +159,10 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     });
 
     socket.on("partner_left", () => {
+      console.log("[LiveKit] Partner left, switching back to searching...");
       room.disconnect();
       setIsCallConnected(false);
+      setIsMatching(true); // Return to searching state visually
     });
 
     socket.on("chat_message", (msg: any) => {
