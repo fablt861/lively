@@ -5,7 +5,6 @@ import {
     ChevronRight,
     ShieldCheck,
     Globe,
-    Zap,
     Heart,
     Zap,
     DollarSign,
@@ -117,7 +116,7 @@ export default function ModelLandingPage() {
                                 </div>
                                 <div className="w-px h-3 bg-white/20" />
                                 <div className="flex items-center gap-2 text-[9px] font-black text-white/70 uppercase tracking-widest">
-                                    <Lock size={12} className="text-purple-400" /> {t('model.stat.secure_access_val')}
+                                    <Zap size={12} className="text-purple-400" /> {t('model.stat.secure_access_val')}
                                 </div>
                             </div>
                         </div>
@@ -201,7 +200,7 @@ export default function ModelLandingPage() {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 {[
-                                    { icon: Lock, title: t('model.benefit.anon_title'), desc: t('model.benefit.anon_desc'), color: 'indigo' },
+                                    { icon: Zap, title: t('model.benefit.anon_title'), desc: t('model.benefit.anon_desc'), color: 'indigo' },
                                     { icon: ShieldOff, title: t('model.benefit.geoblock_title'), desc: t('model.benefit.geoblock_desc'), color: 'blue' },
                                     { icon: Star, title: t('model.benefit.private_title'), desc: t('model.benefit.private_desc'), color: 'purple' },
                                     { icon: Heart, title: t('model.benefit.favorites_title'), desc: t('model.benefit.favorites_desc'), color: 'pink' },
