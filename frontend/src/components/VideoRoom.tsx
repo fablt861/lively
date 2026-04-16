@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles, Lock, Timer, Check, Plus, Heart, Smile, Signal, Wifi } from "lucide-react";
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import { LiveKitRoom, VideoTrack, useTracks, RoomAudioRenderer, TrackLoop, isTrackReference } from '@livekit/components-react';
-import { Track, RemoteParticipant, LocalParticipant } from 'livekit-client';
+import { Track, RemoteParticipant, LocalParticipant, VideoQuality } from 'livekit-client';
 import { CallListener } from './CallListener';
 import { useTranslation } from "@/context/LanguageContext";
 import { MaintenanceGuard } from "./MaintenanceGuard";
@@ -140,6 +140,14 @@ export function VideoRoom({
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const [accountStatus, setAccountStatus] = useState<'guest' | 'registered' | 'premium'>('guest');
+
+    // Force high quality subscription as soon as remote track is available
+    useEffect(() => {
+        if (remoteVideoTrack && (remoteVideoTrack as any).publication) {
+            console.log("[LiveKit] Requesting HIGH quality for remote track immediately");
+            (remoteVideoTrack as any).publication.setVideoQuality(VideoQuality.HIGH);
+        }
+    }, [remoteVideoTrack]);
     const [userCredits, setUserCredits] = useState<number | null>(null);
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
