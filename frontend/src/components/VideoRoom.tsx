@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles, Lock, Timer, Check, Plus, Heart, Smile, Signal, Wifi, Zap } from "lucide-react";
+import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles, Timer, Check, Plus, Heart, Smile, Signal, Wifi, Zap, RefreshCw, Home } from "lucide-react";
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import { LiveKitRoom, VideoTrack, useTracks, RoomAudioRenderer, TrackLoop, isTrackReference } from '@livekit/components-react';
 import { Track, RemoteParticipant, LocalParticipant, VideoQuality } from 'livekit-client';
