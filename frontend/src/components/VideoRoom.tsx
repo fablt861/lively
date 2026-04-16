@@ -194,6 +194,17 @@ export function VideoRoom({
             handleStartMatch();
         }
     }, [isDirectCall, role, hasStartedMatch]);
+
+    useEffect(() => {
+        // Auto-skip PreMatchModal if camera is already accepted and ready
+        if (previewStream && !hasStartedMatch) {
+            console.log('[Auto-Skip] Camera ready, jumping to entry flow');
+            const timer = setTimeout(() => {
+                handleStartMatch();
+            }, 300); 
+            return () => clearTimeout(timer);
+        }
+    }, [previewStream, hasStartedMatch]);
     const [blockTimeLeft, setBlockTimeLeft] = useState("");
     const [displayedCredits, setDisplayedCredits] = useState<number | null>(null);
     const [showNextConfirm, setShowNextConfirm] = useState(false);
