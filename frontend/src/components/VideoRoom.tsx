@@ -647,7 +647,7 @@ export function VideoRoom({
         if (localVideoRef.current) {
             localVideoRef.current.srcObject = localStream || previewStream;
         }
-    }, [localStream, previewStream, hasStartedMatch]);
+    }, [localStream, previewStream, hasStartedMatch, !!localVideoTrack]);
 
     useEffect(() => {
         if (remoteVideoRef.current && remoteStream) {
@@ -1017,7 +1017,7 @@ export function VideoRoom({
                             onClick={() => setShowBlockRequestModal(true)}
                             className="w-12 h-12 flex items-center justify-center rounded-2xl bg-pink-600/80 border border-pink-500/50 text-white backdrop-blur-md shadow-lg shadow-pink-500/20"
                         >
-                            <Lock size={20} />
+                            <Zap size={20} fill="currentColor" />
                         </button>
                     )}
                     {/* Favorite Button */}
@@ -1071,7 +1071,7 @@ export function VideoRoom({
                             className="p-4 rounded-full bg-pink-600 hover:bg-pink-500 text-white transition-all shadow-lg shadow-pink-500/20 active:scale-95"
                             title={t('room.block_cta_tooltip')}
                         >
-                            <Lock size={24} />
+                            <Zap size={24} fill="currentColor" />
                         </button>
                     )}
                 </div>
@@ -1275,7 +1275,7 @@ export function VideoRoom({
                         <div className="absolute top-0 right-0 w-32 h-32 bg-pink-500/10 rounded-full blur-3xl -mr-16 -mt-16" />
                         
                         <div className="w-16 h-16 bg-pink-500/20 rounded-2xl flex items-center justify-center mb-6 border border-pink-500/30">
-                            <Lock size={32} className="text-pink-500" />
+                            <Zap size={32} className="text-pink-500" fill="currentColor" />
                         </div>
 
                         <h2 className="text-2xl font-black mb-4">{t('room.block_request_title', { duration: settings?.blockDurationMin || 30 })}</h2>
@@ -1421,7 +1421,7 @@ export function VideoRoom({
                 <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
                     <div className="w-full max-w-sm bg-neutral-900 border border-white/10 rounded-[2rem] p-8 shadow-2xl text-center">
                         <div className="w-16 h-16 bg-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <Lock className="text-pink-500" size={32} />
+                            <Zap className="text-pink-500" size={32} fill="currentColor" />
                         </div>
                         <h3 className="text-xl font-bold mb-4">{t('room.next_confirm_title')}</h3>
                         <p className="text-white/60 text-sm mb-8 leading-relaxed">
