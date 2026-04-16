@@ -78,10 +78,20 @@ router.get('/:userId', async (req, res) => {
         const models = await Promise.all(result.rows.map(async (model) => {
             const isOnline = await redis.sismember('online_models', model.id);
             const activeRoom = await redis.get(`user_active_room:${model.id}`);
+            
+            let isPrivate = false;
+            if (activeRoom) {
+                const blockData = await redis.get(`billing:is_blocked:${activeRoom}`);
+                if (blockData) {
+                    isPrivate = true;
+                }
+            }
+
             return {
                 ...model,
                 isOnline: isOnline === 1,
-                isBusy: !!activeRoom
+                isBusy: !!activeRoom,
+                isPrivate
             };
         }));
 

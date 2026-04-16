@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles, Lock, Timer, Check, Plus, Heart, Smile, Signal, Wifi } from "lucide-react";
+import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles, Lock, Timer, Check, Plus, Heart, Smile, Signal, Wifi, Zap } from "lucide-react";
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import { LiveKitRoom, VideoTrack, useTracks, RoomAudioRenderer, TrackLoop, isTrackReference } from '@livekit/components-react';
 import { Track, RemoteParticipant, LocalParticipant, VideoQuality } from 'livekit-client';
@@ -1272,7 +1272,7 @@ export function VideoRoom({
                                 disabled={isWaitingForBlockResponse}
                                 className="w-full py-4 bg-white text-black font-black uppercase tracking-widest text-sm rounded-2xl hover:bg-neutral-200 transition-all active:scale-95 flex items-center justify-center gap-2"
                             >
-                                {isWaitingForBlockResponse ? <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" /> : <Check size={18} />}
+                                {isWaitingForBlockResponse ? <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" /> : <Zap size={18} fill="currentColor" />}
                                 {isWaitingForBlockResponse ? t('room.block_request_sent') : t('room.block_send_request')}
                             </button>
                             <button
@@ -1336,7 +1336,7 @@ export function VideoRoom({
                                 }}
                                 className="w-full py-5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-black uppercase tracking-widest text-sm rounded-2xl hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-3 shadow-xl shadow-indigo-500/20"
                             >
-                                <Coins size={20} />
+                                <Zap size={20} fill="currentColor" />
                                 {t('room.block_buy_and_continue')}
                             </button>
                             <button

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { User, Wallet, Heart, Settings, Trash2, CreditCard, ChevronRight, Star } from "lucide-react";
+import { User, Wallet, Heart, Settings, Trash2, CreditCard, ChevronRight, Star, Zap } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { ProfileSettingsModal } from "@/components/ProfileSettingsModal";
@@ -17,6 +17,7 @@ interface FavoriteModel {
     photo_profile: string;
     isOnline?: boolean;
     isBusy?: boolean;
+    isPrivate?: boolean;
 }
 
 interface UserInfo {
@@ -356,9 +357,9 @@ export default function CustomerDashboard() {
                                         </div>
                                         <h3 className="text-2xl font-black text-white tracking-tight uppercase group-hover:text-indigo-400 transition-colors">{model.pseudo}</h3>
                                         {model.isOnline && (
-                                            model.isBusy ? (
-                                                <div className="mt-4 text-[10px] font-black text-orange-500 uppercase tracking-[0.2em]">
-                                                    {t('dashboard.model_busy') || "EN SESSION PRIVÉE"}
+                                            model.isPrivate ? (
+                                                <div className="mt-4 text-[10px] font-black text-orange-500 uppercase tracking-[0.2em] flex items-center gap-1.5">
+                                                    {t('dashboard.model_busy') || "EN SESSION PRIVÉE"} <Zap size={10} fill="currentColor" />
                                                 </div>
                                             ) : (
                                                 <button 
