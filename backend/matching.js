@@ -721,14 +721,14 @@ async function disconnectFromRoom(io, socket, reason = 'unknown') {
         // --- MULTI-SERVER SAFE RE-QUEUE ---
         // We now emit to the partner by ID instead of manipulating their local socket object.
         // This ensures it works if the partner is on a different Render instance.
-        if (partnerId) {
+        if (partnerSocketId) {
             const isDirectCall = roomId.startsWith('direct-call-');
             if (blockDataRaw || isDirectCall) {
-                console.log(`[Auto-Next] Gating auto-requeue for partner ID ${partnerId} (Private/Direct detected)`);
-                io.to(partnerId).emit('clean_room', { roomId }); // Tell remote partner to leave room state
+                console.log(`[Auto-Next] Gating auto-requeue for partner ID ${partnerSocketId} (Private/Direct detected)`);
+                io.to(partnerSocketId).emit('clean_room', { roomId }); // Tell remote partner to leave room state
             } else {
-                console.log(`[Auto-Next] Triggering re-queue signal for partner ID ${partnerId}`);
-                io.to(partnerId).emit('force_requeue', { lastRoomId: roomId });
+                console.log(`[Auto-Next] Triggering re-queue signal for partner ID ${partnerSocketId}`);
+                io.to(partnerSocketId).emit('force_requeue', { lastRoomId: roomId });
             }
         }
     }
