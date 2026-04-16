@@ -696,7 +696,10 @@ export function VideoRoom({
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [showEmojiPicker]);
 
-    if (isLaunch || isLaunchOverride) {
+    // Detect if we're about to auto-start to avoid flickering the LaunchPage
+    const isAutoStarting = !hasStartedMatch && previewStream && isSocketConnected;
+
+    if ((isLaunch || isLaunchOverride) && !isAutoStarting) {
         return <LaunchPage />;
     }
 
