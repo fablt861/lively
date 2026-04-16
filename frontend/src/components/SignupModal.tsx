@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, ShieldCheck, Mail, Lock, User } from "lucide-react";
+import { ArrowRight, ShieldCheck, Mail, Zap, User } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 import Link from "next/link";
 
@@ -43,7 +43,7 @@ export function SignupModal({ onSignup }: SignupModalProps) {
                             <input type="email" placeholder={t('signup.email')} required value={email} onChange={e => setEmail(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 pl-12 shadow-inner text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none transition-all" />
                         </div>
                         <div className="relative">
-                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={20} />
+                            <Zap className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={20} />
                             <input type="password" placeholder={t('signup.password')} required value={password} onChange={e => setPassword(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded-2xl py-3.5 pl-12 shadow-inner text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none transition-all" />
                         </div>
                     </div>

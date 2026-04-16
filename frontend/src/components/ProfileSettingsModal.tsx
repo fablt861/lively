@@ -301,7 +301,7 @@ export function ProfileSettingsModal({ isOpen, onClose, userId, role, onProfileU
                                         className="w-full flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all text-white/60 hover:text-white"
                                     >
                                         <div className="flex items-center gap-3">
-                                            <Lock size={16} className="text-pink-500" />
+                                            <Zap size={16} className="text-pink-500" />
                                             <span className="text-[10px] uppercase font-black tracking-widest">{t('profile.password_section')}</span>
                                         </div>
                                         {showPasswordSection ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -312,7 +312,7 @@ export function ProfileSettingsModal({ isOpen, onClose, userId, role, onProfileU
                                             {/* Old Password */}
                                             <div className="space-y-2">
                                                 <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
-                                                    <Lock size={12} /> {t('profile.old_password')}
+                                                    <Zap size={12} /> {t('profile.old_password')}
                                                 </label>
                                                 <div className="relative">
                                                     <input 
@@ -335,7 +335,7 @@ export function ProfileSettingsModal({ isOpen, onClose, userId, role, onProfileU
                                                 {/* New Password */}
                                                 <div className="space-y-2">
                                                     <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
-                                                        <Lock size={12} /> {t('profile.new_password')}
+                                                        <Zap size={12} /> {t('profile.new_password')}
                                                     </label>
                                                     <div className="relative">
                                                         <input 
@@ -357,7 +357,7 @@ export function ProfileSettingsModal({ isOpen, onClose, userId, role, onProfileU
                                                 {/* Confirm Password */}
                                                 <div className="space-y-2">
                                                     <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
-                                                        <Lock size={12} /> {t('profile.confirm_new_password')}
+                                                        <Zap size={12} /> {t('profile.confirm_new_password')}
                                                     </label>
                                                     <div className="relative">
                                                         <input 
