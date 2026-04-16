@@ -791,7 +791,7 @@ export function VideoRoom({
             data-testid="livekit-room"
         >
             <div className="flex flex-col md:flex-row h-[100dvh] w-full bg-neutral-950 text-white font-sans overflow-hidden no-scroll overscroll-none touch-none">
-            {!hasStartedMatch && (
+            {!hasStartedMatch && !isDirectCall && (
                 <PreMatchModal localStream={localStream} onJoin={handleStartMatch} role={role as any} />
             )}
 
