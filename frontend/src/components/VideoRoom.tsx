@@ -648,6 +648,7 @@ export function VideoRoom({
     }, [role, isConnected, userCredits, accountStatus]);
 
     useEffect(() => {
+        console.log("[Video] Syncing local video. Track:", !!localVideoTrack, "Stream:", !!localStream, "Preview:", !!previewStream);
         if (localVideoRef.current) {
             localVideoRef.current.srcObject = localStream || previewStream;
         }
@@ -941,7 +942,7 @@ export function VideoRoom({
                             <div className="w-20 h-20 md:w-28 md:h-28 border-[3px] border-white/5 border-t-indigo-500 rounded-full animate-spin mb-8 shadow-[0_0_30px_rgba(99,102,241,0.5)] relative z-10"></div>
 
                             <h2 className="text-sm sm:text-lg md:text-3xl font-extralight tracking-[0.2em] text-white/90 animate-pulse relative z-10 text-center px-12 uppercase leading-relaxed">
-                                {(isConnecting && !isMatching) ? t('room.connecting') : t('room.searching')}
+                                {((isConnecting && !isMatching) ? t('room.connecting') : t('room.searching')) + " [V2]"}
                                 {isMatching && queuePosition !== null && (
                                     <div className="mt-4 text-xs md:text-sm font-bold text-pink-500/80 tracking-widest uppercase animate-pulse">
                                         {t('room.queue_position', { position: queuePosition })}
