@@ -699,35 +699,32 @@ async function disconnectFromRoom(io, socket, reason = 'unknown') {
 
         // Find partner socket ID before we clear anything
         const roomDataStr = await redis.hget('billing:active_rooms', roomId);
-        let partnerSocket = null;
+        let partnerSocketId = null;
         if (roomDataStr) {
             const roomData = JSON.parse(roomDataStr);
-            const partnerSocketId = socket.id === roomData.userSocketId ? roomData.modelSocketId : roomData.userSocketId;
-            if (partnerSocketId) {
-                partnerSocket = io.sockets.sockets.get(partnerSocketId);
-            }
+            partnerSocketId = socket.id === roomData.userSocketId ? roomData.modelSocketId : roomData.userSocketId;
         }
 
+        console.log(`[Disconnect] cleaning room ${roomId}. Initiator: ${socket.id}, Partner found: ${partnerSocketId}, Reason: ${reason}`);
+
         // Stop billing for this room - this emits private_session_summary if needed
-        // Note: stopBilling will delete the billing:is_blocked key
+        // Note: stopBilling will delete the billing:active_rooms entry
         await stopBilling(roomId, reason);
 
-        // Notify the room that a partner left (works globally with Redis Adapter)
-        socket.to(roomId).emit('partner_left', { reason });
+        // Notify the room that a partner left (WORKS globally with io.to, even if initiator already left)
+        io.to(roomId).emit('partner_left', { reason });
 
         socket.leave(roomId);
         socket.currentRoom = null;
 
         // --- MULTI-SERVER SAFE RE-QUEUE ---
-        // We now emit to the partner by ID instead of manipulating their local socket object.
-        // This ensures it works if the partner is on a different Render instance.
         if (partnerSocketId) {
             const isDirectCall = roomId.startsWith('direct-call-');
             if (blockDataRaw || isDirectCall) {
                 console.log(`[Auto-Next] Gating auto-requeue for partner ID ${partnerSocketId} (Private/Direct detected)`);
-                io.to(partnerSocketId).emit('clean_room', { roomId }); // Tell remote partner to leave room state
+                io.to(partnerSocketId).emit('clean_room', { roomId }); 
             } else {
-                console.log(`[Auto-Next] Triggering re-queue signal for partner ID ${partnerSocketId}`);
+                console.log(`[Auto-Next] Sending force_requeue to partner ID ${partnerSocketId}`);
                 io.to(partnerSocketId).emit('force_requeue', { lastRoomId: roomId });
             }
         }
