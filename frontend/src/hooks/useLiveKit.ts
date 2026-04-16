@@ -17,6 +17,7 @@ import {
 
 export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = true) {
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [isSocketConnected, setIsSocketConnected] = useState(false);
   const [room, setRoom] = useState<Room | null>(null);
   const [isMatching, setIsMatching] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -59,6 +60,16 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
       transports: ["websocket", "polling"],
       forceNew: true,
       reconnectionAttempts: 5
+    });
+
+    newSocket.on("connect", () => {
+      console.log("[Socket] Connected to backend:", newSocket.id);
+      setIsSocketConnected(true);
+    });
+
+    newSocket.on("disconnect", () => {
+      console.log("[Socket] Disconnected from backend");
+      setIsSocketConnected(false);
     });
 
     setSocket(newSocket);

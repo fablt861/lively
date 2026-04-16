@@ -121,6 +121,7 @@ export function VideoRoom({
     room,
     finishMatching,
     joinDirectRoom,
+    isSocketConnected = false,
     isConnecting = false,
     previewStream = null
 }: VideoRoomProps) {
@@ -169,7 +170,7 @@ export function VideoRoom({
     const [userCredits, setUserCredits] = useState<number | null>(null);
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
-    const [hasStartedMatch, setHasStartedMatch] = useState(!!previewStream);
+    const [hasStartedMatch, setHasStartedMatch] = useState(false);
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
     const [isReporting, setIsReporting] = useState(false);
     const [reportReason, setReportReason] = useState("");
@@ -196,12 +197,12 @@ export function VideoRoom({
     }, [isDirectCall, role, hasStartedMatch]);
 
     useEffect(() => {
-        // Auto-skip PreMatchModal if camera is already accepted and ready
-        if (previewStream && !hasStartedMatch) {
-            console.log('[Auto-Skip] Camera ready, jumping to entry flow');
+        // Auto-skip PreMatchModal if camera is ready AND socket is connected
+        if (previewStream && isSocketConnected && !hasStartedMatch) {
+            console.log('[Auto-Skip] Camera and Socket ready, jumping to entry flow');
             handleStartMatch();
         }
-    }, [previewStream, hasStartedMatch]);
+    }, [previewStream, isSocketConnected, hasStartedMatch]);
 
     // Ensure we trigger the match if we skipped the modal on initial render
     useEffect(() => {

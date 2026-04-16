@@ -58,12 +58,12 @@ const io = new Server(server, {
   transports: ["websocket", "polling"]
 });
 
-const { setupMatching } = require('./matching');
+const { setupMatching, disconnectFromRoom } = require('./matching');
 const { setupSignaling } = require('./signaling');
 const { initBillingLoop, getModelStats } = require('./billing');
 const { initSettings } = require('./settings');
 app.get('/health', (req, res) => {
-  res.json({ status: 'OK', version: '2026-04-15_v21_payout_stats_fix', timestamp: new Date().toISOString() });
+  res.json({ status: 'OK', version: '2026-04-16_v3_disconnect_fix', timestamp: new Date().toISOString() });
 });
 
 // Load and mount routes
