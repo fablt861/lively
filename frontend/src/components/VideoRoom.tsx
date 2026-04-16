@@ -188,29 +188,25 @@ export function VideoRoom({
     const [incomingBlockRequest, setIncomingBlockRequest] = useState<any>(null);
     const [isWaitingForBlockResponse, setIsWaitingForBlockResponse] = useState(false);
 
+    // --- UNIFIED AUTO-START LOGIC ---
+    // This effect ensures we only trigger handleStartMatch when both camera and socket are truly ready.
     useEffect(() => {
-        // Models skip PreMatchModal for direct calls since they already accepted via CallListener
-        // Users (initiators) still see it for a last cam check
-        if (isDirectCall && role === 'model' && !hasStartedMatch) {
-            console.log('[DirectCall] Model skipping PreMatchModal');
-            handleStartMatch();
-        }
-    }, [isDirectCall, role, hasStartedMatch]);
+        if (hasStartedMatch) return;
 
-    useEffect(() => {
-        // Auto-skip PreMatchModal if camera is ready AND socket is connected
-        if (previewStream && isSocketConnected && !hasStartedMatch) {
-            console.log('[Auto-Skip] Camera and Socket ready, jumping to entry flow');
+        // Condition A: It's a direct call and we have camera + socket
+        if (isDirectCall && previewStream && isSocketConnected) {
+            console.log('[Auto-Start] Direct call ready (Camera + Socket), joining room...');
             handleStartMatch();
         }
-    }, [previewStream, isSocketConnected, hasStartedMatch]);
+        // Condition B: Standard call with already active camera from previous session 
+        // (Wait for socket to be sure we don't 'burn' our hasStartedMatch flag)
+        else if (!isDirectCall && previewStream && isSocketConnected) {
+             console.log('[Auto-Start] Standard call auto-skip (Camera + Socket), joining queue...');
+             handleStartMatch();
+        }
+    }, [isDirectCall, previewStream, isSocketConnected, hasStartedMatch]);
 
-    // Ensure we trigger the match if we skipped the modal on initial render
-    useEffect(() => {
-        if (previewStream) {
-            handleStartMatch();
-        }
-    }, []);
+
     const [blockTimeLeft, setBlockTimeLeft] = useState("");
     const [displayedCredits, setDisplayedCredits] = useState<number | null>(null);
     const [showNextConfirm, setShowNextConfirm] = useState(false);
@@ -250,6 +246,13 @@ export function VideoRoom({
     };
 
     const handleStartMatch = () => {
+        // Double-check socket to prevent silent failures if called manually/prematurely
+        if (!socket) {
+            console.warn('[handleStartMatch] Aborting: Socket not connected yet.');
+            return;
+        }
+
+        console.log('[handleStartMatch] Triggering match joining flow');
         setHasStartedMatch(true);
         const searchParams = new URLSearchParams(window.location.search);
         const roomParam = searchParams.get('room');

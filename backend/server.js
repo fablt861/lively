@@ -58,12 +58,28 @@ const io = new Server(server, {
   transports: ["websocket", "polling"]
 });
 
+// Redis Adapter for multi-instance synchronization (essential for Render)
+if (process.env.REDIS_URL) {
+    const { createClient } = require('redis');
+    const { createAdapter } = require('@socket.io/redis-adapter');
+    
+    const pubClient = createClient({ url: process.env.REDIS_URL });
+    const subClient = pubClient.duplicate();
+    
+    Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
+        io.adapter(createAdapter(pubClient, subClient));
+        console.log('[Socket] Redis Adapter enabled successfully');
+    }).catch(err => {
+        console.error('[Socket] Redis Adapter failed to connect:', err);
+    });
+}
+
 const { setupMatching, disconnectFromRoom } = require('./matching');
 const { setupSignaling } = require('./signaling');
 const { initBillingLoop, getModelStats } = require('./billing');
 const { initSettings } = require('./settings');
 app.get('/health', (req, res) => {
-  res.json({ status: 'OK', version: '2026-04-16_v3_disconnect_fix', timestamp: new Date().toISOString() });
+  res.json({ status: 'OK', version: '2026-04-16_v4_infrastructure_fix', timestamp: new Date().toISOString() });
 });
 
 // Load and mount routes

@@ -201,8 +201,12 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
   }, [socket, room, partnerInfo]);
 
   const joinDirectRoom = (roomId: string) => {
-    if (!socket || !role) return;
+    if (!socket || !role) {
+        console.warn("[Socket Emit] Aborting joinDirectRoom: Socket or Role missing");
+        return;
+    }
     const id = localStorage.getItem("kinky_user_id") || null;
+    console.log(`[Socket Emit] join_direct_room: ${roomId} as ${role} (ID: ${id})`);
     socket.emit("join_direct_room", { roomId, role, id, language: navigator.language || "en" });
     setIsMatching(false); // Direct joins skip matching state
     setIsConnecting(true);
