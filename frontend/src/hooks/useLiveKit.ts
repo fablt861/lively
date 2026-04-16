@@ -90,6 +90,7 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     lkRoom
       .on(RoomEvent.Connected, () => {
         console.log("[LiveKit] Connected to room");
+        setIsMatching(false);
         setIsCallConnected(true);
       })
       .on(RoomEvent.Disconnected, () => {
@@ -130,7 +131,7 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     socket.on("matched", async (data: any) => {
       const { roomId, initiator, partnerId, partnerRole, partnerName } = data;
       currentRoomIdRef.current = roomId;
-      setIsMatching(false);
+      // Keep isMatching true until room is connected to mask negotiation
       setIsConnecting(true);
 
       if (partnerId) {
