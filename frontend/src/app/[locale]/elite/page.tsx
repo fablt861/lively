@@ -4,14 +4,14 @@ import Link from "next/link";
 import {
     ChevronRight,
     ShieldCheck,
-    Globe,
-    Heart,
     Zap,
+    Heart,
     DollarSign,
     Star,
     CheckCircle2,
     ArrowRight,
-    ShieldOff
+    ShieldOff,
+    Globe
 } from "lucide-react";
 import { ModelSimulator } from "@/components/ModelSimulator";
 import { useTranslation } from "@/context/LanguageContext";

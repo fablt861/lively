@@ -68,10 +68,10 @@ interface VideoRoomProps {
     nextPartner: () => void;
     toggleAudio: () => void;
     toggleVideo: () => void;
-    messages: any[];
+    messages: { text: string; originalText?: string; sender?: string; timestamp?: number }[];
     sendMessage: (text: string) => void;
     socketId: string | undefined;
-    socket: any;
+    socket: { on: (event: string, cb: (data: unknown) => void) => void; emit: (event: string, data?: unknown) => void; disconnect: () => void; connected: boolean } | null;
     role: "user" | "model" | null;
     onNext: () => void;
     handleOutOfCredits?: () => void;
@@ -82,11 +82,11 @@ interface VideoRoomProps {
     queuePosition?: number | null;
     isLaunch?: boolean;
     isLaunchOverride?: boolean;
-    packs?: any[];
+    packs?: { id: string; credits: number; price: number }[];
     onPurchase?: (credits: number, priceUsd: number) => Promise<void>;
     isDirectCall?: boolean;
     connectionQuality?: 'excellent' | 'good' | 'fair' | 'poor' | 'reconnecting';
-    room?: any; // LiveKit Room
+    room?: { disconnect: () => void; state: string } | null; // LiveKit Room
     finishMatching: () => void;
     joinDirectRoom: (roomId: string) => void;
     isConnecting?: boolean;
@@ -154,9 +154,9 @@ export function VideoRoom({
     // Force high quality subscription as soon as remote track is available
     // AND wait for stabilization before hiding the matching overlay
     useEffect(() => {
-        if (remoteVideoTrack && (remoteVideoTrack as any).publication) {
+        if (remoteVideoTrack && (remoteVideoTrack as { publication?: { setVideoQuality: (q: VideoQuality) => void } }).publication) {
             console.log("[LiveKit] Requesting HIGH quality for remote track immediately");
-            (remoteVideoTrack as any).publication.setVideoQuality(VideoQuality.HIGH);
+            (remoteVideoTrack as { publication: { setVideoQuality: (q: VideoQuality) => void } }).publication.setVideoQuality(VideoQuality.HIGH);
 
             // Wait for 1200ms for the stream to stabilize (ramp-up + keyframe) 
             // before telling the hook to hide the "Searching" overlay
@@ -179,13 +179,13 @@ export function VideoRoom({
     const [reportError, setReportError] = useState("");
     const [payoutInfo, setPayoutInfo] = useState({ rate: 0, earned: 0, totalBalance: 0 });
     const [showExitConfirm, setShowExitConfirm] = useState(false);
-    const [settings, setSettings] = useState<any>(null);
+    const [settings, setSettings] = useState<Record<string, unknown> | null>(null);
     const [isBlocked, setIsBlocked] = useState(false);
     const [blockEndTime, setBlockEndTime] = useState<number | null>(null);
     const [isRestricted, setIsRestricted] = useState(false);
     const [showBlockRequestModal, setShowBlockRequestModal] = useState(false);
     const [showSpecialPackModal, setShowSpecialPackModal] = useState(false);
-    const [incomingBlockRequest, setIncomingBlockRequest] = useState<any>(null);
+    const [incomingBlockRequest, setIncomingBlockRequest] = useState<Record<string, unknown> | null>(null);
     const [isWaitingForBlockResponse, setIsWaitingForBlockResponse] = useState(false);
 
     // --- UNIFIED AUTO-START LOGIC ---
@@ -210,7 +210,7 @@ export function VideoRoom({
     const [blockTimeLeft, setBlockTimeLeft] = useState("");
     const [displayedCredits, setDisplayedCredits] = useState<number | null>(null);
     const [showNextConfirm, setShowNextConfirm] = useState(false);
-    const [privateSummary, setPrivateSummary] = useState<any>(null);
+    const [privateSummary, setPrivateSummary] = useState<Record<string, unknown> | null>(null);
     const [isRequeuingBlocked, setIsRequeuingBlocked] = useState(false);
     const [isFavorite, setIsFavorite] = useState(false);
     const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
@@ -309,7 +309,7 @@ export function VideoRoom({
 
     // Load state from localStorage on mount
     useEffect(() => {
-        const storedStatus = (localStorage.getItem('kinky_account_status') as any) || 'guest';
+        const storedStatus = (localStorage.getItem('kinky_account_status') as 'guest' | 'registered' | 'premium') || 'guest';
         const storedId = localStorage.getItem('kinky_user_id');
         setAccountStatus(storedStatus);
 
@@ -408,13 +408,13 @@ export function VideoRoom({
             }
         };
 
-        const handleRequestBlockSession = (payload: any) => {
+        const handleRequestBlockSession = (payload: Record<string, unknown>) => {
             if (role === 'model') {
                 setIncomingBlockRequest(payload);
             }
         };
 
-        const handleRespondBlockSession = (payload: any) => {
+        const handleRespondBlockSession = (payload: { accepted: boolean }) => {
             if (role === 'user') {
                 setIsWaitingForBlockResponse(false);
                 if (!payload.accepted) {
@@ -469,7 +469,7 @@ export function VideoRoom({
         };
         
 
-        const handlePrivateSummary = (data: any) => {
+        const handlePrivateSummary = (data: Record<string, unknown>) => {
             console.log("[Block] Received private summary:", data);
             if (role === 'model') {
                 setPrivateSummary(data);
@@ -496,7 +496,7 @@ export function VideoRoom({
             }
         };
 
-        const handleMatched = (data: any) => {
+        const handleMatched = (data: { modelBalance?: number; isBlocked?: boolean; blockEnd?: number }) => {
             console.log("[Socket] Matched event received in VideoRoom:", data);
             
             if (data.modelBalance !== undefined && role === 'model') {
@@ -615,10 +615,6 @@ export function VideoRoom({
         return () => clearInterval(interval);
     }, [isBlocked, blockEndTime]);
 
-    if (isLaunch || isLaunchOverride) {
-        return <LaunchPage />;
-    }
-
     // Teaser logic (only for 0-credit entries)
     const teaserTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -685,6 +681,21 @@ export function VideoRoom({
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            const target = event.target as Element;
+            if (showEmojiPicker && !target.closest('.emoji-picker-container') && !target.closest('.emoji-toggle-btn')) {
+                setShowEmojiPicker(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [showEmojiPicker]);
+
+    if (isLaunch || isLaunchOverride) {
+        return <LaunchPage />;
+    }
+
     const handleToggleAudio = () => {
         toggleAudio();
         setIsAudioMuted(!isAudioMuted);
@@ -704,20 +715,9 @@ export function VideoRoom({
         }
     };
 
-    const onEmojiClick = (emojiData: any) => {
+    const onEmojiClick = (emojiData: { emoji: string }) => {
         setChatInput(prev => prev + emojiData.emoji);
     };
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            const target = event.target as Element;
-            if (showEmojiPicker && !target.closest('.emoji-picker-container') && !target.closest('.emoji-toggle-btn')) {
-                setShowEmojiPicker(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [showEmojiPicker]);
 
     const captureScreenshots = async (): Promise<string[]> => {
         const video = remoteVideoRef.current;
@@ -794,7 +794,7 @@ export function VideoRoom({
         >
             <div className="flex flex-col md:flex-row h-[100dvh] w-full bg-neutral-950 text-white font-sans overflow-hidden no-scroll overscroll-none touch-none">
             {!hasStartedMatch && !isDirectCall && (
-                <PreMatchModal localStream={localStream} onJoin={handleStartMatch} role={role as any} />
+                <PreMatchModal localStream={localStream} onJoin={handleStartMatch} role={role as 'user' | 'model'} />
             )}
 
             <OrientationGuard />
@@ -821,7 +821,7 @@ export function VideoRoom({
                             localStorage.setItem('kinky_user_pseudo', name);
                             localStorage.setItem('kinky_user_role', userRole);
                             localStorage.setItem('kinky_credits', String(credits));
-                            setAccountStatus(userRole as any);
+                            setAccountStatus(userRole as 'user' | 'model');
                             setUserCredits(credits);
                             setShowAuthModal(false);
                             
@@ -942,7 +942,7 @@ export function VideoRoom({
                             <div className="w-20 h-20 md:w-28 md:h-28 border-[3px] border-white/5 border-t-indigo-500 rounded-full animate-spin mb-8 shadow-[0_0_30px_rgba(99,102,241,0.5)] relative z-10"></div>
 
                             <h2 className="text-sm sm:text-lg md:text-3xl font-extralight tracking-[0.2em] text-white/90 animate-pulse relative z-10 text-center px-12 uppercase leading-relaxed">
-                                {(isConnecting && !isMatching) ? t('room.connecting') : t('room.searching')} [V4]
+                                {((isConnecting && !isMatching) ? t('room.connecting') : t('room.searching'))}
                                 {isMatching && queuePosition !== null && (
                                     <div className="mt-4 text-xs md:text-sm font-bold text-pink-500/80 tracking-widest uppercase animate-pulse">
                                         {t('room.queue_position', { position: queuePosition })}
@@ -1549,7 +1549,7 @@ export function VideoRoom({
     );
 }
 
-function ChatMessage({ message, isMe }: { message: any; isMe: boolean }) {
+function ChatMessage({ message, isMe }: { message: { text: string; originalText?: string }; isMe: boolean }) {
     const hasTranslation = !isMe && message.originalText && message.text !== message.originalText;
 
     // Browser-native decoder as a safeguard
