@@ -78,6 +78,11 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
       publishDefaults: {
         simulcast: true,
         videoCodec: 'vp8',
+        videoEncoding: {
+          maxBitrate: 3_000_000, // Hint for 3 Mbps
+          maxFramerate: 30,
+          priority: 'high',
+        },
       },
     });
 
