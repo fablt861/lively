@@ -309,6 +309,12 @@ function setupMatching(io, socket) {
 
     socket.on('join_direct_room', async ({ roomId, role, id, language }) => {
         try {
+            // CRITICAL: If already in a room, disconnect first to clean up billing/partner state
+            if (socket.currentRoom && socket.currentRoom !== roomId) {
+                console.log(`[DirectCall] Socket ${socket.id} already in room ${socket.currentRoom}. Disconnecting before join.`);
+                await disconnectFromRoom(io, socket, 'direct_call_accepted');
+            }
+
             console.log(`[DirectCall] Socket ${socket.id} joining room ${roomId} as ${role} (ID: ${id})`);
             socket.role = role;
             socket.data.role = role;

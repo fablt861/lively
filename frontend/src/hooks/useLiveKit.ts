@@ -180,6 +180,14 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     };
   }, [socket, room, partnerInfo]);
 
+  const joinDirectRoom = (roomId: string) => {
+    if (!socket || !role) return;
+    const id = localStorage.getItem("kinky_user_id") || null;
+    socket.emit("join_direct_room", { roomId, role, id, language: navigator.language || "en" });
+    setIsMatching(false); // Direct joins skip matching state
+    setIsConnecting(true);
+  };
+
   const joinQueue = () => {
     if (!socket || !role) return;
     const id = localStorage.getItem("kinky_user_id") || null;
@@ -233,6 +241,7 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     isConnected: isCallConnected,
     isConnecting,
     joinQueue,
+    joinDirectRoom,
     nextPartner,
     toggleAudio,
     toggleVideo,

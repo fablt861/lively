@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { VideoRoom } from "@/components/VideoRoom";
 import { useLiveKit } from "@/hooks/useLiveKit";
 import { MaintenanceGuard } from "@/components/MaintenanceGuard";
@@ -12,6 +13,9 @@ export default function LivePage({ params }: { params: { locale: string } }) {
     const [isLaunch, setIsLaunch] = useState(false);
     const [isChecking, setIsChecking] = useState(true);
     const [settings, setSettings] = useState<any>(null);
+    const searchParams = useSearchParams();
+    const roomParam = searchParams.get('room');
+    const isDirectCall = !!roomParam;
 
     useEffect(() => {
         const storedRole = localStorage.getItem("kinky_user_role") as "user" | "model" | null;
@@ -53,10 +57,10 @@ export default function LivePage({ params }: { params: { locale: string } }) {
     if (videoSession.cameraPermissionError) return <CameraPermissionGuard onRetry={videoSession.retryCamera} />;
     
     // We pass previewStream for localStream to allow the PreMatchModal to show the camera check
-    if (activeLaunch) return <VideoRoom {...videoSession} localStream={videoSession.previewStream} remoteStream={null} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={videoSession.endCall} onNext={videoSession.nextPartner} onPurchase={handlePurchase} isLaunchOverride={true} packs={settings?.packs} isDirectCall={false} />;
+    if (activeLaunch) return <VideoRoom {...videoSession} localStream={videoSession.previewStream} remoteStream={null} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={videoSession.endCall} onNext={videoSession.nextPartner} onPurchase={handlePurchase} isLaunchOverride={true} packs={settings?.packs} isDirectCall={isDirectCall} />;
     if (isChecking || !role) return <div className="min-h-screen bg-[#050505]"></div>;
 
-    return <VideoRoom {...videoSession} localStream={videoSession.previewStream} remoteStream={null} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={videoSession.endCall} onNext={videoSession.nextPartner} onPurchase={handlePurchase} packs={settings?.packs} isDirectCall={false} />;
+    return <VideoRoom {...videoSession} localStream={videoSession.previewStream} remoteStream={null} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={videoSession.endCall} onNext={videoSession.nextPartner} onPurchase={handlePurchase} packs={settings?.packs} isDirectCall={isDirectCall} />;
 }
 
 

@@ -88,6 +88,7 @@ interface VideoRoomProps {
     connectionQuality?: 'excellent' | 'good' | 'fair' | 'poor' | 'reconnecting';
     room?: any; // LiveKit Room
     finishMatching: () => void;
+    joinDirectRoom: (roomId: string) => void;
     isConnecting?: boolean;
     previewStream?: MediaStream | null;
 }
@@ -119,6 +120,7 @@ export function VideoRoom({
     connectionQuality = 'excellent',
     room,
     finishMatching,
+    joinDirectRoom,
     isConnecting = false,
     previewStream = null
 }: VideoRoomProps) {
@@ -185,11 +187,13 @@ export function VideoRoom({
     const [isWaitingForBlockResponse, setIsWaitingForBlockResponse] = useState(false);
 
     useEffect(() => {
-        if (isDirectCall && !hasStartedMatch) {
-            console.log('[DirectCall] Skipping PreMatchModal');
-            setHasStartedMatch(true);
+        // Models skip PreMatchModal for direct calls since they already accepted via CallListener
+        // Users (initiators) still see it for a last cam check
+        if (isDirectCall && role === 'model' && !hasStartedMatch) {
+            console.log('[DirectCall] Model skipping PreMatchModal');
+            handleStartMatch();
         }
-    }, [isDirectCall, hasStartedMatch]);
+    }, [isDirectCall, role, hasStartedMatch]);
     const [blockTimeLeft, setBlockTimeLeft] = useState("");
     const [displayedCredits, setDisplayedCredits] = useState<number | null>(null);
     const [showNextConfirm, setShowNextConfirm] = useState(false);
@@ -230,7 +234,14 @@ export function VideoRoom({
 
     const handleStartMatch = () => {
         setHasStartedMatch(true);
-        joinQueue();
+        const searchParams = new URLSearchParams(window.location.search);
+        const roomParam = searchParams.get('room');
+        
+        if (roomParam) {
+            joinDirectRoom(roomParam);
+        } else {
+            joinQueue();
+        }
     };
 
     // Favorites Management
