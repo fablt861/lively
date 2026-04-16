@@ -382,11 +382,8 @@ export function VideoRoom({
                 setUserCredits(newCredits);
                 localStorage.setItem('kinky_credits', String(newCredits));
                 
-                // If it's the first time or we just jumped up (purchase), update displayed credits immediately
-                setDisplayedCredits(prev => {
-                    if (prev === null || newCredits > prev) return newCredits;
-                    return prev;
-                });
+                // Sync displayed credits
+                setDisplayedCredits(newCredits);
 
                 if (newCredits <= 0) {
                     setIsBlocked(false);

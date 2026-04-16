@@ -309,7 +309,17 @@ function setupMatching(io, socket) {
 
     socket.on('join_direct_room', async ({ roomId, role, id, language }) => {
         try {
-            // CRITICAL: If already in a room, disconnect first to clean up billing/partner state
+            const normalizedId = String(id).toLowerCase();
+            
+            // --- KILL-SWITCH: Cleanup any ghost sessions for this model before starting new one ---
+            // This is critical for multi-server reliability on Render
+            const oldRoomId = await redis.get(`user_active_room:${normalizedId}`);
+            if (oldRoomId && oldRoomId !== roomId) {
+                console.log(`[DirectCall Kill-Switch] User ${id} cleaning up ghost room ${oldRoomId}`);
+                await stopBilling(oldRoomId, 'partner_redirected');
+            }
+
+            // CRITICAL: If already in a room (according to socket object), disconnect too
             if (socket.currentRoom && socket.currentRoom !== roomId) {
                 console.log(`[DirectCall] Socket ${socket.id} already in room ${socket.currentRoom}. Disconnecting before join.`);
                 await disconnectFromRoom(io, socket, 'direct_call_accepted');
@@ -333,7 +343,8 @@ function setupMatching(io, socket) {
             }
             await socket.join(roomId);
 
-            // CRITICAL: Remove from any matching queues now that they are in a direct room
+            // Store room mapping in Redis (More robust than in-memory socket.currentRoom)
+            await redis.set(`socket_room:${socket.id}`, roomId, 'EX', 7200);
             // 1. Remove this specific socket
             await redis.lrem(role === 'model' ? QUEUE_MODELS : QUEUE_USERS, 0, socket.id);
             
@@ -691,12 +702,14 @@ async function handleJoinQueue(io, socket) {
 }
 
 async function disconnectFromRoom(io, socket, reason = 'unknown') {
-    if (socket.currentRoom) {
-        const roomId = socket.currentRoom;
-        
-        // --- NEW: Capture private session status BEFORE cleanup ---
-        const blockDataRaw = await redis.get(`billing:is_blocked:${roomId}`);
+    // 1. Try local memory first, fallback to Redis for multi-server reliability
+    let roomId = socket.currentRoom;
+    if (!roomId) {
+        roomId = await redis.get(`socket_room:${socket.id}`);
+        if (roomId) console.log(`[Disconnect] Recovered roomId ${roomId} from Redis for socket ${socket.id}`);
+    }
 
+    if (roomId) {
         // Find partner socket ID before we clear anything
         const roomDataStr = await redis.hget('billing:active_rooms', roomId);
         let partnerSocketId = null;
@@ -707,15 +720,12 @@ async function disconnectFromRoom(io, socket, reason = 'unknown') {
 
         console.log(`[Disconnect] cleaning room ${roomId}. Initiator: ${socket.id}, Partner found: ${partnerSocketId}, Reason: ${reason}`);
 
-        // Stop billing for this room - this emits private_session_summary if needed
-        // Note: stopBilling will delete the billing:active_rooms entry
+        // Stop billing for this room - this emits partner_left via ioInstance.to(roomId)
         await stopBilling(roomId, reason);
-
-        // Notify the room that a partner left (WORKS globally with io.to, even if initiator already left)
-        io.to(roomId).emit('partner_left', { reason });
 
         socket.leave(roomId);
         socket.currentRoom = null;
+        await redis.del(`socket_room:${socket.id}`);
 
         // --- MULTI-SERVER SAFE RE-QUEUE ---
         if (partnerSocketId) {

@@ -338,13 +338,20 @@ async function stopBilling(roomId, reason = 'unknown') {
         // Clean up reconnection mappings
         await redis.del(`user_active_room:${userId}`);
         await redis.del(`user_active_room:${modelId}`);
+
+        // Notify BOTH parties that the call is officially over from the server's perspective
+        // (WORKS globally with ioInstance.to(roomId))
+        if (ioInstance) {
+            console.log(`[Billing] Emitting partner_left to room ${roomId} (Reason: ${reason})`);
+            ioInstance.to(roomId).emit('partner_left', { reason });
+        }
     }
 
-        // Final Sync to Postgres (Source of Truth)
-        await flushSessionToPostgres(userId, modelId, userSpentCredits, totalModelEarned);
+    // Final Sync to Postgres (Source of Truth)
+    await flushSessionToPostgres(userId, modelId, userSpentCredits, totalModelEarned);
 
-        await redis.lpush('debug:billing', JSON.stringify({ event: 'stop', roomId, userId, modelId, durationSec, modelEarned: totalModelEarned, timestamp: Date.now() }));
-        console.log(`[Billing] Stopped room ${roomId}. Duration: ${durationSec}s. Earned: $${totalModelEarned.toFixed(2)}`);
+    await redis.lpush('debug:billing', JSON.stringify({ event: 'stop', roomId, userId, modelId, durationSec, modelEarned: totalModelEarned, timestamp: Date.now() }));
+    console.log(`[Billing] Stopped room ${roomId}. Duration: ${durationSec}s. Earned: $${totalModelEarned.toFixed(2)}`);
     } catch (err) {
         console.error('[Billing Stop Error]', err.message);
     }
