@@ -89,6 +89,7 @@ interface VideoRoomProps {
     room?: any; // LiveKit Room
     finishMatching: () => void;
     isConnecting?: boolean;
+    previewStream?: MediaStream | null;
 }
 
 export function VideoRoom({
@@ -118,7 +119,8 @@ export function VideoRoom({
     connectionQuality = 'excellent',
     room,
     finishMatching,
-    isConnecting = false
+    isConnecting = false,
+    previewStream = null
 }: VideoRoomProps) {
     const { t, language } = useTranslation();
     const router = useRouter();
@@ -614,10 +616,10 @@ export function VideoRoom({
     }, [role, isConnected, userCredits, accountStatus]);
 
     useEffect(() => {
-        if (localVideoRef.current && localStream) {
-            localVideoRef.current.srcObject = localStream;
+        if (localVideoRef.current) {
+            localVideoRef.current.srcObject = localStream || previewStream;
         }
-    }, [localStream]);
+    }, [localStream, previewStream, hasStartedMatch]);
 
     useEffect(() => {
         if (remoteVideoRef.current && remoteStream) {
