@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, User, Lock, Mail, ShieldCheck, X, CheckSquare, Square } from "lucide-react";
+import { ArrowRight, User, Zap, Mail, ShieldCheck, X, CheckSquare, Square } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 import Link from "next/link";
 
@@ -117,14 +117,14 @@ export function UnifiedAuthModal({ onSuccess, onClose }: UnifiedAuthModalProps) 
                         <input type="email" required placeholder={t('auth.email_placeholder')} className="w-full bg-neutral-800 border border-white/30 rounded-2xl py-4 pl-12 text-sm text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all placeholder:text-white/60" value={email} onChange={e => setEmail(e.target.value)} />
                     </div>
                     <div className="relative group">
-                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white/80 transition-colors" size={18} />
+                        <Zap className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white/80 transition-colors" size={18} />
                         <input type="password" required placeholder={t('auth.password_placeholder')} className="w-full bg-neutral-800 border border-white/30 rounded-2xl py-4 pl-12 text-sm text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all placeholder:text-white/60" value={password} onChange={e => setPassword(e.target.value)} />
                     </div>
 
                     {mode === 'signup' && (
                         <>
                             <div className="relative group">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white/80 transition-colors" size={18} />
+                                <Zap className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white/80 transition-colors" size={18} />
                                 <input type="password" required placeholder={t('auth.confirm_password_placeholder')} className="w-full bg-neutral-800 border border-white/30 rounded-2xl py-4 pl-12 text-sm text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all placeholder:text-white/60" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
                             </div>
                             <div className="pt-2">
