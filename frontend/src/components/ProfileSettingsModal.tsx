@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, User, Mail, Phone, Camera, ShieldCheck, CheckCircle2, Lock, Eye, EyeOff, ChevronDown, ChevronUp } from "lucide-react";
+import { X, User, Mail, Phone, Camera, ShieldCheck, CheckCircle2, Zap, Eye, EyeOff, ChevronDown, ChevronUp } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 
 interface ProfileInfo {

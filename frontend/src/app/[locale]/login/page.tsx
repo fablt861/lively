@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, User, Lock, Video, X, Mail, ShieldCheck, CheckSquare, Square } from "lucide-react";
+import { ArrowRight, User, Zap, Video, X, Mail, ShieldCheck, CheckSquare, Square } from "lucide-react";
 import Link from "next/link";
 import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -152,7 +152,7 @@ export default function LoginPage() {
                         </div>
 
                         <div className="relative group">
-                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
+                            <Zap className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
                             <input
                                 type="password"
                                 required
@@ -166,7 +166,7 @@ export default function LoginPage() {
                         {mode === 'signup' && (
                             <>
                                 <div className="relative group">
-                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
+                                    <Zap className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
                                     <input
                                         type="password"
                                         required
