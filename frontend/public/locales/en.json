@@ -310,7 +310,7 @@
   "dashboard.download_invoice": "Download Invoice",
   "dashboard.email_change_warning": "Note: Changing your email will update your login credentials.",
   "dashboard.favorites_empty": "You haven't added any favorites yet. Start matching to find your favorites!",
-  "dashboard.favorites_title": "My Favorite Models",
+  "dashboard.favorites_title": "My Favorite Partners",
   "dashboard.geoblock_desc": "Select up to 3 countries. Clients from these countries will not be able to see or match with you.",
   "dashboard.geoblock_limit_reached": "Maximum 3 countries allowed.",
   "dashboard.geoblock_no_countries": "No countries blocked yet.",

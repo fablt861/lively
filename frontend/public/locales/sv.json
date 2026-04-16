@@ -760,5 +760,7 @@
   "terms.withdrawal_content": "Services are provided immediately upon registration. Consequently, Users expressly waive their 14-day right of withdrawal.",
   "terms.withdrawal_section": "9. Waiver of Withdrawal\nUsers are informed of the principle 14-day withdrawal period but expressly accept that Services are fully performed before expiry. Consequently, they expressly waive their right of withdrawal.",
   "terms.withdrawal_title": "10. Waiver of Withdrawal",
-  "common.years_old": "år"
+  "common.years_old": "år",
+  "dashboard.favorites_title": "Mina favoritpartners",
+  "dashboard.favorites_empty": "Du har inte lagt till några favoriter än. Börja matcha för att hitta dem!"
 }
