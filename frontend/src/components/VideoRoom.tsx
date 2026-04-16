@@ -87,6 +87,7 @@ interface VideoRoomProps {
     isDirectCall?: boolean;
     connectionQuality?: 'excellent' | 'good' | 'fair' | 'poor' | 'reconnecting';
     room?: any; // LiveKit Room
+    finishMatching: () => void;
 }
 
 export function VideoRoom({
@@ -114,7 +115,8 @@ export function VideoRoom({
     onPurchase,
     isDirectCall,
     connectionQuality = 'excellent',
-    room
+    room,
+    finishMatching
 }: VideoRoomProps) {
     const { t, language } = useTranslation();
     const router = useRouter();
@@ -142,12 +144,22 @@ export function VideoRoom({
     const [accountStatus, setAccountStatus] = useState<'guest' | 'registered' | 'premium'>('guest');
 
     // Force high quality subscription as soon as remote track is available
+    // AND wait for stabilization before hiding the matching overlay
     useEffect(() => {
         if (remoteVideoTrack && (remoteVideoTrack as any).publication) {
             console.log("[LiveKit] Requesting HIGH quality for remote track immediately");
             (remoteVideoTrack as any).publication.setVideoQuality(VideoQuality.HIGH);
+
+            // Wait for 800ms for the stream to stabilize (ramp-up + keyframe) 
+            // before telling the hook to hide the "Searching" overlay
+            const timer = setTimeout(() => {
+                console.log("[LiveKit] Stream stabilized, hiding overlay");
+                finishMatching();
+            }, 800);
+
+            return () => clearTimeout(timer);
         }
-    }, [remoteVideoTrack]);
+    }, [remoteVideoTrack, finishMatching]);
     const [userCredits, setUserCredits] = useState<number | null>(null);
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);

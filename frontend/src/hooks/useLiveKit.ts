@@ -128,7 +128,8 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     socket.on("matched", async (data: any) => {
       const { roomId, initiator, partnerId, partnerRole, partnerName } = data;
       currentRoomIdRef.current = roomId;
-      setIsMatching(false);
+      // Note: We no longer auto-hide isMatching here. 
+      // The UI component will call finishMatching when video is warm.
 
       if (partnerId) {
         setPartnerInfo({
@@ -243,6 +244,7 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     cameraPermissionError,
     connectionQuality,
     previewStream,
+    finishMatching: () => setIsMatching(false),
     handleOutOfCredits: () => {}, // Compatibility stub
     retryCamera: () => {}, // Handled by LiveKit internally or via re-connect
   };
