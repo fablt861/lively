@@ -357,9 +357,13 @@ export function VideoRoom({
 
         const handleOutOfCredits = () => {
             if (role === 'user') {
+                console.log("[Credits] Balance depleted. Opening paywall, staying in call for grace period.");
                 setIsBlocked(false);
                 setBlockEndTime(null);
-                if (onCallEnd) onCallEnd();
+                
+                // Do NOT call onCallEnd here immediately. 
+                // Let the server's billing loop handle the hard-disconnect after grace period.
+                // This gives the user time to top-up via the modal.
                 if (accountStatus === 'guest') setShowAuthModal(true);
                 else setShowPaywall(true);
             }
