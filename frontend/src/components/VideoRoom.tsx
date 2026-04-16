@@ -816,10 +816,14 @@ export function VideoRoom({
                             localStorage.setItem('kinky_user_pseudo', name);
                             localStorage.setItem('kinky_user_role', userRole);
                             localStorage.setItem('kinky_credits', String(credits));
-                            setAccountStatus('registered');
+                            setAccountStatus(userRole as any);
                             setUserCredits(credits);
                             setShowAuthModal(false);
-                            nextPartner();
+                            
+                            if (!isConnected || isMatching) {
+                                console.log("[Auth] Not in active call, triggering nextPartner");
+                                nextPartner();
+                            }
                         }} />
                 )}
 
@@ -858,7 +862,15 @@ export function VideoRoom({
                             setAccountStatus('premium');
                             setUserCredits(newBalance);
                             setShowPaywall(false);
-                            nextPartner();
+
+                            // ONLY skip to next if we were not already in a call
+                            // This allows topping up DURING a call without being disconnected
+                            if (!isConnected || isMatching) {
+                                console.log("[Purchase] Not in active call, triggering nextPartner");
+                                nextPartner();
+                            } else {
+                                console.log("[Purchase] Already in call, staying with current partner");
+                            }
                         }}
                     />
                 )}
