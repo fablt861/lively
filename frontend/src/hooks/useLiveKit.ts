@@ -281,6 +281,7 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     cameraPermissionError,
     connectionQuality,
     previewStream,
+    isSocketConnected,
     finishMatching: () => setIsConnecting(false),
     handleOutOfCredits: () => {}, // Compatibility stub
     retryCamera: () => {}, // Handled by LiveKit internally or via re-connect

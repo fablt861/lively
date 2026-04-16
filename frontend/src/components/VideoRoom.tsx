@@ -223,7 +223,7 @@ export function VideoRoom({
     useEffect(() => { isBlockedRef.current = isBlocked; }, [isBlocked]);
     useEffect(() => { privateSummaryRef.current = privateSummary; }, [privateSummary]);
 
-    console.log(`[VideoRoom Render] isConnected: ${isConnected}, isMatching: ${isMatching}, remoteVideoTrack (bool): ${!!remoteVideoTrack}`);
+    console.log(`[VideoRoom Render] isConnected: ${isConnected}, isSocket: ${isSocketConnected}, isMatching: ${isMatching}, remoteVideoTrack (bool): ${!!remoteVideoTrack}`);
 
     const handleNext = (force = false) => {
         if (!force && isBlockedRef.current) {
