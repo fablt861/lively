@@ -150,12 +150,12 @@ export function VideoRoom({
             console.log("[LiveKit] Requesting HIGH quality for remote track immediately");
             (remoteVideoTrack as any).publication.setVideoQuality(VideoQuality.HIGH);
 
-            // Wait for 1200ms for the stream to stabilize (ramp-up + keyframe) 
+            // Wait for 2000ms for the stream to stabilize (ramp-up + keyframe) 
             // before telling the hook to hide the "Searching" overlay
             const timer = setTimeout(() => {
                 console.log("[LiveKit] Stream stabilized, hiding overlay");
                 finishMatching();
-            }, 1200);
+            }, 2000);
 
             return () => clearTimeout(timer);
         }
@@ -889,7 +889,7 @@ export function VideoRoom({
                         <div className="w-full h-full bg-neutral-950" />
                     )}
                     {(isConnected === false || isMatching === true) && !showPaywall && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#050505]/95 backdrop-blur-2xl transition-all duration-1000 overflow-hidden">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black transition-all duration-1000 overflow-hidden z-[60]">
                             {/* Glowing Orbs for Sexy Vibe */}
                             <div className="absolute w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none animate-pulse" />
                             <div className="absolute w-[400px] h-[400px] bg-pink-600/10 rounded-full blur-[120px] pointer-events-none -translate-x-1/3 translate-y-1/3" />
@@ -922,7 +922,7 @@ export function VideoRoom({
                 </div>
 
                 {/* Local Video (Top Right on Mobile) */}
-                <div className="absolute top-4 right-4 md:top-auto md:bottom-24 md:left-6 md:right-auto z-40 w-24 md:w-48 aspect-[3/4] bg-neutral-900 rounded-2xl md:rounded-[2rem] overflow-hidden shadow-2xl border border-white/20 transition-all duration-500">
+                <div className="absolute top-4 right-4 md:top-auto md:bottom-24 md:left-6 md:right-auto z-[100] w-24 md:w-48 aspect-[3/4] bg-neutral-900 rounded-2xl md:rounded-[2rem] overflow-hidden shadow-2xl border border-white/20 transition-all duration-500">
                     {localVideoTrack ? (
                         <VideoTrack
                             trackRef={localVideoTrack}
