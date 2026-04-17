@@ -100,7 +100,6 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
           maxBitrate: 3_000_000,
           maxFramerate: 15,
         },
-        stopTrackOnUnavailable: true,
       },
     });
 
