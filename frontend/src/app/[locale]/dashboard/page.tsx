@@ -389,9 +389,10 @@ export default function CustomerDashboard() {
                                             ) : (
                                                 <button 
                                                     onClick={() => handleDirectCall(model)}
-                                                    className="mt-4 flex items-center gap-2 text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] group/btn hover:text-white transition-colors"
+                                                    className="mt-5 w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white py-3 px-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all duration-300 shadow-lg shadow-indigo-500/20 active:scale-[0.97] group/btn"
                                                 >
-                                                    {t('dashboard.join') || "REJOINDRE"} <ChevronRight size={12} className="group-hover/btn:translate-x-1 transition-transform" />
+                                                    <Phone size={14} className="fill-current" />
+                                                    {t('dashboard.join')}
                                                 </button>
                                             )
                                         )}
