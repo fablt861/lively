@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
+import NextImage from "next/image";
 import { X, User, Mail, Phone, Camera, ShieldCheck, CheckCircle2, Zap, Eye, EyeOff, ChevronDown, ChevronUp } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 
@@ -222,10 +222,11 @@ export function ProfileSettingsModal({ isOpen, onClose, userId, role, onProfileU
                                                     <Camera size={24} className="text-white" />
                                                 )}
                                             </div>
-                                            <Image 
+                                            <NextImage 
                                                 src={info.photoProfile || "/images/avatars/model_1.png"} 
                                                 alt="Profile" 
                                                 fill
+                                                unoptimized={true}
                                                 className="object-cover transition-transform duration-700 group-hover:scale-110"
                                             />
                                         </div>
