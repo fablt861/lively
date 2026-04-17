@@ -33,24 +33,28 @@ function initBillingLoop(io) {
                 try {
                     const session = JSON.parse(rooms[roomId]);
 
-                    // 1. Verify room still exists in socket.io
+                    // 1. Verify room still exists in socket.io (Global across instances)
                     if (ioInstance) {
-                        const activeRoom = ioInstance.sockets.adapter.rooms.get(roomId);
-                        if (!activeRoom || activeRoom.size === 0) {
-                            // Give it a 20-second grace period before closing
+                        const globalSockets = await ioInstance.in(roomId).fetchSockets();
+                        const hasUser = globalSockets.some(s => s.data?.role === 'user');
+                        const hasModel = globalSockets.some(s => s.data?.role === 'model');
+
+                        if (!hasUser || !hasModel) {
+                            // Give it a 10-second grace period before closing (Reduces ghost billing)
                             session.emptyTicks = (session.emptyTicks || 0) + 1;
-                            console.log(`[Billing] Room ${roomId} is empty (Tick ${session.emptyTicks}/20).`);
+                            const missingRole = !hasUser ? 'USER' : 'MODEL';
+                            console.log(`[Billing] Room ${roomId} missing ${missingRole} (Tick ${session.emptyTicks}/10).`);
                             
-                            if (session.emptyTicks >= 20) {
-                                console.log(`[Billing] Room ${roomId} exceeded grace period. Auto-closing.`);
+                            if (session.emptyTicks >= 10) {
+                                console.log(`[Billing] Room ${roomId} missing person for 10s. Auto-closing.`);
                                 await stopBilling(roomId, 'disconnect_timeout');
                             } else {
                                 // Update session with new tick count
                                 await redis.hset(ACTIVE_ROOMS_KEY, roomId, JSON.stringify(session));
                             }
-                            continue; // Stop processing billing for this empty room
+                            continue; // Stop processing billing for this incomplete room session
                         } else {
-                            // Reset grace period if sockets are found
+                            // Reset grace period if BOTH parties are present
                             if (session.emptyTicks) {
                                 delete session.emptyTicks;
                                 await redis.hset(ACTIVE_ROOMS_KEY, roomId, JSON.stringify(session));
