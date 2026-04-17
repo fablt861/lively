@@ -31,30 +31,45 @@ function initBillingLoop(io) {
             
             for (const roomId of roomIds) {
                 try {
-                    const session = JSON.parse(rooms[roomId]);
-
-                    // 1. Verify room still exists in socket.io (Global across instances)
+                    // 1. Verify room presence (Optimized: Local check then Global fallback)
                     if (ioInstance) {
-                        const globalSockets = await ioInstance.in(roomId).fetchSockets();
-                        const hasUser = globalSockets.some(s => s.data?.role === 'user');
-                        const hasModel = globalSockets.some(s => s.data?.role === 'model');
+                        let hasUser = false;
+                        let hasModel = false;
+
+                        // FAST PATH: Check local server instance first
+                        const localRoom = ioInstance.sockets.adapter.rooms.get(roomId);
+                        if (localRoom && localRoom.size >= 2) {
+                            const localSockets = Array.from(localRoom).map(id => ioInstance.sockets.sockets.get(id)).filter(Boolean);
+                            hasUser = localSockets.some(s => s.data?.role === 'user' || s.id === session.userSocketId);
+                            hasModel = localSockets.some(s => s.data?.role === 'model' || s.id === session.modelSocketId);
+                        }
+
+                        // SLOW PATH: If one is missing locally, check all servers in the cluster (Render/Vercel safe)
+                        if (!hasUser || !hasModel) {
+                            const globalSockets = await ioInstance.in(roomId).fetchSockets();
+                            hasUser = globalSockets.some(s => (s.data?.role === 'user' || s.id === session.userSocketId));
+                            hasModel = globalSockets.some(s => (s.data?.role === 'model' || s.id === session.modelSocketId));
+                        }
 
                         if (!hasUser || !hasModel) {
                             // Give it a 10-second grace period before closing (Reduces ghost billing)
                             session.emptyTicks = (session.emptyTicks || 0) + 1;
                             const missingRole = !hasUser ? 'USER' : 'MODEL';
-                            console.log(`[Billing] Room ${roomId} missing ${missingRole} (Tick ${session.emptyTicks}/10).`);
+                            
+                            // Debug log for troubleshooting why billing might skip
+                            if (session.emptyTicks % 5 === 0) {
+                                console.log(`[Billing Grace] Room ${roomId} missing ${missingRole}. Sockets in room:`, (await ioInstance.in(roomId).fetchSockets()).map(s => `${s.id}:${s.data?.role || 'null'}`));
+                            }
                             
                             if (session.emptyTicks >= 10) {
                                 console.log(`[Billing] Room ${roomId} missing person for 10s. Auto-closing.`);
                                 await stopBilling(roomId, 'disconnect_timeout');
                             } else {
-                                // Update session with new tick count
                                 await redis.hset(ACTIVE_ROOMS_KEY, roomId, JSON.stringify(session));
                             }
-                            continue; // Stop processing billing for this incomplete room session
+                            continue; // Skip billing for this tick
                         } else {
-                            // Reset grace period if BOTH parties are present
+                            // Both parties present, reset grace period
                             if (session.emptyTicks) {
                                 delete session.emptyTicks;
                                 await redis.hset(ACTIVE_ROOMS_KEY, roomId, JSON.stringify(session));
