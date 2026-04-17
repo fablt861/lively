@@ -631,9 +631,9 @@ async function handleJoinQueue(io, socket) {
 
             // --- NEW: Mark as seen to avoid immediate rematching after hangup ---
             if (myIdentifier && pIdentifier) {
-                // Reduced cooldown to 5s for easier testing and staging use
-                await redis.set(`seen:${myIdentifier.toLowerCase()}:${pIdentifier.toLowerCase()}`, '1', 'EX', 5);
-                await redis.set(`seen:${pIdentifier.toLowerCase()}:${myIdentifier.toLowerCase()}`, '1', 'EX', 5);
+                // Increased cooldown to 12s to definitively prevent "bounce" rematches
+                await redis.set(`seen:${myIdentifier.toLowerCase()}:${pIdentifier.toLowerCase()}`, '1', 'EX', 12);
+                await redis.set(`seen:${pIdentifier.toLowerCase()}:${myIdentifier.toLowerCase()}`, '1', 'EX', 12);
             }
 
             const userSocket = isModel ? partnerSocket : socket;

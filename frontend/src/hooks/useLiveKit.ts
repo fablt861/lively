@@ -182,22 +182,19 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
       room.disconnect();
       setIsCallConnected(false);
       setIsMatching(true); // Return to searching state visually
+      setIsConnecting(false);
 
-      // Automatically re-queue the user if they were in a standard call or it was a direct call handover.
-      // We check the roomId from currentRoomIdRef to decide if we should auto-requeue.
-      const lastRoomId = currentRoomIdRef.current;
-      const isPrivate = lastRoomId && (lastRoomId.includes('priv-') || lastRoomId.includes('private-'));
-      
-      if (!isPrivate) {
-          console.log("[LiveKit] Auto-requeuing partner...");
-          joinQueue();
-      }
+      // --- CRITICIAL FIX: DE-DUPLICATION ---
+      // We removed joinQueue() from here because the backend already sends a 'force_requeue' 
+      // event to the partner after a successful stopBilling. 
+      // Joining here as well caused a race condition and redundant queue entries.
     });
 
     socket.on("force_requeue", () => {
         console.log("[LiveKit] Server forced a re-queue");
         room.disconnect();
         setIsCallConnected(false);
+        setIsConnecting(false);
         setIsMatching(true);
         joinQueue();
     });
@@ -206,6 +203,7 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
         console.log("[LiveKit] Server cleaned room state");
         room.disconnect();
         setIsCallConnected(false);
+        setIsConnecting(false);
         setIsMatching(true);
     });
 
@@ -225,6 +223,25 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
         socket.off("chat_message");
     };
   }, [socket, room, partnerInfo]);
+
+  // 4. WATCHDOG: Connection Timeout
+  // If we are stuck in 'Connecting' (triggered by 'matched' or 'direct_join')
+  // for more than 15 seconds without success, we return to 'Searching'.
+  useEffect(() => {
+    if (!isConnecting) return;
+
+    const timeout = setTimeout(() => {
+      if (isConnecting && !isCallConnected) {
+        console.warn("[Watchdog] Connection timeout. Returning to searching state.");
+        setIsConnecting(false);
+        setIsMatching(true);
+        // Important: Stop the room connection attempt if it's still hanging
+        room?.disconnect();
+      }
+    }, 15000);
+
+    return () => clearTimeout(timeout);
+  }, [isConnecting, isCallConnected, room]);
 
   const joinDirectRoom = (roomId: string) => {
     if (!socket || !role) {

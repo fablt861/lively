@@ -388,8 +388,9 @@ export function VideoRoom({
                 setUserCredits(newCredits);
                 localStorage.setItem('kinky_credits', String(newCredits));
                 
-                // Sync displayed credits
-                setDisplayedCredits(newCredits);
+                // --- THROTTLING FIX ---
+                // We no longer call setDisplayedCredits(newCredits) here. 
+                // This allows the 20s visual throttle (at line 672) to be the source of truth during calls.
 
                 if (newCredits <= 0) {
                     setIsBlocked(false);
@@ -671,8 +672,8 @@ export function VideoRoom({
     // Visual Throttling: Sync displayedCredits with userCredits every 20 seconds
     useEffect(() => {
         if (role !== 'user' || !isConnected || isMatching || !remoteVideoTrack) {
-            // Not in an active call, keep sync
-            if (userCredits !== null && (displayedCredits === null || Math.abs((displayedCredits || 0) - userCredits) > 5)) {
+            // Not in an active call, keep sync active for UI changes like purchases
+            if (userCredits !== null && (displayedCredits === null || Math.abs((displayedCredits || 0) - userCredits) > 20)) {
                 setDisplayedCredits(userCredits);
             }
             return;
