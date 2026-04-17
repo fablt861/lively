@@ -19,6 +19,7 @@ import {
     HeartPulse
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useTranslation } from "@/context/LanguageContext";
 import { countries } from "@/utils/countries";
 import CameraCapture from "@/components/CameraCapture";
@@ -479,7 +480,7 @@ export default function ModelSignupPage() {
                                             
                                             <div className="relative group/photo overflow-hidden rounded-xl bg-black/60 aspect-[4/3] flex items-center justify-center border border-white/5">
                                                 {p.photo ? (
-                                                    <img src={p.photo} alt="Verification" className="w-full h-full object-cover" />
+                                                    <Image src={p.photo} alt="Verification" fill className="object-cover" unoptimized={true} />
                                                 ) : (
                                                     <Camera className="text-white/10" size={24} />
                                                 )}

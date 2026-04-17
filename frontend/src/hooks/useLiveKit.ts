@@ -92,10 +92,15 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
         simulcast: true,
         videoCodec: 'vp8',
         videoEncoding: {
-          maxBitrate: 3_000_000, // Hint for 3 Mbps
-          maxFramerate: 30,
+          maxBitrate: 1_500_000, // 1.5 Mbps is better for mobile 4G/LTE
+          maxFramerate: 24, // Smoother on mobile devices
           priority: 'high',
         },
+        screenShareEncoding: {
+          maxBitrate: 3_000_000,
+          maxFramerate: 15,
+        },
+        stopTrackOnUnavailable: true,
       },
     });
 

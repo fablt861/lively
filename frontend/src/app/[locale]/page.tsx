@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Camera, ShieldCheck, Flame, Play, Video, ChevronDown, CreditCard, Wallet, Activity, User } from "lucide-react";
 import Link from "next/link";
 import { GenderModal } from "@/components/GenderModal";
@@ -85,8 +86,16 @@ export default function Home() {
     return (
         <div className="bg-[#050505] text-white relative font-sans overflow-x-hidden">
             {/* Background Effects */}
-            <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none max-w-full">
-                <div className="absolute inset-0 lg:hidden bg-[url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&h=1200&fit=crop&crop=faces')] bg-cover bg-center opacity-30 mix-blend-luminosity"></div>
+            <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none max-w-full gpu-accelerated">
+                <div className="absolute inset-0 lg:hidden">
+                    <Image 
+                        src="/images/assets/hero_main.png" 
+                        alt="Background" 
+                        fill 
+                        className="object-cover opacity-30 mix-blend-luminosity"
+                        priority
+                    />
+                </div>
                 <div className="absolute inset-0 lg:hidden bg-gradient-to-t from-[#050505] via-[#050505]/80 to-[#050505]/30"></div>
 
                 <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-600/30 rounded-full blur-[140px] translate-x-1/3 -translate-y-1/4" />
@@ -249,7 +258,12 @@ export default function Home() {
                 <div className="flex-1 w-full relative hidden lg:flex items-center justify-center h-[550px] perspective-1000">
                     {/* Center App Mockup */}
                     <div className="relative w-[320px] h-[550px] rounded-[2.5rem] border border-white/20 bg-neutral-900/50 backdrop-blur-xl shadow-2xl flex flex-col items-center justify-between overflow-hidden group transform rotate-y-[-10deg] rotate-x-[5deg] hover:rotate-y-0 hover:rotate-x-0 transition-transform duration-700 ease-out">
-                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&h=800&fit=crop&crop=faces" alt="Model" className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" />
+                        <Image 
+                            src="/images/assets/mockup_main.png" 
+                            alt="Model" 
+                            fill
+                            className="object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" 
+                        />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-80" />
 
                         {/* Mockup UI Top */}
@@ -272,12 +286,16 @@ export default function Home() {
 
                     {/* Floating element 1 */}
                     <div className="absolute top-12 right-6 w-24 h-24 rounded-[1.5rem] bg-white/5 border border-white/10 backdrop-blur-xl p-2 shadow-2xl transform hover:-translate-y-4 hover:rotate-6 transition-all duration-500 cursor-default">
-                        <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100&h=100&fit=crop&crop=faces" className="w-full h-full rounded-xl object-cover" alt="Floating avatar" />
+                        <div className="relative w-full h-full rounded-xl overflow-hidden">
+                            <Image src="/images/assets/avatar_1.png" fill className="object-cover" alt="Floating avatar" />
+                        </div>
                     </div>
 
                     {/* Floating element 2 */}
                     <div className="absolute bottom-24 -left-4 w-32 h-32 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-xl p-2 shadow-2xl transform hover:-translate-y-4 hover:-rotate-6 transition-all duration-500 cursor-default z-20">
-                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop&crop=faces" className="w-full h-full rounded-[1.5rem] object-cover" alt="Floating avatar" />
+                        <div className="relative w-full h-full rounded-[1.5rem] overflow-hidden">
+                            <Image src="/images/assets/avatar_2.png" fill className="object-cover" alt="Floating avatar" />
+                        </div>
                     </div>
 
                     {/* Floating Badge */}

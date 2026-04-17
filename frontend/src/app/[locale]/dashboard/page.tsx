@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import Image from "next/image";
 import { User, Wallet, Heart, Settings, Trash2, CreditCard, ChevronRight, Star, Zap } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -125,10 +126,24 @@ export default function CustomerDashboard() {
             fetchFavorites();
 
             const interval = setInterval(() => {
-                fetchFavorites();
+                // Only fetch if the page is visible to save bandwidth/battery
+                if (document.visibilityState === 'visible') {
+                    fetchFavorites();
+                }
             }, 15000);
 
-            return () => clearInterval(interval);
+            // Handle visibility change immediately
+            const handleVisibilityChange = () => {
+                if (document.visibilityState === 'visible') {
+                    fetchFavorites();
+                }
+            };
+            document.addEventListener("visibilitychange", handleVisibilityChange);
+
+            return () => {
+                clearInterval(interval);
+                document.removeEventListener("visibilitychange", handleVisibilityChange);
+            };
         }
     }, [userId]);
 
@@ -246,7 +261,7 @@ export default function CustomerDashboard() {
     return (
         <div className="min-h-screen bg-neutral-950 text-white font-sans selection:bg-indigo-500/30">
             {/* Background Glows */}
-            <div className="fixed inset-0 pointer-events-none opacity-20 overflow-hidden">
+            <div className="fixed inset-0 pointer-events-none opacity-20 overflow-hidden gpu-accelerated">
                 <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-indigo-600 rounded-full blur-[140px]" />
                 <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-600 rounded-full blur-[120px]" />
             </div>
@@ -357,11 +372,16 @@ export default function CustomerDashboard() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                             {favorites.map((model) => (
                                 <div key={model.id} className="group relative aspect-[3/4] rounded-[2rem] overflow-hidden border border-white/10 bg-neutral-900 shadow-2xl transition-all duration-500 hover:border-indigo-500/50 hover:-translate-y-2">
-                                    <img 
-                                        src={model.photo_profile || "/images/avatars/model_1.png"} 
-                                        alt={model.pseudo}
-                                        className="w-full h-full object-cover grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700 group-hover:scale-110"
-                                    />
+                                    <div className="relative w-full h-full">
+                                        <Image 
+                                            src={model.photo_profile || "/images/avatars/model_1.png"} 
+                                            alt={model.pseudo}
+                                            fill
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                                            className="object-cover grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700 group-hover:scale-110"
+                                            priority={favorites.indexOf(model) < 4}
+                                        />
+                                    </div>
                                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity" />
                                     
                                     <div className="absolute top-4 right-4 z-20">
@@ -421,10 +441,11 @@ export default function CustomerDashboard() {
                     <div className="relative">
                         <div className="absolute inset-0 bg-indigo-500 rounded-full blur-[100px] opacity-20 animate-pulse" />
                         <div className="relative w-48 h-48 md:w-64 md:h-64 rounded-[3rem] overflow-hidden border-2 border-white/10 shadow-2xl mb-12 transform hover:scale-105 transition-transform duration-700">
-                            <img 
+                            <Image 
                                 src={callingModel.photo_profile || "/images/avatars/model_1.png"} 
                                 alt={callingModel.pseudo}
-                                className="w-full h-full object-cover"
+                                fill
+                                className="object-cover"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import {
     ChevronRight,
     ShieldCheck,
@@ -102,8 +103,8 @@ export default function ModelLandingPage() {
                     {/* Right: Simulator & Premium Image */}
                     <div className="relative animate-in fade-in slide-in-from-right-8 duration-700">
                         {/* Decorative Premium Image Background */}
-                        <div className="absolute -top-12 -right-12 w-64 h-64 rounded-full border border-white/5 overflow-hidden opacity-20 blur-sm pointer-events-none hidden lg:block">
-                            <img src="/images/model_hero.png" alt="" className="w-full h-full object-cover grayscale" />
+                        <div className="absolute -top-12 -right-12 w-64 h-64 rounded-full border border-white/5 overflow-hidden opacity-20 blur-sm pointer-events-none hidden lg:block relative">
+                            <Image fill src="/images/model_hero.png" alt="" className="object-cover grayscale" />
                         </div>
                         
                         <div className="relative z-10 flex flex-col items-center gap-8">
@@ -143,21 +144,21 @@ export default function ModelLandingPage() {
                     {/* Image Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="group relative overflow-hidden rounded-3xl bg-white/5 border border-white/10 aspect-[4/3] hover:border-indigo-500/50 transition-all duration-500">
-                            <img src="/images/live_cam_mockup_1.png" alt="Live Cam Desktop" className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
+                            <Image fill src="/images/live_cam_mockup_1.png" alt="Live Cam Desktop" className="object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
                             <div className="absolute bottom-6 left-6">
                                 <p className="text-[10px] font-black text-white uppercase tracking-widest">{t('model.landing.live_cam_feat1')}</p>
                             </div>
                         </div>
                         <div className="group relative overflow-hidden rounded-3xl bg-white/5 border border-white/10 aspect-[4/3] md:translate-y-6 hover:border-purple-500/50 transition-all duration-500">
-                            <img src="/images/live_cam_mockup_2.png" alt="Live Cam Mobile" className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
+                            <Image fill src="/images/live_cam_mockup_2.png" alt="Live Cam Mobile" className="object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
                             <div className="absolute bottom-6 left-6">
                                 <p className="text-[10px] font-black text-white uppercase tracking-widest">{t('model.landing.live_cam_feat2')}</p>
                             </div>
                         </div>
                         <div className="group relative overflow-hidden rounded-3xl bg-white/5 border border-white/10 aspect-[4/3] hover:border-indigo-500/50 transition-all duration-500">
-                            <img src="/images/girls_success.png" alt="High Earnings" className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
+                            <Image fill src="/images/girls_success.png" alt="High Earnings" className="object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
                             <div className="absolute bottom-6 left-6">
                                 <p className="text-[10px] font-black text-white uppercase tracking-widest">{t('model.landing.live_cam_feat3')}</p>
@@ -174,10 +175,11 @@ export default function ModelLandingPage() {
                         {/* Left: 3D Illustration/Photo */}
                         <div className="relative group flex justify-center">
                             <div className="w-full max-w-md aspect-square rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl relative">
-                                <img 
+                                <Image 
+                                    fill
                                     src="/images/privacy_illustration.png" 
                                     alt="Privacy Illustration" 
-                                    className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110" 
+                                    className="object-cover transition-transform duration-[2s] group-hover:scale-110" 
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-10">
                                     <span className="text-3xl font-black text-white mb-2 tracking-tighter">{t('model.benefit.anon_title')}</span>

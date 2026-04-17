@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { X, User, Mail, Phone, Camera, ShieldCheck, CheckCircle2, Zap, Eye, EyeOff, ChevronDown, ChevronUp } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 
@@ -213,7 +214,7 @@ export function ProfileSettingsModal({ isOpen, onClose, userId, role, onProfileU
                             {role === 'model' && (
                                 <div className="flex flex-col items-center gap-6 mb-8">
                                     <div className="relative group cursor-pointer" onClick={() => document.getElementById('profile-photo-upload')?.click()}>
-                                        <div className="w-32 h-32 rounded-[2.5rem] bg-neutral-800 border-2 border-white/10 overflow-hidden ring-4 ring-pink-500/10 ring-offset-4 ring-offset-neutral-900 group-hover:ring-pink-500/30 transition-all duration-500 shadow-2xl">
+                                        <div className="w-32 h-32 rounded-[2.5rem] bg-neutral-800 border-2 border-white/10 overflow-hidden ring-4 ring-pink-500/10 ring-offset-4 ring-offset-neutral-900 group-hover:ring-pink-500/30 transition-all duration-500 shadow-2xl relative">
                                             <div className={`absolute inset-0 z-10 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${compressing ? 'opacity-100' : ''}`}>
                                                 {compressing ? (
                                                     <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -221,10 +222,11 @@ export function ProfileSettingsModal({ isOpen, onClose, userId, role, onProfileU
                                                     <Camera size={24} className="text-white" />
                                                 )}
                                             </div>
-                                            <img 
+                                            <Image 
                                                 src={info.photoProfile || "/images/avatars/model_1.png"} 
                                                 alt="Profile" 
-                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                fill
+                                                className="object-cover transition-transform duration-700 group-hover:scale-110"
                                             />
                                         </div>
                                         <div className="absolute -bottom-1 -right-1 w-10 h-10 rounded-2xl bg-pink-500 flex items-center justify-center text-white shadow-lg shadow-pink-500/40 border-2 border-neutral-900 group-hover:scale-110 transition-transform">

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { CreditCard, X, Coins, Check, ShieldCheck, Zap, Heart } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 
@@ -83,8 +84,8 @@ export function PaywallModal({ onClose, onPurchase, packs: propPacks = [] }: Pay
                         <div className="flex flex-row md:grid md:grid-cols-2 gap-3 overflow-x-auto md:overflow-visible pb-2 md:pb-0 no-scrollbar">
                             {PROFILES.map(p => (
                                 <div key={p.id} className="relative group cursor-pointer flex-shrink-0 w-16 md:w-auto">
-                                    <div className="aspect-square rounded-xl md:rounded-2xl overflow-hidden border border-white/10 group-hover:border-pink-500/50 transition-all duration-300">
-                                        <img src={p.img} alt={p.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                    <div className="aspect-square rounded-xl md:rounded-2xl overflow-hidden border border-white/10 group-hover:border-pink-500/50 transition-all duration-300 relative">
+                                        <Image src={p.img} alt={p.name} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
                                     </div>
                                     <div className="absolute top-1 right-1 w-2 h-2 bg-green-500 rounded-full border border-neutral-900" />
                                 </div>

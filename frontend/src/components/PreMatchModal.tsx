@@ -32,7 +32,7 @@ export function PreMatchModal({ localStream, onJoin, role = "user" }: PreMatchMo
     return (
         <div className="fixed inset-0 z-[100] bg-[#050505] animate-in fade-in duration-700 overflow-y-auto scrollbar-hide flex flex-col">
             {/* Background Camera Preview (Blurred) */}
-            <div className="fixed inset-0 z-0 text-white">
+            <div className="fixed inset-0 z-0 text-white gpu-accelerated">
                 <video
                     ref={videoRef}
                     autoPlay

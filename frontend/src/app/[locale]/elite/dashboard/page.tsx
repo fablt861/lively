@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { Wallet, History, ArrowUpRight, DollarSign, Activity, Video, Download } from "lucide-react";
 import Link from "next/link";
@@ -201,12 +202,13 @@ export default function DashboardPage() {
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12 md:mb-16">
                 <div className="flex flex-col md:flex-row items-center md:items-end gap-6 md:gap-8 text-center md:text-left">
                     <div className="relative group">
-                        <div className="w-24 h-24 md:w-32 md:h-32 rounded-[2.5rem] bg-neutral-900 border-2 border-white/10 overflow-hidden ring-4 ring-pink-500/10 ring-offset-4 ring-offset-neutral-950 group-hover:ring-pink-500/30 transition-all duration-500 shadow-2xl flex items-center justify-center">
+                        <div className="w-24 h-24 md:w-32 md:h-32 rounded-[2.5rem] bg-neutral-900 border-2 border-white/10 overflow-hidden ring-4 ring-pink-500/10 ring-offset-4 ring-offset-neutral-950 group-hover:ring-pink-500/30 transition-all duration-500 shadow-2xl flex items-center justify-center relative">
                             {stats?.photoProfile ? (
-                                <img 
+                                <Image 
                                     src={stats.photoProfile} 
                                     alt="Profile" 
-                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                    fill
+                                    className="object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
                             ) : (
                                 <User size={40} className="text-white/10" />
@@ -258,12 +260,14 @@ export default function DashboardPage() {
                     {/* Avatar Group */}
                     <div className="flex -space-x-3 overflow-hidden">
                         {[1, 2, 3, 4].map((i) => (
-                            <img
-                                key={i}
-                                className="inline-block h-10 w-10 md:h-12 md:w-12 rounded-full ring-2 ring-neutral-900 object-cover"
-                                src={`/images/avatars/model_${i}.png`}
-                                alt={`Model ${i}`}
-                            />
+                            <div key={i} className="relative inline-block h-10 w-10 md:h-12 md:w-12 rounded-full ring-2 ring-neutral-900 overflow-hidden">
+                                <Image
+                                    fill
+                                    className="object-cover"
+                                    src={`/images/avatars/model_${i}.png`}
+                                    alt={`Model ${i}`}
+                                />
+                            </div>
                         ))}
                         <div className="flex items-center justify-center h-10 w-10 md:h-12 md:w-12 rounded-full border-2 border-dashed border-cyan-500/50 bg-cyan-500/10 text-[10px] font-bold text-cyan-400 ring-2 ring-neutral-900">
                             +14
