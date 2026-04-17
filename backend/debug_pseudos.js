@@ -1,3 +1,4 @@
+// Trigger Vercel Build - 2026-04-17 10:20
 const { query } = require('./db');
 const { getRedisClient } = require('./redis');
 
