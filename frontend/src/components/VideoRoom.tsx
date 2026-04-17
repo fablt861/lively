@@ -188,6 +188,7 @@ export function VideoRoom({
     const [showSpecialPackModal, setShowSpecialPackModal] = useState(false);
     const [incomingBlockRequest, setIncomingBlockRequest] = useState<Record<string, unknown> | null>(null);
     const [isWaitingForBlockResponse, setIsWaitingForBlockResponse] = useState(false);
+    const [currentRoomId, setCurrentRoomId] = useState<string | null>(null);
 
     // --- UNIFIED AUTO-START LOGIC ---
     // This effect ensures we only trigger handleStartMatch when both camera and socket are truly ready.
@@ -499,8 +500,12 @@ export function VideoRoom({
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const handleMatched = (data: any) => {
-            const matchedData = data as { modelBalance?: number; isBlocked?: boolean; blockEnd?: number; isRestricted?: boolean };
+            const matchedData = data as { roomId: string; modelBalance?: number; isBlocked?: boolean; blockEnd?: number; isRestricted?: boolean };
             console.log("[Socket] Matched event received in VideoRoom:", matchedData);
+            
+            if (matchedData.roomId) {
+                setCurrentRoomId(matchedData.roomId);
+            }
             
             if (matchedData.modelBalance !== undefined && role === 'model') {
                 const newBalance = matchedData.modelBalance;
@@ -769,7 +774,8 @@ export function VideoRoom({
                     screenshots,
                     reportedId: partnerInfo?.id || 'unknown',
                     reportedName: partnerInfo?.name || 'Unknown',
-                    reportedRole: partnerInfo?.role || (role === 'model' ? 'user' : 'model')
+                    reportedRole: partnerInfo?.role || (role === 'model' ? 'user' : 'model'),
+                    roomId: currentRoomId
                 })
             });
 

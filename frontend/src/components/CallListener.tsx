@@ -43,6 +43,10 @@ export function CallListener() {
             }, 1000);
         });
         newSocket.on('direct_call_rejected', () => setIncomingCall(null));
+        newSocket.on('direct_call_cancel', () => {
+            console.log('[CallListener] Call cancelled by user');
+            setIncomingCall(null);
+        });
 
         return () => {
             newSocket.disconnect();

@@ -171,6 +171,12 @@ function setupSignaling(io, socket) {
             io.to(requestorSocketId).emit('direct_call_rejected', { reason: 'busy' });
         }
     });
+
+    socket.on('direct_call_cancel', async (payload) => {
+        const { targetId } = payload;
+        // Notify Model to close the popup
+        io.to(`id:${targetId}`).emit('direct_call_cancel');
+    });
 }
 
 module.exports = { setupSignaling };

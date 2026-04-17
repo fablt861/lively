@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { User, Wallet, Heart, Settings, Trash2, CreditCard, ChevronRight, Star, Zap } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -38,13 +38,15 @@ export default function CustomerDashboard() {
     const [showPaywall, setShowPaywall] = useState(false);
     const [socket, setSocket] = useState<Socket | null>(null);
     const [callingModel, setCallingModel] = useState<FavoriteModel | null>(null);
-    const [callStatus, setCallStatus] = useState<'calling' | 'rejected' | 'accepted' | null>(null);
+    const [callStatus, setCallStatus] = useState<'calling' | 'rejected' | 'accepted' | 'no_answer' | null>(null);
+    const callTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         const newSocket = io(BACKEND_URL);
         setSocket(newSocket);
         
         newSocket.on('direct_call_accepted', ({ roomId }) => {
+            if (callTimeoutRef.current) clearTimeout(callTimeoutRef.current);
             setCallStatus('accepted');
             setTimeout(() => {
                 window.location.href = `/${language}/live?room=${roomId}&init=true`;
@@ -52,6 +54,7 @@ export default function CustomerDashboard() {
         });
 
         newSocket.on('direct_call_rejected', () => {
+            if (callTimeoutRef.current) clearTimeout(callTimeoutRef.current);
             setCallStatus('rejected');
             setTimeout(() => {
                 setCallingModel(null);
@@ -60,6 +63,7 @@ export default function CustomerDashboard() {
         });
 
         newSocket.on('direct_call_error', ({ reason }) => {
+            if (callTimeoutRef.current) clearTimeout(callTimeoutRef.current);
             if (reason === 'insufficient_credits') {
                 setShowPaywall(true);
             }
@@ -119,6 +123,12 @@ export default function CustomerDashboard() {
         if (userId) {
             fetchUserInfo();
             fetchFavorites();
+
+            const interval = setInterval(() => {
+                fetchFavorites();
+            }, 15000);
+
+            return () => clearInterval(interval);
         }
     }, [userId]);
 
@@ -175,9 +185,24 @@ export default function CustomerDashboard() {
             userId: userInfo.id,
             userPseudo: userInfo.pseudo
         });
+
+        // Set 20s timeout
+        if (callTimeoutRef.current) clearTimeout(callTimeoutRef.current);
+        callTimeoutRef.current = setTimeout(() => {
+            setCallStatus('no_answer');
+            socket.emit('direct_call_cancel', { targetId: model.id });
+            setTimeout(() => {
+                setCallingModel(null);
+                setCallStatus(null);
+            }, 4000);
+        }, 20000);
     };
 
     const handleCancelCall = () => {
+        if (callTimeoutRef.current) clearTimeout(callTimeoutRef.current);
+        if (socket && callingModel) {
+            socket.emit('direct_call_cancel', { targetId: callingModel.id });
+        }
         setCallingModel(null);
         setCallStatus(null);
     };
@@ -416,6 +441,7 @@ export default function CustomerDashboard() {
                         <h3 className="text-4xl md:text-6xl font-black tracking-tight text-white mb-2 uppercase">
                             {callStatus === 'calling' ? 'APPELEE...' : 
                              callStatus === 'rejected' ? 'OCCUPÉE' : 
+                             callStatus === 'no_answer' ? 'SANS RÉPONSE' :
                              'ACCEPTÉ !'}
                         </h3>
                         <p className="text-indigo-400 font-black uppercase tracking-[0.3em] text-sm md:text-base">
@@ -424,6 +450,7 @@ export default function CustomerDashboard() {
                         <p className="text-white/40 text-xs md:text-sm font-medium leading-relaxed mt-4">
                             {callStatus === 'calling' ? 'Nous connectons votre session privée. Veuillez patienter...' :
                              callStatus === 'rejected' ? 'La modèle est actuellement indisponible. Réessayez plus tard.' :
+                             callStatus === 'no_answer' ? 'La modèle n\'a pas répondu à votre appel. Réessayez dans quelques instants.' :
                              'Préparation du chat vidéo...'}
                         </p>
                     </div>

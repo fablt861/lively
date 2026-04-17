@@ -7,3 +7,5 @@ backend/.env
 frontend/.env.local
 dist
 build
+.vercel
+.env*.local
