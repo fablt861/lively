@@ -31,6 +31,8 @@ function initBillingLoop(io) {
             
             for (const roomId of roomIds) {
                 try {
+                    const session = JSON.parse(rooms[roomId]);
+
                     // 1. Verify room presence (Optimized: Local check then Global fallback)
                     if (ioInstance) {
                         let hasUser = false;
