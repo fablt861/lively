@@ -762,5 +762,32 @@
   "terms.withdrawal_title": "10. Waiver of Withdrawal",
   "common.years_old": "anos",
   "dashboard.favorites_title": "Meus Parceiros Favoritos",
-  "dashboard.favorites_empty": "Você ainda no adicionou favoritos. Comece a combinar para encontrá-los!"
+  "dashboard.favorites_empty": "Você ainda no adicionou favoritos. Comece a combinar para encontrá-los!",
+  "direct_call": {
+    "status": {
+      "calling": "Chamando...",
+      "rejected": "Chamada Rejeitada",
+      "busy": "Modelo Ocupada",
+      "no_answer": "Sem resposta",
+      "accepted": "Aceito!"
+    },
+    "desc": {
+      "calling": "Estamos conectando sua chamada. Por favor aguarde...",
+      "rejected": "A modelo recusou a chamada. Você não foi cobrado.",
+      "busy": "A modelo está atualmente em outra chamada. Por favor, tente novamente em alguns instantes.",
+      "no_answer": "A modelo não atendeu sua chamada. Por favor, tente novamente em alguns instantes.",
+      "accepted": "Preparando chat de vídeo..."
+    },
+    "action": {
+      "cancel": "Cancelar chamada",
+      "close": "Fechar"
+    },
+    "incoming": {
+      "title": "Chamada Direta",
+      "subtitle": "{{pseudo}} quer se juntar a você",
+      "desc": "Este cliente deseja iniciar uma chamada direta imediatamente com você.",
+      "accept": "ACEITAR",
+      "later": "MAIS TARDE"
+    }
+  }
 }

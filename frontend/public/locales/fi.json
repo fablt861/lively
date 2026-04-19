@@ -762,5 +762,30 @@
   "terms.withdrawal_title": "10. Waiver of Withdrawal",
   "common.years_old": "v.",
   "dashboard.favorites_title": "Suosikkikumppanini",
-  "dashboard.favorites_empty": "Et ole vielä lisännyt suosikkeja. Aloita yhdistäminen löytääksesi heidät!"
+  "dashboard.favorites_empty": "Et ole vielä lisännyt suosikkeja. Aloita yhdistäminen löytääksesi heidät!",
+  "direct_call": {
+    "status": {
+      "calling": "Soitetaan...",
+      "rejected": "Puhelu Hylätty",
+      "busy": "Malli Varattu",
+      "no_answer": "Ei vastausta",
+      "accepted": "Hyväksytty!"
+    },
+    "desc": {
+      "calling": "Yhdistämme puheluasi. Odota...",
+      "busy": "Malli on tällä hetkellä varattu. Yritä uudelleen myöhemmin.",
+      "no_answer": "Malli ei vastannut puheluusi. Yritä uudelleen hetken kuluttua.",
+      "accepted": "Valmistellaan videokeskustelua..."
+    },
+    "action": {
+      "cancel": "Peruuta puhelu"
+    },
+    "incoming": {
+      "title": "Suora puhelu",
+      "subtitle": "{{pseudo}} haluaa liittyä seuraasi",
+      "desc": "Tämä asiakas haluaa aloittaa suoran puhelun kanssasi välittömästi.",
+      "accept": "HYVÄKSY",
+      "later": "MYÖHEMMIN"
+    }
+  }
 }

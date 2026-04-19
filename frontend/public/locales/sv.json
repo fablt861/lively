@@ -762,5 +762,30 @@
   "terms.withdrawal_title": "10. Waiver of Withdrawal",
   "common.years_old": "år",
   "dashboard.favorites_title": "Mina favoritpartners",
-  "dashboard.favorites_empty": "Du har inte lagt till några favoriter än. Börja matcha för att hitta dem!"
+  "dashboard.favorites_empty": "Du har inte lagt till några favoriter än. Börja matcha för att hitta dem!",
+  "direct_call": {
+    "status": {
+      "calling": "Ringer...",
+      "rejected": "Samtal Avvisat",
+      "busy": "Modell Upptagen",
+      "no_answer": "Inget svar",
+      "accepted": "Accepterat!"
+    },
+    "desc": {
+      "calling": "Vi kopplar upp ditt samtal. Vänta...",
+      "busy": "Modellen är upptagen för tillfället. Försök igen senare.",
+      "no_answer": "Modellen svarade inte på ditt samtal. Försök igen om en stund.",
+      "accepted": "Förbereder videochat..."
+    },
+    "action": {
+      "cancel": "Avbryt samtal"
+    },
+    "incoming": {
+      "title": "Direktsamtal",
+      "subtitle": "{{pseudo}} vill ansluta till dig",
+      "desc": "Denna kund vill starta ett direktsamtal med dig omedelbart.",
+      "accept": "ACCEPTERA",
+      "later": "SENARE"
+    }
+  }
 }

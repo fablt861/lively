@@ -85,12 +85,12 @@ export function CallListener() {
                         <Bell size={40} />
                     </div>
 
-                    <h3 className="text-3xl font-black text-white mb-2 uppercase tracking-tight">Appel Direct</h3>
+                    <h3 className="text-3xl font-black text-white mb-2 uppercase tracking-tight">{t('direct_call.incoming.title')}</h3>
                     <p className="text-indigo-400 font-bold uppercase tracking-widest text-sm mb-6">
-                        {incomingCall.requestorPseudo} souhaite vous rejoindre
+                        {t('direct_call.incoming.subtitle', { pseudo: incomingCall.requestorPseudo })}
                     </p>
                     <p className="text-white/40 text-sm leading-relaxed mb-10 px-4">
-                        Ce client souhaite démarrer une session privée immédiatement avec vous.
+                        {t('direct_call.incoming.desc')}
                     </p>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
@@ -98,13 +98,13 @@ export function CallListener() {
                             onClick={() => handleResponse(true)}
                             className="bg-indigo-500 hover:bg-indigo-600 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-3 transition-all transform active:scale-95 shadow-lg shadow-indigo-500/20"
                         >
-                            <Phone size={18} /> ACCEPTER
+                            <Phone size={18} /> {t('direct_call.incoming.accept')}
                         </button>
                         <button 
                             onClick={() => handleResponse(false)}
                             className="bg-white/5 hover:bg-white/10 text-white/60 font-black py-4 rounded-2xl flex items-center justify-center gap-3 transition-all transform active:scale-95"
                         >
-                            <PhoneOff size={18} /> PLUS TARD
+                            <PhoneOff size={18} /> {t('direct_call.incoming.later')}
                         </button>
                     </div>
                 </div>

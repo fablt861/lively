@@ -762,5 +762,32 @@
   "terms.withdrawal_title": "10. Waiver of Withdrawal",
   "common.years_old": "år",
   "dashboard.favorites_title": "Mine favorittpartnere",
-  "dashboard.favorites_empty": "Du har ikke lagt til noen favoritter ennå. Begynn å matche for å finne dem!"
+  "dashboard.favorites_empty": "Du har ikke lagt til noen favoritter ennå. Begynn å matche for å finne dem!",
+  "direct_call": {
+    "status": {
+      "calling": "Ringer...",
+      "rejected": "Anrop Avvist",
+      "busy": "Modell Opptatt",
+      "no_answer": "Ikke svar",
+      "accepted": "Akseptert!"
+    },
+    "desc": {
+      "calling": "Vi kobler til anropet ditt. Vennligst vent...",
+      "rejected": "Modellen har avvist anropet. Du har ikke blitt belastet.",
+      "busy": "Modellen er for øyeblikket i en annen samtale. Vennligst prøv igjen om et øyeblikk.",
+      "no_answer": "Modellen svarte ikke på anropet ditt. Vennligst prøv igjen om et øyeblikk.",
+      "accepted": "Forbereder videochat..."
+    },
+    "action": {
+      "cancel": "Avbryt anrop",
+      "close": "Lukk"
+    },
+    "incoming": {
+      "title": "Direkte Anrop",
+      "subtitle": "{{pseudo}} vil bli med deg",
+      "desc": "Denne klienten ønsker å starte et direkte anrop med deg umiddelbart.",
+      "accept": "AKSEPTER",
+      "later": "SENERE"
+    }
+  }
 }

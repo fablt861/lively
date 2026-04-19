@@ -762,5 +762,28 @@
   "terms.withdrawal_title": "10. Waiver of Withdrawal",
   "common.years_old": "ani",
   "dashboard.favorites_title": "Partenerii mei favoriți",
-  "dashboard.favorites_empty": "Nu ai adăugat încă niciun favorit. Începe să te potrivești pentru a-i găsi!"
+  "dashboard.favorites_empty": "Nu ai adăugat încă niciun favorit. Începe să te potrivești pentru a-i găsi!",
+  "direct_call": {
+    "status": {
+      "busy": "Ocupată",
+      "no_answer": "Niciun răspuns",
+      "accepted": "Acceptat!"
+    },
+    "desc": {
+      "calling": "Vă conectăm apelul. Vă rugăm să așteptați...",
+      "busy": "Modelul este ocupat în prezent. Vă rugăm să încercați din nou mai târziu.",
+      "no_answer": "Modelul nu a răspuns la apelul dumneavoastră. Vă rugăm să încercați din nou în câteva clipe.",
+      "accepted": "Se pregătește chat-ul video..."
+    },
+    "action": {
+      "cancel": "Anulați apelul"
+    },
+    "incoming": {
+      "title": "Apel Direct",
+      "subtitle": "{{pseudo}} vrea să ți se alăture",
+      "desc": "Acest client dorește să înceapă un apel direct imediat cu tine.",
+      "accept": "ACCEPTĂ",
+      "later": "MAI TÂRZIU"
+    }
+  }
 }

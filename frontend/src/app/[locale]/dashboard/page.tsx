@@ -461,19 +461,19 @@ export default function CustomerDashboard() {
 
                     <div className="text-center space-y-4 max-w-md px-6">
                         <h3 className="text-4xl md:text-6xl font-black tracking-tight text-white mb-2 uppercase">
-                            {callStatus === 'calling' ? 'APPELEE...' : 
-                             callStatus === 'rejected' ? 'OCCUPÉE' : 
-                             callStatus === 'no_answer' ? 'SANS RÉPONSE' :
-                             'ACCEPTÉ !'}
+                            {callStatus === 'calling' ? t('direct_call.status.calling') : 
+                             callStatus === 'rejected' ? t('direct_call.status.busy') : 
+                             callStatus === 'no_answer' ? t('direct_call.status.no_answer') :
+                             t('direct_call.status.accepted')}
                         </h3>
                         <p className="text-indigo-400 font-black uppercase tracking-[0.3em] text-sm md:text-base">
                             {callingModel.pseudo}
                         </p>
                         <p className="text-white/40 text-xs md:text-sm font-medium leading-relaxed mt-4">
-                            {callStatus === 'calling' ? 'Nous connectons votre session privée. Veuillez patienter...' :
-                             callStatus === 'rejected' ? 'La modèle est actuellement indisponible. Réessayez plus tard.' :
-                             callStatus === 'no_answer' ? 'La modèle n\'a pas répondu à votre appel. Réessayez dans quelques instants.' :
-                             'Préparation du chat vidéo...'}
+                            {callStatus === 'calling' ? t('direct_call.desc.calling') :
+                             callStatus === 'rejected' ? t('direct_call.desc.busy') :
+                             callStatus === 'no_answer' ? t('direct_call.desc.no_answer') :
+                             t('direct_call.desc.accepted')}
                         </p>
                     </div>
 
@@ -483,14 +483,14 @@ export default function CustomerDashboard() {
                                 onClick={handleCancelCall}
                                 className="group flex items-center gap-4 bg-red-500/10 border border-red-500/20 text-red-500 px-10 py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all duration-300 transform active:scale-95"
                             >
-                                <PhoneOff size={20} /> Annuler l'appel
+                                <PhoneOff size={20} /> {t('direct_call.action.cancel')}
                             </button>
                         ) : (
                             <button 
                                 onClick={() => { setCallingModel(null); setCallStatus(null); }}
                                 className="flex items-center gap-4 bg-white/5 border border-white/10 text-white px-10 py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300"
                             >
-                                <X size={20} /> Fermer
+                                <X size={20} /> {t('common.close')}
                             </button>
                         )}
                     </div>
