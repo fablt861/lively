@@ -711,6 +711,47 @@ export default function AdminPage() {
                                     <input type="number" value={settings.antiFraudDelaySec} onChange={e => setSettings({ ...settings, antiFraudDelaySec: parseInt(e.target.value) })} className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 transition-colors" />
                                     <p className="text-xs text-neutral-500 mt-2">{t('admin.settings.anti_fraud_desc')}</p>
                                 </div>
+
+                                <div className="border-t border-white/5 pt-6 col-span-2">
+                                    <h4 className="text-sm font-bold text-white uppercase tracking-widest mb-6">{t('admin.settings.free_credits_title') || 'Free Credits & Rates'}</h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <div className="space-y-2">
+                                            <label className="block text-xs text-neutral-500 font-bold uppercase tracking-wider">{t('admin.settings.registration_credits') || 'Registration Welcome Credits'}</label>
+                                            <input 
+                                                type="number" 
+                                                step="0.1"
+                                                value={settings.registrationWelcomeCredits || 5.0} 
+                                                onChange={e => setSettings({ ...settings, registrationWelcomeCredits: parseFloat(e.target.value) })}
+                                                className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 transition-colors font-mono" 
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="block text-xs text-neutral-500 font-bold uppercase tracking-wider">{t('admin.settings.guest_credits') || 'Guest Free Credits'}</label>
+                                            <input 
+                                                type="number" 
+                                                step="0.1"
+                                                value={settings.guestFreeCredits || 5.0} 
+                                                onChange={e => setSettings({ ...settings, guestFreeCredits: parseFloat(e.target.value) })}
+                                                className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 transition-colors font-mono" 
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="block text-xs text-neutral-500 font-bold uppercase tracking-wider">{t('admin.settings.credits_per_minute') || 'Credits per Minute'}</label>
+                                            <input 
+                                                type="number" 
+                                                value={settings.creditsPerMinute || 10} 
+                                                onChange={e => setSettings({ ...settings, creditsPerMinute: parseInt(e.target.value) })}
+                                                className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 transition-colors font-mono" 
+                                            />
+                                        </div>
+                                    </div>
+                                    <p className="text-[10px] text-neutral-500 mt-4 italic">
+                                        {t('admin.settings.free_time_hint', { 
+                                            guestTime: Math.floor(((settings.guestFreeCredits || 5) / (settings.creditsPerMinute || 10)) * 60),
+                                            regTime: Math.floor(((settings.registrationWelcomeCredits || 5) / (settings.creditsPerMinute || 10)) * 60)
+                                        }) || `Guest gets ${Math.floor(((settings.guestFreeCredits || 5) / (settings.creditsPerMinute || 10)) * 60)}s free. New users get ${Math.floor(((settings.registrationWelcomeCredits || 5) / (settings.creditsPerMinute || 10)) * 60)}s free.`}
+                                    </p>
+                                </div>
                             </div>
                         </div>
 

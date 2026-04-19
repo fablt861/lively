@@ -141,6 +141,12 @@
   "admin.settings.add_tier": "+ Ajouter un palier",
   "admin.settings.anti_fraud_delay": "Délai Anti-Fraude (Secondes)",
   "admin.settings.anti_fraud_desc": "Les modèles ne gagneront rien durant ces premières secondes d'appel.",
+  "admin.settings.free_credits_title": "Crédits Offerts & Tarification",
+  "admin.settings.registration_credits": "Crédits de bienvenue (Inscription)",
+  "admin.settings.guest_credits": "Crédits gratuits (Invités)",
+  "admin.settings.credits_per_minute": "Crédits par minute",
+  "admin.settings.free_time_hint": "Les invités reçoivent {{guestTime}}s gratuites. Les nouveaux inscrits reçoivent {{regTime}}s gratuites.",
+
   "admin.settings.auto_debit": "Débit Auto",
   "admin.settings.auto_pack_desc": "Pack proposé automatiquement si le solde est insuffisant.",
   "admin.settings.block_notice": "L'accès au live chat est actuellement bloqué",

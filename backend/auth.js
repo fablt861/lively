@@ -3,6 +3,8 @@ const { getRedisClient } = require('./redis');
 const { query } = require('./db');
 const { logNewUser } = require('./stats');
 const crypto = require('crypto');
+const { getSettings } = require('./settings');
+
 
 const router = express.Router();
 
@@ -96,15 +98,18 @@ router.post('/register', async (req, res) => {
         }
 
         const id = crypto.randomUUID();
+        const settings = await getSettings();
+        const welcomeCredits = settings.registrationWelcomeCredits || 5.0;
+
         await query(`
             INSERT INTO users (
                 id, email, password, pseudo, credits, marketing_src, marketing_camp, marketing_ad
             ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-        `, [id, email, password, pseudo, 5.00, src, camp, ad]);
+        `, [id, email, password, pseudo, welcomeCredits, src, camp, ad]);
 
         // Sync initial credits to Redis for fast access in billing logic
         const redis = getRedisClient();
-        await redis.set(`user:${id}:credits`, "5");
+        await redis.set(`user:${id}:credits`, welcomeCredits.toString());
         await redis.hset(`profile:${id}`, 'pseudo', pseudo);
         
         await logNewUser();
@@ -113,7 +118,7 @@ router.post('/register', async (req, res) => {
         res.json({
             success: true,
             token: `user-token-${id}`,
-            user: { id, email, role: 'user', name: pseudo, credits: 5 }
+            user: { id, email, role: 'user', name: pseudo, credits: welcomeCredits }
         });
     } catch (err) {
         console.error('[Register Error]', err);

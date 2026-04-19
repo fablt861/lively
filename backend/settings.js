@@ -7,6 +7,9 @@ const SETTINGS_KEY = 'global:settings';
 const DEFAULT_SETTINGS = {
     pricePerMinute: 1.00,
     antiFraudDelaySec: 5,
+    creditsPerMinute: 10,
+    guestFreeCredits: 5.0,
+    registrationWelcomeCredits: 5.0,
     payoutTiers: [
         { label: 'Tier 1', minMinutes: 0, rate: 0.40 },
         { label: 'Tier 2', minMinutes: 5, rate: 0.50 },

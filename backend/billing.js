@@ -123,7 +123,8 @@ function initBillingLoop(io) {
                     }
 
                     if (!isBlockedActive) {
-                        rateUserCreditsPerSec = 10 / 60.0;
+                        const creditsPerMin = settings.creditsPerMinute || 10;
+                        rateUserCreditsPerSec = creditsPerMin / 60.0;
                         
                         // Calculate dynamic Model Payout Tier
                         const durationMin = durationSec / 60.0;
@@ -161,12 +162,17 @@ function initBillingLoop(io) {
                             continue;
                         }
                     } else {
-                        // Guest user: increment time used (no block logic for guests usually, but we keep it safe)
+                        // Guest user: increment time used
                         const used = await redis.incrby(`free_secs:${session.userId}`, 1);
                         
                         // RESTRICTED COUNTRY LOGIC
                         const isRestricted = settings.restrictedCountries && settings.restrictedCountries.includes(session.userCountryCode);
-                        const limit = isRestricted ? 0 : 30; // 0 seconds for restricted countries
+                        
+                        const guestCredits = settings.guestFreeCredits || 5.0;
+                        const creditsPerMin = settings.creditsPerMinute || 10;
+                        const freeLimitSecs = (guestCredits / creditsPerMin) * 60;
+                        
+                        const limit = isRestricted ? 0 : freeLimitSecs;
                         
                         remaining = limit - used;
                         if (ioInstance) {

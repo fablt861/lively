@@ -141,6 +141,12 @@
   "admin.settings.add_tier": "+ Add a Tier",
   "admin.settings.anti_fraud_delay": "Anti-Fraud Delay (Seconds)",
   "admin.settings.anti_fraud_desc": "Models will not earn anything during these first seconds of a call.",
+  "admin.settings.free_credits_title": "Free Credits & Rates",
+  "admin.settings.registration_credits": "Registration Welcome Credits",
+  "admin.settings.guest_credits": "Guest Free Credits",
+  "admin.settings.credits_per_minute": "Credits per Minute",
+  "admin.settings.free_time_hint": "Guest gets {{guestTime}}s free. New users get {{regTime}}s free.",
+
   "admin.settings.auto_debit": "Auto Debit",
   "admin.settings.auto_pack_desc": "Pack automatically offered if balance is insufficient.",
   "admin.settings.block_notice": "Access to live chat is currently blocked",

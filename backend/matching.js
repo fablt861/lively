@@ -205,11 +205,16 @@ function setupMatching(io, socket) {
                 }
             }
 
-            // If Guest: check free limit (30s)
+            // If Guest: check free limit
             if (role === 'user' && !id) {
+                const settings = await getSettings();
+                const guestCredits = settings.guestFreeCredits || 5.0;
+                const creditsPerMin = settings.creditsPerMinute || 10;
+                const freeLimitSecs = (guestCredits / creditsPerMin) * 60;
+
                 const freeUsed = await redis.get(`free_secs:${userIp}`) || 0;
-                if (parseInt(freeUsed) >= 30) {
-                    console.log(`[Limit] IP ${userIp} reached free guest limit (30s).`);
+                if (parseInt(freeUsed) >= freeLimitSecs) {
+                    console.log(`[Limit] IP ${userIp} reached free guest limit (${freeLimitSecs}s).`);
                     return socket.emit('out_of_credits', { reason: 'guest_limit_reached' });
                 }
             }
