@@ -969,7 +969,7 @@ export function VideoRoom({
 
                 {/* Remote Video (Full Screen) */}
                 <div className="absolute inset-0 z-0 h-[100dvh]">
-                    {remoteVideoTrack ? (
+                    {remoteVideoTrack && (
                         <VideoTrack
                             trackRef={remoteVideoTrack}
                             className={`w-full h-full object-cover transition-all duration-700 ease-in-out ${(isMatching || isConnecting || showPaywall) ? "blur-2xl opacity-40 scale-105" : "blur-0 opacity-100 scale-100"}`}
