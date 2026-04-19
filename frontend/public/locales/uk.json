@@ -225,7 +225,7 @@
   "auth.error.email_already_registered": "Email вже зареєстровано.",
   "auth.error.email_in_use": "Ця електронна адреса вже використовується.",
   "auth.error.invalid": "Невірні дані для входу",
-  "auth.error.invalid_credentials": "Невірні облікові дані.",
+  "auth.error.invalid_credentials": "Невірна електронна адреса або пароль.",
   "auth.error.missing_fields": "Усі поля обов’язкові для заповнення.",
   "auth.error.network": "Помилка з'єднання",
   "auth.error.password_match": "Паролі не збігаються",
@@ -789,5 +789,8 @@
       "accept": "ПРИЙНЯТИ",
       "later": "ПІЗНІШЕ"
     }
-  }
+  },
+  "favorite.restriction.title": "Дружба потребує часу!",
+  "favorite.restriction.desc": "Ви повинні провести принаймні 3 хвилини у дзвінку з цією моделлю, перш ніж зможете додати її до обраного.",
+  "favorite.restriction.cta": "Зрозуміло"
 }

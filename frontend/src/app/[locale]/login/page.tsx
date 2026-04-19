@@ -122,7 +122,7 @@ export default function LoginPage() {
                         </button>
                     </div>
 
-                    {error && <div className="p-3 mb-6 bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-2xl text-center animate-in fade-in duration-300">{error}</div>}
+                    {error && <div className="p-3 mb-6 bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-2xl text-center animate-in fade-in duration-300">{t(error)}</div>}
 
                     <form onSubmit={handleAction} className="space-y-4">
                         {mode === 'signup' && (

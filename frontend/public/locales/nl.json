@@ -225,7 +225,7 @@
   "auth.error.email_already_registered": "E-mailadres is al geregistreerd.",
   "auth.error.email_in_use": "E-mailadres is al in gebruik.",
   "auth.error.invalid": "Ongeldige inloggegevens",
-  "auth.error.invalid_credentials": "Ongeldige inloggegevens.",
+  "auth.error.invalid_credentials": "E-mail of wachtwoord onjuist.",
   "auth.error.missing_fields": "Alle velden zijn verplicht.",
   "auth.error.network": "Verbindingsfout",
   "auth.error.password_match": "Wachtwoorden komen niet overeen",
@@ -789,5 +789,8 @@
       "accept": "ACCEPTEREN",
       "later": "LATER"
     }
-  }
+  },
+  "favorite.restriction.title": "Vriendschap kost tijd!",
+  "favorite.restriction.desc": "Je moet minstens 3 minuten in een gesprek met dit model doorbrengen voordat je haar aan je favorieten kunt toevoegen.",
+  "favorite.restriction.cta": "Begrepen"
 }

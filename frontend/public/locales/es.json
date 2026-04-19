@@ -225,7 +225,7 @@
   "auth.error.email_already_registered": "Email ya registrado.",
   "auth.error.email_in_use": "Email ya en uso.",
   "auth.error.invalid": "Credenciales inválidas",
-  "auth.error.invalid_credentials": "Credenciales inválidas.",
+  "auth.error.invalid_credentials": "Correo electrónico o contraseña incorrectos.",
   "auth.error.missing_fields": "Todos los campos son obligatorios.",
   "auth.error.network": "Error de conexión",
   "auth.error.password_match": "Las contraseñas no coinciden",
@@ -788,5 +788,8 @@
       "accept": "ACEPTAR",
       "later": "MÁS TARDE"
     }
-  }
+  },
+  "favorite.restriction.title": "¡Amistad en camino!",
+  "favorite.restriction.desc": "Debes pasar al menos 3 minutos en una llamada con esta modelo antes de poder añadirla a tus favoritos.",
+  "favorite.restriction.cta": "Entendido"
 }

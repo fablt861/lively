@@ -225,7 +225,7 @@
   "auth.error.email_already_registered": "Sähköposti on jo rekisteröity.",
   "auth.error.email_in_use": "Sähköpostiosoite on jo käytössä.",
   "auth.error.invalid": "Virheelliset tunnukset",
-  "auth.error.invalid_credentials": "Virheelliset tunnistautumistiedot.",
+  "auth.error.invalid_credentials": "Virheellinen sähköposti tai salasana.",
   "auth.error.missing_fields": "Kaikki kentät ovat pakollisia.",
   "auth.error.network": "Yhteysvirhe",
   "auth.error.password_match": "Salasanat eivät täsmää",
@@ -787,5 +787,8 @@
       "accept": "HYVÄKSY",
       "later": "MYÖHEMMIN"
     }
-  }
+  },
+  "favorite.restriction.title": "Ystävyys vie aikaa!",
+  "favorite.restriction.desc": "Sinun on vietettävä vähintään 3 minuuttia puhelussa tämän mallin kanssa, ennen kuin voit lisätä hänet suosikkeihisi.",
+  "favorite.restriction.cta": "Selvä"
 }

@@ -225,7 +225,7 @@
   "auth.error.email_already_registered": "Email já registado.",
   "auth.error.email_in_use": "Email já em uso.",
   "auth.error.invalid": "Credenciais inválidas",
-  "auth.error.invalid_credentials": "Credenciais inválidas.",
+  "auth.error.invalid_credentials": "E-mail ou senha incorretos.",
   "auth.error.missing_fields": "Todos os campos são obrigatórios.",
   "auth.error.network": "Erro de ligação",
   "auth.error.password_match": "As palavras-passe não coincidem",
@@ -789,5 +789,8 @@
       "accept": "ACEITAR",
       "later": "MAIS TARDE"
     }
-  }
+  },
+  "favorite.restriction.title": "Amizade leva tempo!",
+  "favorite.restriction.desc": "Você deve passar pelo menos 3 minutos em uma chamada com esta modelo antes de poder adicioná-la aos seus favoritos.",
+  "favorite.restriction.cta": "Entendi"
 }

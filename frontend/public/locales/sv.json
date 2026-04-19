@@ -225,7 +225,7 @@
   "auth.error.email_already_registered": "E-postadressen är redan registrerad.",
   "auth.error.email_in_use": "E-postadressen används redan.",
   "auth.error.invalid": "Ogiltiga uppgifter",
-  "auth.error.invalid_credentials": "Ogiltiga uppgifter.",
+  "auth.error.invalid_credentials": "Fel e-postadress eller lösenord.",
   "auth.error.missing_fields": "Alla fält är obligatoriska.",
   "auth.error.network": "Anslutningsfel",
   "auth.error.password_match": "Lösenorden matchar inte",
@@ -787,5 +787,8 @@
       "accept": "ACCEPTERA",
       "later": "SENARE"
     }
-  }
+  },
+  "favorite.restriction.title": "Vänskap tar tid!",
+  "favorite.restriction.desc": "Du måste spendera minst 3 minuter i ett samtal med den här modellen innan du kan lägga till henne i dina favoriter.",
+  "favorite.restriction.cta": "Uppfattat"
 }

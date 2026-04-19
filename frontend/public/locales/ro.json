@@ -225,7 +225,7 @@
   "auth.error.email_already_registered": "Email deja înregistrat.",
   "auth.error.email_in_use": "Email deja utilizat.",
   "auth.error.invalid": "Date invalide",
-  "auth.error.invalid_credentials": "Date de autentificare invalide.",
+  "auth.error.invalid_credentials": "E-mail sau parolă incorectă.",
   "auth.error.missing_fields": "Toate câmpurile sunt obligatorii.",
   "auth.error.network": "Eroare de conexiune",
   "auth.error.password_match": "Parolele nu se potrivesc",
@@ -785,5 +785,8 @@
       "accept": "ACCEPTĂ",
       "later": "MAI TÂRZIU"
     }
-  }
+  },
+  "favorite.restriction.title": "Prietenia necesită timp!",
+  "favorite.restriction.desc": "Trebuie să petreci cel puțin 3 minute într-un apel cu acest model înainte de a-l putea adăuga la favorite.",
+  "favorite.restriction.cta": "Am înțeles"
 }

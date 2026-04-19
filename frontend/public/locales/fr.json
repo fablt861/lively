@@ -146,7 +146,6 @@
   "admin.settings.guest_credits": "Crédits gratuits (Invités)",
   "admin.settings.credits_per_minute": "Crédits par minute",
   "admin.settings.free_time_hint": "Les invités reçoivent {{guestTime}}s gratuites. Les nouveaux inscrits reçoivent {{regTime}}s gratuites.",
-
   "admin.settings.auto_debit": "Débit Auto",
   "admin.settings.auto_pack_desc": "Pack proposé automatiquement si le solde est insuffisant.",
   "admin.settings.block_notice": "L'accès au live chat est actuellement bloqué",
@@ -241,7 +240,7 @@
   "auth.error.email_already_registered": "Email déjà enregistré.",
   "auth.error.email_in_use": "Email déjà utilisé.",
   "auth.error.invalid": "Identifiants invalides",
-  "auth.error.invalid_credentials": "Identifiants invalides.",
+  "auth.error.invalid_credentials": "Email ou mot de passe incorrect.",
   "auth.error.missing_fields": "Tous les champs sont obligatoires.",
   "auth.error.network": "Erreur de connexion",
   "auth.error.password_match": "Les mots de passe ne correspondent pas",
@@ -813,5 +812,8 @@
       "accept": "ACCEPTER",
       "later": "PLUS TARD"
     }
-  }
+  },
+  "favorite.restriction.title": "Ami à gagner !",
+  "favorite.restriction.desc": "Vous devez passer au moins 3 minutes en appel avec ce modèle avant de pouvoir l'ajouter à vos favoris.",
+  "favorite.restriction.cta": "Compris"
 }

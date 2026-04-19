@@ -225,7 +225,7 @@
   "auth.error.email_already_registered": "Email уже зарегистрирован.",
   "auth.error.email_in_use": "Этот адрес электронной почты уже используется.",
   "auth.error.invalid": "Неверные учетные данные",
-  "auth.error.invalid_credentials": "Неверные учетные данные.",
+  "auth.error.invalid_credentials": "Неверный адрес электронной почты или пароль.",
   "auth.error.missing_fields": "Все поля обязательны для заполнения.",
   "auth.error.network": "Ошибка соединения",
   "auth.error.password_match": "Пароли не совпадают",
@@ -789,5 +789,8 @@
       "accept": "ПРИНЯТЬ",
       "later": "ПОЗЖЕ"
     }
-  }
+  },
+  "favorite.restriction.title": "Дружба требует времени!",
+  "favorite.restriction.desc": "Вы должны провести не менее 3 минут в звонке с этой моделью, прежде чем сможете добавить ее в избранное.",
+  "favorite.restriction.cta": "Понятно"
 }

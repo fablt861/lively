@@ -225,7 +225,7 @@
   "auth.error.email_already_registered": "E-Mail bereits registriert.",
   "auth.error.email_in_use": "E-Mail bereits verwendet.",
   "auth.error.invalid": "Ungültige Anmeldedaten",
-  "auth.error.invalid_credentials": "Ungültige Anmeldedaten.",
+  "auth.error.invalid_credentials": "Ungültige E-Mail oder Passwort.",
   "auth.error.missing_fields": "Alle Felder sind erforderlich.",
   "auth.error.network": "Verbindungsfehler",
   "auth.error.password_match": "Passwörter stimmen nicht überein",
@@ -788,5 +788,8 @@
       "accept": "ANNEHMEN",
       "later": "SPÄTER"
     }
-  }
+  },
+  "favorite.restriction.title": "Freundschaft braucht Zeit!",
+  "favorite.restriction.desc": "Du musst mindestens 3 Minuten mit diesem Modell telefonieren, bevor du es zu deinen Favoriten hinzufügen kannst.",
+  "favorite.restriction.cta": "Verstanden"
 }

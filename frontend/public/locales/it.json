@@ -225,7 +225,7 @@
   "auth.error.email_already_registered": "Email già registrata.",
   "auth.error.email_in_use": "Email già in uso.",
   "auth.error.invalid": "Credenziali non valide",
-  "auth.error.invalid_credentials": "Credenziali non valide.",
+  "auth.error.invalid_credentials": "Email o password non corretti.",
   "auth.error.missing_fields": "Tutti i campi sono obbligatori.",
   "auth.error.network": "Errore di connessione",
   "auth.error.password_match": "Le password non corrispondono",
@@ -788,5 +788,8 @@
       "accept": "ACCETTA",
       "later": "PIÙ TARDI"
     }
-  }
+  },
+  "favorite.restriction.title": "L'amicizia richiede tempo!",
+  "favorite.restriction.desc": "Devi trascorrere almeno 3 minuti in chiamata con questa modella prima di poterla aggiungere ai tuoi preferiti.",
+  "favorite.restriction.cta": "Ho capito"
 }

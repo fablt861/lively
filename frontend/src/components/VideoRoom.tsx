@@ -220,6 +220,8 @@ export function VideoRoom({
     const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const isBlockedRef = useRef(isBlocked);
     const privateSummaryRef = useRef(privateSummary);
+    const [currCallDuration, setCurrCallDuration] = useState(0);
+    const [showFavoriteRuleModal, setShowFavoriteRuleModal] = useState(false);
 
     // Sync refs for use in socket listeners (to avoid stale closures)
     useEffect(() => { isBlockedRef.current = isBlocked; }, [isBlocked]);
@@ -285,6 +287,12 @@ export function VideoRoom({
         if (role !== 'user' || !partnerInfo?.id || isTogglingFavorite) return;
         const userId = localStorage.getItem('kinky_user_id');
         if (!userId) return;
+
+        // --- 3 MIN RULE ---
+        if (!isFavorite && currCallDuration < 180) {
+            setShowFavoriteRuleModal(true);
+            return;
+        }
 
         setIsTogglingFavorite(true);
         const action = isFavorite ? 'remove' : 'add';
@@ -653,6 +661,19 @@ export function VideoRoom({
         }
     }, [role, isConnected, userCredits, accountStatus]);
 
+    // Track Call Duration for Favorites Rule
+    useEffect(() => {
+        setCurrCallDuration(0);
+    }, [partnerInfo?.id]);
+
+    useEffect(() => {
+        if (!remoteVideoTrack) return;
+        const interval = setInterval(() => {
+            setCurrCallDuration(prev => prev + 1);
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [!!remoteVideoTrack, partnerInfo?.id]);
+
     useEffect(() => {
         console.log("[Video] Syncing local video. Track:", !!localVideoTrack, "Stream:", !!localStream, "Preview:", !!previewStream);
         if (localVideoRef.current) {
@@ -663,8 +684,17 @@ export function VideoRoom({
     useEffect(() => {
         if (remoteVideoRef.current && remoteStream) {
             remoteVideoRef.current.srcObject = remoteStream;
+        } else if (remoteVideoRef.current && remoteVideoTrack) {
+            const track = (remoteVideoTrack as any).publication?.videoTrack || (remoteVideoTrack as any).track;
+            if (track && typeof track.attach === 'function') {
+                track.attach(remoteVideoRef.current);
+                const el = remoteVideoRef.current;
+                return () => {
+                    if (track && typeof track.detach === 'function') track.detach(el);
+                };
+            }
         }
-    }, [remoteStream]);
+    }, [remoteStream, remoteVideoTrack]);
 
     const userCreditsRef = useRef(userCredits);
     useEffect(() => { userCreditsRef.current = userCredits; }, [userCredits]);
@@ -944,9 +974,9 @@ export function VideoRoom({
                             trackRef={remoteVideoTrack}
                             className={`w-full h-full object-cover transition-all duration-700 ease-in-out ${(isMatching || isConnecting || showPaywall) ? "blur-2xl opacity-40 scale-105" : "blur-0 opacity-100 scale-100"}`}
                         />
-                    ) : (
-                        <div className="w-full h-full bg-neutral-950" />
                     )}
+                    {/* Hidden mirror video for screenshots */}
+                    <video ref={remoteVideoRef} className="hidden" autoPlay playsInline muted />
                     {(isConnected === false || isMatching === true || isConnecting === true) && !showPaywall && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black transition-all duration-1000 overflow-hidden z-[60] gpu-accelerated">
                             {/* Glowing Orbs for Sexy Vibe */}
@@ -1495,6 +1525,31 @@ export function VideoRoom({
                             className="w-full py-4 bg-white/10 hover:bg-white/20 rounded-2xl font-bold transition-all text-white"
                         >
                             {t('common.close')}
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* FAVORITE RULE MODAL */}
+            {showFavoriteRuleModal && (
+                <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl animate-in fade-in duration-300">
+                    <div className="w-full max-w-sm bg-neutral-900 border border-white/10 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-violet-600/10 rounded-full blur-3xl -mr-16 -mt-16" />
+                        
+                        <div className="w-16 h-16 bg-violet-600/20 rounded-2xl flex items-center justify-center mb-6 border border-violet-600/30 mx-auto">
+                            <Heart size={32} className="text-violet-500" fill="currentColor" />
+                        </div>
+
+                        <h2 className="text-2xl font-black mb-4 text-center">{t('favorite.restriction.title')}</h2>
+                        <p className="text-white/60 text-sm mb-8 leading-relaxed text-center">
+                            {t('favorite.restriction.desc')}
+                        </p>
+
+                        <button
+                            onClick={() => setShowFavoriteRuleModal(false)}
+                            className="w-full py-4 bg-violet-600 text-white font-black uppercase tracking-widest text-sm rounded-2xl hover:bg-violet-500 transition-all active:scale-95 shadow-xl shadow-violet-600/20"
+                        >
+                            {t('favorite.restriction.cta')}
                         </button>
                     </div>
                 </div>

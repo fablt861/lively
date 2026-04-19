@@ -225,7 +225,7 @@
   "auth.error.email_already_registered": "E-postadressen er allerede registrert.",
   "auth.error.email_in_use": "E-postadressen er allerede i bruk.",
   "auth.error.invalid": "Ugyldig pålogging informasjon",
-  "auth.error.invalid_credentials": "Ugyldig påloggingsinformasjon.",
+  "auth.error.invalid_credentials": "Feil e-post eller passord.",
   "auth.error.missing_fields": "Alle felt er obligatoriske.",
   "auth.error.network": "Tilkoblingsfeil",
   "auth.error.password_match": "Passordene samsvarer ikke",
@@ -789,5 +789,8 @@
       "accept": "AKSEPTER",
       "later": "SENERE"
     }
-  }
+  },
+  "favorite.restriction.title": "Vennskap tar tid!",
+  "favorite.restriction.desc": "Du må tilbringe minst 3 minutter i en samtale med denne modellen før du kan legge henne till i favorittene dine.",
+  "favorite.restriction.cta": "Skjønner"
 }

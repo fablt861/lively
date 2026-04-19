@@ -146,7 +146,6 @@
   "admin.settings.guest_credits": "Guest Free Credits",
   "admin.settings.credits_per_minute": "Credits per Minute",
   "admin.settings.free_time_hint": "Guest gets {{guestTime}}s free. New users get {{regTime}}s free.",
-
   "admin.settings.auto_debit": "Auto Debit",
   "admin.settings.auto_pack_desc": "Pack automatically offered if balance is insufficient.",
   "admin.settings.block_notice": "Access to live chat is currently blocked",
@@ -241,7 +240,7 @@
   "auth.error.email_already_registered": "Email already registered.",
   "auth.error.email_in_use": "Email already in use.",
   "auth.error.invalid": "Invalid credentials",
-  "auth.error.invalid_credentials": "Invalid credentials.",
+  "auth.error.invalid_credentials": "Incorrect email or password.",
   "auth.error.missing_fields": "All fields are required.",
   "auth.error.network": "Connection error",
   "auth.error.password_match": "Passwords do not match",
@@ -819,5 +818,8 @@
       "accept": "ACCEPT",
       "later": "LATER"
     }
-  }
+  },
+  "favorite.restriction.title": "Friendship takes time!",
+  "favorite.restriction.desc": "You must spend at least 3 minutes in a call with this model before you can add her to your favorites.",
+  "favorite.restriction.cta": "Got it"
 }
