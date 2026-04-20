@@ -289,6 +289,7 @@
   "common.swift": "SWIFT",
   "common.visa": "VISA",
   "common.wallet": "Portemonnee",
+  "common.years_old": "jaar",
   "contact.email": "support@kinky.live",
   "contact.intro": "Have a question or need assistance? Our dedicated support team is here to help you experience the best of Kinky. Feel free to reach out to us at any time.",
   "contact.title": "Contact Us",
@@ -296,6 +297,8 @@
   "dashboard.billing_cta": "Facturatie-instellingen",
   "dashboard.download_invoice": "Factuur downloaden",
   "dashboard.email_change_warning": "Let op: Het wijzigen van uw e-mailadres verandert uw inloggegevens.",
+  "dashboard.favorites_empty": "Je hebt nog geen favorieten toegevoegd. Begin met matchen om ze te vinden!",
+  "dashboard.favorites_title": "Mijn favoriete partners",
   "dashboard.history_empty": "Nog geen sessies geregistreerd.",
   "dashboard.history_loading": "Laden...",
   "dashboard.history_title": "Verdienstgeschiedenis",
@@ -313,6 +316,9 @@
   "dashboard.profile_load_error": "Kan profielinstellingen niet laden.",
   "dashboard.profile_saved_success": "Profiel succesvol bijgewerkt!",
   "dashboard.profile_settings_title": "Profielinstellingen",
+  "dashboard.restriction.cta": "Credits kopen",
+  "dashboard.restriction.description": "Er zijn minimaal {{credits}} credits nodig om {{name}} direct te bellen.",
+  "dashboard.restriction.title": "Onvoldoende credits",
   "dashboard.rules_allowed_item1": "Je gezicht niet laten zien",
   "dashboard.rules_allowed_title": "Wat is toegestaan",
   "dashboard.rules_cta": "Regels bekijken",
@@ -339,6 +345,36 @@
   "dashboard.telegram_desc": "Blijf op de hoogte van bonussen, technische updates en chat met het team.",
   "dashboard.telegram_title": "Word lid van de Elite Telegram Community",
   "dashboard.title": "Elite Dashboard",
+  "direct_call": {
+    "status": {
+      "calling": "Bellen...",
+      "rejected": "Oproep Geweigerd",
+      "busy": "Model Bezet",
+      "no_answer": "Geen antwoord",
+      "accepted": "Geaccepteerd!"
+    },
+    "desc": {
+      "calling": "We verbinden uw oproep. Even geduld...",
+      "rejected": "Het model heeft de oproep geweigerd. Er zijn geen kosten in rekening gebracht.",
+      "busy": "Het model is momenteel in gesprek. Probeer het over enkele ogenblikken opnieuw.",
+      "no_answer": "Het model heeft uw oproep niet beantwoord. Probeer het over enkele ogenblikken opnieuw.",
+      "accepted": "Videochat voorbereiden..."
+    },
+    "action": {
+      "cancel": "Oproep annuleren",
+      "close": "Sluiten"
+    },
+    "incoming": {
+      "title": "Directe Oproep",
+      "subtitle": "{{pseudo}} wil meedoen",
+      "desc": "Deze klant wil onmiddellijk een direct gesprek met u beginnen.",
+      "accept": "ACCEPTEREN",
+      "later": "LATER"
+    }
+  },
+  "favorite.restriction.cta": "Begrepen",
+  "favorite.restriction.desc": "Je moet minstens 3 minuten in een gesprek met dit model doorbrengen voordat je haar aan je favorieten kunt toevoegen.",
+  "favorite.restriction.title": "Vriendschap kost tijd!",
   "footer.contact": "Contact",
   "footer.disclaimer": "De eigenaren en exploitanten van deze website zijn niet de primaire producent (zoals die term is gedefinieerd in 18 USC sectie 2257) van de visuele inhoud op de website. De originele gegevens die zijn vereist op grond van 18 U.S.C. sectie 2257 en 28 C.F.R. 75 voor materialen op de website worden bewaard door de juiste Custodian of Records als volgt: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Parijs, Frankrijk",
   "footer.legal": "Juridische Kennisgeving",
@@ -759,45 +795,5 @@
   "terms.updated": "Inwerkingtreding: 27 maart 2024",
   "terms.withdrawal_content": "Services are provided immediately upon registration. Consequently, Users expressly waive their 14-day right of withdrawal.",
   "terms.withdrawal_section": "9. Waiver of Withdrawal\nUsers are informed of the principle 14-day withdrawal period but expressly accept that Services are fully performed before expiry. Consequently, they expressly waive their right of withdrawal.",
-  "terms.withdrawal_title": "10. Waiver of Withdrawal",
-  "common.years_old": "jaar",
-  "dashboard.favorites_title": "Mijn favoriete partners",
-  "dashboard.favorites_empty": "Je hebt nog geen favorieten toegevoegd. Begin met matchen om ze te vinden!",
-  "direct_call": {
-    "status": {
-      "calling": "Bellen...",
-      "rejected": "Oproep Geweigerd",
-      "busy": "Model Bezet",
-      "no_answer": "Geen antwoord",
-      "accepted": "Geaccepteerd!"
-    },
-    "desc": {
-      "calling": "We verbinden uw oproep. Even geduld...",
-      "rejected": "Het model heeft de oproep geweigerd. Er zijn geen kosten in rekening gebracht.",
-      "busy": "Het model is momenteel in gesprek. Probeer het over enkele ogenblikken opnieuw.",
-      "no_answer": "Het model heeft uw oproep niet beantwoord. Probeer het over enkele ogenblikken opnieuw.",
-      "accepted": "Videochat voorbereiden..."
-    },
-    "action": {
-      "cancel": "Oproep annuleren",
-      "close": "Sluiten"
-    },
-    "incoming": {
-      "title": "Directe Oproep",
-      "subtitle": "{{pseudo}} wil meedoen",
-      "desc": "Deze klant wil onmiddellijk een direct gesprek met u beginnen.",
-      "accept": "ACCEPTEREN",
-      "later": "LATER"
-    }
-  },
-  "favorite.restriction.title": "Vriendschap kost tijd!",
-  "favorite.restriction.desc": "Je moet minstens 3 minuten in een gesprek met dit model doorbrengen voordat je haar aan je favorieten kunt toevoegen.",
-  "favorite.restriction.cta": "Begrepen",
-  "dashboard": {
-    "restriction": {
-      "title": "Onvoldoende credits",
-      "description": "Er zijn minimaal {credits} credits nodig om {name} direct te bellen.",
-      "cta": "Credits kopen"
-    }
-  }
+  "terms.withdrawal_title": "10. Waiver of Withdrawal"
 }

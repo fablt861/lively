@@ -289,6 +289,7 @@
   "common.swift": "SWIFT",
   "common.visa": "VISA",
   "common.wallet": "Lommebok",
+  "common.years_old": "år",
   "contact.email": "support@kinky.live",
   "contact.intro": "Have a question or need assistance? Our dedicated support team is here to help you experience the best of Kinky. Feel free to reach out to us at any time.",
   "contact.title": "Contact Us",
@@ -296,6 +297,8 @@
   "dashboard.billing_cta": "Faktureringsinnstillinger",
   "dashboard.download_invoice": "Last ned faktura",
   "dashboard.email_change_warning": "Merk: Endring av e-post vil endre påloggingsinformasjonen din.",
+  "dashboard.favorites_empty": "Du har ikke lagt til noen favoritter ennå. Begynn å matche for å finne dem!",
+  "dashboard.favorites_title": "Mine favorittpartnere",
   "dashboard.history_empty": "Ingen økter er registrert ennå.",
   "dashboard.history_loading": "Laster...",
   "dashboard.history_title": "Inntjeningshistorikk",
@@ -313,6 +316,9 @@
   "dashboard.profile_load_error": "Kunne ikke laste profilinnstillinger.",
   "dashboard.profile_saved_success": "Profilen er oppdatert!",
   "dashboard.profile_settings_title": "Profilinnstillinger",
+  "dashboard.restriction.cta": "Kjøp kreditter",
+  "dashboard.restriction.description": "Minimum {{credits}} kreditter kreves for å ringe {{name}} direkte.",
+  "dashboard.restriction.title": "Utilstrekkelige kreditter",
   "dashboard.rules_allowed_item1": "Ikke vise ansiktet ditt",
   "dashboard.rules_allowed_title": "Hва som er tillatt",
   "dashboard.rules_cta": "Se regler",
@@ -339,6 +345,36 @@
   "dashboard.telegram_desc": "Hold deg oppdatert på bonuser, tekniske oppdateringer og prat med teamet.",
   "dashboard.telegram_title": "Bli med i Elite Telegram-fellesskapet",
   "dashboard.title": "Elite Dashbord",
+  "direct_call": {
+    "status": {
+      "calling": "Ringer...",
+      "rejected": "Anrop Avvist",
+      "busy": "Modell Opptatt",
+      "no_answer": "Ikke svar",
+      "accepted": "Akseptert!"
+    },
+    "desc": {
+      "calling": "Vi kobler til anropet ditt. Vennligst vent...",
+      "rejected": "Modellen har avvist anropet. Du har ikke blitt belastet.",
+      "busy": "Modellen er for øyeblikket i en annen samtale. Vennligst prøv igjen om et øyeblikk.",
+      "no_answer": "Modellen svarte ikke på anropet ditt. Vennligst prøv igjen om et øyeblikk.",
+      "accepted": "Forbereder videochat..."
+    },
+    "action": {
+      "cancel": "Avbryt anrop",
+      "close": "Lukk"
+    },
+    "incoming": {
+      "title": "Direkte Anrop",
+      "subtitle": "{{pseudo}} vil bli med deg",
+      "desc": "Denne klienten ønsker å starte et direkte anrop med deg umiddelbart.",
+      "accept": "AKSEPTER",
+      "later": "SENERE"
+    }
+  },
+  "favorite.restriction.cta": "Skjønner",
+  "favorite.restriction.desc": "Du må tilbringe minst 3 minutter i en samtale med denne modellen før du kan legge henne till i favorittene dine.",
+  "favorite.restriction.title": "Vennskap tar tid!",
   "footer.contact": "Kontakt",
   "footer.disclaimer": "Eierne og operatørene av dette nettstedet er ikke den primære produsenten (slik begrepet er definert i 18 USC seksjon 2257) av noe av det visuelle innholdet på nettstedet. Originale dokumenter som kreves i henhold til 18 U.S.C. seksjon 2257 og 28 C.F.R. 75 for materiale på nettstedet oppbevares av den aktuelle Custodian of Records som følger: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Paris, Frankrike",
   "footer.legal": "Juridisk Informasjon",
@@ -759,45 +795,5 @@
   "terms.updated": "Ikrafttredelse: 27. mars 2024",
   "terms.withdrawal_content": "Services are provided immediately upon registration. Consequently, Users expressly waive their 14-day right of withdrawal.",
   "terms.withdrawal_section": "9. Waiver of Withdrawal\nUsers are informed of the principle 14-day withdrawal period but expressly accept that Services are fully performed before expiry. Consequently, they expressly waive their right of withdrawal.",
-  "terms.withdrawal_title": "10. Waiver of Withdrawal",
-  "common.years_old": "år",
-  "dashboard.favorites_title": "Mine favorittpartnere",
-  "dashboard.favorites_empty": "Du har ikke lagt til noen favoritter ennå. Begynn å matche for å finne dem!",
-  "direct_call": {
-    "status": {
-      "calling": "Ringer...",
-      "rejected": "Anrop Avvist",
-      "busy": "Modell Opptatt",
-      "no_answer": "Ikke svar",
-      "accepted": "Akseptert!"
-    },
-    "desc": {
-      "calling": "Vi kobler til anropet ditt. Vennligst vent...",
-      "rejected": "Modellen har avvist anropet. Du har ikke blitt belastet.",
-      "busy": "Modellen er for øyeblikket i en annen samtale. Vennligst prøv igjen om et øyeblikk.",
-      "no_answer": "Modellen svarte ikke på anropet ditt. Vennligst prøv igjen om et øyeblikk.",
-      "accepted": "Forbereder videochat..."
-    },
-    "action": {
-      "cancel": "Avbryt anrop",
-      "close": "Lukk"
-    },
-    "incoming": {
-      "title": "Direkte Anrop",
-      "subtitle": "{{pseudo}} vil bli med deg",
-      "desc": "Denne klienten ønsker å starte et direkte anrop med deg umiddelbart.",
-      "accept": "AKSEPTER",
-      "later": "SENERE"
-    }
-  },
-  "favorite.restriction.title": "Vennskap tar tid!",
-  "favorite.restriction.desc": "Du må tilbringe minst 3 minutter i en samtale med denne modellen før du kan legge henne till i favorittene dine.",
-  "favorite.restriction.cta": "Skjønner",
-  "dashboard": {
-    "restriction": {
-      "title": "Utilstrekkelige kreditter",
-      "description": "Minimum {credits} kreditter kreves for å ringe {name} direkte.",
-      "cta": "Kjøp kreditter"
-    }
-  }
+  "terms.withdrawal_title": "10. Waiver of Withdrawal"
 }

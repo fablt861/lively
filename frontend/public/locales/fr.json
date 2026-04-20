@@ -141,17 +141,16 @@
   "admin.settings.add_tier": "+ Ajouter un palier",
   "admin.settings.anti_fraud_delay": "Délai Anti-Fraude (Secondes)",
   "admin.settings.anti_fraud_desc": "Les modèles ne gagneront rien durant ces premières secondes d'appel.",
-  "admin.settings.free_credits_title": "Crédits Offerts & Tarification",
-  "admin.settings.registration_credits": "Crédits de bienvenue (Inscription)",
-  "admin.settings.guest_credits": "Crédits gratuits (Invités)",
-  "admin.settings.credits_per_minute": "Crédits par minute",
-  "admin.settings.free_time_hint": "Les invités reçoivent {{guestTime}}s gratuites. Les nouveaux inscrits reçoivent {{regTime}}s gratuites.",
   "admin.settings.auto_debit": "Débit Auto",
   "admin.settings.auto_pack_desc": "Pack proposé automatiquement si le solde est insuffisant.",
   "admin.settings.block_notice": "L'accès au live chat est actuellement bloqué",
   "admin.settings.coming_soon": "(Bientôt disponible)",
   "admin.settings.country_search_placeholder": "Rechercher un pays (ex: Inde, Pakistan...)",
+  "admin.settings.credits_per_minute": "Crédits par minute",
   "admin.settings.earnings_rate": "Gains ($ / min)",
+  "admin.settings.free_credits_title": "Crédits Offerts & Tarification",
+  "admin.settings.free_time_hint": "Les invités reçoivent {{guestTime}}s gratuites. Les nouveaux inscrits reçoivent {{regTime}}s gratuites.",
+  "admin.settings.guest_credits": "Crédits gratuits (Invités)",
   "admin.settings.landpage_desc_short": "Affiche une page de capture magnifique au lieu du chat.",
   "admin.settings.landpage_notice": "LA PAGE MAGNIFIQUE EST ACTIVÉE",
   "admin.settings.maintenance_desc": "Bloquer l'accès au live chat pour tout le monde.",
@@ -166,6 +165,7 @@
   "admin.settings.price_per_min": "Prix par minute (Utilisateur $)",
   "admin.settings.private_session_title": "Appel (Blocage {{minutes}} min)",
   "admin.settings.rates_title": "Tarification",
+  "admin.settings.registration_credits": "Crédits de bienvenue (Inscription)",
   "admin.settings.restricted_countries_desc": "Les utilisateurs de ces pays ne bénéficieront pas des 30s gratuites et devront s'inscrire/payer immédiatement.",
   "admin.settings.restricted_countries_title": "Restrictions Géographiques (Non-Freemium)",
   "admin.settings.save_cta": "Enregistrer les paramètres",
@@ -305,6 +305,7 @@
   "common.swift": "SWIFT",
   "common.visa": "VISA",
   "common.wallet": "Portefeuille",
+  "common.years_old": "ans",
   "contact.email": "support@kinky.live",
   "contact.intro": "Une question ou besoin d'assistance ? Notre équipe de support est là pour vous aider à profiter au mieux de Kinky. N'hésitez pas à nous contacter à tout moment.",
   "contact.title": "Contactez-nous",
@@ -313,6 +314,8 @@
   "dashboard.btn_geoblock": "Géo-Blocage",
   "dashboard.download_invoice": "Télécharger la facture",
   "dashboard.email_change_warning": "Remarque : Changer votre e-mail modifiera vos identifiants de connexion.",
+  "dashboard.favorites_empty": "Vous n'avez pas encore de favoris. Commencez à matcher pour les trouver !",
+  "dashboard.favorites_title": "Mes Partenaires Favoris",
   "dashboard.geoblock_desc": "Sélectionnez jusqu'à 3 pays. Les clients de ces pays ne pourront pas vous voir ni vous matcher.",
   "dashboard.geoblock_limit_reached": "Maximum 3 pays autorisés.",
   "dashboard.geoblock_no_countries": "Aucun pays bloqué pour le moment.",
@@ -338,6 +341,9 @@
   "dashboard.profile_load_error": "Impossible de charger les paramètres du profil.",
   "dashboard.profile_saved_success": "Profil mis à jour avec succès !",
   "dashboard.profile_settings_title": "Paramètres du Profil",
+  "dashboard.restriction.cta": "Acheter des crédits",
+  "dashboard.restriction.description": "Un minimum de {{credits}} crédits est requis pour appeler {{name}} en direct.",
+  "dashboard.restriction.title": "Crédits insuffisants",
   "dashboard.rules_allowed_item1": "Ne pas montrer son visage",
   "dashboard.rules_allowed_title": "Ce qui est Autorisé",
   "dashboard.rules_cta": "Afficher les règles",
@@ -364,6 +370,34 @@
   "dashboard.telegram_desc": "Restez informé des bonus, des mises à jour techniques et discutez avec l'équipe.",
   "dashboard.telegram_title": "Rejoindre la communauté Elite Telegram",
   "dashboard.title": "Tableau de bord Elite",
+  "direct_call": {
+    "status": {
+      "calling": "Appel en cours...",
+      "rejected": "Appel Refusé",
+      "busy": "Modèle Occupée",
+      "no_answer": "Pas de réponse",
+      "accepted": "Accepté !"
+    },
+    "desc": {
+      "calling": "Nous connectons votre appel. Veuillez patienter...",
+      "busy": "La modèle est actuellement indisponible. Réessayez plus tard.",
+      "no_answer": "La modèle n'a pas répondu à votre appel. Réessayez dans quelques instants.",
+      "accepted": "Préparation du chat vidéo..."
+    },
+    "action": {
+      "cancel": "Annuler l'appel"
+    },
+    "incoming": {
+      "title": "Appel Direct",
+      "subtitle": "{{pseudo}} souhaite vous rejoindre",
+      "desc": "Ce client souhaite démarrer un appel direct immédiatement avec vous.",
+      "accept": "ACCEPTER",
+      "later": "PLUS TARD"
+    }
+  },
+  "favorite.restriction.cta": "Compris",
+  "favorite.restriction.desc": "Vous devez passer au moins 3 minutes en appel avec ce modèle avant de pouvoir l'ajouter à vos favoris.",
+  "favorite.restriction.title": "Ami à gagner !",
   "footer.contact": "Contact",
   "footer.disclaimer": "Les propriétaires et exploitants de ce site Web ne sont pas le producteur principal (tel que ce terme est défini dans le 18 USC section 2257) de tout contenu visuel contenu dans le site Web. Les documents originaux requis conformément au 18 U.S.C. section 2257 et 28 C.F.R. 75 pour les documents contenus dans le site Web sont conservés par le dépositaire approprié des dossiers comme suit : MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Paris, France",
   "footer.legal": "Mentions Légales",
@@ -784,43 +818,5 @@
   "terms.updated": "Entrée en vigueur : 27 mars 2024",
   "terms.withdrawal_content": "Les Services sont fournis dès l'inscription. En conséquence, les Utilisateurs renoncent expressément à leur droit de rétractation de 14 jours.",
   "terms.withdrawal_section": "9. Renonciation au Droit de Rétractation\nLes Utilisateurs sont informés du délai de rétractation de 14 jours mais acceptent que les Services soient pleinement exécutés avant l'expiration. Ils y renoncent donc expressément.",
-  "terms.withdrawal_title": "10. Renonciation au Droit de Rétractation",
-  "common.years_old": "ans",
-  "dashboard.favorites_title": "Mes Partenaires Favoris",
-  "dashboard.favorites_empty": "Vous n'avez pas encore de favoris. Commencez à matcher pour les trouver !",
-  "direct_call": {
-    "status": {
-      "calling": "Appel en cours...",
-      "rejected": "Appel Refusé",
-      "busy": "Modèle Occupée",
-      "no_answer": "Pas de réponse",
-      "accepted": "Accepté !"
-    },
-    "desc": {
-      "calling": "Nous connectons votre appel. Veuillez patienter...",
-      "busy": "La modèle est actuellement indisponible. Réessayez plus tard.",
-      "no_answer": "La modèle n'a pas répondu à votre appel. Réessayez dans quelques instants.",
-      "accepted": "Préparation du chat vidéo..."
-    },
-    "action": {
-      "cancel": "Annuler l'appel"
-    },
-    "incoming": {
-      "title": "Appel Direct",
-      "subtitle": "{{pseudo}} souhaite vous rejoindre",
-      "desc": "Ce client souhaite démarrer un appel direct immédiatement avec vous.",
-      "accept": "ACCEPTER",
-      "later": "PLUS TARD"
-    }
-  },
-  "favorite.restriction.title": "Ami à gagner !",
-  "favorite.restriction.desc": "Vous devez passer au moins 3 minutes en appel avec ce modèle avant de pouvoir l'ajouter à vos favoris.",
-  "favorite.restriction.cta": "Compris",
-  "dashboard": {
-    "restriction": {
-      "title": "Crédits insuffisants",
-      "description": "Un minimum de {credits} crédits est requis pour appeler {name} en direct.",
-      "cta": "Acheter des crédits"
-    }
-  }
+  "terms.withdrawal_title": "10. Renonciation au Droit de Rétractation"
 }

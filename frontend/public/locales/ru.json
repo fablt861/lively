@@ -289,6 +289,7 @@
   "common.swift": "SWIFT",
   "common.visa": "VISA",
   "common.wallet": "Кошелек",
+  "common.years_old": "лет",
   "contact.email": "support@kinky.live",
   "contact.intro": "Have a question or need assistance? Our dedicated support team is here to help you experience the best of Kinky. Feel free to reach out to us at any time.",
   "contact.title": "Contact Us",
@@ -296,6 +297,8 @@
   "dashboard.billing_cta": "Настройки оплаты",
   "dashboard.download_invoice": "Скачать инвойс",
   "dashboard.email_change_warning": "Примечание: изменение электронной почты изменит ваши учетные данные.",
+  "dashboard.favorites_empty": "Вы еще не добавили ни одного фаворита. Начните знакомства, чтобы найти их!",
+  "dashboard.favorites_title": "Мои любимые партнеры",
   "dashboard.history_empty": "Пока не записано ни одной сессии.",
   "dashboard.history_loading": "Загрузка...",
   "dashboard.history_title": "История заработка",
@@ -313,6 +316,9 @@
   "dashboard.profile_load_error": "Не удалось загрузить настройки профиля.",
   "dashboard.profile_saved_success": "Профиль успешно обновлен!",
   "dashboard.profile_settings_title": "Настройки профиля",
+  "dashboard.restriction.cta": "Купить кредиты",
+  "dashboard.restriction.description": "Для прямого звонка {{name}} требуется минимум {{credits}} кредитов.",
+  "dashboard.restriction.title": "Недостаточно кредитов",
   "dashboard.rules_allowed_item1": "Не показывать лицо",
   "dashboard.rules_allowed_title": "Что разрешено",
   "dashboard.rules_cta": "Посмотреть правила",
@@ -339,6 +345,36 @@
   "dashboard.telegram_desc": "Будьте в курсе бонусов, технических обновлений и общайтесь с командой.",
   "dashboard.telegram_title": "Присоединяйтесь к сообществу Elite Telegram",
   "dashboard.title": "Элитная панель",
+  "direct_call": {
+    "status": {
+      "calling": "Вызов...",
+      "rejected": "Вызов отклонен",
+      "busy": "Модель занята",
+      "no_answer": "Нет ответа",
+      "accepted": "Принято!"
+    },
+    "desc": {
+      "calling": "Мы соединяем ваш звонок. Пожалуйста, подождите...",
+      "rejected": "Модель отклонила вызов. Плата не взималась.",
+      "busy": "Модель в данный момент занята другим вызовом. Пожалуйста, попробуйте еще раз через несколько мгновений.",
+      "no_answer": "Модель не ответила на ваш звонок. Пожалуйста, попробуйте еще раз через несколько мгновений.",
+      "accepted": "Подготовка видеочата..."
+    },
+    "action": {
+      "cancel": "Отменить вызов",
+      "close": "Закрыть"
+    },
+    "incoming": {
+      "title": "Прямой вызов",
+      "subtitle": "{{pseudo}} хочет присоединиться к вам",
+      "desc": "Этот клиент хочет немедленно начать прямой звонок с вами.",
+      "accept": "ПРИНЯТЬ",
+      "later": "ПОЗЖЕ"
+    }
+  },
+  "favorite.restriction.cta": "Понятно",
+  "favorite.restriction.desc": "Вы должны провести не менее 3 минут в звонке с этой моделью, прежде чем сможете добавить ее в избранное.",
+  "favorite.restriction.title": "Дружба требует времени!",
   "footer.contact": "Контакты",
   "footer.disclaimer": "Владельцы и операторы этого веб-сайта не являются основными производителями (как этот термин определен в 18 USC раздел 2257) любого визуального контента, содержащегося на веб-сайте. Оригинальные записи, требуемые в соответствии с 18 U.S.C. раздел 2257 и 28 C.F.R. 75 для материалов, содержащихся на веб-сайте, хранятся соответствующим Хранителем записей следующим образом: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Париж, Франция",
   "footer.legal": "Юридическая информация",
@@ -759,45 +795,5 @@
   "terms.updated": "Вступление в силу: 27 марта 2024 г.",
   "terms.withdrawal_content": "Services are provided immediately upon registration. Consequently, Users expressly waive their 14-day right of withdrawal.",
   "terms.withdrawal_section": "9. Waiver of Withdrawal\nUsers are informed of the principle 14-day withdrawal period but expressly accept that Services are fully performed before expiry. Consequently, they expressly waive their right of withdrawal.",
-  "terms.withdrawal_title": "10. Waiver of Withdrawal",
-  "common.years_old": "лет",
-  "dashboard.favorites_title": "Мои любимые партнеры",
-  "dashboard.favorites_empty": "Вы еще не добавили ни одного фаворита. Начните знакомства, чтобы найти их!",
-  "direct_call": {
-    "status": {
-      "calling": "Вызов...",
-      "rejected": "Вызов отклонен",
-      "busy": "Модель занята",
-      "no_answer": "Нет ответа",
-      "accepted": "Принято!"
-    },
-    "desc": {
-      "calling": "Мы соединяем ваш звонок. Пожалуйста, подождите...",
-      "rejected": "Модель отклонила вызов. Плата не взималась.",
-      "busy": "Модель в данный момент занята другим вызовом. Пожалуйста, попробуйте еще раз через несколько мгновений.",
-      "no_answer": "Модель не ответила на ваш звонок. Пожалуйста, попробуйте еще раз через несколько мгновений.",
-      "accepted": "Подготовка видеочата..."
-    },
-    "action": {
-      "cancel": "Отменить вызов",
-      "close": "Закрыть"
-    },
-    "incoming": {
-      "title": "Прямой вызов",
-      "subtitle": "{{pseudo}} хочет присоединиться к вам",
-      "desc": "Этот клиент хочет немедленно начать прямой звонок с вами.",
-      "accept": "ПРИНЯТЬ",
-      "later": "ПОЗЖЕ"
-    }
-  },
-  "favorite.restriction.title": "Дружба требует времени!",
-  "favorite.restriction.desc": "Вы должны провести не менее 3 минут в звонке с этой моделью, прежде чем сможете добавить ее в избранное.",
-  "favorite.restriction.cta": "Понятно",
-  "dashboard": {
-    "restriction": {
-      "title": "Недостаточно кредитов",
-      "description": "Для прямого звонка {name} требуется минимум {credits} кредитов.",
-      "cta": "Купить кредиты"
-    }
-  }
+  "terms.withdrawal_title": "10. Waiver of Withdrawal"
 }

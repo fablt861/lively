@@ -289,6 +289,7 @@
   "common.swift": "SWIFT",
   "common.visa": "VISA",
   "common.wallet": "Portofel",
+  "common.years_old": "ani",
   "contact.email": "support@kinky.live",
   "contact.intro": "Have a question or need assistance? Our dedicated support team is here to help you experience the best of Kinky. Feel free to reach out to us at any time.",
   "contact.title": "Contact Us",
@@ -296,6 +297,8 @@
   "dashboard.billing_cta": "Setări de facturare",
   "dashboard.download_invoice": "Descarcă Factura",
   "dashboard.email_change_warning": "Notă: Schimbarea e-mailului va modifica datele de autentificare.",
+  "dashboard.favorites_empty": "Nu ai adăugat încă niciun favorit. Începe să te potrivești pentru a-i găsi!",
+  "dashboard.favorites_title": "Partenerii mei favoriți",
   "dashboard.history_empty": "Nicio sesiune înregistrată încă.",
   "dashboard.history_loading": "Se încarcă...",
   "dashboard.history_title": "Istoric Câștiguri",
@@ -313,6 +316,9 @@
   "dashboard.profile_load_error": "Nu s-au putut încărca setările profilului.",
   "dashboard.profile_saved_success": "Profil actualizat cu succes!",
   "dashboard.profile_settings_title": "Setări Profil",
+  "dashboard.restriction.cta": "Cumpără credite",
+  "dashboard.restriction.description": "Sunt necesare minimum {{credits}} credite pentru a suna direct pe {{name}}.",
+  "dashboard.restriction.title": "Credite insuficiente",
   "dashboard.rules_allowed_item1": "A nu-ți arăta fața",
   "dashboard.rules_allowed_title": "Ce este autorizat",
   "dashboard.rules_cta": "Vezi regulile",
@@ -339,6 +345,32 @@
   "dashboard.telegram_desc": "Fii la curent cu bonusurile, actualizările tehnice și discută cu echipa.",
   "dashboard.telegram_title": "Alătură-te comunității Elite Telegram",
   "dashboard.title": "Panou de Control Elite",
+  "direct_call": {
+    "status": {
+      "busy": "Ocupată",
+      "no_answer": "Niciun răspuns",
+      "accepted": "Acceptat!"
+    },
+    "desc": {
+      "calling": "Vă conectăm apelul. Vă rugăm să așteptați...",
+      "busy": "Modelul este ocupat în prezent. Vă rugăm să încercați din nou mai târziu.",
+      "no_answer": "Modelul nu a răspuns la apelul dumneavoastră. Vă rugăm să încercați din nou în câteva clipe.",
+      "accepted": "Se pregătește chat-ul video..."
+    },
+    "action": {
+      "cancel": "Anulați apelul"
+    },
+    "incoming": {
+      "title": "Apel Direct",
+      "subtitle": "{{pseudo}} vrea să ți se alăture",
+      "desc": "Acest client dorește să înceapă un apel direct imediat cu tine.",
+      "accept": "ACCEPTĂ",
+      "later": "MAI TÂRZIU"
+    }
+  },
+  "favorite.restriction.cta": "Am înțeles",
+  "favorite.restriction.desc": "Trebuie să petreci cel puțin 3 minute într-un apel cu acest model înainte de a-l putea adăuga la favorite.",
+  "favorite.restriction.title": "Prietenia necesită timp!",
   "footer.contact": "Contact",
   "footer.disclaimer": "Proprietarii și operatorii acestui site web nu sunt producătorii primari (așa cum este definit acest termen în 18 USC secțiunea 2257) a oricărui conținut vizual conținut în site-ul web. Înregistrările originale solicitate în conformitate cu 18 U.S.C. secțiunea 2257 și 28 C.F.R. 75 pentru materialele conținute în site-ul web sunt păstrate de Custodele de Înregistrări corespunzător după cum urmează: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Paris, Franța",
   "footer.legal": "Notificare Legală",
@@ -759,41 +791,5 @@
   "terms.updated": "Intrare în vigoare: 27 martie 2024",
   "terms.withdrawal_content": "Services are provided immediately upon registration. Consequently, Users expressly waive their 14-day right of withdrawal.",
   "terms.withdrawal_section": "9. Waiver of Withdrawal\nUsers are informed of the principle 14-day withdrawal period but expressly accept that Services are fully performed before expiry. Consequently, they expressly waive their right of withdrawal.",
-  "terms.withdrawal_title": "10. Waiver of Withdrawal",
-  "common.years_old": "ani",
-  "dashboard.favorites_title": "Partenerii mei favoriți",
-  "dashboard.favorites_empty": "Nu ai adăugat încă niciun favorit. Începe să te potrivești pentru a-i găsi!",
-  "direct_call": {
-    "status": {
-      "busy": "Ocupată",
-      "no_answer": "Niciun răspuns",
-      "accepted": "Acceptat!"
-    },
-    "desc": {
-      "calling": "Vă conectăm apelul. Vă rugăm să așteptați...",
-      "busy": "Modelul este ocupat în prezent. Vă rugăm să încercați din nou mai târziu.",
-      "no_answer": "Modelul nu a răspuns la apelul dumneavoastră. Vă rugăm să încercați din nou în câteva clipe.",
-      "accepted": "Se pregătește chat-ul video..."
-    },
-    "action": {
-      "cancel": "Anulați apelul"
-    },
-    "incoming": {
-      "title": "Apel Direct",
-      "subtitle": "{{pseudo}} vrea să ți se alăture",
-      "desc": "Acest client dorește să înceapă un apel direct imediat cu tine.",
-      "accept": "ACCEPTĂ",
-      "later": "MAI TÂRZIU"
-    }
-  },
-  "favorite.restriction.title": "Prietenia necesită timp!",
-  "favorite.restriction.desc": "Trebuie să petreci cel puțin 3 minute într-un apel cu acest model înainte de a-l putea adăuga la favorite.",
-  "favorite.restriction.cta": "Am înțeles",
-  "dashboard": {
-    "restriction": {
-      "title": "Credite insuficiente",
-      "description": "Sunt necesare minimum {credits} credite pentru a suna direct pe {name}.",
-      "cta": "Cumpără credite"
-    }
-  }
+  "terms.withdrawal_title": "10. Waiver of Withdrawal"
 }

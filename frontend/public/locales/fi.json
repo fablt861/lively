@@ -289,6 +289,7 @@
   "common.swift": "SWIFT",
   "common.visa": "VISA",
   "common.wallet": "Lompakko",
+  "common.years_old": "v.",
   "contact.email": "support@kinky.live",
   "contact.intro": "Have a question or need assistance? Our dedicated support team is here to help you experience the best of Kinky. Feel free to reach out to us at any time.",
   "contact.title": "Contact Us",
@@ -296,6 +297,8 @@
   "dashboard.billing_cta": "Laskutusasetukset",
   "dashboard.download_invoice": "Lataa lasku",
   "dashboard.email_change_warning": "Huomautus: Sähköpostiosoitteen muuttaminen muuttaa kirjautumistietojasi.",
+  "dashboard.favorites_empty": "Et ole vielä lisännyt suosikkeja. Aloita yhdistäminen löytääksesi heidät!",
+  "dashboard.favorites_title": "Suosikkikumppanini",
   "dashboard.history_empty": "Istuntoja ei ole vielä tallennettu.",
   "dashboard.history_loading": "Ladataan...",
   "dashboard.history_title": "Ansiohistoria",
@@ -313,6 +316,9 @@
   "dashboard.profile_load_error": "Profiiliasetuksia ei voitu ladata.",
   "dashboard.profile_saved_success": "Profiili päivitetty onnistuneesti!",
   "dashboard.profile_settings_title": "Profiiliasetukset",
+  "dashboard.restriction.cta": "Osta krediittejä",
+  "dashboard.restriction.description": "Suoraan puheluun käyttäjälle {{name}} tarvitaan vähintään {{credits}} krediittiä.",
+  "dashboard.restriction.title": "Riittämättömästi krediittejä",
   "dashboard.rules_allowed_item1": "Kasvojen näyttämättä jättäminen",
   "dashboard.rules_allowed_title": "Mikä on sallittua",
   "dashboard.rules_cta": "Näytä säännöt",
@@ -339,6 +345,34 @@
   "dashboard.telegram_desc": "Pysy ajan tasalla bonuksista, teknisistä päivityksistä ja keskustele tiimin kanssa.",
   "dashboard.telegram_title": "Liity Elite Telegram -yhteisöön",
   "dashboard.title": "Elite-hallintapaneeli",
+  "direct_call": {
+    "status": {
+      "calling": "Soitetaan...",
+      "rejected": "Puhelu Hylätty",
+      "busy": "Malli Varattu",
+      "no_answer": "Ei vastausta",
+      "accepted": "Hyväksytty!"
+    },
+    "desc": {
+      "calling": "Yhdistämme puheluasi. Odota...",
+      "busy": "Malli on tällä hetkellä varattu. Yritä uudelleen myöhemmin.",
+      "no_answer": "Malli ei vastannut puheluusi. Yritä uudelleen hetken kuluttua.",
+      "accepted": "Valmistellaan videokeskustelua..."
+    },
+    "action": {
+      "cancel": "Peruuta puhelu"
+    },
+    "incoming": {
+      "title": "Suora puhelu",
+      "subtitle": "{{pseudo}} haluaa liittyä seuraasi",
+      "desc": "Tämä asiakas haluaa aloittaa suoran puhelun kanssasi välittömästi.",
+      "accept": "HYVÄKSY",
+      "later": "MYÖHEMMIN"
+    }
+  },
+  "favorite.restriction.cta": "Selvä",
+  "favorite.restriction.desc": "Sinun on vietettävä vähintään 3 minuuttia puhelussa tämän mallin kanssa, ennen kuin voit lisätä hänet suosikkeihisi.",
+  "favorite.restriction.title": "Ystävyys vie aikaa!",
   "footer.contact": "Ota yhteyttä",
   "footer.disclaimer": "Tämän verkkosivuston omistajat ja ylläpitäjät eivät ole tämän verkkosivuston sisältämän visuaalisen sisällön ensisijaisia tuottajia (kuten kyseinen termi on määritelty 18 USC:n pykälässä 2257). Alkuperäiset asiakirjat, joita vaaditaan 18 U.S.C:n pykälän 2257 ja 28 C.F.R. 75:n mukaisesti verkkosivuston sisältämää materiaalia varten, säilyttää asianmukainen Custodian of Records seuraavasti: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Pariisi, Ranska",
   "footer.legal": "Oikeudellinen ilmoitus",
@@ -759,43 +793,5 @@
   "terms.updated": "Voimaantulo: 27. maaliskuuta 2024",
   "terms.withdrawal_content": "Services are provided immediately upon registration. Consequently, Users expressly waive their 14-day right of withdrawal.",
   "terms.withdrawal_section": "9. Waiver of Withdrawal\nUsers are informed of the principle 14-day withdrawal period but expressly accept that Services are fully performed before expiry. Consequently, they expressly waive their right of withdrawal.",
-  "terms.withdrawal_title": "10. Waiver of Withdrawal",
-  "common.years_old": "v.",
-  "dashboard.favorites_title": "Suosikkikumppanini",
-  "dashboard.favorites_empty": "Et ole vielä lisännyt suosikkeja. Aloita yhdistäminen löytääksesi heidät!",
-  "direct_call": {
-    "status": {
-      "calling": "Soitetaan...",
-      "rejected": "Puhelu Hylätty",
-      "busy": "Malli Varattu",
-      "no_answer": "Ei vastausta",
-      "accepted": "Hyväksytty!"
-    },
-    "desc": {
-      "calling": "Yhdistämme puheluasi. Odota...",
-      "busy": "Malli on tällä hetkellä varattu. Yritä uudelleen myöhemmin.",
-      "no_answer": "Malli ei vastannut puheluusi. Yritä uudelleen hetken kuluttua.",
-      "accepted": "Valmistellaan videokeskustelua..."
-    },
-    "action": {
-      "cancel": "Peruuta puhelu"
-    },
-    "incoming": {
-      "title": "Suora puhelu",
-      "subtitle": "{{pseudo}} haluaa liittyä seuraasi",
-      "desc": "Tämä asiakas haluaa aloittaa suoran puhelun kanssasi välittömästi.",
-      "accept": "HYVÄKSY",
-      "later": "MYÖHEMMIN"
-    }
-  },
-  "favorite.restriction.title": "Ystävyys vie aikaa!",
-  "favorite.restriction.desc": "Sinun on vietettävä vähintään 3 minuuttia puhelussa tämän mallin kanssa, ennen kuin voit lisätä hänet suosikkeihisi.",
-  "favorite.restriction.cta": "Selvä",
-  "dashboard": {
-    "restriction": {
-      "title": "Riittämättömästi krediittejä",
-      "description": "Suoraan puheluun käyttäjälle {name} tarvitaan vähintään {credits} krediittiä.",
-      "cta": "Osta krediittejä"
-    }
-  }
+  "terms.withdrawal_title": "10. Waiver of Withdrawal"
 }

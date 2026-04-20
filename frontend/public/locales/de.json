@@ -289,6 +289,7 @@
   "common.swift": "SWIFT",
   "common.visa": "VISA",
   "common.wallet": "Geldbörse",
+  "common.years_old": "Jahre",
   "contact.email": "support@kinky.live",
   "contact.intro": "Have a question or need assistance? Our dedicated support team is here to help you experience the best of Kinky. Feel free to reach out to us at any time.",
   "contact.title": "Contact Us",
@@ -296,6 +297,8 @@
   "dashboard.billing_cta": "Abrechnungseinstellungen",
   "dashboard.download_invoice": "Rechnung herunterladen",
   "dashboard.email_change_warning": "Hinweis: Die Änderung Ihrer E-Mail-Adresse ändert Ihre Anmeldedaten.",
+  "dashboard.favorites_empty": "Du hast noch keine Favoriten hinzugefügt. Fang an zu matchen, um sie zu finden!",
+  "dashboard.favorites_title": "Meine Lieblingspartner",
   "dashboard.history_empty": "Bisher wurden keine Sitzungen aufgezeichnet.",
   "dashboard.history_loading": "Laden...",
   "dashboard.history_title": "Verdiensthistorie",
@@ -313,6 +316,9 @@
   "dashboard.profile_load_error": "Profileinstellungen konnten nicht geladen werden.",
   "dashboard.profile_saved_success": "Profil erfolgreich aktualisiert!",
   "dashboard.profile_settings_title": "Profileinstellungen",
+  "dashboard.restriction.cta": "Guthaben kaufen",
+  "dashboard.restriction.description": "Für einen Direktanruf bei {{name}} sind mindestens {{credits}} Credits erforderlich.",
+  "dashboard.restriction.title": "Unzureichendes Guthaben",
   "dashboard.rules_allowed_item1": "Gesicht nicht zeigen",
   "dashboard.rules_allowed_title": "Was erlaubt ist",
   "dashboard.rules_cta": "Regeln anzeigen",
@@ -339,6 +345,36 @@
   "dashboard.telegram_desc": "Bleiben Sie über Boni und technische Updates auf dem Laufenden und chatten Sie mit dem Team.",
   "dashboard.telegram_title": "Tritt der Elite Telegram Community bei",
   "dashboard.title": "Elite Dashboard",
+  "direct_call": {
+    "status": {
+      "calling": "Wählen...",
+      "rejected": "Anruf Abgelehnt",
+      "busy": "Modell Besetzt",
+      "no_answer": "Keine Antwort",
+      "accepted": "Angenommen!"
+    },
+    "desc": {
+      "calling": "Wir verbinden Ihren Anruf. Bitte warten...",
+      "rejected": "Das Modell hat den Anruf abgelehnt. Ihnen wurde nichts berechnet.",
+      "busy": "Das Modell befindet sich gerade in einem anderen Gespräch. Bitte versuchen Sie es in wenigen Augenblicken erneut.",
+      "no_answer": "Das Modell hat Ihren Anruf nicht beantwortet. Bitte versuchen Sie es in wenigen Augenblicken erneut.",
+      "accepted": "Video-Chat wird vorbereitet..."
+    },
+    "action": {
+      "cancel": "Anruf abbrechen",
+      "close": "Schließen"
+    },
+    "incoming": {
+      "title": "Direktanruf",
+      "subtitle": "{{pseudo}} möchte teilnehmen",
+      "desc": "Dieser Kunde möchte sofort einen Direktanruf mit Ihnen starten.",
+      "accept": "ANNEHMEN",
+      "later": "SPÄTER"
+    }
+  },
+  "favorite.restriction.cta": "Verstanden",
+  "favorite.restriction.desc": "Du musst mindestens 3 Minuten mit diesem Modell telefonieren, bevor du es zu deinen Favoriten hinzufügen kannst.",
+  "favorite.restriction.title": "Freundschaft braucht Zeit!",
   "footer.contact": "Kontakt",
   "footer.disclaimer": "Die Eigentümer und Betreiber dieser Website sind nicht die Primärproduzenten (wie dieser Begriff in 18 USC Abschnitt 2257 definiert ist) jeglicher visueller Inhalte auf der Website. Die gemäß 18 U.S.C. Abschnitt 2257 und 28 C.F.R. 75 erforderlichen Originalunterlagen für auf der Website enthaltene Materialien werden vom zuständigen Verwahrer der Unterlagen wie folgt aufbewahrt: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Paris, Frankreich",
   "footer.legal": "Impressum",
@@ -758,45 +794,5 @@
   "terms.updated": "Inkrafttreten: 27. März 2024",
   "terms.withdrawal_content": "Services are provided immediately upon registration. Consequently, Users expressly waive their 14-day right of withdrawal.",
   "terms.withdrawal_section": "9. Waiver of Withdrawal\nUsers are informed of the principle 14-day withdrawal period but expressly accept that Services are fully performed before expiry. Consequently, they expressly waive their right of withdrawal.",
-  "terms.withdrawal_title": "10. Waiver of Withdrawal",
-  "common.years_old": "Jahre",
-  "dashboard.favorites_title": "Meine Lieblingspartner",
-  "dashboard.favorites_empty": "Du hast noch keine Favoriten hinzugefügt. Fang an zu matchen, um sie zu finden!",
-  "direct_call": {
-    "status": {
-      "calling": "Wählen...",
-      "rejected": "Anruf Abgelehnt",
-      "busy": "Modell Besetzt",
-      "no_answer": "Keine Antwort",
-      "accepted": "Angenommen!"
-    },
-    "desc": {
-      "calling": "Wir verbinden Ihren Anruf. Bitte warten...",
-      "rejected": "Das Modell hat den Anruf abgelehnt. Ihnen wurde nichts berechnet.",
-      "busy": "Das Modell befindet sich gerade in einem anderen Gespräch. Bitte versuchen Sie es in wenigen Augenblicken erneut.",
-      "no_answer": "Das Modell hat Ihren Anruf nicht beantwortet. Bitte versuchen Sie es in wenigen Augenblicken erneut.",
-      "accepted": "Video-Chat wird vorbereitet..."
-    },
-    "action": {
-      "cancel": "Anruf abbrechen",
-      "close": "Schließen"
-    },
-    "incoming": {
-      "title": "Direktanruf",
-      "subtitle": "{{pseudo}} möchte teilnehmen",
-      "desc": "Dieser Kunde möchte sofort einen Direktanruf mit Ihnen starten.",
-      "accept": "ANNEHMEN",
-      "later": "SPÄTER"
-    }
-  },
-  "favorite.restriction.title": "Freundschaft braucht Zeit!",
-  "favorite.restriction.desc": "Du musst mindestens 3 Minuten mit diesem Modell telefonieren, bevor du es zu deinen Favoriten hinzufügen kannst.",
-  "favorite.restriction.cta": "Verstanden",
-  "dashboard": {
-    "restriction": {
-      "title": "Unzureichendes Guthaben",
-      "description": "Für einen Direktanruf bei {name} sind mindestens {credits} Credits erforderlich.",
-      "cta": "Guthaben kaufen"
-    }
-  }
+  "terms.withdrawal_title": "10. Waiver of Withdrawal"
 }

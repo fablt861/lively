@@ -289,6 +289,7 @@
   "common.swift": "SWIFT",
   "common.visa": "VISA",
   "common.wallet": "Portafoglio",
+  "common.years_old": "anni",
   "contact.email": "support@kinky.live",
   "contact.intro": "Have a question or need assistance? Our dedicated support team is here to help you experience the best of Kinky. Feel free to reach out to us at any time.",
   "contact.title": "Contact Us",
@@ -296,6 +297,8 @@
   "dashboard.billing_cta": "Impostazioni di fatturazione",
   "dashboard.download_invoice": "Scarica Fattura",
   "dashboard.email_change_warning": "Nota: cambiare l'email modificherà le tue credenziali di accesso.",
+  "dashboard.favorites_empty": "Non hai ancora aggiunto preferiti. Inizia a fare match per trovarli!",
+  "dashboard.favorites_title": "I Miei Partner Preferiti",
   "dashboard.history_empty": "Nessuna sessione registrata al momento.",
   "dashboard.history_loading": "Caricamento...",
   "dashboard.history_title": "Cronologia Guadagni",
@@ -313,6 +316,9 @@
   "dashboard.profile_load_error": "Impossibile caricare le impostazioni del profilo.",
   "dashboard.profile_saved_success": "Profilo aggiornato con successo!",
   "dashboard.profile_settings_title": "Impostazioni del Profilo",
+  "dashboard.restriction.cta": "Acquista crediti",
+  "dashboard.restriction.description": "È richiesto un minimo di {{credits}} crediti per chiamare {{name}} direttamente.",
+  "dashboard.restriction.title": "Crediti insufficienti",
   "dashboard.rules_allowed_item1": "Non mostrare il viso",
   "dashboard.rules_allowed_title": "Cosa è autorizzato",
   "dashboard.rules_cta": "Visualizza regole",
@@ -339,6 +345,36 @@
   "dashboard.telegram_desc": "Rimani aggiornato su bonus, aggiornamenti tecnici e chatta con il team.",
   "dashboard.telegram_title": "Unisciti alla comunità Elite Telegram",
   "dashboard.title": "Dashboard Elite",
+  "direct_call": {
+    "status": {
+      "calling": "Chiamata in corso...",
+      "rejected": "Chiamata Rifiutata",
+      "busy": "Modella Occupata",
+      "no_answer": "Nessuna risposta",
+      "accepted": "Accettata!"
+    },
+    "desc": {
+      "calling": "Stiamo collegando la tua chiamata. Attendi...",
+      "rejected": "La modella ha rifiutato la chiamata. Non ti è stato addebitato nulla.",
+      "busy": "La modella è attualmente in un'altra chiamata. Riprova tra pochi istanti.",
+      "no_answer": "La modella non ha risposto alla tua chiamata. Riprova tra pochi istanti.",
+      "accepted": "Preparazione video chat..."
+    },
+    "action": {
+      "cancel": "Annulla chiamata",
+      "close": "Chiudi"
+    },
+    "incoming": {
+      "title": "Chiamata Diretta",
+      "subtitle": "{{pseudo}} vuole unirsi a te",
+      "desc": "Questo cliente vuole iniziare immediatamente una chiamata diretta con te.",
+      "accept": "ACCETTA",
+      "later": "PIÙ TARDI"
+    }
+  },
+  "favorite.restriction.cta": "Ho capito",
+  "favorite.restriction.desc": "Devi trascorrere almeno 3 minuti in chiamata con questa modella prima di poterla aggiungere ai tuoi preferiti.",
+  "favorite.restriction.title": "L'amicizia richiede tempo!",
   "footer.contact": "Contatti",
   "footer.disclaimer": "I proprietari e gli operatori di questo sito web non sono i produttori primari (secondo la definizione del termine contenuta in 18 USC sezione 2257) di alcuno dei contenuti visuali contenuti nel sito web. I documenti originali richiesti ai sensi di 18 U.S.C. sezione 2257 e 28 C.F.R. 75 per i materiali contenuti nel sito web sono conservati dal Custode dei Registri appropriato come segue: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Parigi, Francia",
   "footer.legal": "Note Legali",
@@ -758,45 +794,5 @@
   "terms.updated": "Entrata in vigore: 27 marzo 2024",
   "terms.withdrawal_content": "Services are provided immediately upon registration. Consequently, Users expressly waive their 14-day right of withdrawal.",
   "terms.withdrawal_section": "9. Waiver of Withdrawal\nUsers are informed of the principle 14-day withdrawal period but expressly accept that Services are fully performed before expiry. Consequently, they expressly waive their right of withdrawal.",
-  "terms.withdrawal_title": "10. Waiver of Withdrawal",
-  "common.years_old": "anni",
-  "dashboard.favorites_title": "I Miei Partner Preferiti",
-  "dashboard.favorites_empty": "Non hai ancora aggiunto preferiti. Inizia a fare match per trovarli!",
-  "direct_call": {
-    "status": {
-      "calling": "Chiamata in corso...",
-      "rejected": "Chiamata Rifiutata",
-      "busy": "Modella Occupata",
-      "no_answer": "Nessuna risposta",
-      "accepted": "Accettata!"
-    },
-    "desc": {
-      "calling": "Stiamo collegando la tua chiamata. Attendi...",
-      "rejected": "La modella ha rifiutato la chiamata. Non ti è stato addebitato nulla.",
-      "busy": "La modella è attualmente in un'altra chiamata. Riprova tra pochi istanti.",
-      "no_answer": "La modella non ha risposto alla tua chiamata. Riprova tra pochi istanti.",
-      "accepted": "Preparazione video chat..."
-    },
-    "action": {
-      "cancel": "Annulla chiamata",
-      "close": "Chiudi"
-    },
-    "incoming": {
-      "title": "Chiamata Diretta",
-      "subtitle": "{{pseudo}} vuole unirsi a te",
-      "desc": "Questo cliente vuole iniziare immediatamente una chiamata diretta con te.",
-      "accept": "ACCETTA",
-      "later": "PIÙ TARDI"
-    }
-  },
-  "favorite.restriction.title": "L'amicizia richiede tempo!",
-  "favorite.restriction.desc": "Devi trascorrere almeno 3 minuti in chiamata con questa modella prima di poterla aggiungere ai tuoi preferiti.",
-  "favorite.restriction.cta": "Ho capito",
-  "dashboard": {
-    "restriction": {
-      "title": "Crediti insufficienti",
-      "description": "È richiesto un minimo di {credits} crediti per chiamare {name} direttamente.",
-      "cta": "Acquista crediti"
-    }
-  }
+  "terms.withdrawal_title": "10. Waiver of Withdrawal"
 }

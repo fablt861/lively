@@ -289,6 +289,7 @@
   "common.swift": "SWIFT",
   "common.visa": "VISA",
   "common.wallet": "Plånbok",
+  "common.years_old": "år",
   "contact.email": "support@kinky.live",
   "contact.intro": "Have a question or need assistance? Our dedicated support team is here to help you experience the best of Kinky. Feel free to reach out to us at any time.",
   "contact.title": "Contact Us",
@@ -296,6 +297,8 @@
   "dashboard.billing_cta": "Faktureringsinställningar",
   "dashboard.download_invoice": "Ladda ner faktura",
   "dashboard.email_change_warning": "Obs: Att ändra e-post ändrar dina inloggningsuppgifter.",
+  "dashboard.favorites_empty": "Du har inte lagt till några favoriter än. Börja matcha för att hitta dem!",
+  "dashboard.favorites_title": "Mina favoritpartners",
   "dashboard.history_empty": "Inga sessioner har registrerats än.",
   "dashboard.history_loading": "Laddar...",
   "dashboard.history_title": "Intjäningshistorik",
@@ -313,6 +316,9 @@
   "dashboard.profile_load_error": "Kunde inte ladda profilinställningar.",
   "dashboard.profile_saved_success": "Profilen har uppdaterats!",
   "dashboard.profile_settings_title": "Profilinställningar",
+  "dashboard.restriction.cta": "Köp krediter",
+  "dashboard.restriction.description": "Minst {{credits}} krediter krävs för att ringa {{name}} direkt.",
+  "dashboard.restriction.title": "Otillräckliga krediter",
   "dashboard.rules_allowed_item1": "Att inte visa ditt ansikte",
   "dashboard.rules_allowed_title": "Vad som är tillåtet",
   "dashboard.rules_cta": "Visa regler",
@@ -339,6 +345,34 @@
   "dashboard.telegram_desc": "Håll dig uppdaterad om bonusar, tekniska uppdateringar och chatta med teamet.",
   "dashboard.telegram_title": "Gå med i Elite Telegram-communityt",
   "dashboard.title": "Elite Kontrollpanel",
+  "direct_call": {
+    "status": {
+      "calling": "Ringer...",
+      "rejected": "Samtal Avvisat",
+      "busy": "Modell Upptagen",
+      "no_answer": "Inget svar",
+      "accepted": "Accepterat!"
+    },
+    "desc": {
+      "calling": "Vi kopplar upp ditt samtal. Vänta...",
+      "busy": "Modellen är upptagen för tillfället. Försök igen senare.",
+      "no_answer": "Modellen svarade inte på ditt samtal. Försök igen om en stund.",
+      "accepted": "Förbereder videochat..."
+    },
+    "action": {
+      "cancel": "Avbryt samtal"
+    },
+    "incoming": {
+      "title": "Direktsamtal",
+      "subtitle": "{{pseudo}} vill ansluta till dig",
+      "desc": "Denna kund vill starta ett direktsamtal med dig omedelbart.",
+      "accept": "ACCEPTERA",
+      "later": "SENARE"
+    }
+  },
+  "favorite.restriction.cta": "Uppfattat",
+  "favorite.restriction.desc": "Du måste spendera minst 3 minuter i ett samtal med den här modellen innan du kan lägga till henne i dina favoriter.",
+  "favorite.restriction.title": "Vänskap tar tid!",
   "footer.contact": "Kontakt",
   "footer.disclaimer": "Ägarna och operatörerna av denna webbplats är inte den primära producenten (enligt definitionen i 18 USC sektion 2257) av något av det visuella innehållet på webbplatsen. Originalhandlingar som krävs enligt 18 U.S.C. sektion 2257 och 28 C.F.R. 75 för material på webbplatsen förvaras av behörig Custodian of Records enligt följande: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Paris, Frankrike",
   "footer.legal": "Juridisk Information",
@@ -759,43 +793,5 @@
   "terms.updated": "Ikraftträdande: 27 mars 2024",
   "terms.withdrawal_content": "Services are provided immediately upon registration. Consequently, Users expressly waive their 14-day right of withdrawal.",
   "terms.withdrawal_section": "9. Waiver of Withdrawal\nUsers are informed of the principle 14-day withdrawal period but expressly accept that Services are fully performed before expiry. Consequently, they expressly waive their right of withdrawal.",
-  "terms.withdrawal_title": "10. Waiver of Withdrawal",
-  "common.years_old": "år",
-  "dashboard.favorites_title": "Mina favoritpartners",
-  "dashboard.favorites_empty": "Du har inte lagt till några favoriter än. Börja matcha för att hitta dem!",
-  "direct_call": {
-    "status": {
-      "calling": "Ringer...",
-      "rejected": "Samtal Avvisat",
-      "busy": "Modell Upptagen",
-      "no_answer": "Inget svar",
-      "accepted": "Accepterat!"
-    },
-    "desc": {
-      "calling": "Vi kopplar upp ditt samtal. Vänta...",
-      "busy": "Modellen är upptagen för tillfället. Försök igen senare.",
-      "no_answer": "Modellen svarade inte på ditt samtal. Försök igen om en stund.",
-      "accepted": "Förbereder videochat..."
-    },
-    "action": {
-      "cancel": "Avbryt samtal"
-    },
-    "incoming": {
-      "title": "Direktsamtal",
-      "subtitle": "{{pseudo}} vill ansluta till dig",
-      "desc": "Denna kund vill starta ett direktsamtal med dig omedelbart.",
-      "accept": "ACCEPTERA",
-      "later": "SENARE"
-    }
-  },
-  "favorite.restriction.title": "Vänskap tar tid!",
-  "favorite.restriction.desc": "Du måste spendera minst 3 minuter i ett samtal med den här modellen innan du kan lägga till henne i dina favoriter.",
-  "favorite.restriction.cta": "Uppfattat",
-  "dashboard": {
-    "restriction": {
-      "title": "Otillräckliga krediter",
-      "description": "Minst {credits} krediter krävs för att ringa {name} direkt.",
-      "cta": "Köp krediter"
-    }
-  }
+  "terms.withdrawal_title": "10. Waiver of Withdrawal"
 }

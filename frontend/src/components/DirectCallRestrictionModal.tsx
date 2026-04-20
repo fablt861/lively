@@ -44,9 +44,10 @@ export function DirectCallRestrictionModal({
                     </h2>
 
                     <p className="text-white/60 text-sm md:text-base leading-relaxed mb-10">
-                        {t('dashboard.restriction.description')
-                            .replace('{credits}', requiredCredits.toString())
-                            .replace('{name}', modelName)}
+                        {t('dashboard.restriction.description', { 
+                            credits: requiredCredits, 
+                            name: modelName 
+                        })}
                     </p>
 
                     <div className="w-full space-y-4">

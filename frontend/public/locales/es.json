@@ -289,6 +289,7 @@
   "common.swift": "SWIFT",
   "common.visa": "VISA",
   "common.wallet": "Billetera",
+  "common.years_old": "años",
   "contact.email": "support@kinky.live",
   "contact.intro": "¿Tiene alguna pregunta o necesita ayuda? Nuestro dedicado equipo de soporte está aquí para ayudarlo a experimentar lo mejor de Kinky. No dude en comunicarse con nosotros en cualquier momento.",
   "contact.title": "Contáctenos",
@@ -296,6 +297,8 @@
   "dashboard.billing_cta": "Ajustes de facturación",
   "dashboard.download_invoice": "Descargar Factura",
   "dashboard.email_change_warning": "Nota: Cambiar tu correo cambiará tus credenciales de acceso.",
+  "dashboard.favorites_empty": "Aún no has añadido favoritos. ¡Empieza a emparejar para encontrarlos!",
+  "dashboard.favorites_title": "Mis Compañeros Favoritos",
   "dashboard.history_empty": "Aún no se han registrado sesiones.",
   "dashboard.history_loading": "Cargando...",
   "dashboard.history_title": "Historial de Ganancias",
@@ -313,6 +316,9 @@
   "dashboard.profile_load_error": "Error al cargar los ajustes del perfil.",
   "dashboard.profile_saved_success": "¡Perfil actualizado con éxito!",
   "dashboard.profile_settings_title": "Ajustes del Perfil",
+  "dashboard.restriction.cta": "Comprar créditos",
+  "dashboard.restriction.description": "Se requiere un mínimo de {{credits}} créditos para llamar a {{name}} directamente.",
+  "dashboard.restriction.title": "Créditos insuficientes",
   "dashboard.rules_allowed_item1": "No mostrar el rostro",
   "dashboard.rules_allowed_title": "Lo que está autorizado",
   "dashboard.rules_cta": "Ver reglas",
@@ -339,6 +345,35 @@
   "dashboard.telegram_desc": "Mantente informado sobre bonos, actualizaciones técnicas y chatea con el equipo.",
   "dashboard.telegram_title": "Únete a la comunidad Elite Telegram",
   "dashboard.title": "Panel de Control Elite",
+  "direct_call": {
+    "status": {
+      "calling": "Llamando...",
+      "rejected": "Llamada Rechazada",
+      "busy": "Modelo Ocupada",
+      "no_answer": "Sin respuesta",
+      "accepted": "¡Aceptado!"
+    },
+    "desc": {
+      "calling": "Estamos conectando su llamada. Por favor espere...",
+      "rejected": "La modelo ha rechazado la llamada. No se le ha cobrado.",
+      "busy": "La modelo está actualmente en otra llamada. Por favor, inténtelo de nuevo en unos momentos.",
+      "no_answer": "La modelo no respondió a su llamada. Por favor, inténtelo de nuevo en unos momentos.",
+      "accepted": "Preparando videochat..."
+    },
+    "action": {
+      "cancel": "Cancelar llamada"
+    },
+    "incoming": {
+      "title": "Llamada Directa",
+      "subtitle": "{{pseudo}} quiere unirse a ti",
+      "desc": "Este cliente quiere iniciar una llamada directa contigo inmediatamente.",
+      "accept": "ACEPTAR",
+      "later": "MÁS TARDE"
+    }
+  },
+  "favorite.restriction.cta": "Entendido",
+  "favorite.restriction.desc": "Debes pasar al menos 3 minutos en una llamada con esta modelo antes de poder añadirla a tus favoritos.",
+  "favorite.restriction.title": "¡Amistad en camino!",
   "footer.contact": "Contacto",
   "footer.disclaimer": "Los propietarios y operadores de este sitio web no son los productores principales (según se define dicho término en 18 USC sección 2257) de ninguno de los contenidos visuales contenidos en el sitio web. Los registros originales requeridos de conformidad con 18 U.S.C. sección 2257 y 28 C.F.R. 75 para los materiales contenidos en el sitio web son mantenidos por el Custodio de Registros correspondiente de la siguiente manera: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Paris, Francia",
   "footer.legal": "Aviso Legal",
@@ -759,44 +794,5 @@
   "terms.updated": "Entrada en vigor: 27 de marzo de 2024",
   "terms.withdrawal_content": "Los servicios se prestan inmediatamente después del registro. En consecuencia, los usuarios renuncian expresamente a su derecho de desistimiento de 14 días.",
   "terms.withdrawal_section": "9. Renuncia al retiro\nSe informa a los usuarios del período de desistimiento de 14 días mencionado en principio, pero aceptan expresamente que los servicios se realicen íntegramente antes del vencimiento. En consecuencia, renuncian expresamente a su derecho de desistimiento.",
-  "terms.withdrawal_title": "10. Renuncia al Retiro",
-  "common.years_old": "años",
-  "dashboard.favorites_title": "Mis Compañeros Favoritos",
-  "dashboard.favorites_empty": "Aún no has añadido favoritos. ¡Empieza a emparejar para encontrarlos!",
-  "direct_call": {
-    "status": {
-      "calling": "Llamando...",
-      "rejected": "Llamada Rechazada",
-      "busy": "Modelo Ocupada",
-      "no_answer": "Sin respuesta",
-      "accepted": "¡Aceptado!"
-    },
-    "desc": {
-      "calling": "Estamos conectando su llamada. Por favor espere...",
-      "rejected": "La modelo ha rechazado la llamada. No se le ha cobrado.",
-      "busy": "La modelo está actualmente en otra llamada. Por favor, inténtelo de nuevo en unos momentos.",
-      "no_answer": "La modelo no respondió a su llamada. Por favor, inténtelo de nuevo en unos momentos.",
-      "accepted": "Preparando videochat..."
-    },
-    "action": {
-      "cancel": "Cancelar llamada"
-    },
-    "incoming": {
-      "title": "Llamada Directa",
-      "subtitle": "{{pseudo}} quiere unirse a ti",
-      "desc": "Este cliente quiere iniciar una llamada directa contigo inmediatamente.",
-      "accept": "ACEPTAR",
-      "later": "MÁS TARDE"
-    }
-  },
-  "favorite.restriction.title": "¡Amistad en camino!",
-  "favorite.restriction.desc": "Debes pasar al menos 3 minutos en una llamada con esta modelo antes de poder añadirla a tus favoritos.",
-  "favorite.restriction.cta": "Entendido",
-  "dashboard": {
-    "restriction": {
-      "title": "Créditos insuficientes",
-      "description": "Se requiere un mínimo de {credits} créditos para llamar a {name} directamente.",
-      "cta": "Comprar créditos"
-    }
-  }
+  "terms.withdrawal_title": "10. Renuncia al Retiro"
 }
