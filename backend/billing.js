@@ -176,7 +176,8 @@ function initBillingLoop(io) {
                         
                         remaining = limit - used;
                         if (ioInstance) {
-                            ioInstance.to(roomId).emit('credits_update', Math.max(0, remaining));
+                            const creditsRemaining = remaining * (creditsPerMin / 60.0);
+                            ioInstance.to(roomId).emit('credits_update', Math.max(0, creditsRemaining));
                         }
                         if (used >= limit) {
                             if (ioInstance) {
