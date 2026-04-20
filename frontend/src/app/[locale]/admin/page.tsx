@@ -58,6 +58,7 @@ export default function AdminPage() {
     const [payoutHistory, setPayoutHistory] = useState<any[]>([]);
     const [reports, setReports] = useState<any[]>([]);
     const [financesStats, setFinancesStats] = useState<any>(null);
+    const [marketingTab, setMarketingTab] = useState<'user' | 'model'>('user');
     const [marketingUsersStats, setMarketingUsersStats] = useState<any[]>([]);
     const [marketingModelsStats, setMarketingModelsStats] = useState<any[]>([]);
     const [teaserStats, setTeaserStats] = useState<any>(null);
@@ -395,9 +396,6 @@ export default function AdminPage() {
                     <button onClick={() => setActiveTab('stats')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'stats' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <Activity size={20} /> {t('admin.nav.dashboard')}
                     </button>
-                    <button onClick={() => setActiveTab('teaser')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'teaser' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
-                        <Video size={20} /> {t('admin.tabs.teaser') || "Teaser"}
-                    </button>
                     <button onClick={() => setActiveTab('users')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'users' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <Users size={20} /> {t('admin.nav.users')}
                     </button>
@@ -422,11 +420,11 @@ export default function AdminPage() {
                     <button onClick={() => setActiveTab('moderation')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'moderation' ? 'bg-red-500/20 text-red-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <ShieldAlert size={20} /> {t('admin.nav.moderation')}
                     </button>
-                    <button onClick={() => setActiveTab('marketing_users')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'marketing_users' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
-                        <Globe size={20} /> {t('admin.nav.marketing_users')}
+                    <button onClick={() => setActiveTab('marketing')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'marketing' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                        <Globe size={20} /> {t('admin.nav.marketing')}
                     </button>
-                    <button onClick={() => setActiveTab('marketing_models')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'marketing_models' ? 'bg-pink-500/20 text-pink-300' : 'hover:bg-white/5 text-neutral-400'}`}>
-                        <Zap size={20} /> {t('admin.nav.marketing_models')}
+                    <button onClick={() => setActiveTab('teaser')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'teaser' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                        <Video size={20} /> {t('admin.nav.teaser')}
                     </button>
                     <div className="pt-4 mt-4 border-t border-white/5 space-y-2">
                         <button onClick={() => setActiveTab('settings')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'settings' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
@@ -1024,19 +1022,6 @@ export default function AdminPage() {
 
                             {settings.teaserEnabled && (
                                 <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
-                                    <div className="space-y-2">
-                                        <label className="block text-[10px] text-neutral-500 font-bold uppercase tracking-widest">{t('admin.settings.teaser_video_url') || "URL de la Vidéo Teaser"}</label>
-                                        <input 
-                                            type="text" 
-                                            placeholder="https://example.com/teaser.mp4"
-                                            value={settings.teaserVideoUrl || ""} 
-                                            onChange={e => setSettings({ ...settings, teaserVideoUrl: e.target.value })}
-                                            className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 transition-colors font-mono text-sm" 
-                                        />
-                                        <p className="text-[10px] text-neutral-500 mt-2 italic">
-                                            {t('admin.settings.teaser_local_hint') || "Tip: Put your files in frontend/public/videos/teaser/ and just use the path like /videos/teaser/teaser.mp4"}
-                                        </p>
-                                    </div>
                                     <div className="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl text-indigo-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-3">
                                         <Sparkles size={14} className="text-indigo-500" />
                                         {t('admin.settings.teaser_active_notice') || "TEASER FEATURE IS LIVE FOR NEW REGISTERED USERS"}
@@ -1114,8 +1099,8 @@ export default function AdminPage() {
                 {activeTab === 'maintenance' && (
                     <div className="space-y-8 max-w-3xl animate-in fade-in duration-500">
                         <div className="flex items-center gap-4 mb-8">
-                            <h2 className="text-3xl font-light">Maintenance Système</h2>
-                            <span className="px-3 py-1 bg-red-500/10 text-red-400 text-[10px] font-black uppercase tracking-widest rounded-full border border-red-500/20">Outils Critiques</span>
+                            <h2 className="text-3xl font-light">{t('admin.maintenance.title') || 'Maintenance Système'}</h2>
+                            <span className="px-3 py-1 bg-red-500/10 text-red-400 text-[10px] font-black uppercase tracking-widest rounded-full border border-red-500/20">{t('admin.maintenance.subtitle') || 'Outils Critiques'}</span>
                         </div>
 
                         <div className="bg-neutral-900 border border-white/5 p-8 rounded-[2.5rem] space-y-6 shadow-2xl relative overflow-hidden group">
@@ -1155,7 +1140,7 @@ export default function AdminPage() {
                                             className="group relative px-6 py-3 bg-indigo-500 hover:bg-indigo-400 text-white disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-xl shadow-indigo-500/20 flex items-center gap-3"
                                         >
                                             <Activity size={16} className="group-hover:animate-spin" />
-                                            {t('admin.maintenance.sync_btn_all') || 'Lancer la Synchronisation Totale'}
+                                            {t('admin.maintenance.sync_btn_all')}
                                         </button>
                                     </div>
                                 </div>
@@ -1199,7 +1184,7 @@ export default function AdminPage() {
                                             className="group relative px-6 py-3 bg-amber-500 hover:bg-amber-400 text-white disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-xl shadow-amber-500/20 flex items-center gap-3"
                                         >
                                             <Activity size={16} className="group-hover:animate-spin" />
-                                            {t('admin.maintenance.reconstruct_btn') || "Lancer la Reconstruction de l'Historique"}
+                                            {t('admin.maintenance.reconstruct_btn')}
                                         </button>
                                     </div>
                                 </div>
@@ -1925,178 +1910,176 @@ export default function AdminPage() {
                         )}
                     </div>
                 )}
-                {activeTab === 'marketing_users' && (
+                {activeTab === 'marketing' && (
                     <div className="space-y-8 animate-in fade-in duration-500 pb-20">
-                        <div className="flex flex-col gap-2">
-                            <h2 className="text-3xl font-light">{t('admin.marketing.title')}</h2>
-                            <div className="flex items-center justify-between">
-                                <p className="text-neutral-500 text-sm tracking-wide">{t('admin.marketing.intro')}</p>
-                                <div className="bg-white/5 border border-white/10 px-4 py-1.5 rounded-full flex items-center gap-2">
-                                    <Globe size={14} className="text-indigo-400" />
-                                    <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest">{t('admin.marketing.params_reminder')}</span>
-                                </div>
+                        <div className="flex flex-col gap-6">
+                            <div className="flex flex-col gap-2">
+                                <h2 className="text-3xl font-light">{t('admin.nav.marketing')}</h2>
+                                <p className="text-neutral-500 text-sm tracking-wide">{marketingTab === 'user' ? t('admin.marketing.intro') : t('admin.marketing.models.intro')}</p>
+                            </div>
+
+                            {/* Internal Sub-Tabs */}
+                            <div className="flex bg-white/5 p-1 rounded-2xl w-fit border border-white/10 shadow-xl">
+                                <button 
+                                    onClick={() => setMarketingTab('user')}
+                                    className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 flex items-center gap-2 ${marketingTab === 'user' ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'text-neutral-500 hover:text-white hover:bg-white/5'}`}
+                                >
+                                    <Globe size={16} /> {t('admin.marketing.type_user')}
+                                </button>
+                                <button 
+                                    onClick={() => setMarketingTab('model')}
+                                    className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 flex items-center gap-2 ${marketingTab === 'model' ? 'bg-pink-500 text-white shadow-lg shadow-pink-500/20' : 'text-neutral-500 hover:text-white hover:bg-white/5'}`}
+                                >
+                                    <Zap size={16} /> {t('admin.marketing.type_model')}
+                                </button>
                             </div>
                         </div>
 
-                        <div className="bg-neutral-900 border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-xl">
-                            <table className="w-full text-left">
-                                <thead className="bg-white/[0.02] border-b border-white/5">
-                                    <tr>
-                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.source')}</th>
-                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.visits')}</th>
-                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.signups')}</th>
-                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.clients')}</th>
-                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.revenue')}</th>
-                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.cr_signup')}</th>
-                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.cr_client')}</th>
-                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em] text-right">{t('admin.marketing.table.arpu')}</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-white/5">
-                                    {marketingUsersStats.length === 0 && (
-                                        <tr><td colSpan={8} className="p-12 text-center text-neutral-500 font-medium tracking-wide uppercase text-xs italic">{t('admin.marketing.no_data')}</td></tr>
-                                    )}
-                                    {[...marketingUsersStats].sort((a,b) => b.revenue - a.revenue || b.visits - a.visits).map((row, i) => {
-                                        const crSignup = row.visits > 0 ? (row.signups / row.visits) * 100 : 0;
-                                        const crClient = row.signups > 0 ? (row.clients / row.signups) * 100 : 0;
-                                        const arpu = row.clients > 0 ? row.revenue / row.clients : 0;
+                        {marketingTab === 'user' ? (
+                            <div className="bg-neutral-900 border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-xl">
+                                <table className="w-full text-left">
+                                    <thead className="bg-white/[0.02] border-b border-white/5">
+                                        <tr>
+                                            <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.source')}</th>
+                                            <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.visits')}</th>
+                                            <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.signups')}</th>
+                                            <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.clients')}</th>
+                                            <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.revenue')}</th>
+                                            <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.cr_signup')}</th>
+                                            <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.cr_client')}</th>
+                                            <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em] text-right">{t('admin.marketing.table.arpu')}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-white/5">
+                                        {marketingUsersStats.length === 0 && (
+                                            <tr><td colSpan={8} className="p-12 text-center text-neutral-500 font-medium tracking-wide uppercase text-xs italic">{t('admin.marketing.no_data')}</td></tr>
+                                        )}
+                                        {[...marketingUsersStats].sort((a,b) => b.revenue - a.revenue || b.visits - a.visits).map((row, i) => {
+                                            const crSignup = row.visits > 0 ? (row.signups / row.visits) * 100 : 0;
+                                            const crClient = row.signups > 0 ? (row.clients / row.signups) * 100 : 0;
+                                            const arpu = row.clients > 0 ? row.revenue / row.clients : 0;
 
-                                        return (
-                                            <tr key={i} className="hover:bg-white/[0.02] transition-colors group">
-                                                <td className="p-6">
-                                                    <div className="flex items-center gap-3">
-                                                        {row.id === 'direct' ? (
-                                                            <div className="p-2 bg-neutral-800 rounded-lg text-neutral-400 border border-white/10 group-hover:bg-neutral-700 transition-colors">
-                                                                <Globe size={16} />
+                                            return (
+                                                <tr key={i} className="hover:bg-white/[0.02] transition-colors group">
+                                                    <td className="p-6">
+                                                        <div className="flex items-center gap-3">
+                                                            {row.id === 'direct' ? (
+                                                                <div className="p-2 bg-neutral-800 rounded-lg text-neutral-400 border border-white/10 group-hover:bg-neutral-700 transition-colors">
+                                                                    <Globe size={16} />
+                                                                </div>
+                                                            ) : (
+                                                                <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400 border border-indigo-500/20 group-hover:bg-indigo-500/20 transition-colors">
+                                                                    <Zap size={16} />
+                                                                </div>
+                                                            )}
+                                                            <div>
+                                                                <div className="font-bold text-white tracking-tight">
+                                                                    {row.id === 'direct' ? t('admin.marketing.direct') : row.id.replace(/\|/g, ' ')}
+                                                                </div>
+                                                                <div className="text-[9px] text-neutral-500 font-mono mt-0.5 opacity-50 uppercase tracking-widest">{row.id === 'direct' ? t('admin.marketing.organic_traffic') : t('admin.marketing.tracked_campaign')}</div>
                                                             </div>
-                                                        ) : (
-                                                            <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400 border border-indigo-500/20 group-hover:bg-indigo-500/20 transition-colors">
-                                                                <Zap size={16} />
-                                                            </div>
-                                                        )}
-                                                        <div>
-                                                            <div className="font-bold text-white tracking-tight">
-                                                                {row.id === 'direct' ? t('admin.marketing.direct') : row.id.replace(/\|/g, ' ')}
-                                                            </div>
-                                                            <div className="text-[9px] text-neutral-500 font-mono mt-0.5 opacity-50 uppercase tracking-widest">{row.id === 'direct' ? t('admin.marketing.organic_traffic') : t('admin.marketing.tracked_campaign')}</div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                                <td className="p-6 font-mono text-neutral-300 text-sm font-bold">{row.visits.toLocaleString()}</td>
-                                                <td className="p-6 font-mono text-neutral-300 text-sm font-bold">{row.signups.toLocaleString()}</td>
-                                                <td className="p-6 font-mono text-neutral-400 text-sm font-bold">{row.clients.toLocaleString()}</td>
-                                                <td className="p-6">
-                                                    <div className="flex flex-col">
-                                                        <span className="font-mono text-green-400 text-lg font-black">${row.revenue.toFixed(2)}</span>
-                                                        <div className="w-full bg-white/5 h-1 rounded-full mt-2 overflow-hidden">
-                                                            <div className="bg-green-500 h-full" style={{ width: `${Math.min(100, (row.revenue / 1000) * 100)}%` }} />
+                                                    </td>
+                                                    <td className="p-6 font-mono text-neutral-300 text-sm font-bold">{row.visits.toLocaleString()}</td>
+                                                    <td className="p-6 font-mono text-neutral-300 text-sm font-bold">{row.signups.toLocaleString()}</td>
+                                                    <td className="p-6 font-mono text-neutral-400 text-sm font-bold">{row.clients.toLocaleString()}</td>
+                                                    <td className="p-6">
+                                                        <div className="flex flex-col">
+                                                            <span className="font-mono text-green-400 text-lg font-black">${row.revenue.toFixed(2)}</span>
+                                                            <div className="w-full bg-white/5 h-1 rounded-full mt-2 overflow-hidden">
+                                                                <div className="bg-green-500 h-full" style={{ width: `${Math.min(100, (row.revenue / 1000) * 100)}%` }} />
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                                <td className="p-6">
-                                                    <span className={`text-[10px] font-black px-2 py-1 rounded-lg border uppercase tracking-tighter ${crSignup > 15 ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-white/5 text-neutral-500 border-white/10'}`}>
-                                                        {crSignup.toFixed(1)}%
-                                                    </span>
-                                                </td>
-                                                <td className="p-6">
-                                                    <span className={`text-[10px] font-black px-2 py-1 rounded-lg border uppercase tracking-tighter ${crClient > 5 ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' : 'bg-white/5 text-neutral-500 border-white/10'}`}>
-                                                        {crClient.toFixed(1)}%
-                                                    </span>
-                                                </td>
-                                                <td className="p-6 text-right">
-                                                    <span className="font-mono text-white text-sm font-black tracking-tighter">${arpu.toFixed(1)}</span>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                )}
-
-                {activeTab === 'marketing_models' && (
-                    <div className="space-y-8 animate-in fade-in duration-500 pb-20">
-                        <div className="flex flex-col gap-2">
-                            <h2 className="text-3xl font-light">{t('admin.marketing.models.title')}</h2>
-                            <div className="flex items-center justify-between">
-                                <p className="text-neutral-500 text-sm tracking-wide">{t('admin.marketing.models.intro')}</p>
-                                <div className="bg-white/5 border border-white/10 px-4 py-1.5 rounded-full flex items-center gap-2">
-                                    <Zap size={14} className="text-pink-400" />
-                                    <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest">{t('admin.marketing.params_reminder')}</span>
-                                </div>
+                                                    </td>
+                                                    <td className="p-6">
+                                                        <span className={`text-[10px] font-black px-2 py-1 rounded-lg border uppercase tracking-tighter ${crSignup > 15 ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-white/5 text-neutral-500 border-white/10'}`}>
+                                                            {crSignup.toFixed(1)}%
+                                                        </span>
+                                                    </td>
+                                                    <td className="p-6">
+                                                        <span className={`text-[10px] font-black px-2 py-1 rounded-lg border uppercase tracking-tighter ${crClient > 5 ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' : 'bg-white/5 text-neutral-500 border-white/10'}`}>
+                                                            {crClient.toFixed(1)}%
+                                                        </span>
+                                                    </td>
+                                                    <td className="p-6 text-right font-mono text-white text-sm font-bold">${arpu.toFixed(2)}</td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
                             </div>
-                        </div>
+                        ) : (
+                            <div className="bg-neutral-900 border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-xl">
+                                <table className="w-full text-left">
+                                    <thead className="bg-white/[0.02] border-b border-white/5">
+                                        <tr>
+                                            <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.source')}</th>
+                                            <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.visits')}</th>
+                                            <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.signups')}</th>
+                                            <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.validated')}</th>
+                                            <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em] text-right">{t('admin.marketing.table.cr_signup')}</th>
+                                            <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em] text-right">{t('admin.marketing.table.cr_client')}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-white/5">
+                                        {marketingModelsStats.length === 0 && (
+                                            <tr><td colSpan={6} className="p-12 text-center text-neutral-500 font-medium tracking-wide uppercase text-xs italic">{t('admin.marketing.models.no_data')}</td></tr>
+                                        )}
+                                        {[...marketingModelsStats].sort((a,b) => b.validated - a.validated || b.visits - a.visits).map((row, i) => {
+                                            const crSignup = row.visits > 0 ? (row.signups / row.visits) * 100 : 0;
+                                            const crValidation = row.signups > 0 ? (row.validated / row.signups) * 100 : 0;
 
-                        <div className="bg-neutral-900 border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-xl">
-                            <table className="w-full text-left">
-                                <thead className="bg-white/[0.02] border-b border-white/5">
-                                    <tr>
-                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.source')}</th>
-                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.visits')}</th>
-                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.signups')}</th>
-                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.validated')}</th>
-                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em] text-right">{t('admin.marketing.table.cr_signup')}</th>
-                                        <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em] text-right">{t('admin.marketing.table.cr_client')}</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-white/5">
-                                    {marketingModelsStats.length === 0 && (
-                                        <tr><td colSpan={6} className="p-12 text-center text-neutral-500 font-medium tracking-wide uppercase text-xs italic">{t('admin.marketing.models.no_data')}</td></tr>
-                                    )}
-                                    {[...marketingModelsStats].sort((a,b) => b.validated - a.validated || b.visits - a.visits).map((row, i) => {
-                                        const crSignup = row.visits > 0 ? (row.signups / row.visits) * 100 : 0;
-                                        const crValidation = row.signups > 0 ? (row.validated / row.signups) * 100 : 0;
-
-                                        return (
-                                            <tr key={i} className="hover:bg-white/[0.02] transition-colors group">
-                                                <td className="p-6">
-                                                    <div className="flex items-center gap-3">
-                                                        {row.id === 'direct' ? (
-                                                            <div className="p-2 bg-neutral-800 rounded-lg text-neutral-400 border border-white/10 group-hover:bg-neutral-700 transition-colors">
-                                                                <Globe size={16} />
+                                            return (
+                                                <tr key={i} className="hover:bg-white/[0.02] transition-colors group">
+                                                    <td className="p-6">
+                                                        <div className="flex items-center gap-3">
+                                                            {row.id === 'direct' ? (
+                                                                <div className="p-2 bg-neutral-800 rounded-lg text-neutral-400 border border-white/10 group-hover:bg-neutral-700 transition-colors">
+                                                                    <Globe size={16} />
+                                                                </div>
+                                                            ) : (
+                                                                <div className="p-2 bg-pink-500/10 rounded-lg text-pink-400 border border-pink-500/20 group-hover:bg-pink-500/20 transition-colors">
+                                                                    <Zap size={16} />
+                                                                </div>
+                                                            )}
+                                                            <div>
+                                                                <div className="font-bold text-white tracking-tight">
+                                                                    {row.id === 'direct' ? t('admin.marketing.direct') : row.id.replace(/\|/g, ' ')}
+                                                                </div>
+                                                                <div className="text-[9px] text-neutral-500 font-mono mt-0.5 opacity-50 uppercase tracking-widest">{row.id === 'direct' ? t('admin.marketing.models.organic_attraction') : t('admin.marketing.models.tracked_recruitment')}</div>
                                                             </div>
-                                                        ) : (
-                                                            <div className="p-2 bg-pink-500/10 rounded-lg text-pink-400 border border-pink-500/20 group-hover:bg-pink-500/20 transition-colors">
-                                                                <Zap size={16} />
-                                                            </div>
-                                                        )}
-                                                        <div>
-                                                            <div className="font-bold text-white tracking-tight">
-                                                                {row.id === 'direct' ? t('admin.marketing.direct') : row.id.replace(/\|/g, ' ')}
-                                                            </div>
-                                                            <div className="text-[9px] text-neutral-500 font-mono mt-0.5 opacity-50 uppercase tracking-widest">{row.id === 'direct' ? t('admin.marketing.models.organic_attraction') : t('admin.marketing.models.tracked_recruitment')}</div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                                <td className="p-6 font-mono text-neutral-300 text-sm font-bold">{row.visits.toLocaleString()}</td>
-                                                <td className="p-6 font-mono text-neutral-300 text-sm font-bold">{row.signups.toLocaleString()}</td>
-                                                <td className="p-6">
-                                                    <div className="flex flex-col">
-                                                        <span className="font-mono text-pink-400 text-lg font-black">{row.validated.toLocaleString()}</span>
-                                                        <div className="w-full bg-white/5 h-1 rounded-full mt-2 overflow-hidden">
-                                                            <div className="bg-pink-500 h-full" style={{ width: `${Math.min(100, (row.validated / 10) * 100)}%` }} />
+                                                    </td>
+                                                    <td className="p-6 font-mono text-neutral-300 text-sm font-bold">{row.visits.toLocaleString()}</td>
+                                                    <td className="p-6 font-mono text-neutral-300 text-sm font-bold">{row.signups.toLocaleString()}</td>
+                                                    <td className="p-6">
+                                                        <div className="flex flex-col">
+                                                            <span className="font-mono text-pink-400 text-lg font-black">{row.validated.toLocaleString()}</span>
+                                                            <div className="w-full bg-white/5 h-1 rounded-full mt-2 overflow-hidden">
+                                                                <div className="bg-pink-500 h-full" style={{ width: `${Math.min(100, (row.validated / 10) * 100)}%` }} />
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                                <td className="p-6 text-right">
-                                                    <span className={`text-[10px] font-black px-2 py-1 rounded-lg border uppercase tracking-tighter ${crSignup > 5 ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-white/5 text-neutral-500 border-white/10'}`}>
-                                                        {crSignup.toFixed(1)}%
-                                                    </span>
-                                                </td>
-                                                <td className="p-6 text-right">
-                                                    <span className={`text-[10px] font-black px-2 py-1 rounded-lg border uppercase tracking-tighter ${crValidation > 20 ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' : 'bg-white/5 text-neutral-500 border-white/10'}`}>
-                                                        {crValidation.toFixed(1)}%
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
+                                                    </td>
+                                                    <td className="p-6 text-right">
+                                                        <span className={`text-[10px] font-black px-2 py-1 rounded-lg border uppercase tracking-tighter ${crSignup > 5 ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-white/5 text-neutral-500 border-white/10'}`}>
+                                                            {crSignup.toFixed(1)}%
+                                                        </span>
+                                                    </td>
+                                                    <td className="p-6 text-right">
+                                                        <span className={`text-[10px] font-black px-2 py-1 rounded-lg border uppercase tracking-tighter ${crValidation > 20 ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' : 'bg-white/5 text-neutral-500 border-white/10'}`}>
+                                                            {crValidation.toFixed(1)}%
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
                     </div>
                 )}
+
                 {activeTab === 'finances' && financesStats && (
                     <div className="space-y-8 animate-in fade-in duration-500 pb-20">
                         <div className="flex flex-col gap-2">

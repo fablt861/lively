@@ -27,8 +27,7 @@ const DEFAULT_SETTINGS = {
     blockModelGain: 25,
     blockSpecialPackPrice: 59,
     restrictedCountries: [],
-    teaserEnabled: false,
-    teaserVideoUrl: ""
+    teaserEnabled: false
 };
 
 

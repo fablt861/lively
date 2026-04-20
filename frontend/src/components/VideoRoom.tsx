@@ -262,7 +262,7 @@ export function VideoRoom({
 
     // Handle Random Teaser Selection & Logging
     useEffect(() => {
-        if (isTeaserActive && teaserStep === 'playing' && !(settings as any)?.teaserVideoUrl) {
+        if (isTeaserActive && teaserStep === 'playing') {
             const fetchAndLogTeaser = async () => {
                 try {
                     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live";
@@ -303,7 +303,7 @@ export function VideoRoom({
         } else if (!isTeaserActive) {
             setRandomTeaserUrl(null);
         }
-    }, [isTeaserActive, teaserStep, (settings as any)?.teaserVideoUrl]);
+    }, [isTeaserActive, teaserStep]);
 
     console.log(`[VideoRoom Render] isConnected: ${isConnected}, isSocket: ${isSocketConnected}, isMatching: ${isMatching}, remoteVideoTrack (bool): ${!!remoteVideoTrack}`);
 
