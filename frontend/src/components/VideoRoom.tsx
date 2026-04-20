@@ -708,6 +708,7 @@ export function VideoRoom({
     }, [role, isConnected, userCredits, accountStatus]);
 
     // --- FAKE VIDEO TEASER (Synchronized with 0 credits) ---
+    // 1. Detection Effect
     useEffect(() => {
         if (role !== "user" || !isConnected || userCredits === null || isTeaserActive) return;
         if (accountStatus !== 'registered' || teaserShownState) return;
@@ -715,64 +716,76 @@ export function VideoRoom({
 
         // Trigger at 1.67 credits left (approx 10s)
         if (userCredits > 0 && userCredits <= 1.67) {
-            const initialCredits = userCredits;
-            const totalDurationMs = Math.round(initialCredits * 6000); // 10 credits/min = 6s/credit = 6000ms/credit
-            
-            console.log(`[Teaser] Synchronizing ${Math.round(totalDurationMs/1000)}s sequence with ${initialCredits.toFixed(2)} credits`);
+            console.log("[Teaser] Low credits threshold detected. Activating teaser state.");
             setIsTeaserActive(true);
-            setTeaserStep('searching');
-
-            // Disconnect immediately to be clean
-            if (socket) {
-                console.log("[Teaser] Disconnecting real room");
-                socket.emit('stop');
-            }
-
-            // 1. Local Credits Countdown
-            const interval = setInterval(() => {
-                setUserCredits(prev => {
-                    const next = (prev || 0) - (1/6);
-                    return next > 0 ? next : 0;
-                });
-                setDisplayedCredits(prev => {
-                    const next = (prev || 0) - (1/6);
-                    return next > 0 ? next : 0;
-                });
-            }, 1000);
-
-            // 2. Sequence: Search 2s, then Play until 0
-            const searchTimeout = setTimeout(() => {
-                setTeaserStep('playing');
-            }, 2000);
-
-            // 3. Final Termination (Credits hit 0)
-            const endTimeout = setTimeout(() => {
-                clearInterval(interval);
-                setIsTeaserActive(false);
-                setTeaserStep(null);
-                setUserCredits(0);
-                setDisplayedCredits(0);
-                localStorage.setItem('kinky_credits', '0');
-                setShowPaywall(true);
-                
-                // Mark as shown in DB
-                const userId = localStorage.getItem('kinky_user_id');
-                if (userId) {
-                    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/teaser-shown`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ userId })
-                    }).then(() => setTeaserShownState(true)).catch(console.error);
-                }
-            }, totalDurationMs);
-
-            return () => {
-                clearInterval(interval);
-                clearTimeout(searchTimeout);
-                clearTimeout(endTimeout);
-            };
         }
-    }, [userCredits, isConnected, role, accountStatus, teaserShownState, settings, isTeaserActive, socket]);
+    }, [userCredits, isConnected, role, accountStatus, teaserShownState, settings, isTeaserActive]);
+
+    // 2. Sequence Execution Effect
+    useEffect(() => {
+        if (!isTeaserActive) return;
+
+        // Capture initial credits at the start of the teaser
+        const initialCredits = userCredits || 0;
+        const totalDurationMs = Math.round(initialCredits * 6000); // 10 credits/min = 6s/credit = 6000ms/credit
+        
+        console.log(`[Teaser] Starting ${Math.round(totalDurationMs/1000)}s sequence (2s search + remainder playing)`);
+        setTeaserStep('searching');
+
+        // Disconnect immediately to be clean
+        if (socket) {
+            console.log("[Teaser] Disconnecting real room");
+            socket.emit('stop');
+        }
+
+        // A. Local Credits Countdown
+        const interval = setInterval(() => {
+            setUserCredits(prev => {
+                const next = (prev || 0) - (1/6);
+                return next > 0 ? next : 0;
+            });
+            setDisplayedCredits(prev => {
+                const next = (prev || 0) - (1/6);
+                return next > 0 ? next : 0;
+            });
+        }, 1000);
+
+        // B. Sequence: Search 2s, then Play until 0
+        const searchTimeout = setTimeout(() => {
+            console.log("[Teaser] Moving to playing step");
+            setTeaserStep('playing');
+        }, 2000);
+
+        // C. Final Termination (Credits hit 0)
+        const endTimeout = setTimeout(() => {
+            console.log("[Teaser] Ending sequence, showing paywall");
+            clearInterval(interval);
+            setIsTeaserActive(false);
+            setTeaserStep(null);
+            setUserCredits(0);
+            setDisplayedCredits(0);
+            localStorage.setItem('kinky_credits', '0');
+            setShowPaywall(true);
+            
+            // Mark as shown in DB
+            const userId = localStorage.getItem('kinky_user_id');
+            if (userId) {
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/teaser-shown`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ userId })
+                }).then(() => setTeaserShownState(true)).catch(console.error);
+            }
+        }, totalDurationMs);
+
+        return () => {
+            clearInterval(interval);
+            clearTimeout(searchTimeout);
+            clearTimeout(endTimeout);
+        };
+        // We EXPLICITLY do not include userCredits here to avoid re-triggering the sequence at every decrement
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isTeaserActive, socket]);
 
     // Force stop teaser video when inactive to avoid residual sound
     useEffect(() => {
