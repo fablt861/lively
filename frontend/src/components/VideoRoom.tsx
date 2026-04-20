@@ -410,6 +410,10 @@ export function VideoRoom({
                     if (onCallEnd) onCallEnd();
                     if (accountStatus === 'guest') setShowAuthModal(true);
                     else setShowPaywall(true);
+                } else {
+                    // Safety: Ensure modals are closed if user topped up or registered
+                    setShowAuthModal(false);
+                    setShowPaywall(false);
                 }
             }
         };
@@ -914,6 +918,7 @@ export function VideoRoom({
                             setAccountStatus('registered');
                             setUserCredits(credits);
                             setShowAuthModal(false);
+                            setShowPaywall(false);
                             
                             if (!isConnected || isMatching) {
                                 console.log("[Auth] Not in active call, triggering nextPartner");
@@ -1013,9 +1018,16 @@ export function VideoRoom({
                 )}
 
 
-                {/* Remote Video (Full Screen) */}
+                    {/* Remote Video (Full Screen) */}
                 <div className="absolute inset-0 z-0 h-[100dvh]">
-                    {remoteVideoTrack && (
+                    {isTeaserActive && teaserStep === 'playing' ? (
+                        <video 
+                            src={(settings as any)?.teaserVideoUrl || "https://www.w3schools.com/html/mov_bbb.mp4"} 
+                            autoPlay 
+                            playsInline
+                            className="w-full h-full object-cover animate-in fade-in duration-1000"
+                        />
+                    ) : remoteVideoTrack && (
                         <VideoTrack
                             trackRef={remoteVideoTrack}
                             className={`w-full h-full object-cover transition-all duration-700 ease-in-out ${(isMatching || isConnecting || showPaywall) ? "blur-2xl opacity-40 scale-105" : "blur-0 opacity-100 scale-100"}`}
@@ -1023,7 +1035,7 @@ export function VideoRoom({
                     )}
                     {/* Hidden mirror video for screenshots */}
                     <video ref={remoteVideoRef} className="hidden" autoPlay playsInline muted />
-                    {(isConnected === false || isMatching === true || isConnecting === true) && !showPaywall && (
+                    {(isConnected === false || isMatching === true || isConnecting === true || (isTeaserActive && teaserStep === 'searching')) && !showPaywall && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black transition-all duration-1000 overflow-hidden z-[60] gpu-accelerated">
                             {/* Glowing Orbs for Sexy Vibe */}
                             <div className="absolute w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none animate-pulse" />
@@ -1665,44 +1677,6 @@ export function VideoRoom({
             {/* LiveKit Audio Handling (Silent) */}
             {isConnected && !isConnecting && !isMatching && room && <RoomAudioRenderer />}
 
-                {/* --- FAKE TEASER OVERLAY --- */}
-                {isTeaserActive && (
-                    <div className="fixed inset-0 z-[90] bg-black flex flex-col items-center justify-center overflow-hidden">
-                        {teaserStep === 'searching' && (
-                            <div className="flex flex-col items-center gap-8 animate-in fade-in zoom-in duration-500">
-                                <div className="relative">
-                                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-indigo-500/20 animate-ping absolute inset-0" />
-                                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-indigo-400/40 animate-pulse absolute inset-0 delay-75" />
-                                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-indigo-500 flex items-center justify-center relative shadow-[0_0_50px_rgba(99,102,241,0.4)]">
-                                        <Sparkles className="text-white animate-spin-slow" size={48} />
-                                    </div>
-                                </div>
-                                <div className="text-center space-y-2">
-                                    <h3 className="text-2xl sm:text-3xl font-black text-white italic tracking-tighter uppercase animate-pulse">
-                                        {t('matching.searching') || "Searching Next Partner..."}
-                                    </h3>
-                                    <p className="text-neutral-500 text-xs font-bold tracking-[0.3em] uppercase opacity-50">
-                                        {t('matching.optimized') || "Optimizing connections"}
-                                    </p>
-                                </div>
-                            </div>
-                        )}
-                        {teaserStep === 'playing' && (
-                            <div className="relative w-full h-full animate-in fade-in duration-1000">
-                                <video 
-                                    src={(settings as any)?.teaserVideoUrl || "https://kinky-vids.s3.eu-west-3.amazonaws.com/teaser_v2.mp4"} 
-                                    autoPlay 
-                                    playsInline
-                                    className="w-full h-full object-cover"
-                                />
-                                <div className="absolute top-6 left-6 flex items-center gap-3 px-4 py-2 bg-red-600 rounded-full animate-pulse shadow-lg shadow-red-600/20">
-                                    <div className="w-2 h-2 bg-white rounded-full" />
-                                    <span className="text-[10px] font-black uppercase text-white tracking-widest leading-none">LIVE</span>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                )}
             </div>
         </LiveKitRoom>
     );
