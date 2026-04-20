@@ -303,7 +303,7 @@ export function VideoRoom({
         } else if (!isTeaserActive) {
             setRandomTeaserUrl(null);
         }
-    }, [isTeaserActive, teaserStep, (settings as any)?.teaserVideoUrl, user?.id]);
+    }, [isTeaserActive, teaserStep, (settings as any)?.teaserVideoUrl]);
 
     console.log(`[VideoRoom Render] isConnected: ${isConnected}, isSocket: ${isSocketConnected}, isMatching: ${isMatching}, remoteVideoTrack (bool): ${!!remoteVideoTrack}`);
 
