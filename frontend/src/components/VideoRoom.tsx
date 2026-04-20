@@ -219,6 +219,7 @@ export function VideoRoom({
     const [isTeaserActive, setIsTeaserActive] = useState(false);
     const [teaserStep, setTeaserStep] = useState<'searching' | 'playing' | null>(null);
     const [teaserShownState, setTeaserShownState] = useState(false);
+    const [randomTeaserUrl, setRandomTeaserUrl] = useState<string | null>(null);
 
     // --- UNIFIED AUTO-START LOGIC ---
     // This effect ensures we only trigger handleStartMatch when both camera and socket are truly ready.
@@ -258,6 +259,29 @@ export function VideoRoom({
     useEffect(() => { isBlockedRef.current = isBlocked; }, [isBlocked]);
     useEffect(() => { isTeaserActiveRef.current = isTeaserActive; }, [isTeaserActive]);
     useEffect(() => { privateSummaryRef.current = privateSummary; }, [privateSummary]);
+
+    // Handle Random Teaser Selection
+    useEffect(() => {
+        if (isTeaserActive && teaserStep === 'playing' && !(settings as any)?.teaserVideoUrl) {
+            const fetchTeasers = async () => {
+                try {
+                    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live";
+                    const res = await fetch(`${backendUrl}/api/admin/teaser/list`);
+                    const list = await res.json();
+                    if (Array.isArray(list) && list.length > 0) {
+                        const randomVideo = list[Math.floor(Math.random() * list.length)];
+                        console.log("[Teaser] Randomly selected video:", randomVideo);
+                        setRandomTeaserUrl(randomVideo);
+                    }
+                } catch (err) {
+                    console.error("[Teaser] Failed to fetch local video list:", err);
+                }
+            };
+            fetchTeasers();
+        } else if (!isTeaserActive) {
+            setRandomTeaserUrl(null);
+        }
+    }, [isTeaserActive, teaserStep, (settings as any)?.teaserVideoUrl]);
 
     console.log(`[VideoRoom Render] isConnected: ${isConnected}, isSocket: ${isSocketConnected}, isMatching: ${isMatching}, remoteVideoTrack (bool): ${!!remoteVideoTrack}`);
 
@@ -1130,7 +1154,7 @@ export function VideoRoom({
                         <video 
                             key="teaser-video-player"
                             ref={teaserVideoRef}
-                            src={(settings as any)?.teaserVideoUrl || "/videos/teaser/teaser.mp4"} 
+                            src={(settings as any)?.teaserVideoUrl || randomTeaserUrl || "/videos/teaser/teaser.mp4"} 
                             autoPlay 
                             playsInline
                             className="w-full h-full object-cover animate-in fade-in duration-1000"

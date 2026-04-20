@@ -60,6 +60,22 @@ router.post('/login', async (req, res) => {
     }
 });
 
+// Admin Teaser List (Local files)
+router.get('/teaser/list', async (req, res) => {
+    try {
+        const teaserDir = path.join(__dirname, '../frontend/public/videos/teaser');
+        if (!fs.existsSync(teaserDir)) {
+            return res.json([]);
+        }
+        const files = fs.readdirSync(teaserDir);
+        const videos = files.filter(f => f.endsWith('.mp4')).map(f => `/videos/teaser/${f}`);
+        res.json(videos);
+    } catch (err) {
+        console.error('[Teaser List Error]', err);
+        res.json([]);
+    }
+});
+
 // Admin Stats
 router.get('/stats', requireAuth, async (req, res) => {
     try {
