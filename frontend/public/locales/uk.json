@@ -685,6 +685,7 @@
   "room.exit_confirm_title": "Залишити дзвінок?",
   "room.gift_cta": "Надіслати подарунок (10$)",
   "room.gift_sent": "Вітаємо! Ви надіслали подарунок.",
+  "room.low_balance_warning": "НИЗЬКИЙ БАЛАНС",
   "room.next": "ДАЛІ",
   "room.next_confirm_model_desc": "Попередження: якщо ви підете зараз, ви нічого не заробите за цю приватну сесію.",
   "room.next_confirm_title": "Завершити приватну сесію?",

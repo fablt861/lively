@@ -8,11 +8,12 @@ import Link from "next/link";
 interface UnifiedAuthModalProps {
     onSuccess: (id: string, email: string, role: string, pseudo: string, credits: number) => void;
     onClose?: () => void;
+    initialMode?: "login" | "signup";
 }
 
-export function UnifiedAuthModal({ onSuccess, onClose }: UnifiedAuthModalProps) {
+export function UnifiedAuthModal({ onSuccess, onClose, initialMode = "login" }: UnifiedAuthModalProps) {
     const { t, language } = useTranslation();
-    const [mode, setMode] = useState<"login" | "signup">("login");
+    const [mode, setMode] = useState<"login" | "signup">(initialMode);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");

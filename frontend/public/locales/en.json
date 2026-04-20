@@ -714,6 +714,7 @@
   "room.exit_confirm_title": "Leave the call?",
   "room.gift_cta": "Send a gift (10$)",
   "room.gift_sent": "Congratulations! You have sent a gift.",
+  "room.low_balance_warning": "LOW BALANCE",
   "room.next": "NEXT",
   "room.next_confirm_model_desc": "Warning: If you leave now, you will earn nothing for this call.",
   "room.next_confirm_title": "Quit call?",

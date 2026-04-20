@@ -150,7 +150,29 @@ export function VideoRoom({
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const [accountStatus, setAccountStatus] = useState<'guest' | 'registered' | 'premium'>('guest');
+    const [accountStatus, setAccountStatus] = useState<'guest' | 'registered' | 'premium'>(() => {
+        if (typeof window !== 'undefined') {
+            return (localStorage.getItem('kinky_account_status') as any) || 'guest';
+        }
+        return 'guest';
+    });
+    const [userCredits, setUserCredits] = useState<number | null>(() => {
+        if (typeof window !== 'undefined') {
+            const stored = localStorage.getItem('kinky_credits');
+            if (stored) return Number(stored);
+            return (localStorage.getItem('kinky_account_status') || 'guest') === 'guest' ? 5 : null;
+        }
+        return null;
+    });
+    const [displayedCredits, setDisplayedCredits] = useState<number | null>(() => {
+        if (typeof window !== 'undefined') {
+            const stored = localStorage.getItem('kinky_credits');
+            if (stored) return Number(stored);
+            return (localStorage.getItem('kinky_account_status') || 'guest') === 'guest' ? 5 : null;
+        }
+        return null;
+    });
+    const [authModalMode, setAuthModalMode] = useState<'login' | 'signup'>('login');
 
     // Force high quality subscription as soon as remote track is available
     // AND wait for stabilization before hiding the matching overlay
@@ -169,7 +191,6 @@ export function VideoRoom({
             return () => clearTimeout(timer);
         }
     }, [remoteVideoTrack, finishMatching]);
-    const [userCredits, setUserCredits] = useState<number | null>(null);
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [hasStartedMatch, setHasStartedMatch] = useState(false);
@@ -213,7 +234,6 @@ export function VideoRoom({
 
 
     const [blockTimeLeft, setBlockTimeLeft] = useState("");
-    const [displayedCredits, setDisplayedCredits] = useState<number | null>(null);
     const [showNextConfirm, setShowNextConfirm] = useState(false);
     const [privateSummary, setPrivateSummary] = useState<Record<string, unknown> | null>(null);
     const [isRequeuingBlocked, setIsRequeuingBlocked] = useState(false);
@@ -378,8 +398,12 @@ export function VideoRoom({
                 // Do NOT call onCallEnd here immediately. 
                 // Let the server's billing loop handle the hard-disconnect after grace period.
                 // This gives the user time to top-up via the modal.
-                if (accountStatus === 'guest') setShowAuthModal(true);
-                else setShowPaywall(true);
+                if (accountStatus === 'guest') {
+                    setAuthModalMode('signup');
+                    setShowAuthModal(true);
+                } else {
+                    setShowPaywall(true);
+                }
             }
         };
 
@@ -408,8 +432,12 @@ export function VideoRoom({
                     setIsBlocked(false);
                     setBlockEndTime(null);
                     if (onCallEnd) onCallEnd();
-                    if (accountStatus === 'guest') setShowAuthModal(true);
-                    else setShowPaywall(true);
+                    if (accountStatus === 'guest') {
+                        setAuthModalMode('signup');
+                        setShowAuthModal(true);
+                    } else {
+                        setShowPaywall(true);
+                    }
                 } else {
                     // Safety: Ensure modals are closed if user topped up or registered
                     setShowAuthModal(false);
@@ -902,6 +930,7 @@ export function VideoRoom({
 
                 {showAuthModal && (
                     <UnifiedAuthModal 
+                        initialMode={authModalMode}
                         onClose={() => {
                             setShowAuthModal(false);
                             if (role === 'user' && (userCredits === null || userCredits <= 0)) {
@@ -915,8 +944,21 @@ export function VideoRoom({
                             localStorage.setItem('kinky_user_pseudo', name);
                             localStorage.setItem('kinky_user_role', userRole);
                             localStorage.setItem('kinky_credits', String(credits));
+                            
+                            // SYNC SOCKET IDENTITY
+                            if (socket) {
+                                console.log("[Socket] Syncing identity after auth:", id);
+                                socket.emit('identify', { 
+                                    id, 
+                                    role: userRole, 
+                                    email, 
+                                    language: navigator.language || 'en' 
+                                });
+                            }
+
                             setAccountStatus('registered');
                             setUserCredits(credits);
+                            setDisplayedCredits(credits);
                             setShowAuthModal(false);
                             setShowPaywall(false);
                             
@@ -980,8 +1022,8 @@ export function VideoRoom({
                     <div className={`absolute top-16 left-6 md:top-6 md:right-6 md:left-auto z-30 flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3 bg-black/40 backdrop-blur-xl rounded-full border border-white/10 shadow-lg transition-all duration-700 overflow-hidden ${userCredits <= 2 ? 'max-w-[calc(100vw-3rem)] md:max-w-2xl border-red-500/50 shadow-red-500/20' : 'max-w-fit'}`}>
                         <div className="flex items-center gap-2">
                             <span className="text-white/80 text-[10px] md:text-xs font-bold tracking-wider uppercase whitespace-nowrap hidden sm:block">{t('room.balance')}</span>
-                            <span className={`font-mono text-xs md:text-lg font-bold whitespace-nowrap flex items-center gap-1.5 ${userCredits <= 2 ? 'text-red-400 animate-pulse' : 'text-white'}`}>
-                                    {displayedCredits !== null ? Math.floor(displayedCredits) : (userCredits !== null ? Math.floor(userCredits) : 0)} <Coins size={12} className="md:w-[18px] text-yellow-400 fill-yellow-500/30" />
+                             <span className={`font-mono text-xs md:text-lg font-bold whitespace-nowrap flex items-center gap-1.5 ${userCredits <= 2 ? 'text-red-400 animate-pulse' : 'text-white'}`}>
+                                    {displayedCredits !== null ? Math.floor(displayedCredits) : (userCredits !== null ? Math.floor(userCredits) : (accountStatus === 'guest' ? 5 : 0))} <Coins size={12} className="md:w-[18px] text-yellow-400 fill-yellow-500/30" />
                             </span>
                             
                             {/* Constant Purchase Button */}

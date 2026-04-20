@@ -685,6 +685,7 @@
   "room.exit_confirm_title": "Poistu puhelusta?",
   "room.gift_cta": "Lähetä lahja (10$)",
   "room.gift_sent": "Onneksi olkoon! Olet lähettänyt lahjan.",
+  "room.low_balance_warning": "ALHAINEN SALDO",
   "room.next": "SEURAAVA",
   "room.next_confirm_model_desc": "Varoitus: Jos lähdet nyt, et ansaitse mitään tästä yksityisestä istunnosta.",
   "room.next_confirm_title": "Lopetetaanko yksityinen istunto?",

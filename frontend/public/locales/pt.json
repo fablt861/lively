@@ -685,6 +685,7 @@
   "room.exit_confirm_title": "Sair da chamada?",
   "room.gift_cta": "Enviar um presente (10$)",
   "room.gift_sent": "Parabéns! Enviou um presente.",
+  "room.low_balance_warning": "SALDO BAIXO",
   "room.next": "PRÓXIMO",
   "room.next_confirm_model_desc": "Aviso: Se você sair agora, não ganhará nada por esta sessão privada.",
   "room.next_confirm_title": "Encerrar sessão privada?",

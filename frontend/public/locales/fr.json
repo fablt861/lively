@@ -710,6 +710,7 @@
   "room.exit_confirm_title": "Quitter l'appel ?",
   "room.gift_cta": "Envoyer un cadeau (10$)",
   "room.gift_sent": "Félicitations ! Vous avez envoyé un cadeau.",
+  "room.low_balance_warning": "SOLDE FAIBLE",
   "room.next": "SUIVANT",
   "room.next_confirm_model_desc": "Attention, si vous quittez maintenant, vous ne gagnerez rien sur cet appel.",
   "room.next_confirm_title": "Quitter l'appel ?",

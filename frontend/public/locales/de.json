@@ -684,6 +684,7 @@
   "room.exit_confirm_title": "Anruf verlassen?",
   "room.gift_cta": "Geschenk senden (10$)",
   "room.gift_sent": "Glückwunsch! Du hast ein Geschenk gesendet.",
+  "room.low_balance_warning": "GERINGER SALDO",
   "room.next": "NÄCHSTER",
   "room.next_confirm_model_desc": "Warnung: Wenn Sie jetzt gehen, verdienen Sie nichts mit diesem Anruf.",
   "room.next_confirm_title": "Anruf beenden?",

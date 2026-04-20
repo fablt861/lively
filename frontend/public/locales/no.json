@@ -685,6 +685,7 @@
   "room.exit_confirm_title": "Forlat samtalen?",
   "room.gift_cta": "Send en gave (10$)",
   "room.gift_sent": "Gratulerer! Du har sendt en gave.",
+  "room.low_balance_warning": "LAV SALDO",
   "room.next": "NESTE",
   "room.next_confirm_model_desc": "Advarsel: Hvis du drar nå, vil du ikke tjene noe på denne private økten.",
   "room.next_confirm_title": "Avslutte privat økt?",

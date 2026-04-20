@@ -685,6 +685,7 @@
   "room.exit_confirm_title": "¿Salir de la llamada?",
   "room.gift_cta": "Enviar un regalo (10$)",
   "room.gift_sent": "¡Felicidades! Has enviado un regalo.",
+  "room.low_balance_warning": "SALDO BAJO",
   "room.next": "SIGUIENTE",
   "room.next_confirm_model_desc": "Advertencia: si te vas ahora, no ganarás nada en esta llamada.",
   "room.next_confirm_title": "¿Salir de la llamada?",

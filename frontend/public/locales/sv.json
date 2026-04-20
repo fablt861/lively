@@ -685,6 +685,7 @@
   "room.exit_confirm_title": "Lämna samtalet?",
   "room.gift_cta": "Skicka en present (10$)",
   "room.gift_sent": "Grattis! Du har skickat en present.",
+  "room.low_balance_warning": "LÅGT SALDO",
   "room.next": "NÄSTA",
   "room.next_confirm_model_desc": "Varning: Om du lämnar nu kommer du inte att tjäna någonting för denna privata session.",
   "room.next_confirm_title": "Avsluta privat session?",
