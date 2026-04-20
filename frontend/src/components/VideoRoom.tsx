@@ -875,6 +875,15 @@ export function VideoRoom({
         return <LaunchPage />;
     }
 
+    // Force sync mute states with LiveKit room whenever it changes or stats change
+    useEffect(() => {
+        if (room?.localParticipant) {
+            console.log("[LiveKit] Syncing mute states to participant:", { audio: isAudioMuted, video: isVideoMuted });
+            room.localParticipant.setMicrophoneEnabled(!isAudioMuted);
+            room.localParticipant.setCameraEnabled(!isVideoMuted);
+        }
+    }, [room, isAudioMuted, isVideoMuted, hasStartedMatch]);
+
     const handleToggleAudio = () => {
         toggleAudio();
         setIsAudioMuted(!isAudioMuted);
@@ -1076,7 +1085,7 @@ export function VideoRoom({
                 )}
 
                 {/* User Credit Counter */}
-                {role === "user" && isConnected && !showPaywall && !showAuthModal && userCredits !== null && (
+                {role === "user" && (isConnected || isTeaserActive) && !showPaywall && !showAuthModal && userCredits !== null && (
                     <div className={`absolute top-16 left-6 md:top-6 md:right-6 md:left-auto z-30 flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3 bg-black/40 backdrop-blur-xl rounded-full border border-white/10 shadow-lg transition-all duration-700 overflow-hidden ${accountStatus !== 'guest' && userCredits <= 30 ? 'max-w-[calc(100vw-3rem)] md:max-w-2xl border-red-500/50 shadow-red-500/20' : 'max-w-fit'}`}>
                         <div className="flex items-center gap-2">
                             <span className="text-white/80 text-[10px] md:text-xs font-bold tracking-wider uppercase whitespace-nowrap hidden sm:block">{t('room.balance')}</span>

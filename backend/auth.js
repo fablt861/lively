@@ -242,7 +242,13 @@ router.post('/teaser-shown', async (req, res) => {
     if (!userId) return res.status(400).json({ error: 'Missing userId' });
 
     try {
-        await query('UPDATE users SET teaser_shown = TRUE WHERE id = $1', [userId]);
+        // Mark teaser as shown AND set credits to 0
+        await query('UPDATE users SET teaser_shown = TRUE, credits = 0 WHERE id = $1', [userId]);
+        
+        // Also update Redis to ensure consistency with the billing loop
+        const redis = getRedisClient();
+        await redis.set(`user:${userId}:credits`, '0');
+        
         res.json({ success: true });
     } catch (err) {
         console.error('[Teaser Shown Error]', err);
