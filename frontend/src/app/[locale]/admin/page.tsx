@@ -1004,6 +1004,9 @@ export default function AdminPage() {
                                             onChange={e => setSettings({ ...settings, teaserVideoUrl: e.target.value })}
                                             className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 transition-colors font-mono text-sm" 
                                         />
+                                        <p className="text-[10px] text-neutral-500 mt-2 italic">
+                                            {t('admin.settings.teaser_local_hint') || "Tip: Put your files in frontend/public/videos/teaser/ and just use the path like /videos/teaser/teaser.mp4"}
+                                        </p>
                                     </div>
                                     <div className="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl text-indigo-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-3">
                                         <Sparkles size={14} className="text-indigo-500" />

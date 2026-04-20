@@ -1130,7 +1130,7 @@ export function VideoRoom({
                         <video 
                             key="teaser-video-player"
                             ref={teaserVideoRef}
-                            src={(settings as any)?.teaserVideoUrl || "https://www.w3schools.com/html/mov_bbb.mp4"} 
+                            src={(settings as any)?.teaserVideoUrl || "/videos/teaser/teaser.mp4"} 
                             autoPlay 
                             playsInline
                             className="w-full h-full object-cover animate-in fade-in duration-1000"
