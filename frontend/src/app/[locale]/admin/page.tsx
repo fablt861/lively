@@ -1384,7 +1384,14 @@ export default function AdminPage() {
                                                     {teaserStats.control.views > 0 ? ((teaserStats.control.conversions / teaserStats.control.views) * 100).toFixed(1) : 0}%
                                                 </div>
                                             </td>
-                                            <td className="p-6 text-right italic text-[10px] text-neutral-600 uppercase font-black">Permanent</td>
+                                            <td className="p-6 text-right">
+                                                <button 
+                                                    onClick={() => toggleTeaser('none', !teaserStats.control.active)}
+                                                    className={`w-12 h-6 rounded-full p-1 transition-all duration-300 relative ml-auto ${teaserStats.control.active ? 'bg-indigo-500' : 'bg-neutral-800'}`}
+                                                >
+                                                    <div className={`w-4 h-4 bg-white rounded-full shadow-lg transition-all duration-300 transform ${teaserStats.control.active ? 'translate-x-6' : 'translate-x-0'}`} />
+                                                </button>
+                                            </td>
                                         </tr>
                                     )}
                                 </tbody>

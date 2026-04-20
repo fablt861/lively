@@ -88,9 +88,13 @@ router.get('/teaser/stats', requireAuth, async (req, res) => {
         res.json({
             videos: videos.map(v => ({
                 ...v,
-                stats: stats.find(s => s.id === v.id)
+                stats: stats.find(s => s.id === v.id),
+                active: !disabled.includes(v.id)
             })),
-            control: stats.find(s => s.id === 'none')
+            control: {
+                ...stats.find(s => s.id === 'none'),
+                active: !disabled.includes('none')
+            }
         });
     } catch (err) {
         console.error('[Teaser Stats Error]', err);
@@ -138,8 +142,11 @@ router.get('/teaser/list', async (req, res) => {
         const files = fs.readdirSync(teaserDir);
         const videos = files.filter(f => f.endsWith('.mp4') && !disabled.includes(f)).map(f => `/videos/teaser/${f}`);
         
-        // Return videos + "none" to represent the control group
-        res.json([...videos, 'none']);
+        // Return videos + "none" to represent the control group (only if not disabled)
+        if (!disabled.includes('none')) {
+            videos.push('none');
+        }
+        res.json(videos);
     } catch (err) {
         console.error('[Teaser List Error]', err);
         res.json(['none']);
