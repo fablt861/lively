@@ -1172,15 +1172,17 @@ export function VideoRoom({
 
                     {/* Remote Video (Full Screen) */}
                 <div className="absolute inset-0 z-0 h-[100dvh]">
-                    {isTeaserActive && teaserStep === 'playing' ? (
+                    {isTeaserActive && teaserStep === 'playing' && randomTeaserUrl ? (
                         <video 
                             key="teaser-video-player"
                             ref={teaserVideoRef}
-                            src={(settings as any)?.teaserVideoUrl || randomTeaserUrl || "/videos/teaser/teaser.mp4"} 
+                            src={randomTeaserUrl} 
                             autoPlay 
                             playsInline
                             className="w-full h-full object-cover animate-in fade-in duration-1000"
                         />
+                    ) : isTeaserActive && teaserStep === 'playing' && !randomTeaserUrl ? (
+                        <div className="w-full h-full bg-black animate-in fade-in duration-1000" />
                     ) : remoteVideoTrack && (
                         <VideoTrack
                             trackRef={remoteVideoTrack}
