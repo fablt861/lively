@@ -159,7 +159,7 @@ export function PaywallModal({ onClose, onPurchase, packs: propPacks = [] }: Pay
                                         </div>
                                     )}
                                     <div className="flex flex-col items-center gap-1 text-center">
-                                        <span className={`text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] mb-2 ${isSelected ? 'text-indigo-400' : isPopular ? 'text-indigo-400/50' : isElite ? 'text-pink-400/50' : 'text-white/20'}`}>
+                                        <span className={`text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] mb-2 ${isSelected ? '' : 'opacity-50'} ${idx === 0 ? 'text-white/40' : idx === 1 ? 'text-indigo-400' : 'text-pink-400'}`}>
                                             {idx === 0 ? t('paywall.pack_essential') : idx === 1 ? t('paywall.pack_popular') : t('paywall.pack_elite')}
                                         </span>
                                         <div className="flex items-center gap-1.5 md:gap-2 mb-1">
@@ -167,7 +167,7 @@ export function PaywallModal({ onClose, onPurchase, packs: propPacks = [] }: Pay
                                             <Coins size={20} className={`${isSelected ? 'text-yellow-400' : 'text-yellow-400'} md:w-6 md:h-6 transition-colors`} />
                                         </div>
                                         <div className={`text-[10px] md:text-xs font-bold mb-1 transition-colors px-2 py-0.5 rounded-full ${isSelected ? 'bg-indigo-500/20 text-indigo-400' : 'bg-white/5 text-white/40'}`}>
-                                            ~ {Math.round(pack.credits / creditsPerMinute)} min
+                                            {Math.round(pack.credits / creditsPerMinute)} min
                                         </div>
                                         <span className={`font-bold text-xs md:text-sm transition-colors ${isSelected ? 'text-white/80' : 'text-white/60'}`}>${pack.priceUsd.toFixed(2)}</span>
                                     </div>
