@@ -22,6 +22,7 @@ export function PaywallModal({ onClose, onPurchase, packs: propPacks = [] }: Pay
     const { t } = useTranslation();
     const [selectedPack, setSelectedPack] = useState(0);
     const [internalPacks, setInternalPacks] = useState<any[]>([]);
+    const [creditsPerMinute, setCreditsPerMinute] = useState(10);
     const [isInitialSet, setIsInitialSet] = useState(false);
     const [isPurchasing, setIsPurchasing] = useState(false);
 
@@ -35,6 +36,9 @@ export function PaywallModal({ onClose, onPurchase, packs: propPacks = [] }: Pay
                 .then(data => {
                     if (data && data.packs) {
                         setInternalPacks(data.packs);
+                    }
+                    if (data && data.creditsPerMinute) {
+                        setCreditsPerMinute(data.creditsPerMinute);
                     }
                 })
                 .catch(console.error);
@@ -143,7 +147,7 @@ export function PaywallModal({ onClose, onPurchase, packs: propPacks = [] }: Pay
                                     onClick={() => setSelectedPack(pack.credits)}
                                     className={`relative group cursor-pointer rounded-2xl md:rounded-3xl p-5 md:p-7 transition-all duration-500 border overflow-hidden ${isSelected
                                         ? 'bg-indigo-500/10 border-indigo-500 shadow-[0_0_40px_rgba(99,102,241,0.2)] scale-[1.02] md:scale-105 z-10'
-                                        : 'bg-white/[0.02] border-white/5 hover:border-white/10 hover:bg-white/[0.05]'
+                                        : 'bg-white/[0.07] border-white/10 hover:border-white/20 hover:bg-white/[0.1]'
                                         }`}
                                 >
                                     {isPopular && !isSelected && (
@@ -159,10 +163,13 @@ export function PaywallModal({ onClose, onPurchase, packs: propPacks = [] }: Pay
                                             {idx === 0 ? t('paywall.pack_essential') : idx === 1 ? t('paywall.pack_popular') : t('paywall.pack_elite')}
                                         </span>
                                         <div className="flex items-center gap-1.5 md:gap-2 mb-1">
-                                            <span className={`text-2xl md:text-3xl font-black transition-colors ${isSelected ? 'text-white' : 'text-white/60'}`}>{pack.credits}</span>
-                                            <Coins size={20} className={`${isSelected ? 'text-yellow-400' : 'text-yellow-400/40'} md:w-6 md:h-6 transition-colors`} />
+                                            <span className={`text-2xl md:text-3xl font-black transition-colors ${isSelected ? 'text-white' : 'text-white'}`}>{pack.credits}</span>
+                                            <Coins size={20} className={`${isSelected ? 'text-yellow-400' : 'text-yellow-400'} md:w-6 md:h-6 transition-colors`} />
                                         </div>
-                                        <span className={`font-bold text-xs md:text-sm transition-colors ${isSelected ? 'text-white/80' : 'text-white/20'}`}>${pack.priceUsd.toFixed(2)}</span>
+                                        <div className={`text-[10px] md:text-xs font-bold mb-1 transition-colors px-2 py-0.5 rounded-full ${isSelected ? 'bg-indigo-500/20 text-indigo-400' : 'bg-white/5 text-white/40'}`}>
+                                            ~ {Math.round(pack.credits / creditsPerMinute)} min
+                                        </div>
+                                        <span className={`font-bold text-xs md:text-sm transition-colors ${isSelected ? 'text-white/80' : 'text-white/60'}`}>${pack.priceUsd.toFixed(2)}</span>
                                     </div>
                                 </div>
                             );
@@ -192,7 +199,7 @@ export function PaywallModal({ onClose, onPurchase, packs: propPacks = [] }: Pay
                             )}
                         </button>
 
-                        <p className="text-[8px] md:text-[9px] text-center text-white/20 font-bold uppercase tracking-widest mt-4">
+                        <p className="text-[10px] md:text-[11px] text-center text-white/50 font-bold uppercase tracking-widest mt-4">
                             {t('paywall.footer')}
                         </p>
                     </div>
