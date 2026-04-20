@@ -227,6 +227,21 @@ router.post('/add-credits', async (req, res) => {
         const { logPurchase } = require('./stats');
         await logPurchase(priceUsd || parseFloat(amount) / 10);
 
+        // --- NEW: Teaser Conversion Tracking ---
+        try {
+            const hasConverted = await redis.get(`user:${user.id}:has_converted_teaser`);
+            if (!hasConverted) {
+                const lastTeaserId = await redis.get(`user:${user.id}:last_teaser`);
+                if (lastTeaserId) {
+                    console.log(`[Teaser Stats] Conversion detected for user ${user.id} attributed to teaser: ${lastTeaserId}`);
+                    await redis.incr(`teaser:stats:${lastTeaserId}:conversions`);
+                    await redis.set(`user:${user.id}:has_converted_teaser`, '1');
+                }
+            }
+        } catch (teaserErr) {
+            console.error('[Teaser Conversion Logic Error]', teaserErr);
+        }
+
         res.json({
             success: true,
             credits: newCredits

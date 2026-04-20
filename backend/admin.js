@@ -60,19 +60,89 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Admin Teaser List (Local files)
+// Admin Teaser Full Stats & Management
+router.get('/teaser/stats', requireAuth, async (req, res) => {
+    try {
+        const teaserDir = path.join(__dirname, '../frontend/public/videos/teaser');
+        const disabled = await redis.smembers('admin:teaser:disabled');
+        
+        let videos = [];
+        if (fs.existsSync(teaserDir)) {
+            const files = fs.readdirSync(teaserDir);
+            videos = files.filter(f => f.endsWith('.mp4')).map(f => ({
+                id: f,
+                name: f,
+                path: `/videos/teaser/${f}`,
+                active: !disabled.includes(f)
+            }));
+        }
+
+        // Add stats for each video + "none" (control group)
+        const allKeys = [...videos.map(v => v.id), 'none'];
+        const stats = await Promise.all(allKeys.map(async (id) => {
+            const views = await redis.get(`teaser:stats:${id}:views`) || 0;
+            const conversions = await redis.get(`teaser:stats:${id}:conversions`) || 0;
+            return { id, views: parseInt(views), conversions: parseInt(conversions) };
+        }));
+
+        res.json({
+            videos: videos.map(v => ({
+                ...v,
+                stats: stats.find(s => s.id === v.id)
+            })),
+            control: stats.find(s => s.id === 'none')
+        });
+    } catch (err) {
+        console.error('[Teaser Stats Error]', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+router.post('/teaser/toggle', requireAuth, async (req, res) => {
+    try {
+        const { id, active } = req.body;
+        if (active) {
+            await redis.srem('admin:teaser:disabled', id);
+        } else {
+            await redis.sadd('admin:teaser:disabled', id);
+        }
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+router.post('/teaser/log-view', async (req, res) => {
+    try {
+        const { id, userId } = req.body; // id is filename or 'none'
+        if (!id) return res.status(400).send('Missing teaser ID');
+        
+        await redis.incr(`teaser:stats:${id}:views`);
+        if (userId) {
+            await redis.set(`user:${userId}:last_teaser`, id, 'EX', 86400 * 7); // Store for 7 days
+        }
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// Admin Teaser List (For Frontend selection)
 router.get('/teaser/list', async (req, res) => {
     try {
         const teaserDir = path.join(__dirname, '../frontend/public/videos/teaser');
         if (!fs.existsSync(teaserDir)) {
-            return res.json([]);
+            return res.json(['none']);
         }
+        const disabled = await redis.smembers('admin:teaser:disabled');
         const files = fs.readdirSync(teaserDir);
-        const videos = files.filter(f => f.endsWith('.mp4')).map(f => `/videos/teaser/${f}`);
-        res.json(videos);
+        const videos = files.filter(f => f.endsWith('.mp4') && !disabled.includes(f)).map(f => `/videos/teaser/${f}`);
+        
+        // Return videos + "none" to represent the control group
+        res.json([...videos, 'none']);
     } catch (err) {
         console.error('[Teaser List Error]', err);
-        res.json([]);
+        res.json(['none']);
     }
 });
 

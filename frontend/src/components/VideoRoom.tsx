@@ -260,28 +260,50 @@ export function VideoRoom({
     useEffect(() => { isTeaserActiveRef.current = isTeaserActive; }, [isTeaserActive]);
     useEffect(() => { privateSummaryRef.current = privateSummary; }, [privateSummary]);
 
-    // Handle Random Teaser Selection
+    // Handle Random Teaser Selection & Logging
     useEffect(() => {
         if (isTeaserActive && teaserStep === 'playing' && !(settings as any)?.teaserVideoUrl) {
-            const fetchTeasers = async () => {
+            const fetchAndLogTeaser = async () => {
                 try {
                     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live";
                     const res = await fetch(`${backendUrl}/api/admin/teaser/list`);
                     const list = await res.json();
                     if (Array.isArray(list) && list.length > 0) {
-                        const randomVideo = list[Math.floor(Math.random() * list.length)];
-                        console.log("[Teaser] Randomly selected video:", randomVideo);
-                        setRandomTeaserUrl(randomVideo);
+                        const randomChoice = list[Math.floor(Math.random() * list.length)];
+                        console.log("[Teaser] Choice selected:", randomChoice);
+                        
+                        // Extract filename from path if it's a video path
+                        const teaserId = randomChoice === 'none' ? 'none' : randomChoice.split('/').pop();
+                        
+                        // Log VIEW to backend
+                        const currentUserId = localStorage.getItem('kinky_user_id') || (settings as any)?.userId;
+                        fetch(`${backendUrl}/api/admin/teaser/log-view`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ id: teaserId, userId: role === 'user' ? currentUserId : null })
+                        }).catch(e => console.error("Logging teaser view failed", e));
+
+                        if (randomChoice === 'none') {
+                            console.log("[Teaser] No Teaser group selected. Skipping video.");
+                            setRandomTeaserUrl(null);
+                            // Finish teaser immediately to show paywall
+                            setTimeout(() => {
+                                setIsTeaserActive(false);
+                                setShowPaywall(true);
+                            }, 500);
+                        } else {
+                            setRandomTeaserUrl(randomChoice);
+                        }
                     }
                 } catch (err) {
-                    console.error("[Teaser] Failed to fetch local video list:", err);
+                    console.error("[Teaser] Failed to fetch/log teaser:", err);
                 }
             };
-            fetchTeasers();
+            fetchAndLogTeaser();
         } else if (!isTeaserActive) {
             setRandomTeaserUrl(null);
         }
-    }, [isTeaserActive, teaserStep, (settings as any)?.teaserVideoUrl]);
+    }, [isTeaserActive, teaserStep, (settings as any)?.teaserVideoUrl, user?.id]);
 
     console.log(`[VideoRoom Render] isConnected: ${isConnected}, isSocket: ${isSocketConnected}, isMatching: ${isMatching}, remoteVideoTrack (bool): ${!!remoteVideoTrack}`);
 

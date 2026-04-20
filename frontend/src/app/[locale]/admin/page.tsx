@@ -60,6 +60,7 @@ export default function AdminPage() {
     const [financesStats, setFinancesStats] = useState<any>(null);
     const [marketingUsersStats, setMarketingUsersStats] = useState<any[]>([]);
     const [marketingModelsStats, setMarketingModelsStats] = useState<any[]>([]);
+    const [teaserStats, setTeaserStats] = useState<any>(null);
     const [realtimeStats, setRealtimeStats] = useState<any>(null);
     const [userFilter, setUserFilter] = useState<'all' | 'buyers'>('all');
     const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking');
@@ -196,6 +197,29 @@ export default function AdminPage() {
         }
     };
 
+    const fetchTeaserStats = async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/teaser/stats`, { headers: { Authorization: `Bearer ${token}` } });
+            const data = await res.json();
+            setTeaserStats(data);
+        } catch (err) {
+            console.error("Fetch Teaser Stats Error:", err);
+        }
+    };
+
+    const toggleTeaser = async (id: string, active: boolean) => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/teaser/toggle`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ id, active })
+            });
+            if (res.ok) fetchTeaserStats();
+        } catch (err) {
+            console.error("Toggle Teaser Error:", err);
+        }
+    };
+
     const fetchFinancesStats = async () => {
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/finances`, { headers: { Authorization: `Bearer ${token}` } });
@@ -306,6 +330,8 @@ export default function AdminPage() {
             if (activeTab === 'payouts') {
                 fetchPayoutRequests();
                 fetchPayoutHistory();
+            } else if (activeTab === 'teaser') {
+                fetchTeaserStats();
             }
             if (activeTab === 'reports') fetchReports();
             if (activeTab === 'marketing_users') fetchMarketingUsersStats();
@@ -368,6 +394,9 @@ export default function AdminPage() {
                 <nav className="flex-1 p-4 space-y-2">
                     <button onClick={() => setActiveTab('stats')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'stats' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <Activity size={20} /> {t('admin.nav.dashboard')}
+                    </button>
+                    <button onClick={() => setActiveTab('teaser')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'teaser' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                        <Video size={20} /> {t('admin.tabs.teaser') || "Teaser"}
                     </button>
                     <button onClick={() => setActiveTab('users')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'users' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <Users size={20} /> {t('admin.nav.users')}
@@ -1281,6 +1310,101 @@ export default function AdminPage() {
                                 ))}
                             </div>
                         )}
+                    </div>
+                )}
+
+                {activeTab === 'teaser' && (
+                    <div className="space-y-8 animate-in fade-in duration-500 pb-20">
+                        <div className="flex items-center justify-between">
+                            <h2 className="text-3xl font-light">Gestion des Teasers</h2>
+                            <div className="flex items-center gap-4">
+                                <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 text-[10px] font-black uppercase tracking-widest rounded-full border border-indigo-500/20">
+                                    A/B Testing Actif
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="bg-neutral-900 border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
+                            <table className="w-full text-left">
+                                <thead className="bg-white/[0.02] border-b border-white/5">
+                                    <tr>
+                                        <th className="p-6 text-neutral-500 font-bold text-[10px] uppercase tracking-widest">Aperçu</th>
+                                        <th className="p-6 text-neutral-500 font-bold text-[10px] uppercase tracking-widest">Fichier / Nom</th>
+                                        <th className="p-6 text-neutral-500 font-bold text-[10px] uppercase tracking-widest">Vues</th>
+                                        <th className="p-6 text-neutral-500 font-bold text-[10px] uppercase tracking-widest text-center">Ventes</th>
+                                        <th className="p-6 text-neutral-500 font-bold text-[10px] uppercase tracking-widest text-right">Conv. %</th>
+                                        <th className="p-6 text-neutral-500 font-bold text-[10px] uppercase tracking-widest text-right">Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-white/5">
+                                    {teaserStats?.videos?.map((v: any) => (
+                                        <tr key={v.id} className="group hover:bg-white/[0.01] transition-colors">
+                                            <td className="p-6">
+                                                <div className="relative w-20 h-12 rounded-lg bg-black border border-white/10 overflow-hidden group-hover:border-indigo-500/50 transition-colors">
+                                                    <video 
+                                                        src={v.path} 
+                                                        className="w-full h-full object-cover opacity-50 hover:opacity-100 transition-opacity" 
+                                                        onMouseEnter={(e) => e.currentTarget.play()}
+                                                        onMouseLeave={(e) => { e.currentTarget.pause(); e.currentTarget.currentTime = 0; }}
+                                                        muted
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td className="p-6">
+                                                <div className="text-sm font-bold text-white tracking-tight">{v.name}</div>
+                                                <div className="text-[10px] text-neutral-500 font-mono italic">{v.path}</div>
+                                            </td>
+                                            <td className="p-6">
+                                                <div className="text-sm font-mono text-white">{v.stats?.views || 0}</div>
+                                            </td>
+                                            <td className="p-6 text-center">
+                                                <div className="text-sm font-bold text-green-400">{v.stats?.conversions || 0}</div>
+                                            </td>
+                                            <td className="p-6 text-right">
+                                                <div className="text-xs font-black text-indigo-400">
+                                                    {v.stats?.views > 0 ? ((v.stats.conversions / v.stats.views) * 100).toFixed(1) : 0}%
+                                                </div>
+                                            </td>
+                                            <td className="p-6 text-right">
+                                                <button 
+                                                    onClick={() => toggleTeaser(v.id, !v.active)}
+                                                    className={`w-12 h-6 rounded-full p-1 transition-all duration-300 relative ${v.active ? 'bg-green-500' : 'bg-neutral-800'}`}
+                                                >
+                                                    <div className={`w-4 h-4 bg-white rounded-full shadow-lg transition-all duration-300 transform ${v.active ? 'translate-x-6' : 'translate-x-0'}`} />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    
+                                    {/* No Teaser Row (Control Group) */}
+                                    {teaserStats?.control && (
+                                        <tr className="bg-indigo-500/5 border-t-2 border-indigo-500/20">
+                                            <td className="p-6">
+                                                <div className="w-20 h-12 rounded-lg bg-neutral-800 border border-white/5 flex items-center justify-center text-neutral-600">
+                                                    <XCircle size={16} />
+                                                </div>
+                                            </td>
+                                            <td className="p-6">
+                                                <div className="text-sm font-black text-indigo-300 tracking-widest uppercase">GROUPE DE CONTRÔLE</div>
+                                                <div className="text-[10px] text-indigo-400/50 italic">(Aucun Teaser affiché)</div>
+                                            </td>
+                                            <td className="p-6">
+                                                <div className="text-sm font-mono text-white">{teaserStats.control.views}</div>
+                                            </td>
+                                            <td className="p-6 text-center">
+                                                <div className="text-sm font-bold text-green-400">{teaserStats.control.conversions}</div>
+                                            </td>
+                                            <td className="p-6 text-right">
+                                                <div className="text-xs font-black text-indigo-400">
+                                                    {teaserStats.control.views > 0 ? ((teaserStats.control.conversions / teaserStats.control.views) * 100).toFixed(1) : 0}%
+                                                </div>
+                                            </td>
+                                            <td className="p-6 text-right italic text-[10px] text-neutral-600 uppercase font-black">Permanent</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 )}
 
