@@ -220,6 +220,7 @@ export function VideoRoom({
     const [teaserStep, setTeaserStep] = useState<'searching' | 'playing' | null>(null);
     const [teaserShownState, setTeaserShownState] = useState(false);
     const [randomTeaserUrl, setRandomTeaserUrl] = useState<string | null>(null);
+    const [pendingTeaserChoice, setPendingTeaserChoice] = useState<string | null>(null);
 
     // --- UNIFIED AUTO-START LOGIC ---
     // This effect ensures we only trigger handleStartMatch when both camera and socket are truly ready.
@@ -260,50 +261,32 @@ export function VideoRoom({
     useEffect(() => { isTeaserActiveRef.current = isTeaserActive; }, [isTeaserActive]);
     useEffect(() => { privateSummaryRef.current = privateSummary; }, [privateSummary]);
 
-    // Handle Random Teaser Selection & Logging
+    // Pre-decide Teaser Choice at the start of each call
     useEffect(() => {
-        if (isTeaserActive && teaserStep === 'playing') {
-            const fetchAndLogTeaser = async () => {
+        if (room && role === 'user' && (settings as any)?.teaserEnabled) {
+            // Reset for new call
+            setPendingTeaserChoice(null);
+            
+            const fetchChoice = async () => {
                 try {
                     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live";
                     const res = await fetch(`${backendUrl}/api/admin/teaser/list`);
                     const list = await res.json();
                     if (Array.isArray(list) && list.length > 0) {
-                        const randomChoice = list[Math.floor(Math.random() * list.length)];
-                        console.log("[Teaser] Choice selected:", randomChoice);
-                        
-                        // Extract filename from path if it's a video path
-                        const teaserId = randomChoice === 'none' ? 'none' : randomChoice.split('/').pop();
-                        
-                        // Log VIEW to backend
-                        const currentUserId = localStorage.getItem('kinky_user_id') || (settings as any)?.userId;
-                        fetch(`${backendUrl}/api/admin/teaser/log-view`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ id: teaserId, userId: role === 'user' ? currentUserId : null })
-                        }).catch(e => console.error("Logging teaser view failed", e));
-
-                        if (randomChoice === 'none') {
-                            console.log("[Teaser] No Teaser group selected. Skipping video.");
-                            setRandomTeaserUrl(null);
-                            // Finish teaser immediately to show paywall
-                            setTimeout(() => {
-                                setIsTeaserActive(false);
-                                setShowPaywall(true);
-                            }, 500);
-                        } else {
-                            setRandomTeaserUrl(randomChoice);
-                        }
+                        const choice = list[Math.floor(Math.random() * list.length)];
+                        setPendingTeaserChoice(choice);
+                        console.log("[Teaser] Pre-decided choice for this call:", choice);
                     }
-                } catch (err) {
-                    console.error("[Teaser] Failed to fetch/log teaser:", err);
+                } catch (e) {
+                    console.error("[Teaser] Pre-fetch failed", e);
                 }
             };
-            fetchAndLogTeaser();
-        } else if (!isTeaserActive) {
+            fetchChoice();
+        } else if (!room) {
+            setPendingTeaserChoice(null);
             setRandomTeaserUrl(null);
         }
-    }, [isTeaserActive, teaserStep]);
+    }, [room, role, settings]);
 
     console.log(`[VideoRoom Render] isConnected: ${isConnected}, isSocket: ${isSocketConnected}, isMatching: ${isMatching}, remoteVideoTrack (bool): ${!!remoteVideoTrack}`);
 
@@ -764,14 +747,42 @@ export function VideoRoom({
     useEffect(() => {
         if (role !== "user" || !isConnected || userCredits === null || isTeaserActive) return;
         if (accountStatus !== 'registered' || teaserShownState) return;
-        if (!(settings as any)?.teaserEnabled) return;
+        if (!(settings as any)?.teaserEnabled || !pendingTeaserChoice) return;
 
         // Trigger at 1.67 credits left (approx 10s)
         if (userCredits > 0 && userCredits <= 1.67) {
-            console.log("[Teaser] Low credits threshold detected. Activating teaser state.");
-            setIsTeaserActive(true);
+            const choice = pendingTeaserChoice;
+            console.log("[Teaser] Threshold hit. Using pre-decided choice:", choice);
+            
+            // Log view immediately
+            const teaserId = choice === 'none' ? 'none' : choice.split('/').pop();
+            const currentUserId = localStorage.getItem('kinky_user_id');
+            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live";
+            
+            fetch(`${backendUrl}/api/admin/teaser/log-view`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id: teaserId, userId: role === 'user' ? currentUserId : null })
+            }).catch(e => console.error("Logging teaser view failed", e));
+
+            if (choice === 'none') {
+                 console.log("[Teaser] No Teaser group selected. Skipping sequence and Staying in call.");
+                 // Mark as shown in DB to avoid re-triggering
+                 if (currentUserId) {
+                     fetch(`${backendUrl}/api/auth/teaser-shown`, {
+                         method: "POST",
+                         headers: { "Content-Type": "application/json" },
+                         body: JSON.stringify({ userId: currentUserId })
+                     }).then(() => setTeaserShownState(true)).catch(console.error);
+                 } else {
+                     setTeaserShownState(true);
+                 }
+            } else {
+                 setRandomTeaserUrl(choice);
+                 setIsTeaserActive(true);
+            }
         }
-    }, [userCredits, isConnected, role, accountStatus, teaserShownState, settings, isTeaserActive]);
+    }, [userCredits, isConnected, role, accountStatus, teaserShownState, settings, isTeaserActive, pendingTeaserChoice]);
 
     // 2. Sequence Execution Effect
     useEffect(() => {
@@ -852,6 +863,7 @@ export function VideoRoom({
     // Track Call Duration for Favorites Rule
     useEffect(() => {
         setCurrCallDuration(0);
+        setTeaserShownState(false);
     }, [partnerInfo?.id]);
 
     useEffect(() => {
