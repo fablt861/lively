@@ -1077,7 +1077,7 @@ export function VideoRoom({
                     )}
                     {/* Hidden mirror video for screenshots */}
                     <video ref={remoteVideoRef} className="hidden" autoPlay playsInline muted />
-                    {(isConnected === false || isMatching === true || isConnecting === true || (isTeaserActive && teaserStep === 'searching')) && !showPaywall && (
+                    {(isConnected === false || isMatching === true || isConnecting === true || (isTeaserActive && teaserStep === 'searching')) && !showPaywall && !(isTeaserActive && teaserStep === 'playing') && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black transition-all duration-1000 overflow-hidden z-[60] gpu-accelerated">
                             {/* Glowing Orbs for Sexy Vibe */}
                             <div className="absolute w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none animate-pulse" />
