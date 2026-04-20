@@ -57,10 +57,10 @@ export default function LivePage({ params }: { params: { locale: string } }) {
     if (videoSession.cameraPermissionError) return <CameraPermissionGuard onRetry={videoSession.retryCamera} />;
     
     // We pass previewStream for localStream to allow the PreMatchModal to show the camera check
-    if (activeLaunch) return <VideoRoom {...videoSession} localStream={videoSession.previewStream} remoteStream={null} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={videoSession.endCall} onNext={videoSession.nextPartner} onPurchase={handlePurchase} isLaunchOverride={true} packs={settings?.packs} isDirectCall={isDirectCall} />;
+    if (activeLaunch) return <VideoRoom {...videoSession} isAudioMuted={videoSession.isAudioMuted} setIsAudioMuted={videoSession.setIsAudioMuted} isVideoMuted={videoSession.isVideoMuted} setIsVideoMuted={videoSession.setIsVideoMuted} localStream={videoSession.previewStream} remoteStream={null} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={videoSession.endCall} onNext={videoSession.nextPartner} onPurchase={handlePurchase} isLaunchOverride={true} packs={settings?.packs} isDirectCall={isDirectCall} />;
     if (isChecking || !role) return <div className="min-h-screen bg-[#050505]"></div>;
 
-    return <VideoRoom {...videoSession} localStream={videoSession.previewStream} remoteStream={null} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={videoSession.endCall} onNext={videoSession.nextPartner} onPurchase={handlePurchase} packs={settings?.packs} isDirectCall={isDirectCall} />;
+    return <VideoRoom {...videoSession} isAudioMuted={videoSession.isAudioMuted} setIsAudioMuted={videoSession.setIsAudioMuted} isVideoMuted={videoSession.isVideoMuted} setIsVideoMuted={videoSession.setIsVideoMuted} localStream={videoSession.previewStream} remoteStream={null} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={videoSession.endCall} onNext={videoSession.nextPartner} onPurchase={handlePurchase} packs={settings?.packs} isDirectCall={isDirectCall} />;
 }
 
 

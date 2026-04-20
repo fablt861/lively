@@ -32,17 +32,30 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
   const [connectionQuality, setConnectionQuality] = useState<'excellent' | 'good' | 'fair' | 'poor' | 'reconnecting'>('excellent');
   const [previewStream, setPreviewStream] = useState<MediaStream | null>(null);
   
+  const [isAudioMuted, setIsAudioMuted] = useState(false);
+  const [isVideoMuted, setIsVideoMuted] = useState(false);
+  
   const currentRoomIdRef = useRef<string | null>(null);
 
   // 1. Preview Stream (for PreMatchModal)
   useEffect(() => {
     if (!isEnabled) return;
     
+    // Sync preview stream with state
+    if (previewStream) {
+        previewStream.getAudioTracks().forEach(t => t.enabled = !isAudioMuted);
+        previewStream.getVideoTracks().forEach(t => t.enabled = !isVideoMuted);
+    }
+
     navigator.mediaDevices.getUserMedia({ 
       video: { width: { ideal: 1280 }, height: { ideal: 720 } },
       audio: true 
     })
-    .then(setPreviewStream)
+    .then(stream => {
+        stream.getAudioTracks().forEach(t => t.enabled = !isAudioMuted);
+        stream.getVideoTracks().forEach(t => t.enabled = !isVideoMuted);
+        setPreviewStream(stream);
+    })
     .catch(err => {
       console.error("[Preview] Camera error:", err);
       setCameraPermissionError(true);
@@ -51,7 +64,7 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     return () => {
       previewStream?.getTracks().forEach(t => t.stop());
     };
-  }, [isEnabled]);
+  }, [isEnabled, isAudioMuted, isVideoMuted]);
 
   // 2. Socket.io Initialization (Queue & Events)
   useEffect(() => {
@@ -147,9 +160,8 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     socket.on("matched", async (data: any) => {
       const { roomId, initiator, partnerId, partnerRole, partnerName } = data;
       currentRoomIdRef.current = roomId;
-      // Keep isMatching true until room is connected to mask negotiation
       setIsConnecting(true);
-      // If it's a direct call, hide the searching overlay immediately to show the "Connecting" state
+      
       if (roomId.startsWith('direct-call-')) {
           console.log("[LiveKit] Direct call matched, hiding searching overlay immediately");
           setIsMatching(false);
@@ -163,42 +175,42 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
         });
       }
 
-      // Fetch Token and Connect to LiveKit
       try {
         const identity = socket.id || "unknown";
         const resp = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/video/token?room=${roomId}&identity=${identity}`);
         const { token } = await resp.json();
 
         const url = process.env.NEXT_PUBLIC_LIVEKIT_URL || "wss://live.kinky.live";
-        console.log(`[LiveKit] Connecting to ${url} for room ${roomId} (Identity: ${identity})`);
+        console.log(`[LiveKit] Connecting to ${url} for room ${roomId}`);
         await room.connect(url, token);
         
-        // Publish local tracks (uses the HD 720p defaults set in constructor)
+        // Publish local tracks
         await room.localParticipant.enableCameraAndMicrophone();
-        console.log("[LiveKit] Tracks published");
+        
+        // --- CRITICAL SYNC ---
+        // Immediately apply user's mute preferences after publication
+        console.log("[LiveKit] Match established, enforcing mute states:", { audio: isAudioMuted, video: isVideoMuted });
+        await room.localParticipant.setMicrophoneEnabled(!isAudioMuted);
+        await room.localParticipant.setCameraEnabled(!isVideoMuted);
+        
+        console.log("[LiveKit] Tracks published and synced");
       } catch (err) {
         console.error("[LiveKit] Connection error:", err);
       }
     });
 
     socket.on("partner_left", (data?: { reason?: string }) => {
-      console.log("[LiveKit] Partner left, switching back to searching...");
+      console.log("[LiveKit] Partner left");
       room.disconnect();
       setIsCallConnected(false);
-      setIsMatching(true); // Return to searching state visually
+      setIsMatching(true);
       setIsConnecting(false);
-
-      // --- CRITICIAL FIX: DE-DUPLICATION ---
-      // We removed joinQueue() from here because the backend already sends a 'force_requeue' 
-      // event to the partner after a successful stopBilling. 
-      // Joining here as well caused a race condition and redundant queue entries.
     });
 
     socket.on("force_requeue", () => {
         console.log("[LiveKit] Server forced a re-queue");
         room.disconnect();
         setIsCallConnected(false);
-        setIsConnecting(false);
         setIsMatching(true);
         joinQueue();
     });
@@ -207,7 +219,6 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
         console.log("[LiveKit] Server cleaned room state");
         room.disconnect();
         setIsCallConnected(false);
-        setIsConnecting(false);
         setIsMatching(true);
     });
 
@@ -224,13 +235,13 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
         socket.off("queue_update");
         socket.off("matched");
         socket.off("partner_left");
+        socket.off("force_requeue");
+        socket.off("clean_room");
         socket.off("chat_message");
     };
-  }, [socket, room, partnerInfo]);
+  }, [socket, room, partnerInfo, isAudioMuted, isVideoMuted]);
 
   // 4. WATCHDOG: Connection Timeout
-  // If we are stuck in 'Connecting' (triggered by 'matched' or 'direct_join')
-  // for more than 15 seconds without success, we return to 'Searching'.
   useEffect(() => {
     if (!isConnecting) return;
 
@@ -239,7 +250,6 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
         console.warn("[Watchdog] Connection timeout. Returning to searching state.");
         setIsConnecting(false);
         setIsMatching(true);
-        // Important: Stop the room connection attempt if it's still hanging
         room?.disconnect();
       }
     }, 15000);
@@ -248,21 +258,15 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
   }, [isConnecting, isCallConnected, room]);
 
   const joinDirectRoom = (roomId: string) => {
-    if (!socket || !role) {
-        console.warn("[Socket Emit] Aborting joinDirectRoom: Socket or Role missing");
-        return;
-    }
-    const id = localStorage.getItem("kinky_user_id") || null;
-    console.log(`[Socket Emit] join_direct_room: ${roomId} as ${role} (ID: ${id})`);
-    socket.emit("join_direct_room", { roomId, role, id, language: navigator.language || "en" });
-    setIsMatching(false); // Direct joins skip matching state
+    if (!socket || !role) return;
+    socket.emit("join_direct_room", { roomId, role, id: localStorage.getItem("kinky_user_id"), language: navigator.language || "en" });
+    setIsMatching(false);
     setIsConnecting(true);
   };
 
   const joinQueue = () => {
     if (!socket || !role) return;
-    const id = localStorage.getItem("kinky_user_id") || null;
-    socket.emit("join_queue", { role, id, language: navigator.language || "en" });
+    socket.emit("join_queue", { role, id: localStorage.getItem("kinky_user_id"), language: navigator.language || "en" });
     setIsMatching(true);
   };
 
@@ -293,21 +297,29 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
   };
 
   const toggleAudio = () => {
+    const newState = !isAudioMuted;
+    setIsAudioMuted(newState);
     if (room?.localParticipant) {
-      const enabled = room.localParticipant.isMicrophoneEnabled;
-      room.localParticipant.setMicrophoneEnabled(!enabled);
+      room.localParticipant.setMicrophoneEnabled(!newState);
+    }
+    if (previewStream) {
+      previewStream.getAudioTracks().forEach(t => t.enabled = !newState);
     }
   };
 
   const toggleVideo = () => {
+    const newState = !isVideoMuted;
+    setIsVideoMuted(newState);
     if (room?.localParticipant) {
-      const enabled = room.localParticipant.isCameraEnabled;
-      room.localParticipant.setCameraEnabled(!enabled);
+      room.localParticipant.setCameraEnabled(!newState);
+    }
+    if (previewStream) {
+        previewStream.getVideoTracks().forEach(t => t.enabled = !newState);
     }
   };
 
   return {
-    room, // Exposing the room for LiveKit components
+    room,
     isMatching,
     isConnected: isCallConnected,
     isConnecting,
@@ -316,6 +328,10 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     nextPartner,
     toggleAudio,
     toggleVideo,
+    isAudioMuted,
+    isVideoMuted,
+    setIsAudioMuted,
+    setIsVideoMuted,
     messages,
     sendMessage,
     queuePosition,
@@ -330,7 +346,7 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     previewStream,
     isSocketConnected,
     finishMatching: () => setIsConnecting(false),
-    handleOutOfCredits: () => {}, // Compatibility stub
-    retryCamera: () => {}, // Handled by LiveKit internally or via re-connect
+    handleOutOfCredits: () => {},
+    retryCamera: () => {},
   };
 }

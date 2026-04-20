@@ -93,6 +93,10 @@ interface VideoRoomProps {
     isConnecting?: boolean;
     isSocketConnected?: boolean;
     previewStream?: MediaStream | null;
+    isAudioMuted?: boolean;
+    isVideoMuted?: boolean;
+    setIsAudioMuted?: (muted: boolean) => void;
+    setIsVideoMuted?: (muted: boolean) => void;
 }
 
 export function VideoRoom({
@@ -125,7 +129,11 @@ export function VideoRoom({
     joinDirectRoom,
     isSocketConnected = false,
     isConnecting = false,
-    previewStream = null
+    previewStream = null,
+    isAudioMuted = false,
+    isVideoMuted = false,
+    setIsAudioMuted,
+    setIsVideoMuted,
 }: VideoRoomProps) {
     const { t, language } = useTranslation();
     const router = useRouter();
@@ -144,8 +152,6 @@ export function VideoRoom({
     const remoteVideoTrack = room ? tracks.find(t => t.participant instanceof RemoteParticipant && t.source === Track.Source.Camera) : null;
     const localVideoTrack = room ? tracks.find(t => t.participant instanceof LocalParticipant && t.source === Track.Source.Camera) : null;
 
-    const [isAudioMuted, setIsAudioMuted] = useState(false);
-    const [isVideoMuted, setIsVideoMuted] = useState(false);
     const [chatInput, setChatInput] = useState("");
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -875,50 +881,14 @@ export function VideoRoom({
         return <LaunchPage />;
     }
 
-    // Force sync mute states with LiveKit room whenever it changes or stats change
-    useEffect(() => {
-        const syncMutes = async () => {
-            if (room?.localParticipant) {
-                console.log("[LiveKit] Force applying mute states:", { audio: isAudioMuted, video: isVideoMuted });
-                try {
-                    await room.localParticipant.setMicrophoneEnabled(!isAudioMuted);
-                    await room.localParticipant.setCameraEnabled(!isVideoMuted);
-                } catch (e) {
-                    console.warn("[LiveKit] Mute sync error:", e);
-                }
-            }
-        };
 
-        // 1. Immediate sync attempt
-        syncMutes();
-        
-        // 2. Continuous sync for preview MediaStream tracks
-        if (localStream) {
-            localStream.getAudioTracks().forEach(t => t.enabled = !isAudioMuted);
-            localStream.getVideoTracks().forEach(t => t.enabled = !isVideoMuted);
-        }
-
-        // 3. Robust Listener: Re-apply whenever a track is published (Critical for re-matching)
-        if (room) {
-            room.on(RoomEvent.LocalTrackPublished, syncMutes);
-            // Also listen for RoomEvent.Connected because sometimes tracks are published during connection
-            room.on(RoomEvent.Connected, syncMutes);
-            
-            return () => {
-                room.off(RoomEvent.LocalTrackPublished, syncMutes);
-                room.off(RoomEvent.Connected, syncMutes);
-            };
-        }
-    }, [room, isAudioMuted, isVideoMuted, hasStartedMatch, localStream]);
 
     const handleToggleAudio = () => {
-        toggleAudio(); // Immediate imperative control
-        setIsAudioMuted(!isAudioMuted);
+        toggleAudio(); // Calls the hook's central control
     };
 
     const handleToggleVideo = () => {
-        toggleVideo(); // Immediate imperative control
-        setIsVideoMuted(!isVideoMuted);
+        toggleVideo(); // Calls the hook's central control
     };
 
     const handleSend = (e: React.FormEvent) => {
