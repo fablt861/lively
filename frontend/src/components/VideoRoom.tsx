@@ -882,15 +882,19 @@ export function VideoRoom({
             room.localParticipant.setMicrophoneEnabled(!isAudioMuted);
             room.localParticipant.setCameraEnabled(!isVideoMuted);
         }
-    }, [room, isAudioMuted, isVideoMuted, hasStartedMatch]);
+        
+        // Also sync the local MediaStream tracks (used for preview/local display)
+        if (localStream) {
+            localStream.getAudioTracks().forEach(t => t.enabled = !isAudioMuted);
+            localStream.getVideoTracks().forEach(t => t.enabled = !isVideoMuted);
+        }
+    }, [room, isAudioMuted, isVideoMuted, hasStartedMatch, localStream]);
 
     const handleToggleAudio = () => {
-        toggleAudio();
         setIsAudioMuted(!isAudioMuted);
     };
 
     const handleToggleVideo = () => {
-        toggleVideo();
         setIsVideoMuted(!isVideoMuted);
     };
 
