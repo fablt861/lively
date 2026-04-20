@@ -35,7 +35,17 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
   const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(false);
   
+  // Refs for stable use inside socket listeners without triggering re-binds
+  const isAudioMutedRef = useRef(isAudioMuted);
+  const isVideoMutedRef = useRef(isVideoMuted);
+  
   const currentRoomIdRef = useRef<string | null>(null);
+
+  // Sync refs with state
+  useEffect(() => {
+    isAudioMutedRef.current = isAudioMuted;
+    isVideoMutedRef.current = isVideoMuted;
+  }, [isAudioMuted, isVideoMuted]);
 
   // 1. Preview Stream (for PreMatchModal)
   useEffect(() => {
@@ -47,22 +57,26 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
         previewStream.getVideoTracks().forEach(t => t.enabled = !isVideoMuted);
     }
 
-    navigator.mediaDevices.getUserMedia({ 
-      video: { width: { ideal: 1280 }, height: { ideal: 720 } },
-      audio: true 
-    })
-    .then(stream => {
-        stream.getAudioTracks().forEach(t => t.enabled = !isAudioMuted);
-        stream.getVideoTracks().forEach(t => t.enabled = !isVideoMuted);
-        setPreviewStream(stream);
-    })
-    .catch(err => {
-      console.error("[Preview] Camera error:", err);
-      setCameraPermissionError(true);
-    });
+    // Only fetch if not already present or if camera was blocked
+    if (!previewStream || cameraPermissionError) {
+        navigator.mediaDevices.getUserMedia({ 
+          video: { width: { ideal: 1280 }, height: { ideal: 720 } },
+          audio: true 
+        })
+        .then(stream => {
+            stream.getAudioTracks().forEach(t => t.enabled = !isAudioMuted);
+            stream.getVideoTracks().forEach(t => t.enabled = !isVideoMuted);
+            setPreviewStream(stream);
+            setCameraPermissionError(false);
+        })
+        .catch(err => {
+          console.error("[Preview] Camera error:", err);
+          setCameraPermissionError(true);
+        });
+    }
 
     return () => {
-      previewStream?.getTracks().forEach(t => t.stop());
+      // Don't stop tracks here to allow persistence between matched calls
     };
   }, [isEnabled, isAudioMuted, isVideoMuted]);
 
@@ -93,7 +107,7 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     };
   }, [isEnabled]);
 
-  // 2. LiveKit Room Initialization & Cleanup
+  // 2. LiveKit Room Initialization
   useEffect(() => {
     const lkRoom = new Room({
       adaptiveStream: true,
@@ -105,33 +119,24 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
         simulcast: true,
         videoCodec: 'vp8',
         videoEncoding: {
-          maxBitrate: 1_500_000, // 1.5 Mbps is better for mobile 4G/LTE
-          maxFramerate: 24, // Smoother on mobile devices
+          maxBitrate: 1_500_000,
+          maxFramerate: 24,
           priority: 'high',
-        },
-        screenShareEncoding: {
-          maxBitrate: 3_000_000,
-          maxFramerate: 15,
         },
       },
     });
 
     lkRoom
       .on(RoomEvent.Connected, () => {
-        console.log("[LiveKit] Connected to room");
         setIsMatching(false);
         setIsCallConnected(true);
       })
       .on(RoomEvent.Disconnected, () => {
-        console.log("[LiveKit] Disconnected");
         setIsCallConnected(false);
       })
       .on(RoomEvent.ConnectionStateChanged, (state) => {
         if (state === ConnectionState.Reconnecting) setConnectionQuality('reconnecting');
         else if (state === ConnectionState.Connected) setConnectionQuality('excellent');
-      })
-      .on(RoomEvent.ConnectionQualityChanged, (quality, participant) => {
-        // Handle connection quality changes if needed
       });
 
     setRoom(lkRoom);
@@ -141,7 +146,42 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     };
   }, []);
 
-  // 3. Socket Event Handlers
+  // --- CRITICAL SYNC EFFECT ---
+  // This effect ENFORCES the mute state regardless of match lifecycle
+  useEffect(() => {
+    if (!room?.localParticipant || !isCallConnected) return;
+
+    const applyMutes = async () => {
+        console.log("[LiveKit] Enforcing mute consistency:", { audio: isAudioMuted, video: isVideoMuted });
+        try {
+            await room.localParticipant.setMicrophoneEnabled(!isAudioMuted);
+            await room.localParticipant.setCameraEnabled(!isVideoMuted);
+            
+            // Aggressive track-level mute
+            room.localParticipant.trackPublications.forEach(pub => {
+                if (pub.kind === Track.Kind.Audio && pub.track) {
+                    if (isAudioMuted) pub.track.mute();
+                    else pub.track.unmute();
+                } else if (pub.kind === Track.Kind.Video && pub.track) {
+                    if (isVideoMuted) pub.track.mute();
+                    else pub.track.unmute();
+                }
+            });
+        } catch (e) {
+            console.warn("[LiveKit] Mute enforcement error:", e);
+        }
+    };
+
+    applyMutes();
+    
+    // Also re-apply when new tracks are published to catch them early
+    room.on(RoomEvent.LocalTrackPublished, applyMutes);
+    return () => {
+        room.off(RoomEvent.LocalTrackPublished, applyMutes);
+    };
+  }, [room, isCallConnected, isAudioMuted, isVideoMuted]);
+
+  // 3. Socket Event Handlers (Stable: No mute dependencies)
   useEffect(() => {
     if (!socket || !room) return;
 
@@ -163,7 +203,6 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
       setIsConnecting(true);
       
       if (roomId.startsWith('direct-call-')) {
-          console.log("[LiveKit] Direct call matched, hiding searching overlay immediately");
           setIsMatching(false);
       }
 
@@ -187,20 +226,17 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
         // Publish local tracks
         await room.localParticipant.enableCameraAndMicrophone();
         
-        // --- CRITICAL SYNC ---
-        // Immediately apply user's mute preferences after publication
-        console.log("[LiveKit] Match established, enforcing mute states:", { audio: isAudioMuted, video: isVideoMuted });
-        await room.localParticipant.setMicrophoneEnabled(!isAudioMuted);
-        await room.localParticipant.setCameraEnabled(!isVideoMuted);
+        // Initial sync after publication using Refs to avoid closure staleness
+        console.log("[LiveKit] Initial publication sync:", { audio: isAudioMutedRef.current, video: isVideoMutedRef.current });
+        await room.localParticipant.setMicrophoneEnabled(!isAudioMutedRef.current);
+        await room.localParticipant.setCameraEnabled(!isVideoMutedRef.current);
         
-        console.log("[LiveKit] Tracks published and synced");
       } catch (err) {
         console.error("[LiveKit] Connection error:", err);
       }
     });
 
-    socket.on("partner_left", (data?: { reason?: string }) => {
-      console.log("[LiveKit] Partner left");
+    socket.on("partner_left", () => {
       room.disconnect();
       setIsCallConnected(false);
       setIsMatching(true);
@@ -208,7 +244,6 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     });
 
     socket.on("force_requeue", () => {
-        console.log("[LiveKit] Server forced a re-queue");
         room.disconnect();
         setIsCallConnected(false);
         setIsMatching(true);
@@ -216,7 +251,6 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     });
 
     socket.on("clean_room", () => {
-        console.log("[LiveKit] Server cleaned room state");
         room.disconnect();
         setIsCallConnected(false);
         setIsMatching(true);
@@ -225,8 +259,8 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     socket.on("chat_message", (msg: any) => {
       setMessages((prev) => [...prev, {
         ...msg,
-        senderPseudo: msg.senderPseudo || partnerInfo?.name || "Partner",
-        senderRole: msg.senderRole || partnerInfo?.role || "user"
+        senderPseudo: msg.senderPseudo || "Partner",
+        senderRole: msg.senderRole || "user"
       }]);
     });
 
@@ -239,21 +273,18 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
         socket.off("clean_room");
         socket.off("chat_message");
     };
-  }, [socket, room, partnerInfo, isAudioMuted, isVideoMuted]);
+  }, [socket, room]); // IMPORTANT: dependencies are now stable!
 
   // 4. WATCHDOG: Connection Timeout
   useEffect(() => {
     if (!isConnecting) return;
-
     const timeout = setTimeout(() => {
       if (isConnecting && !isCallConnected) {
-        console.warn("[Watchdog] Connection timeout. Returning to searching state.");
         setIsConnecting(false);
         setIsMatching(true);
         room?.disconnect();
       }
     }, 15000);
-
     return () => clearTimeout(timeout);
   }, [isConnecting, isCallConnected, room]);
 
@@ -296,27 +327,51 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     }
   };
 
-  const toggleAudio = () => {
-    const newState = !isAudioMuted;
+  const toggleAudio = useCallback(async () => {
+    const newState = !isAudioMutedRef.current;
     setIsAudioMuted(newState);
+    console.log("[LiveKit] Manually toggling audio to:", !newState);
+    
     if (room?.localParticipant) {
-      room.localParticipant.setMicrophoneEnabled(!newState);
+      try {
+          await room.localParticipant.setMicrophoneEnabled(!newState);
+          // Loop through audio publications for aggressive mute
+          room.localParticipant.trackPublications.forEach(pub => {
+              if (pub.kind === Track.Kind.Audio && pub.track) {
+                  if (newState) pub.track.mute();
+                  else pub.track.unmute();
+              }
+          });
+      } catch (e) {
+          console.warn("[LiveKit] Manual toggle fail:", e);
+      }
     }
     if (previewStream) {
       previewStream.getAudioTracks().forEach(t => t.enabled = !newState);
     }
-  };
+  }, [room, previewStream, setIsAudioMuted]);
 
-  const toggleVideo = () => {
-    const newState = !isVideoMuted;
+  const toggleVideo = useCallback(async () => {
+    const newState = !isVideoMutedRef.current;
     setIsVideoMuted(newState);
+    
     if (room?.localParticipant) {
-      room.localParticipant.setCameraEnabled(!newState);
+      try {
+          await room.localParticipant.setCameraEnabled(!newState);
+          room.localParticipant.trackPublications.forEach(pub => {
+              if (pub.kind === Track.Kind.Video && pub.track) {
+                  if (newState) pub.track.mute();
+                  else pub.track.unmute();
+              }
+          });
+      } catch (e) {
+          console.warn("[LiveKit] Manual toggle fail:", e);
+      }
     }
     if (previewStream) {
         previewStream.getVideoTracks().forEach(t => t.enabled = !newState);
     }
-  };
+  }, [room, previewStream, setIsVideoMuted]);
 
   return {
     room,
