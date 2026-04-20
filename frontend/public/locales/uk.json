@@ -648,7 +648,7 @@
   "room.block_cost_label": "Вартість сесії",
   "room.block_credits_pack": "Credits Pack",
   "room.block_credits_unit": "CREDITS",
-  "room.block_cta_tooltip": "Block the model for 30 min",
+  "room.block_cta_tooltip": "Block the partner for 30 min",
   "room.block_incoming_desc": "Користувач хоче забронювати вас на {{duration}} хвилин. Ви не отримуватимете інші дзвінки в цей період.",
   "room.block_incoming_title": "Запит на приватну сесію!",
   "room.block_insufficient_credits": "Недостатньо коштів!",
