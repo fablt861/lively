@@ -345,36 +345,24 @@
   "dashboard.telegram_desc": "Rimani aggiornato su bonus, aggiornamenti tecnici e chatta con il team.",
   "dashboard.telegram_title": "Unisciti alla comunità Elite Telegram",
   "dashboard.title": "Dashboard Elite",
-  "direct_call": {
-    "status": {
-      "calling": "Chiamata in corso...",
-      "rejected": "Chiamata Rifiutata",
-      "busy": "Modella Occupata",
-      "no_answer": "Nessuna risposta",
-      "accepted": "Accettata!"
-    },
-    "desc": {
-      "calling": "Stiamo collegando la tua chiamata. Attendi...",
-      "rejected": "La modella ha rifiutato la chiamata. Non ti è stato addebitato nulla.",
-      "busy": "La modella è attualmente in un'altra chiamata. Riprova tra pochi istanti.",
-      "no_answer": "La modella non ha risposto alla tua chiamata. Riprova tra pochi istanti.",
-      "accepted": "Preparazione video chat..."
-    },
-    "action": {
-      "cancel": "Annulla chiamata",
-      "close": "Chiudi"
-    },
-    "incoming": {
-      "title": "Chiamata Diretta",
-      "subtitle": "{{pseudo}} vuole unirsi a te",
-      "desc": "Questo cliente vuole iniziare immediatamente una chiamata diretta con te.",
-      "accept": "ACCETTA",
-      "later": "PIÙ TARDI"
-    }
-  },
+  "direct_call.action.cancel": "Annulla chiamata",
+  "direct_call.desc.accepted": "Preparazione chat video...",
+  "direct_call.desc.busy": "La modella non è al momento disponibile. Riprova più tardi.",
+  "direct_call.desc.calling": "Connessione della chiamata in corso. Attendere prego...",
+  "direct_call.desc.no_answer": "La modella non ha risposto alla chiamata. Riprova tra qualche istante.",
+  "direct_call.incoming.accept": "ACCETTA",
+  "direct_call.incoming.desc": "Questo cliente vuole avviare immediatamente una chiamata diretta con te.",
+  "direct_call.incoming.later": "PIÙ TARDI",
+  "direct_call.incoming.subtitle": "{{pseudo}} vuole unirsi",
+  "direct_call.incoming.title": "Chiamata diretta",
+  "direct_call.status.accepted": "Accettato!",
+  "direct_call.status.busy": "Modella occupata",
+  "direct_call.status.calling": "Chiamata...",
+  "direct_call.status.no_answer": "Nessuna risposta",
+  "direct_call.status.rejected": "Chiamata rifiutata",
   "favorite.restriction.cta": "Ho capito",
   "favorite.restriction.desc": "Devi trascorrere almeno 3 minuti in chiamata con questa modella prima di poterla aggiungere ai tuoi preferiti.",
-  "favorite.restriction.title": "L'amicizia richiede tempo!",
+  "favorite.restriction.title": "Amico da vincere!",
   "footer.contact": "Contatti",
   "footer.disclaimer": "I proprietari e gli operatori di questo sito web non sono i produttori primari (secondo la definizione del termine contenuta in 18 USC sezione 2257) di alcuno dei contenuti visuali contenuti nel sito web. I documenti originali richiesti ai sensi di 18 U.S.C. sezione 2257 e 28 C.F.R. 75 per i materiali contenuti nel sito web sono conservati dal Custode dei Registri appropriato come segue: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Parigi, Francia",
   "footer.legal": "Note Legali",

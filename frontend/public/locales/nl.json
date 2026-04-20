@@ -345,36 +345,24 @@
   "dashboard.telegram_desc": "Blijf op de hoogte van bonussen, technische updates en chat met het team.",
   "dashboard.telegram_title": "Word lid van de Elite Telegram Community",
   "dashboard.title": "Elite Dashboard",
-  "direct_call": {
-    "status": {
-      "calling": "Bellen...",
-      "rejected": "Oproep Geweigerd",
-      "busy": "Model Bezet",
-      "no_answer": "Geen antwoord",
-      "accepted": "Geaccepteerd!"
-    },
-    "desc": {
-      "calling": "We verbinden uw oproep. Even geduld...",
-      "rejected": "Het model heeft de oproep geweigerd. Er zijn geen kosten in rekening gebracht.",
-      "busy": "Het model is momenteel in gesprek. Probeer het over enkele ogenblikken opnieuw.",
-      "no_answer": "Het model heeft uw oproep niet beantwoord. Probeer het over enkele ogenblikken opnieuw.",
-      "accepted": "Videochat voorbereiden..."
-    },
-    "action": {
-      "cancel": "Oproep annuleren",
-      "close": "Sluiten"
-    },
-    "incoming": {
-      "title": "Directe Oproep",
-      "subtitle": "{{pseudo}} wil meedoen",
-      "desc": "Deze klant wil onmiddellijk een direct gesprek met u beginnen.",
-      "accept": "ACCEPTEREN",
-      "later": "LATER"
-    }
-  },
+  "direct_call.action.cancel": "Oproep annuleren",
+  "direct_call.desc.accepted": "Videochat voorbereiden...",
+  "direct_call.desc.busy": "Het model is momenteel niet beschikbaar. Probeer het later opnieuw.",
+  "direct_call.desc.calling": "Verbinding maken met uw oproep. Even geduld a.u.b...",
+  "direct_call.desc.no_answer": "Het model heeft uw oproep niet beantwoord. Probeer het over een ogenblik opnieuw.",
+  "direct_call.incoming.accept": "ACCEPTEREN",
+  "direct_call.incoming.desc": "Deze klant wil onmiddellijk een directe oproep met u starten.",
+  "direct_call.incoming.later": "LATER",
+  "direct_call.incoming.subtitle": "{{pseudo}} wil deelnemen",
+  "direct_call.incoming.title": "Directe oproep",
+  "direct_call.status.accepted": "Geaccepteerd!",
+  "direct_call.status.busy": "Model bezet",
+  "direct_call.status.calling": "Bellen...",
+  "direct_call.status.no_answer": "Geen antwoord",
+  "direct_call.status.rejected": "Oproep geweigerd",
   "favorite.restriction.cta": "Begrepen",
-  "favorite.restriction.desc": "Je moet minstens 3 minuten in een gesprek met dit model doorbrengen voordat je haar aan je favorieten kunt toevoegen.",
-  "favorite.restriction.title": "Vriendschap kost tijd!",
+  "favorite.restriction.desc": "U moet minimaal 3 minuten met dit model bellen voordat u deze aan uw favorieten kunt toevoegen.",
+  "favorite.restriction.title": "Vriend winnen!",
   "footer.contact": "Contact",
   "footer.disclaimer": "De eigenaren en exploitanten van deze website zijn niet de primaire producent (zoals die term is gedefinieerd in 18 USC sectie 2257) van de visuele inhoud op de website. De originele gegevens die zijn vereist op grond van 18 U.S.C. sectie 2257 en 28 C.F.R. 75 voor materialen op de website worden bewaard door de juiste Custodian of Records als volgt: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Parijs, Frankrijk",
   "footer.legal": "Juridische Kennisgeving",

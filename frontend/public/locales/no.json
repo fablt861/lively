@@ -345,36 +345,24 @@
   "dashboard.telegram_desc": "Hold deg oppdatert på bonuser, tekniske oppdateringer og prat med teamet.",
   "dashboard.telegram_title": "Bli med i Elite Telegram-fellesskapet",
   "dashboard.title": "Elite Dashbord",
-  "direct_call": {
-    "status": {
-      "calling": "Ringer...",
-      "rejected": "Anrop Avvist",
-      "busy": "Modell Opptatt",
-      "no_answer": "Ikke svar",
-      "accepted": "Akseptert!"
-    },
-    "desc": {
-      "calling": "Vi kobler til anropet ditt. Vennligst vent...",
-      "rejected": "Modellen har avvist anropet. Du har ikke blitt belastet.",
-      "busy": "Modellen er for øyeblikket i en annen samtale. Vennligst prøv igjen om et øyeblikk.",
-      "no_answer": "Modellen svarte ikke på anropet ditt. Vennligst prøv igjen om et øyeblikk.",
-      "accepted": "Forbereder videochat..."
-    },
-    "action": {
-      "cancel": "Avbryt anrop",
-      "close": "Lukk"
-    },
-    "incoming": {
-      "title": "Direkte Anrop",
-      "subtitle": "{{pseudo}} vil bli med deg",
-      "desc": "Denne klienten ønsker å starte et direkte anrop med deg umiddelbart.",
-      "accept": "AKSEPTER",
-      "later": "SENERE"
-    }
-  },
-  "favorite.restriction.cta": "Skjønner",
-  "favorite.restriction.desc": "Du må tilbringe minst 3 minutter i en samtale med denne modellen før du kan legge henne till i favorittene dine.",
-  "favorite.restriction.title": "Vennskap tar tid!",
+  "direct_call.action.cancel": "Avbryt anrop",
+  "direct_call.desc.accepted": "Forbereder videochat...",
+  "direct_call.desc.busy": "Modellen er for øyeblikket utilgjengelig. Prøv igjen senere.",
+  "direct_call.desc.calling": "Kobler anropet ditt. Vennligst vent...",
+  "direct_call.desc.no_answer": "Modellen svarte ikke på anropet. Prøv igjen om et øyeblikk.",
+  "direct_call.incoming.accept": "AKSEPTER",
+  "direct_call.incoming.desc": "Denne klienten ønsker å starte et direkte anrop med deg umiddelbart.",
+  "direct_call.incoming.later": "SENERE",
+  "direct_call.incoming.subtitle": "{{pseudo}} vil delta",
+  "direct_call.incoming.title": "Direkte anrop",
+  "direct_call.status.accepted": "Akseptert!",
+  "direct_call.status.busy": "Modellen er opptatt",
+  "direct_call.status.calling": "Ringer...",
+  "direct_call.status.no_answer": "Ikke svar",
+  "direct_call.status.rejected": "Anrop avvist",
+  "favorite.restriction.cta": "Forstått",
+  "favorite.restriction.desc": "Du må tilbringe minst 3 minutter i en samtale med denne modellen før du kan legge dem til i dine favoritter.",
+  "favorite.restriction.title": "Venn å vinne!",
   "footer.contact": "Kontakt",
   "footer.disclaimer": "Eierne og operatørene av dette nettstedet er ikke den primære produsenten (slik begrepet er definert i 18 USC seksjon 2257) av noe av det visuelle innholdet på nettstedet. Originale dokumenter som kreves i henhold til 18 U.S.C. seksjon 2257 og 28 C.F.R. 75 for materiale på nettstedet oppbevares av den aktuelle Custodian of Records som følger: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Paris, Frankrike",
   "footer.legal": "Juridisk Informasjon",

@@ -345,32 +345,24 @@
   "dashboard.telegram_desc": "Fii la curent cu bonusurile, actualizările tehnice și discută cu echipa.",
   "dashboard.telegram_title": "Alătură-te comunității Elite Telegram",
   "dashboard.title": "Panou de Control Elite",
-  "direct_call": {
-    "status": {
-      "busy": "Ocupată",
-      "no_answer": "Niciun răspuns",
-      "accepted": "Acceptat!"
-    },
-    "desc": {
-      "calling": "Vă conectăm apelul. Vă rugăm să așteptați...",
-      "busy": "Modelul este ocupat în prezent. Vă rugăm să încercați din nou mai târziu.",
-      "no_answer": "Modelul nu a răspuns la apelul dumneavoastră. Vă rugăm să încercați din nou în câteva clipe.",
-      "accepted": "Se pregătește chat-ul video..."
-    },
-    "action": {
-      "cancel": "Anulați apelul"
-    },
-    "incoming": {
-      "title": "Apel Direct",
-      "subtitle": "{{pseudo}} vrea să ți se alăture",
-      "desc": "Acest client dorește să înceapă un apel direct imediat cu tine.",
-      "accept": "ACCEPTĂ",
-      "later": "MAI TÂRZIU"
-    }
-  },
-  "favorite.restriction.cta": "Am înțeles",
+  "direct_call.action.cancel": "Anulează apelul",
+  "direct_call.desc.accepted": "Se pregătește chatul video...",
+  "direct_call.desc.busy": "Modelul este momentan indisponibil. Încercați din nou mai târziu.",
+  "direct_call.desc.calling": "Se conectează apelul. Vă rugăm să așteptați...",
+  "direct_call.desc.no_answer": "Modelul nu a răspuns la apel. Încercați din nou peste câteva clipe.",
+  "direct_call.incoming.accept": "ACCEPTĂ",
+  "direct_call.incoming.desc": "Acest client dorește să înceapă imediat un apel direct cu tine.",
+  "direct_call.incoming.later": "MAI TÂRZIU",
+  "direct_call.incoming.subtitle": "{{pseudo}} vrea să se alăture",
+  "direct_call.incoming.title": "Apel direct",
+  "direct_call.status.accepted": "Acceptat!",
+  "direct_call.status.busy": "Model ocupat",
+  "direct_call.status.calling": "Se apelează...",
+  "direct_call.status.no_answer": "Niciun răspuns",
+  "direct_call.status.rejected": "Apel respins",
+  "favorite.restriction.cta": "Înțeles",
   "favorite.restriction.desc": "Trebuie să petreci cel puțin 3 minute într-un apel cu acest model înainte de a-l putea adăuga la favorite.",
-  "favorite.restriction.title": "Prietenia necesită timp!",
+  "favorite.restriction.title": "Prieten de câștigat!",
   "footer.contact": "Contact",
   "footer.disclaimer": "Proprietarii și operatorii acestui site web nu sunt producătorii primari (așa cum este definit acest termen în 18 USC secțiunea 2257) a oricărui conținut vizual conținut în site-ul web. Înregistrările originale solicitate în conformitate cu 18 U.S.C. secțiunea 2257 și 28 C.F.R. 75 pentru materialele conținute în site-ul web sunt păstrate de Custodele de Înregistrări corespunzător după cum urmează: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Paris, Franța",
   "footer.legal": "Notificare Legală",

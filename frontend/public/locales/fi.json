@@ -345,34 +345,24 @@
   "dashboard.telegram_desc": "Pysy ajan tasalla bonuksista, teknisistä päivityksistä ja keskustele tiimin kanssa.",
   "dashboard.telegram_title": "Liity Elite Telegram -yhteisöön",
   "dashboard.title": "Elite-hallintapaneeli",
-  "direct_call": {
-    "status": {
-      "calling": "Soitetaan...",
-      "rejected": "Puhelu Hylätty",
-      "busy": "Malli Varattu",
-      "no_answer": "Ei vastausta",
-      "accepted": "Hyväksytty!"
-    },
-    "desc": {
-      "calling": "Yhdistämme puheluasi. Odota...",
-      "busy": "Malli on tällä hetkellä varattu. Yritä uudelleen myöhemmin.",
-      "no_answer": "Malli ei vastannut puheluusi. Yritä uudelleen hetken kuluttua.",
-      "accepted": "Valmistellaan videokeskustelua..."
-    },
-    "action": {
-      "cancel": "Peruuta puhelu"
-    },
-    "incoming": {
-      "title": "Suora puhelu",
-      "subtitle": "{{pseudo}} haluaa liittyä seuraasi",
-      "desc": "Tämä asiakas haluaa aloittaa suoran puhelun kanssasi välittömästi.",
-      "accept": "HYVÄKSY",
-      "later": "MYÖHEMMIN"
-    }
-  },
+  "direct_call.action.cancel": "Peruuta puhelu",
+  "direct_call.desc.accepted": "Valmistellaan videokeskustelua...",
+  "direct_call.desc.busy": "Malli ei ole tällä hetkellä tavoitettavissa. Yritä myöhemmin uudelleen.",
+  "direct_call.desc.calling": "Yhdistetään puhelua. Odota hetki...",
+  "direct_call.desc.no_answer": "Malli ei vastannut puheluun. Yritä uudelleen hetken kuluttua.",
+  "direct_call.incoming.accept": "HYVÄKSY",
+  "direct_call.incoming.desc": "Asiakas haluaa aloittaa suoran puhelun kanssasi välittömästi.",
+  "direct_call.incoming.later": "MYÖHEMMIN",
+  "direct_call.incoming.subtitle": "{{pseudo}} haluaa liittyä",
+  "direct_call.incoming.title": "Suora puhelu",
+  "direct_call.status.accepted": "Hyväksytty!",
+  "direct_call.status.busy": "Malli varattu",
+  "direct_call.status.calling": "Soitetaan...",
+  "direct_call.status.no_answer": "Ei vastausta",
+  "direct_call.status.rejected": "Puhelu hylätty",
   "favorite.restriction.cta": "Selvä",
-  "favorite.restriction.desc": "Sinun on vietettävä vähintään 3 minuuttia puhelussa tämän mallin kanssa, ennen kuin voit lisätä hänet suosikkeihisi.",
-  "favorite.restriction.title": "Ystävyys vie aikaa!",
+  "favorite.restriction.desc": "Sinun on käytettävä vähintään 3 minuuttia puhelussa tämän mallin kanssa, ennen kuin voit lisätä hänet suosikkeihisi.",
+  "favorite.restriction.title": "Kaveri voitettavana!",
   "footer.contact": "Ota yhteyttä",
   "footer.disclaimer": "Tämän verkkosivuston omistajat ja ylläpitäjät eivät ole tämän verkkosivuston sisältämän visuaalisen sisällön ensisijaisia tuottajia (kuten kyseinen termi on määritelty 18 USC:n pykälässä 2257). Alkuperäiset asiakirjat, joita vaaditaan 18 U.S.C:n pykälän 2257 ja 28 C.F.R. 75:n mukaisesti verkkosivuston sisältämää materiaalia varten, säilyttää asianmukainen Custodian of Records seuraavasti: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Pariisi, Ranska",
   "footer.legal": "Oikeudellinen ilmoitus",

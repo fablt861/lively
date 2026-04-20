@@ -370,31 +370,21 @@
   "dashboard.telegram_desc": "Restez informé des bonus, des mises à jour techniques et discutez avec l'équipe.",
   "dashboard.telegram_title": "Rejoindre la communauté Elite Telegram",
   "dashboard.title": "Tableau de bord Elite",
-  "direct_call": {
-    "status": {
-      "calling": "Appel en cours...",
-      "rejected": "Appel Refusé",
-      "busy": "Modèle Occupée",
-      "no_answer": "Pas de réponse",
-      "accepted": "Accepté !"
-    },
-    "desc": {
-      "calling": "Nous connectons votre appel. Veuillez patienter...",
-      "busy": "La modèle est actuellement indisponible. Réessayez plus tard.",
-      "no_answer": "La modèle n'a pas répondu à votre appel. Réessayez dans quelques instants.",
-      "accepted": "Préparation du chat vidéo..."
-    },
-    "action": {
-      "cancel": "Annuler l'appel"
-    },
-    "incoming": {
-      "title": "Appel Direct",
-      "subtitle": "{{pseudo}} souhaite vous rejoindre",
-      "desc": "Ce client souhaite démarrer un appel direct immédiatement avec vous.",
-      "accept": "ACCEPTER",
-      "later": "PLUS TARD"
-    }
-  },
+  "direct_call.action.cancel": "Annuler l'appel",
+  "direct_call.desc.accepted": "Préparation du chat vidéo...",
+  "direct_call.desc.busy": "La modèle est actuellement indisponible. Réessayez plus tard.",
+  "direct_call.desc.calling": "Nous connectons votre appel. Veuillez patienter...",
+  "direct_call.desc.no_answer": "La modèle n'a pas répondu à votre appel. Réessayez dans quelques instants.",
+  "direct_call.incoming.accept": "ACCEPTER",
+  "direct_call.incoming.desc": "Ce client souhaite démarrer un appel direct immédiatement avec vous.",
+  "direct_call.incoming.later": "PLUS TARD",
+  "direct_call.incoming.subtitle": "{{pseudo}} souhaite vous rejoindre",
+  "direct_call.incoming.title": "Appel Direct",
+  "direct_call.status.accepted": "Accepté !",
+  "direct_call.status.busy": "Modèle Occupée",
+  "direct_call.status.calling": "Appel en cours...",
+  "direct_call.status.no_answer": "Pas de réponse",
+  "direct_call.status.rejected": "Appel Refusé",
   "favorite.restriction.cta": "Compris",
   "favorite.restriction.desc": "Vous devez passer au moins 3 minutes en appel avec ce modèle avant de pouvoir l'ajouter à vos favoris.",
   "favorite.restriction.title": "Ami à gagner !",

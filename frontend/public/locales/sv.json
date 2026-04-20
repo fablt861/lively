@@ -345,34 +345,24 @@
   "dashboard.telegram_desc": "Håll dig uppdaterad om bonusar, tekniska uppdateringar och chatta med teamet.",
   "dashboard.telegram_title": "Gå med i Elite Telegram-communityt",
   "dashboard.title": "Elite Kontrollpanel",
-  "direct_call": {
-    "status": {
-      "calling": "Ringer...",
-      "rejected": "Samtal Avvisat",
-      "busy": "Modell Upptagen",
-      "no_answer": "Inget svar",
-      "accepted": "Accepterat!"
-    },
-    "desc": {
-      "calling": "Vi kopplar upp ditt samtal. Vänta...",
-      "busy": "Modellen är upptagen för tillfället. Försök igen senare.",
-      "no_answer": "Modellen svarade inte på ditt samtal. Försök igen om en stund.",
-      "accepted": "Förbereder videochat..."
-    },
-    "action": {
-      "cancel": "Avbryt samtal"
-    },
-    "incoming": {
-      "title": "Direktsamtal",
-      "subtitle": "{{pseudo}} vill ansluta till dig",
-      "desc": "Denna kund vill starta ett direktsamtal med dig omedelbart.",
-      "accept": "ACCEPTERA",
-      "later": "SENARE"
-    }
-  },
-  "favorite.restriction.cta": "Uppfattat",
-  "favorite.restriction.desc": "Du måste spendera minst 3 minuter i ett samtal med den här modellen innan du kan lägga till henne i dina favoriter.",
-  "favorite.restriction.title": "Vänskap tar tid!",
+  "direct_call.action.cancel": "Avbryt samtal",
+  "direct_call.desc.accepted": "Förbereder videochatt...",
+  "direct_call.desc.busy": "Modellen är för närvarande inte tillgänglig. Försök igen senare.",
+  "direct_call.desc.calling": "Kopplar ditt samtal. Var god vänta...",
+  "direct_call.desc.no_answer": "Modellen svarade inte på ditt samtal. Försök igen om en stund.",
+  "direct_call.incoming.accept": "ACCEPTERA",
+  "direct_call.incoming.desc": "Den här klienten vill starta ett direktsamtal med dig omedelbart.",
+  "direct_call.incoming.later": "SENARE",
+  "direct_call.incoming.subtitle": "{{pseudo}} vill delta",
+  "direct_call.incoming.title": "Direktsamtal",
+  "direct_call.status.accepted": "Accepterat!",
+  "direct_call.status.busy": "Modellen är upptagen",
+  "direct_call.status.calling": "Ringer...",
+  "direct_call.status.no_answer": "Inget svar",
+  "direct_call.status.rejected": "Samtal avvisat",
+  "favorite.restriction.cta": "Jag förstår",
+  "favorite.restriction.desc": "Du måste spendera minst 3 minuter i ett samtal med den här modellen innan du kan lägga till dem i dina favoriter.",
+  "favorite.restriction.title": "Vän att vinna!",
   "footer.contact": "Kontakt",
   "footer.disclaimer": "Ägarna och operatörerna av denna webbplats är inte den primära producenten (enligt definitionen i 18 USC sektion 2257) av något av det visuella innehållet på webbplatsen. Originalhandlingar som krävs enligt 18 U.S.C. sektion 2257 och 28 C.F.R. 75 för material på webbplatsen förvaras av behörig Custodian of Records enligt följande: MV CAPITAL, 50 avenue des Champs-Elysées, 75008 Paris, Frankrike",
   "footer.legal": "Juridisk Information",
