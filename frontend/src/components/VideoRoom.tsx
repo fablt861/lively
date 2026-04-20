@@ -1032,7 +1032,7 @@ export function VideoRoom({
                         <div className="md:hidden absolute bottom-2 right-2">
                             <button
                                 onClick={handleToggleAudio}
-                                className={`w-8 h-8 flex items-center justify-center rounded-xl transition-all backdrop-blur-md border ${isAudioMuted ? "bg-red-500/80 border-red-500/50 text-white" : "bg-black/40 border-white/10 text-white"}`}
+                                className="w-8 h-8 flex items-center justify-center rounded-xl transition-all backdrop-blur-md border bg-black/60 border-white/20 text-white"
                             >
                                 {isAudioMuted ? <MicOff size={14} /> : <Mic size={14} />}
                             </button>
@@ -1109,7 +1109,12 @@ export function VideoRoom({
 
                 {/* Desktop Controls (Hidden on Mobile) */}
                 <div className="hidden md:flex absolute bottom-8 right-6 z-40 flex-row gap-4">
-                    <button onClick={handleToggleAudio} className={`p-4 rounded-full ${isAudioMuted ? "bg-red-500" : "bg-white/10"}`}><Mic size={24} /></button>
+                    <button 
+                        onClick={handleToggleAudio} 
+                        className="p-4 rounded-full bg-white/20 backdrop-blur-md border border-white/10 hover:bg-white/30 transition-all text-white"
+                    >
+                        {isAudioMuted ? <MicOff size={24} /> : <Mic size={24} />}
+                    </button>
                     <button onClick={() => setIsReportModalOpen(true)} className="p-4 rounded-full bg-orange-600/80 hover:bg-orange-500 transition-colors border border-orange-400/30">
                         <ShieldAlert size={24} />
                     </button>
