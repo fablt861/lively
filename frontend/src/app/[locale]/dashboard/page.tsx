@@ -189,7 +189,7 @@ export default function CustomerDashboard() {
     };
 
     const handleDirectCall = (model: FavoriteModel) => {
-        if (!userInfo || userInfo.credits < 150) {
+        if (!userInfo || userInfo.credits < 100) {
             setRestrictionModel(model);
             setShowRestrictionModal(true);
             return;
@@ -446,7 +446,7 @@ export default function CustomerDashboard() {
                         setShowPaywall(true);
                     }}
                     modelName={restrictionModel?.pseudo || ""}
-                    requiredCredits={150}
+                    requiredCredits={100}
                 />
             )}
             {showPaywall && <PaywallModal onClose={() => setShowPaywall(false)} onPurchase={handlePurchase} />}
