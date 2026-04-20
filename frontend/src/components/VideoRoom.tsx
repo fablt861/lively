@@ -189,6 +189,9 @@ export function VideoRoom({
     const [incomingBlockRequest, setIncomingBlockRequest] = useState<Record<string, unknown> | null>(null);
     const [isWaitingForBlockResponse, setIsWaitingForBlockResponse] = useState(false);
     const [currentRoomId, setCurrentRoomId] = useState<string | null>(null);
+    const [isTeaserActive, setIsTeaserActive] = useState(false);
+    const [teaserStep, setTeaserStep] = useState<'searching' | 'playing' | null>(null);
+    const [teaserShownState, setTeaserShownState] = useState(false);
 
     // --- UNIFIED AUTO-START LOGIC ---
     // This effect ensures we only trigger handleStartMatch when both camera and socket are truly ready.
@@ -337,6 +340,7 @@ export function VideoRoom({
                     if (data && data.credits !== undefined) {
                         setUserCredits(data.credits);
                         localStorage.setItem('kinky_credits', data.credits.toString());
+                        if (data.teaser_shown) setTeaserShownState(true);
                     }
                 })
                 .catch(console.error);
@@ -660,6 +664,48 @@ export function VideoRoom({
             };
         }
     }, [role, isConnected, userCredits, accountStatus]);
+
+    // --- FAKE VIDEO TEASER (10s before end) ---
+    useEffect(() => {
+        if (role !== "user" || !isConnected || userCredits === null || isTeaserActive) return;
+        if (accountStatus !== 'registered' || teaserShownState) return;
+        if (!(settings as any)?.teaserEnabled) return;
+
+        // Trigger at 10s left. Assuming 10 credits/min = 1/6 credits/sec.
+        // 10 seconds = 1.666... credits.
+        if (userCredits > 0 && userCredits <= 1.67) {
+            console.log("[Teaser] Triggering 10s sequence (2s search + 8s video)");
+            setIsTeaserActive(true);
+            setTeaserStep('searching');
+
+            // Disconnect immediately to be clean
+            if (socket) {
+                console.log("[Teaser] Disconnecting real room");
+                socket.emit('stop');
+            }
+
+            // Sequence: 2s searching
+            setTimeout(() => {
+                setTeaserStep('playing');
+                // 8s video playing
+                setTimeout(() => {
+                    setIsTeaserActive(false);
+                    setTeaserStep(null);
+                    setShowPaywall(true);
+                    
+                    // Mark as shown in DB
+                    const userId = localStorage.getItem('kinky_user_id');
+                    if (userId) {
+                        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/teaser-shown`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ userId })
+                        }).then(() => setTeaserShownState(true)).catch(console.error);
+                    }
+                }, 8000);
+            }, 2000);
+        }
+    }, [userCredits, isConnected, role, accountStatus, teaserShownState, settings, isTeaserActive, socket]);
 
     // Track Call Duration for Favorites Rule
     useEffect(() => {
@@ -1618,6 +1664,45 @@ export function VideoRoom({
             <CallListener />
             {/* LiveKit Audio Handling (Silent) */}
             {isConnected && !isConnecting && !isMatching && room && <RoomAudioRenderer />}
+
+                {/* --- FAKE TEASER OVERLAY --- */}
+                {isTeaserActive && (
+                    <div className="fixed inset-0 z-[90] bg-black flex flex-col items-center justify-center overflow-hidden">
+                        {teaserStep === 'searching' && (
+                            <div className="flex flex-col items-center gap-8 animate-in fade-in zoom-in duration-500">
+                                <div className="relative">
+                                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-indigo-500/20 animate-ping absolute inset-0" />
+                                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-indigo-400/40 animate-pulse absolute inset-0 delay-75" />
+                                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-indigo-500 flex items-center justify-center relative shadow-[0_0_50px_rgba(99,102,241,0.4)]">
+                                        <Sparkles className="text-white animate-spin-slow" size={48} />
+                                    </div>
+                                </div>
+                                <div className="text-center space-y-2">
+                                    <h3 className="text-2xl sm:text-3xl font-black text-white italic tracking-tighter uppercase animate-pulse">
+                                        {t('matching.searching') || "Searching Next Partner..."}
+                                    </h3>
+                                    <p className="text-neutral-500 text-xs font-bold tracking-[0.3em] uppercase opacity-50">
+                                        {t('matching.optimized') || "Optimizing connections"}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+                        {teaserStep === 'playing' && (
+                            <div className="relative w-full h-full animate-in fade-in duration-1000">
+                                <video 
+                                    src={(settings as any)?.teaserVideoUrl || "https://kinky-vids.s3.eu-west-3.amazonaws.com/teaser_v2.mp4"} 
+                                    autoPlay 
+                                    playsInline
+                                    className="w-full h-full object-cover"
+                                />
+                                <div className="absolute top-6 left-6 flex items-center gap-3 px-4 py-2 bg-red-600 rounded-full animate-pulse shadow-lg shadow-red-600/20">
+                                    <div className="w-2 h-2 bg-white rounded-full" />
+                                    <span className="text-[10px] font-black uppercase text-white tracking-widest leading-none">LIVE</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         </LiveKitRoom>
     );

@@ -973,6 +973,46 @@ export default function AdminPage() {
                             </div>
                         </div>
 
+                        {/* Video Teaser Section */}
+                        <div className="bg-neutral-900 border border-white/5 p-8 rounded-3xl space-y-6 shadow-2xl relative overflow-hidden group">
+                            <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -mr-16 -mt-16 transition-colors ${settings.teaserEnabled ? 'bg-indigo-500/20' : 'bg-green-500/10'}`} />
+                            
+                            <div className="flex items-center justify-between">
+                                <div className="space-y-1">
+                                    <h3 className="text-xl font-medium text-white flex items-center gap-2">
+                                        <Video className={settings.teaserEnabled ? 'text-indigo-500' : 'text-neutral-500'} size={20} />
+                                        {t('admin.settings.teaser_title') || "Vidéo Teaser (Registered Users)"}
+                                    </h3>
+                                    <p className="text-xs text-neutral-500">{t('admin.settings.teaser_desc') || "Déclenche une vidéo de 8s quand il reste 10s de crédit (bonus de bienvenue uniquement)."}</p>
+                                </div>
+                                <button 
+                                    onClick={() => setSettings({ ...settings, teaserEnabled: !settings.teaserEnabled })}
+                                    className={`w-14 h-8 rounded-full p-1 transition-all duration-300 flex items-center ${settings.teaserEnabled ? 'bg-indigo-500' : 'bg-neutral-700'}`}
+                                >
+                                    <div className={`w-6 h-6 bg-white rounded-full shadow-lg transition-all duration-300 transform ${settings.teaserEnabled ? 'translate-x-6' : 'translate-x-0'}`} />
+                                </button>
+                            </div>
+
+                            {settings.teaserEnabled && (
+                                <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
+                                    <div className="space-y-2">
+                                        <label className="block text-[10px] text-neutral-500 font-bold uppercase tracking-widest">{t('admin.settings.teaser_video_url') || "URL de la Vidéo Teaser"}</label>
+                                        <input 
+                                            type="text" 
+                                            placeholder="https://example.com/teaser.mp4"
+                                            value={settings.teaserVideoUrl || ""} 
+                                            onChange={e => setSettings({ ...settings, teaserVideoUrl: e.target.value })}
+                                            className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 transition-colors font-mono text-sm" 
+                                        />
+                                    </div>
+                                    <div className="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl text-indigo-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-3">
+                                        <Sparkles size={14} className="text-indigo-500" />
+                                        {t('admin.settings.teaser_active_notice') || "TEASER FEATURE IS LIVE FOR NEW REGISTERED USERS"}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
                         {/* Launch Mode */}
                         <div className="bg-neutral-900 border border-white/5 p-8 rounded-3xl space-y-6 shadow-2xl relative overflow-hidden group">
                             <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -mr-16 -mt-16 transition-colors ${settings.launchMode ? 'bg-indigo-500/20' : 'bg-green-500/10'}`} />

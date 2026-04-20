@@ -151,7 +151,8 @@ router.get('/me', async (req, res) => {
                 email: user.email,
                 pseudo: user.pseudo,
                 role: 'user',
-                credits: parseFloat(credits)
+                credits: parseFloat(credits),
+                teaser_shown: !!user.teaser_shown
             });
         }
 
@@ -232,6 +233,19 @@ router.post('/add-credits', async (req, res) => {
         });
     } catch (err) {
         console.error('[Add Credits Error]', err);
+        res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+
+router.post('/teaser-shown', async (req, res) => {
+    const { userId } = req.body;
+    if (!userId) return res.status(400).json({ error: 'Missing userId' });
+
+    try {
+        await query('UPDATE users SET teaser_shown = TRUE WHERE id = $1', [userId]);
+        res.json({ success: true });
+    } catch (err) {
+        console.error('[Teaser Shown Error]', err);
         res.status(500).json({ error: 'api.error.internal_server_error' });
     }
 });

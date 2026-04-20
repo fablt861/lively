@@ -26,7 +26,9 @@ const DEFAULT_SETTINGS = {
     blockCreditsCost: 600,
     blockModelGain: 25,
     blockSpecialPackPrice: 59,
-    restrictedCountries: []
+    restrictedCountries: [],
+    teaserEnabled: false,
+    teaserVideoUrl: ""
 };
 
 
