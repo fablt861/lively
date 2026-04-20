@@ -790,5 +790,12 @@
   },
   "favorite.restriction.title": "Ystävyys vie aikaa!",
   "favorite.restriction.desc": "Sinun on vietettävä vähintään 3 minuuttia puhelussa tämän mallin kanssa, ennen kuin voit lisätä hänet suosikkeihisi.",
-  "favorite.restriction.cta": "Selvä"
+  "favorite.restriction.cta": "Selvä",
+  "dashboard": {
+    "restriction": {
+      "title": "Riittämättömästi krediittejä",
+      "description": "Suoraan puheluun käyttäjälle {name} tarvitaan vähintään {credits} krediittiä.",
+      "cta": "Osta krediittejä"
+    }
+  }
 }

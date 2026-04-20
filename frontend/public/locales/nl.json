@@ -792,5 +792,12 @@
   },
   "favorite.restriction.title": "Vriendschap kost tijd!",
   "favorite.restriction.desc": "Je moet minstens 3 minuten in een gesprek met dit model doorbrengen voordat je haar aan je favorieten kunt toevoegen.",
-  "favorite.restriction.cta": "Begrepen"
+  "favorite.restriction.cta": "Begrepen",
+  "dashboard": {
+    "restriction": {
+      "title": "Onvoldoende credits",
+      "description": "Er zijn minimaal {credits} credits nodig om {name} direct te bellen.",
+      "cta": "Credits kopen"
+    }
+  }
 }

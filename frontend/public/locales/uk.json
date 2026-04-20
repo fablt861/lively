@@ -792,5 +792,12 @@
   },
   "favorite.restriction.title": "Дружба потребує часу!",
   "favorite.restriction.desc": "Ви повинні провести принаймні 3 хвилини у дзвінку з цією моделлю, перш ніж зможете додати її до обраного.",
-  "favorite.restriction.cta": "Зрозуміло"
+  "favorite.restriction.cta": "Зрозуміло",
+  "dashboard": {
+    "restriction": {
+      "title": "Недостатньо кредитів",
+      "description": "Для прямого дзвінка {name} потрібно мінімум {credits} кредитів.",
+      "cta": "Купити кредити"
+    }
+  }
 }

@@ -9,6 +9,7 @@ import { ProfileSettingsModal } from "@/components/ProfileSettingsModal";
 import { PaywallModal } from "@/components/PaywallModal";
 import { io, Socket } from "socket.io-client";
 import { Phone, PhoneOff, X, LogOut } from "lucide-react";
+import { DirectCallRestrictionModal } from "@/components/DirectCallRestrictionModal";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live";
 
@@ -40,6 +41,8 @@ export default function CustomerDashboard() {
     const [socket, setSocket] = useState<Socket | null>(null);
     const [callingModel, setCallingModel] = useState<FavoriteModel | null>(null);
     const [callStatus, setCallStatus] = useState<'calling' | 'rejected' | 'accepted' | 'no_answer' | null>(null);
+    const [showRestrictionModal, setShowRestrictionModal] = useState(false);
+    const [restrictionModel, setRestrictionModel] = useState<FavoriteModel | null>(null);
     const callTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
@@ -187,7 +190,8 @@ export default function CustomerDashboard() {
 
     const handleDirectCall = (model: FavoriteModel) => {
         if (!userInfo || userInfo.credits < 150) {
-            setShowPaywall(true);
+            setRestrictionModel(model);
+            setShowRestrictionModal(true);
             return;
         }
         if (!socket) return;
@@ -433,6 +437,18 @@ export default function CustomerDashboard() {
                 onProfileUpdate={handleProfileUpdate}
             />
 
+            {showRestrictionModal && (
+                <DirectCallRestrictionModal 
+                    isOpen={showRestrictionModal}
+                    onClose={() => setShowRestrictionModal(false)}
+                    onBuyCredits={() => {
+                        setShowRestrictionModal(false);
+                        setShowPaywall(true);
+                    }}
+                    modelName={restrictionModel?.pseudo || ""}
+                    requiredCredits={150}
+                />
+            )}
             {showPaywall && <PaywallModal onClose={() => setShowPaywall(false)} onPurchase={handlePurchase} />}
 
             {/* Calling Overlay */}

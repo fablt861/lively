@@ -792,5 +792,12 @@
   },
   "favorite.restriction.title": "Vennskap tar tid!",
   "favorite.restriction.desc": "Du må tilbringe minst 3 minutter i en samtale med denne modellen før du kan legge henne till i favorittene dine.",
-  "favorite.restriction.cta": "Skjønner"
+  "favorite.restriction.cta": "Skjønner",
+  "dashboard": {
+    "restriction": {
+      "title": "Utilstrekkelige kreditter",
+      "description": "Minimum {credits} kreditter kreves for å ringe {name} direkte.",
+      "cta": "Kjøp kreditter"
+    }
+  }
 }

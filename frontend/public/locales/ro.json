@@ -788,5 +788,12 @@
   },
   "favorite.restriction.title": "Prietenia necesită timp!",
   "favorite.restriction.desc": "Trebuie să petreci cel puțin 3 minute într-un apel cu acest model înainte de a-l putea adăuga la favorite.",
-  "favorite.restriction.cta": "Am înțeles"
+  "favorite.restriction.cta": "Am înțeles",
+  "dashboard": {
+    "restriction": {
+      "title": "Credite insuficiente",
+      "description": "Sunt necesare minimum {credits} credite pentru a suna direct pe {name}.",
+      "cta": "Cumpără credite"
+    }
+  }
 }

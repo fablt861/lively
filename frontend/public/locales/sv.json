@@ -790,5 +790,12 @@
   },
   "favorite.restriction.title": "Vänskap tar tid!",
   "favorite.restriction.desc": "Du måste spendera minst 3 minuter i ett samtal med den här modellen innan du kan lägga till henne i dina favoriter.",
-  "favorite.restriction.cta": "Uppfattat"
+  "favorite.restriction.cta": "Uppfattat",
+  "dashboard": {
+    "restriction": {
+      "title": "Otillräckliga krediter",
+      "description": "Minst {credits} krediter krävs för att ringa {name} direkt.",
+      "cta": "Köp krediter"
+    }
+  }
 }

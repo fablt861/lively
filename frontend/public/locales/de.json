@@ -791,5 +791,12 @@
   },
   "favorite.restriction.title": "Freundschaft braucht Zeit!",
   "favorite.restriction.desc": "Du musst mindestens 3 Minuten mit diesem Modell telefonieren, bevor du es zu deinen Favoriten hinzufügen kannst.",
-  "favorite.restriction.cta": "Verstanden"
+  "favorite.restriction.cta": "Verstanden",
+  "dashboard": {
+    "restriction": {
+      "title": "Unzureichendes Guthaben",
+      "description": "Für einen Direktanruf bei {name} sind mindestens {credits} Credits erforderlich.",
+      "cta": "Guthaben kaufen"
+    }
+  }
 }

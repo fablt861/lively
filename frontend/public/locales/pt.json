@@ -792,5 +792,12 @@
   },
   "favorite.restriction.title": "Amizade leva tempo!",
   "favorite.restriction.desc": "Você deve passar pelo menos 3 minutos em uma chamada com esta modelo antes de poder adicioná-la aos seus favoritos.",
-  "favorite.restriction.cta": "Entendi"
+  "favorite.restriction.cta": "Entendi",
+  "dashboard": {
+    "restriction": {
+      "title": "Créditos insuficientes",
+      "description": "É necessário um mínimo de {credits} créditos para ligar diretamente para {name}.",
+      "cta": "Comprar créditos"
+    }
+  }
 }

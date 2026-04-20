@@ -791,5 +791,12 @@
   },
   "favorite.restriction.title": "¡Amistad en camino!",
   "favorite.restriction.desc": "Debes pasar al menos 3 minutos en una llamada con esta modelo antes de poder añadirla a tus favoritos.",
-  "favorite.restriction.cta": "Entendido"
+  "favorite.restriction.cta": "Entendido",
+  "dashboard": {
+    "restriction": {
+      "title": "Créditos insuficientes",
+      "description": "Se requiere un mínimo de {credits} créditos para llamar a {name} directamente.",
+      "cta": "Comprar créditos"
+    }
+  }
 }

@@ -791,5 +791,12 @@
   },
   "favorite.restriction.title": "L'amicizia richiede tempo!",
   "favorite.restriction.desc": "Devi trascorrere almeno 3 minuti in chiamata con questa modella prima di poterla aggiungere ai tuoi preferiti.",
-  "favorite.restriction.cta": "Ho capito"
+  "favorite.restriction.cta": "Ho capito",
+  "dashboard": {
+    "restriction": {
+      "title": "Crediti insufficienti",
+      "description": "È richiesto un minimo di {credits} crediti per chiamare {name} direttamente.",
+      "cta": "Acquista crediti"
+    }
+  }
 }

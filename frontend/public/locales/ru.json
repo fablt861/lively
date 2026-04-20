@@ -792,5 +792,12 @@
   },
   "favorite.restriction.title": "Дружба требует времени!",
   "favorite.restriction.desc": "Вы должны провести не менее 3 минут в звонке с этой моделью, прежде чем сможете добавить ее в избранное.",
-  "favorite.restriction.cta": "Понятно"
+  "favorite.restriction.cta": "Понятно",
+  "dashboard": {
+    "restriction": {
+      "title": "Недостаточно кредитов",
+      "description": "Для прямого звонка {name} требуется минимум {credits} кредитов.",
+      "cta": "Купить кредиты"
+    }
+  }
 }

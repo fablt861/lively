@@ -815,5 +815,12 @@
   },
   "favorite.restriction.title": "Ami à gagner !",
   "favorite.restriction.desc": "Vous devez passer au moins 3 minutes en appel avec ce modèle avant de pouvoir l'ajouter à vos favoris.",
-  "favorite.restriction.cta": "Compris"
+  "favorite.restriction.cta": "Compris",
+  "dashboard": {
+    "restriction": {
+      "title": "Crédits insuffisants",
+      "description": "Un minimum de {credits} crédits est requis pour appeler {name} en direct.",
+      "cta": "Acheter des crédits"
+    }
+  }
 }

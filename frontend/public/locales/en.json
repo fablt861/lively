@@ -821,5 +821,12 @@
   },
   "favorite.restriction.title": "Friendship takes time!",
   "favorite.restriction.desc": "You must spend at least 3 minutes in a call with this model before you can add her to your favorites.",
-  "favorite.restriction.cta": "Got it"
+  "favorite.restriction.cta": "Got it",
+  "dashboard": {
+    "restriction": {
+      "title": "Insufficient Credits",
+      "description": "A minimum of {credits} credits is required to call {name} directly.",
+      "cta": "Buy Credits"
+    }
+  }
 }
