@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Mic, MicOff, Video, VideoOff, SkipForward, Send, LayoutDashboard, Coins, PhoneOff, SendHorizontal, AlertCircle, ShieldAlert, X, CheckCircle2, Sparkles, Timer, Check, Plus, Heart, Smile, Signal, Wifi, Zap, RefreshCw, Home } from "lucide-react";
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import { LiveKitRoom, VideoTrack, useTracks, RoomAudioRenderer, TrackLoop, isTrackReference } from '@livekit/components-react';
-import { Track, RemoteParticipant, LocalParticipant, VideoQuality, Room } from 'livekit-client';
+import { Track, RemoteParticipant, LocalParticipant, VideoQuality, Room, RoomEvent } from 'livekit-client';
 import { CallListener } from './CallListener';
 import { useTranslation } from "@/context/LanguageContext";
 import { MaintenanceGuard } from "./MaintenanceGuard";
@@ -877,16 +877,37 @@ export function VideoRoom({
 
     // Force sync mute states with LiveKit room whenever it changes or stats change
     useEffect(() => {
-        if (room?.localParticipant) {
-            console.log("[LiveKit] Syncing mute states to participant:", { audio: isAudioMuted, video: isVideoMuted });
-            room.localParticipant.setMicrophoneEnabled(!isAudioMuted);
-            room.localParticipant.setCameraEnabled(!isVideoMuted);
-        }
+        const syncMutes = async () => {
+            if (room?.localParticipant) {
+                console.log("[LiveKit] Force applying mute states:", { audio: isAudioMuted, video: isVideoMuted });
+                try {
+                    await room.localParticipant.setMicrophoneEnabled(!isAudioMuted);
+                    await room.localParticipant.setCameraEnabled(!isVideoMuted);
+                } catch (e) {
+                    console.warn("[LiveKit] Mute sync error:", e);
+                }
+            }
+        };
+
+        // 1. Immediate sync attempt
+        syncMutes();
         
-        // Also sync the local MediaStream tracks (used for preview/local display)
+        // 2. Continuous sync for preview MediaStream tracks
         if (localStream) {
             localStream.getAudioTracks().forEach(t => t.enabled = !isAudioMuted);
             localStream.getVideoTracks().forEach(t => t.enabled = !isVideoMuted);
+        }
+
+        // 3. Robust Listener: Re-apply whenever a track is published (Critical for re-matching)
+        if (room) {
+            room.on(RoomEvent.LocalTrackPublished, syncMutes);
+            // Also listen for RoomEvent.Connected because sometimes tracks are published during connection
+            room.on(RoomEvent.Connected, syncMutes);
+            
+            return () => {
+                room.off(RoomEvent.LocalTrackPublished, syncMutes);
+                room.off(RoomEvent.Connected, syncMutes);
+            };
         }
     }, [room, isAudioMuted, isVideoMuted, hasStartedMatch, localStream]);
 
