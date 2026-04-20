@@ -245,9 +245,12 @@ export function VideoRoom({
     const privateSummaryRef = useRef(privateSummary);
     const [currCallDuration, setCurrCallDuration] = useState(0);
     const [showFavoriteRuleModal, setShowFavoriteRuleModal] = useState(false);
+    const teaserVideoRef = useRef<HTMLVideoElement>(null);
+    const isTeaserActiveRef = useRef(isTeaserActive);
 
     // Sync refs for use in socket listeners (to avoid stale closures)
     useEffect(() => { isBlockedRef.current = isBlocked; }, [isBlocked]);
+    useEffect(() => { isTeaserActiveRef.current = isTeaserActive; }, [isTeaserActive]);
     useEffect(() => { privateSummaryRef.current = privateSummary; }, [privateSummary]);
 
     console.log(`[VideoRoom Render] isConnected: ${isConnected}, isSocket: ${isSocketConnected}, isMatching: ${isMatching}, remoteVideoTrack (bool): ${!!remoteVideoTrack}`);
@@ -498,6 +501,13 @@ export function VideoRoom({
         const handlePartnerLeft = () => {
             console.log("[Socket] Partner left. isBlocked state (ref):", isBlockedRef.current);
             
+            // IMPORTANT: If we are in the middle of a teaser sequence, 
+            // WE MUST NOT auto-requeue the user.
+            if (isTeaserActiveRef.current) {
+                console.log("[Teaser] Ignoring partner_left (Teaser active)");
+                return;
+            }
+
             // We need to know if we were in a block to decide if we auto-requeue
             const processAutoNext = !isBlockedRef.current;
 
@@ -738,6 +748,16 @@ export function VideoRoom({
             }, 2000);
         }
     }, [userCredits, isConnected, role, accountStatus, teaserShownState, settings, isTeaserActive, socket]);
+
+    // Force stop teaser video when inactive to avoid residual sound
+    useEffect(() => {
+        if (!isTeaserActive && teaserVideoRef.current) {
+            console.log("[Teaser] Forcing video pause/cleanup");
+            teaserVideoRef.current.pause();
+            teaserVideoRef.current.src = "";
+            teaserVideoRef.current.load();
+        }
+    }, [isTeaserActive]);
 
     // Track Call Duration for Favorites Rule
     useEffect(() => {
@@ -1064,6 +1084,8 @@ export function VideoRoom({
                 <div className="absolute inset-0 z-0 h-[100dvh]">
                     {isTeaserActive && teaserStep === 'playing' ? (
                         <video 
+                            key="teaser-video-player"
+                            ref={teaserVideoRef}
                             src={(settings as any)?.teaserVideoUrl || "https://www.w3schools.com/html/mov_bbb.mp4"} 
                             autoPlay 
                             playsInline
