@@ -707,16 +707,18 @@ export function VideoRoom({
         }
     }, [role, isConnected, userCredits, accountStatus]);
 
-    // --- FAKE VIDEO TEASER (10s before end) ---
+    // --- FAKE VIDEO TEASER (Synchronized with 0 credits) ---
     useEffect(() => {
         if (role !== "user" || !isConnected || userCredits === null || isTeaserActive) return;
         if (accountStatus !== 'registered' || teaserShownState) return;
         if (!(settings as any)?.teaserEnabled) return;
 
-        // Trigger at 10s left. Assuming 10 credits/min = 1/6 credits/sec.
-        // 10 seconds = 1.666... credits.
+        // Trigger at 1.67 credits left (approx 10s)
         if (userCredits > 0 && userCredits <= 1.67) {
-            console.log("[Teaser] Triggering 10s sequence (2s search + 8s video)");
+            const initialCredits = userCredits;
+            const totalDurationMs = Math.round(initialCredits * 6000); // 10 credits/min = 6s/credit = 6000ms/credit
+            
+            console.log(`[Teaser] Synchronizing ${Math.round(totalDurationMs/1000)}s sequence with ${initialCredits.toFixed(2)} credits`);
             setIsTeaserActive(true);
             setTeaserStep('searching');
 
@@ -726,26 +728,49 @@ export function VideoRoom({
                 socket.emit('stop');
             }
 
-            // Sequence: 2s searching
-            setTimeout(() => {
+            // 1. Local Credits Countdown
+            const interval = setInterval(() => {
+                setUserCredits(prev => {
+                    const next = (prev || 0) - (1/6);
+                    return next > 0 ? next : 0;
+                });
+                setDisplayedCredits(prev => {
+                    const next = (prev || 0) - (1/6);
+                    return next > 0 ? next : 0;
+                });
+            }, 1000);
+
+            // 2. Sequence: Search 2s, then Play until 0
+            const searchTimeout = setTimeout(() => {
                 setTeaserStep('playing');
-                // 8s video playing
-                setTimeout(() => {
-                    setIsTeaserActive(false);
-                    setTeaserStep(null);
-                    setShowPaywall(true);
-                    
-                    // Mark as shown in DB
-                    const userId = localStorage.getItem('kinky_user_id');
-                    if (userId) {
-                        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/teaser-shown`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ userId })
-                        }).then(() => setTeaserShownState(true)).catch(console.error);
-                    }
-                }, 8000);
             }, 2000);
+
+            // 3. Final Termination (Credits hit 0)
+            const endTimeout = setTimeout(() => {
+                clearInterval(interval);
+                setIsTeaserActive(false);
+                setTeaserStep(null);
+                setUserCredits(0);
+                setDisplayedCredits(0);
+                localStorage.setItem('kinky_credits', '0');
+                setShowPaywall(true);
+                
+                // Mark as shown in DB
+                const userId = localStorage.getItem('kinky_user_id');
+                if (userId) {
+                    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/teaser-shown`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ userId })
+                    }).then(() => setTeaserShownState(true)).catch(console.error);
+                }
+            }, totalDurationMs);
+
+            return () => {
+                clearInterval(interval);
+                clearTimeout(searchTimeout);
+                clearTimeout(endTimeout);
+            };
         }
     }, [userCredits, isConnected, role, accountStatus, teaserShownState, settings, isTeaserActive, socket]);
 
