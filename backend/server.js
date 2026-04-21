@@ -1,3 +1,4 @@
+console.log("[STARTUP] Starting server at " + new Date().toISOString());
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
