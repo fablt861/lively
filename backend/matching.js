@@ -24,6 +24,14 @@ function getClientIp(socket) {
     return socket.handshake.address;
 }
 
+function getMatchingIdentifier(socket) {
+    if (!socket) return 'unknown';
+    if (socket.userId) return socket.userId.toLowerCase();
+    const role = socket.role || socket.data?.role || 'user';
+    const ip = socket.userIp || getClientIp(socket);
+    return `${role}:${ip}`.toLowerCase();
+}
+
 async function resolvePseudo(id, role, emailFallback) {
     if (!id) return emailFallback ? emailFallback.split('@')[0] : 'Guest';
     
@@ -66,22 +74,6 @@ function detectCountry(socket) {
     return 'Unknown';
 }
 
-function detectCountry(socket) {
-    try {
-        // Handle proxies like Vercel/Render
-        const forwarded = socket.handshake.headers['x-forwarded-for'];
-        const ip = forwarded ? forwarded.split(',')[0].trim() : socket.handshake.address;
-        
-        const geo = geoip.lookup(ip);
-        if (geo && geo.country) {
-            return geo.country;
-        }
-    } catch (err) {
-        console.error('[GeoIP Error]', err.message);
-    }
-    return 'Unknown';
-}
-
 async function checkRateLimit(identifier) {
     if (!identifier) return false;
     const key = `ratelimit:matching:${identifier.toLowerCase()}`;
@@ -104,7 +96,6 @@ function setupMatching(io, socket) {
             socket.userId = id;
             socket.data.userId = id;
 
-            // Detect IP and Country
             // Detect IP and Country
             const userIp = getClientIp(socket);
             socket.userIp = userIp;
@@ -201,11 +192,10 @@ function setupMatching(io, socket) {
             }
 
             // Get IP for guest tracking
-            // Get IP for guest tracking
             const userIp = getClientIp(socket);
             socket.userIp = userIp;
             socket.data.userIp = userIp;
- Broadway            
+            
             // NEW: Get Country for Geo-Blocking
             const geo = geoip.lookup(userIp);
             socket.country = geo ? geo.country : 'Unknown';
@@ -308,6 +298,19 @@ function setupMatching(io, socket) {
         isProcessing = true;
         try {
             console.log(`Socket ${socket.id} called stop`);
+            const roomId = socket.currentRoom || await redis.get(`socket_room:${socket.id}`);
+            if (roomId) {
+                // If they were matched but not yet active, notify partner fast
+                const roomDataStr = await redis.hget('billing:active_rooms', roomId);
+                if (!roomDataStr) {
+                    // Room exists in socket memory but not in billing? Likely aborted during handshake
+                    const partnerSocketId = await redis.get(`socket_room_partner:${socket.id}`);
+                    if (partnerSocketId) {
+                        console.log(`[Match Abort] Notifying partner ${partnerSocketId} that match was aborted by ${socket.id}`);
+                        io.to(partnerSocketId).emit('match_aborted', { reason: 'partner_gated' });
+                    }
+                }
+            }
             await disconnectFromRoom(io, socket, socket.role + '_stop');
         } finally {
             isProcessing = false;
@@ -486,7 +489,7 @@ async function updateQueuePositions(io, role) {
 }
 
 async function handleJoinQueue(io, socket) {
-    const myIdentifier = (socket.userId || `${socket.role}:${socket.userIp || 'unknown'}`).toLowerCase();
+    const myIdentifier = getMatchingIdentifier(socket);
     const isModel = socket.role === 'model';
     const myQueue = isModel ? QUEUE_MODELS : QUEUE_USERS;
     const targetQueue = isModel ? QUEUE_USERS : QUEUE_MODELS;
@@ -601,8 +604,7 @@ async function handleJoinQueue(io, socket) {
         for (let i = allowedCandidates.length - 1; i >= 0; i--) {
             const cId = allowedCandidates[i];
             const cSocket = io.sockets.sockets.get(cId);
-            const cRole = cSocket.data.role || (targetQueue === QUEUE_MODELS ? 'model' : 'user');
-            const cIdentifier = (cSocket.data.userId || `${cRole}:${cSocket.data.userIp || 'unknown'}`).toLowerCase();
+            const cIdentifier = getMatchingIdentifier(cSocket);
             
             const alreadySeen = await redis.get(`seen:${myIdentifier.toLowerCase()}:${cIdentifier.toLowerCase()}`);
             if (!alreadySeen) {
@@ -646,7 +648,7 @@ async function handleJoinQueue(io, socket) {
 
         const partnerSocket = io.sockets.sockets.get(partnerId);
         if (partnerSocket) {
-            const pIdentifier = (partnerSocket.userId || partnerSocket.userIp || partnerSocket.id).toLowerCase();
+            const pIdentifier = getMatchingIdentifier(partnerSocket);
             const myIdentifierSorted = [myIdentifier.toLowerCase(), pIdentifier].sort();
             const roomId = `room_${myIdentifierSorted[0]}_${myIdentifierSorted[1]}_${Date.now()}`;
             
@@ -657,6 +659,10 @@ async function handleJoinQueue(io, socket) {
 
             await partnerSocket.join(roomId);
             partnerSocket.currentRoom = roomId;
+
+            // Store transient partner relationship for match abort handling
+            await redis.set(`socket_room_partner:${socket.id}`, partnerId, 'EX', 60);
+            await redis.set(`socket_room_partner:${partnerId}`, socket.id, 'EX', 60);
             
             // ENSURE BOTH ARE REMOVED FROM ALL QUEUES to prevent dual-matching
             await redis.lrem(QUEUE_USERS, 0, socket.id);
@@ -665,11 +671,10 @@ async function handleJoinQueue(io, socket) {
             await redis.lrem(QUEUE_MODELS, 0, partnerId);
 
             // --- NEW: Mark as seen to avoid immediate rematching after hangup ---
-            if (myIdentifier && pIdentifier) {
-                // Increased cooldown to 12s to definitively prevent "bounce" rematches
-                await redis.set(`seen:${myIdentifier.toLowerCase()}:${pIdentifier.toLowerCase()}`, '1', 'EX', 12);
-                await redis.set(`seen:${pIdentifier.toLowerCase()}:${myIdentifier.toLowerCase()}`, '1', 'EX', 12);
-            }
+            const pIdentifierSeen = getMatchingIdentifier(partnerSocket);
+            console.log(`[Cooldown] Setting seen for ${myIdentifier} <-> ${pIdentifierSeen}`);
+            await redis.set(`seen:${myIdentifier.toLowerCase()}:${pIdentifierSeen.toLowerCase()}`, '1', 'EX', 15);
+            await redis.set(`seen:${pIdentifierSeen.toLowerCase()}:${myIdentifier.toLowerCase()}`, '1', 'EX', 15);
 
             const userSocket = isModel ? partnerSocket : socket;
             const userCountryCode = userSocket.data.countryCode || 'Unknown';

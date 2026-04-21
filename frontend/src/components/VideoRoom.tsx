@@ -634,6 +634,12 @@ export function VideoRoom({
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const handleMatched = (data: any) => {
+            // --- HARD GATING: Block ANY match processing if modal is open ---
+            if (showAuthModalRef.current || showPaywallRef.current) {
+                console.log("[VideoRoom] Matched event IGNORED: Modal is open.");
+                return;
+            }
+
             const matchedData = data as { roomId: string; modelBalance?: number; isBlocked?: boolean; blockEnd?: number; isRestricted?: boolean };
             console.log("[Socket] Matched event received in VideoRoom:", matchedData);
             

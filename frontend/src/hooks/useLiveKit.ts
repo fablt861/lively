@@ -246,7 +246,20 @@ export function useLiveKit(
 
         const url = process.env.NEXT_PUBLIC_LIVEKIT_URL || "wss://live.kinky.live";
         console.log(`[LiveKit] Connecting to ${url} for room ${roomId}`);
+        
+        // Safety Timeout: if we don't stabilize in 10s, abort match
+        const connTimeout = setTimeout(() => {
+            if (currentRoomIdRef.current === roomId) {
+                console.warn("[LiveKit] Connection timeout. Backing out.");
+                setIsConnecting(false);
+                room.disconnect();
+                socket.emit('stop'); // Stop server session
+                setIsMatching(true); // Restart search
+            }
+        }, 10000);
+
         await room.connect(url, token);
+        clearTimeout(connTimeout);
         
         // Publish local tracks
         await room.localParticipant.enableCameraAndMicrophone();
@@ -265,6 +278,14 @@ export function useLiveKit(
       room.disconnect();
       setIsCallConnected(false);
       setIsConnecting(false);
+    });
+
+    socket.on("match_aborted", () => {
+      console.log("[useLiveKit] Match aborted signal received.");
+      room.disconnect();
+      setIsCallConnected(false);
+      setIsConnecting(false);
+      setIsMatching(true); // Put back in searching state
     });
 
     socket.on("force_requeue", () => {
