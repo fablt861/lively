@@ -255,11 +255,15 @@ export function VideoRoom({
     const [showFavoriteRuleModal, setShowFavoriteRuleModal] = useState(false);
     const teaserVideoRef = useRef<HTMLVideoElement>(null);
     const isTeaserActiveRef = useRef(isTeaserActive);
+    const showAuthModalRef = useRef(showAuthModal);
+    const showPaywallRef = useRef(showPaywall);
 
     // Sync refs for use in socket listeners (to avoid stale closures)
     useEffect(() => { isBlockedRef.current = isBlocked; }, [isBlocked]);
     useEffect(() => { isTeaserActiveRef.current = isTeaserActive; }, [isTeaserActive]);
     useEffect(() => { privateSummaryRef.current = privateSummary; }, [privateSummary]);
+    useEffect(() => { showAuthModalRef.current = showAuthModal; }, [showAuthModal]);
+    useEffect(() => { showPaywallRef.current = showPaywall; }, [showPaywall]);
 
     // Pre-decide Teaser Choice at the start of each call
     useEffect(() => {
@@ -442,6 +446,15 @@ export function VideoRoom({
                 } else {
                     setShowPaywall(true);
                 }
+
+                // --- NEW: Force Physical Disconnect ---
+                // Even though the socket is still connected (to allow for top-up/recovery),
+                // we must stop the camera and leave the LiveKit room room immediately 
+                // to respect the user's objective and avoid background streaming.
+                if (room) {
+                    console.log("[Credits] Hard-disconnecting LiveKit room for modal display.");
+                    room.disconnect();
+                }
             }
         };
 
@@ -475,6 +488,12 @@ export function VideoRoom({
                         setShowAuthModal(true);
                     } else {
                         setShowPaywall(true);
+                    }
+
+                    // --- NEW: Force Physical Disconnect ---
+                    if (room) {
+                        console.log("[Credits] Credit update hit 0. Disconnecting room.");
+                        room.disconnect();
                     }
                 } else {
                     // Safety: Ensure modals are closed if user topped up or registered
@@ -553,6 +572,14 @@ export function VideoRoom({
             if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
             
             if (processAutoNext) {
+                // --- NEW: Gating Check ---
+                // If the user is currently looking at a Signup Modal or Paywall,
+                // we SHOULD NOT re-join the queue or call handleNext.
+                if (showAuthModalRef.current || showPaywallRef.current) {
+                    console.log("[Auto-Next] Gated: Modal is open. Skipping auto-requeue.");
+                    return;
+                }
+
                 console.log("[Auto-Next] Ordinary session ended, re-joining queue");
                 handleNext(true);
             } else {
