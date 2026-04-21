@@ -16,7 +16,12 @@ import {
 } from "livekit-client";
 
 // DEPLOY CANARY: 2026-04-16T13:08:00Z - Robust Sync
-export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = true) {
+export function useLiveKit(
+    role: "user" | "model" | null, 
+    isEnabled: boolean = true,
+    showAuthModal: boolean = false,
+    showPaywall: boolean = false
+) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isSocketConnected, setIsSocketConnected] = useState(false);
   const [room, setRoom] = useState<Room | null>(null);
@@ -42,10 +47,18 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
   const currentRoomIdRef = useRef<string | null>(null);
 
   // Sync refs with state
+  const showAuthModalRef = useRef(showAuthModal);
+  const showPaywallRef = useRef(showPaywall);
+
   useEffect(() => {
     isAudioMutedRef.current = isAudioMuted;
     isVideoMutedRef.current = isVideoMuted;
   }, [isAudioMuted, isVideoMuted]);
+
+  useEffect(() => {
+    showAuthModalRef.current = showAuthModal;
+    showPaywallRef.current = showPaywall;
+  }, [showAuthModal, showPaywall]);
 
   // 1. Preview Stream (for PreMatchModal)
   useEffect(() => {
@@ -202,6 +215,14 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     });
 
     socket.on("matched", async (data: any) => {
+      // --- HARD GATING: Ignore matches if looking at a modal ---
+      if (showAuthModalRef.current || showPaywallRef.current) {
+        console.log("[useLiveKit] Gated: Match received while modal open. Emitting stop.");
+        socket.emit('stop'); // Tell server to remove us from queue definitively
+        setIsMatching(false);
+        return;
+      }
+
       const { roomId, initiator, partnerId, partnerRole, partnerName } = data;
       currentRoomIdRef.current = roomId;
       setIsConnecting(true);

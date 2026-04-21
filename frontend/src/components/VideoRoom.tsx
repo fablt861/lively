@@ -98,6 +98,10 @@ interface VideoRoomProps {
     setIsAudioMuted?: (muted: boolean) => void;
     setIsVideoMuted?: (muted: boolean) => void;
     setIsMatching: (matching: boolean) => void;
+    showAuthModal: boolean;
+    setShowAuthModal: (show: boolean) => void;
+    showPaywall: boolean;
+    setShowPaywall: (show: boolean) => void;
 }
 
 export function VideoRoom({
@@ -124,6 +128,10 @@ export function VideoRoom({
     packs,
     onPurchase,
     isDirectCall,
+    showAuthModal,
+    setShowAuthModal,
+    showPaywall,
+    setShowPaywall,
     connectionQuality = 'excellent',
     room,
     finishMatching,
@@ -199,8 +207,7 @@ export function VideoRoom({
             return () => clearTimeout(timer);
         }
     }, [remoteVideoTrack, finishMatching]);
-    const [showPaywall, setShowPaywall] = useState(false);
-    const [showAuthModal, setShowAuthModal] = useState(false);
+    // Modals visibility handled via props now: showPaywall, showAuthModal
     const [hasStartedMatch, setHasStartedMatch] = useState(false);
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
     const [isReporting, setIsReporting] = useState(false);

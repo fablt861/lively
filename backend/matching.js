@@ -244,7 +244,7 @@ function setupMatching(io, socket) {
 
             const isNew = await redis.set(`has_joined:${socket.id}`, '1', 'NX', 'EX', 86400);
             
-            // ENSURE ONE SOCKET PER ID IN QUEUE
+            // ENSURE ONE SOCKET PER ID/IP IN QUEUE
             if (socket.userId) {
                 const oldSocketId = await redis.get(`queue_socket:${socket.userId}`);
                 if (oldSocketId && oldSocketId !== socket.id) {
@@ -252,6 +252,13 @@ function setupMatching(io, socket) {
                     await redis.lrem(role === 'model' ? QUEUE_MODELS : QUEUE_USERS, 0, oldSocketId);
                 }
                 await redis.set(`queue_socket:${socket.userId}`, socket.id, 'EX', 86400);
+            } else if (role === 'user') {
+                const oldSocketId = await redis.get(`queue_socket:ip:${userIp}`);
+                if (oldSocketId && oldSocketId !== socket.id) {
+                    console.log(`[Queue Cleanup] Removing old guest socket ${oldSocketId} for IP ${userIp}`);
+                    await redis.lrem(QUEUE_USERS, 0, oldSocketId);
+                }
+                await redis.set(`queue_socket:ip:${userIp}`, socket.id, 'EX', 86400);
             }
 
             await redis.lrem(role === 'model' ? QUEUE_MODELS : QUEUE_USERS, 0, socket.id);
@@ -750,6 +757,17 @@ async function disconnectFromRoom(io, socket, reason = 'unknown') {
 
         // Stop billing for this room - this emits partner_left via ioInstance.to(roomId)
         await stopBilling(roomId, reason);
+
+        // --- NEW: Aggressive Queue Cleanup on Disconnect ---
+        if (reason === 'balance_exhausted' || reason === 'guest_limit_reached') {
+            console.log(`[Disconnect Cleanup] Removing socket ${socket.id} (and IP/ID) from queue due to exhaustion.`);
+            await redis.lrem(socket.role === 'model' ? QUEUE_MODELS : QUEUE_USERS, 0, socket.id);
+            if (socket.userId) {
+                await redis.del(`queue_socket:${socket.userId}`);
+            } else if (socket.userIp) {
+                await redis.del(`queue_socket:ip:${socket.userIp}`);
+            }
+        }
 
         socket.leave(roomId);
         socket.currentRoom = null;

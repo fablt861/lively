@@ -13,6 +13,8 @@ export default function LivePage({ params }: { params: { locale: string } }) {
     const [isLaunch, setIsLaunch] = useState(false);
     const [isChecking, setIsChecking] = useState(true);
     const [settings, setSettings] = useState<any>(null);
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [showPaywall, setShowPaywall] = useState(false);
     const searchParams = useSearchParams();
     const roomParam = searchParams.get('room');
     const isDirectCall = !!roomParam;
@@ -33,7 +35,7 @@ export default function LivePage({ params }: { params: { locale: string } }) {
             .finally(() => setIsChecking(false));
     }, []);
 
-    const videoSession = useLiveKit(role || "user", !isMaintenance && !isLaunch && !isChecking);
+    const videoSession = useLiveKit(role || "user", !isMaintenance && !isLaunch && !isChecking, showAuthModal, showPaywall);
 
     const activeMaintenance = isMaintenance || videoSession.isMaintenance;
     const activeLaunch = isLaunch || videoSession.isLaunch;
@@ -57,10 +59,8 @@ export default function LivePage({ params }: { params: { locale: string } }) {
     if (videoSession.cameraPermissionError) return <CameraPermissionGuard onRetry={videoSession.retryCamera} />;
     
     // We pass previewStream for localStream to allow the PreMatchModal to show the camera check
-    if (activeLaunch) return <VideoRoom {...videoSession} isAudioMuted={videoSession.isAudioMuted} setIsAudioMuted={videoSession.setIsAudioMuted} isVideoMuted={videoSession.isVideoMuted} setIsVideoMuted={videoSession.setIsVideoMuted} localStream={videoSession.previewStream} remoteStream={null} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={videoSession.endCall} onNext={videoSession.nextPartner} onPurchase={handlePurchase} isLaunchOverride={true} packs={settings?.packs} isDirectCall={isDirectCall} />;
+    if (activeLaunch) return <VideoRoom {...videoSession} isAudioMuted={videoSession.isAudioMuted} setIsAudioMuted={videoSession.setIsAudioMuted} isVideoMuted={videoSession.isVideoMuted} setIsVideoMuted={videoSession.setIsVideoMuted} localStream={videoSession.previewStream} remoteStream={null} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={videoSession.endCall} onNext={videoSession.nextPartner} onPurchase={handlePurchase} isLaunchOverride={true} packs={settings?.packs} isDirectCall={isDirectCall} showAuthModal={showAuthModal} setShowAuthModal={setShowAuthModal} showPaywall={showPaywall} setShowPaywall={setShowPaywall} />;
     if (isChecking || !role) return <div className="min-h-screen bg-[#050505]"></div>;
 
-    return <VideoRoom {...videoSession} isAudioMuted={videoSession.isAudioMuted} setIsAudioMuted={videoSession.setIsAudioMuted} isVideoMuted={videoSession.isVideoMuted} setIsVideoMuted={videoSession.setIsVideoMuted} localStream={videoSession.previewStream} remoteStream={null} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={videoSession.endCall} onNext={videoSession.nextPartner} onPurchase={handlePurchase} packs={settings?.packs} isDirectCall={isDirectCall} />;
+    return <VideoRoom {...videoSession} isAudioMuted={videoSession.isAudioMuted} setIsAudioMuted={videoSession.setIsAudioMuted} isVideoMuted={videoSession.isVideoMuted} setIsVideoMuted={videoSession.setIsVideoMuted} localStream={videoSession.previewStream} remoteStream={null} role={role} language={params.locale} onCreditsUpdate={() => {}} onCallEnd={videoSession.endCall} onNext={videoSession.nextPartner} onPurchase={handlePurchase} packs={settings?.packs} isDirectCall={isDirectCall} showAuthModal={showAuthModal} setShowAuthModal={setShowAuthModal} showPaywall={showPaywall} setShowPaywall={setShowPaywall} />;
 }
-
-
