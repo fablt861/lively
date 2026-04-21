@@ -156,8 +156,8 @@ export function useLiveKit(
         // Emit a fake Socket event locally so VideoRoom.tsx handles it gracefully
         socket?.emit('partner_left', { reason: 'livekit_drop' });
         // Manually trigger the listener if needed
-        const listeners = (socket as any).listeners('partner_left');
-        if (listeners) {
+        const listeners = socket ? (socket as any).listeners('partner_left') : [];
+        if (listeners && listeners.length > 0) {
              listeners.forEach((fn: Function) => fn({ reason: 'livekit_drop_local' }));
         }
       })
