@@ -244,6 +244,12 @@ export function useLiveKit(
         const resp = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/video/token?room=${roomId}&identity=${identity}`);
         const { token } = await resp.json();
 
+        // Check if we were aborted while waiting for token
+        if (currentRoomIdRef.current !== roomId) {
+          console.log("[useLiveKit] Aborting match connection: Room ID changed/cleared during token fetch.");
+          return;
+        }
+
         const url = process.env.NEXT_PUBLIC_LIVEKIT_URL || "wss://live.kinky.live";
         console.log(`[LiveKit] Connecting to ${url} for room ${roomId}`);
         
@@ -260,6 +266,13 @@ export function useLiveKit(
 
         await room.connect(url, token);
         clearTimeout(connTimeout);
+
+        // Check if we were aborted while connecting
+        if (currentRoomIdRef.current !== roomId) {
+          console.log("[useLiveKit] Aborting match connection: Room ID changed/cleared during room.connect.");
+          room.disconnect();
+          return;
+        }
         
         // Publish local tracks
         await room.localParticipant.enableCameraAndMicrophone();
@@ -282,6 +295,7 @@ export function useLiveKit(
 
     socket.on("match_aborted", () => {
       console.log("[useLiveKit] Match aborted signal received.");
+      currentRoomIdRef.current = null; // Signal current matched handler to stop
       room.disconnect();
       setIsCallConnected(false);
       setIsConnecting(false);

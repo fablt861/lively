@@ -778,6 +778,13 @@ async function disconnectFromRoom(io, socket, reason = 'unknown') {
         socket.currentRoom = null;
         await redis.del(`socket_room:${socket.id}`);
 
+        // Cleanup partner relationship
+        const partnerSocketId = await redis.get(`socket_room_partner:${socket.id}`);
+        if (partnerSocketId) {
+            await redis.del(`socket_room_partner:${socket.id}`);
+            await redis.del(`socket_room_partner:${partnerSocketId}`);
+        }
+
         // --- MULTI-SERVER SAFE RE-QUEUE ---
         if (partnerSocketId) {
             const isDirectCall = roomId.startsWith('direct-call-');
