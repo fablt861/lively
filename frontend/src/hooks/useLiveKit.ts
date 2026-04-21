@@ -243,21 +243,18 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     socket.on("partner_left", () => {
       room.disconnect();
       setIsCallConnected(false);
-      setIsMatching(true);
       setIsConnecting(false);
     });
 
     socket.on("force_requeue", () => {
         room.disconnect();
         setIsCallConnected(false);
-        setIsMatching(true);
-        joinQueue();
+        setIsConnecting(false);
     });
 
     socket.on("clean_room", () => {
         room.disconnect();
         setIsCallConnected(false);
-        setIsMatching(true);
     });
 
     socket.on("chat_message", (msg: any) => {

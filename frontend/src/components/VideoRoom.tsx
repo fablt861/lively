@@ -619,8 +619,7 @@ export function VideoRoom({
             }
             
             if (matchedData.modelBalance !== undefined && role === 'model') {
-                const newBalance = matchedData.modelBalance;
-                setPayoutInfo(prev => ({ ...prev, totalBalance: newBalance }));
+                setPayoutInfo(prev => ({ ...prev, totalBalance: matchedData.modelBalance || 0 }));
             }
             if (matchedData.isBlocked) {
                 console.log("[Block] Recovering active private session state from Matched event", matchedData.blockEnd);
@@ -644,6 +643,26 @@ export function VideoRoom({
             }
         };
 
+        const handleForceRequeue = () => {
+            console.log("[Socket] Force requeue event received.");
+            
+            // Gating Check
+            if (showAuthModalRef.current || showPaywallRef.current) {
+                console.log("[Force Requeue] Gated: Modal is open. Ignoring requeue command.");
+                return;
+            }
+
+            console.log("[Force Requeue] Executing re-queue...");
+            if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
+            handleNext(true);
+        };
+
+        const handleCleanRoom = () => {
+            console.log("[Socket] Clean room event received.");
+            if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
+            setIsMatching(true); // Put back in searching state visually
+        };
+
         socket.on('matched', handleMatched);
         socket.on('out_of_credits', handleOutOfCredits);
         socket.on('partner_out_of_credits', handlePartnerOutOfCredits);
@@ -655,6 +674,8 @@ export function VideoRoom({
         socket.on('block_session_ended', handleBlockSessionEnded);
         socket.on('private_session_summary', handlePrivateSummary);
         socket.on('partner_left', handlePartnerLeft);
+        socket.on('force_requeue', handleForceRequeue);
+        socket.on('clean_room', handleCleanRoom);
 
         return () => {
             socket.off('out_of_credits', handleOutOfCredits);
@@ -667,6 +688,9 @@ export function VideoRoom({
             socket.off('block_session_ended', handleBlockSessionEnded);
             socket.off('private_session_summary', handlePrivateSummary);
             socket.off('partner_left', handlePartnerLeft);
+            socket.off('matched', handleMatched);
+            socket.off('force_requeue', handleForceRequeue);
+            socket.off('clean_room', handleCleanRoom);
         };
     }, [socket, role, accountStatus, onNext, onCallEnd]);
 
