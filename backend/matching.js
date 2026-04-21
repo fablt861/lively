@@ -201,10 +201,6 @@ function setupMatching(io, socket) {
             socket.country = geo ? geo.country : 'Unknown';
             socket.data.country = socket.country;
             console.log(`[GeoIP] Socket ${socket.id} (IP: ${userIp}) detected from: ${socket.country}`);
-
-            if (isProcessing) return;
-            isProcessing = true;
-
             // Hydrate and Check Credits for Registered Users
             if (role === 'user' && id) {
                 const credits = await hydrateUserCredits(id);
@@ -265,8 +261,6 @@ function setupMatching(io, socket) {
 
     socket.on('next', async () => {
         if (isProcessing) return;
-        isProcessing = true;
-
         isProcessing = true;
         try {
             console.log(`Socket ${socket.id} called next`);
