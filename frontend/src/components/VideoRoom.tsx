@@ -1241,7 +1241,7 @@ export function VideoRoom({
                 </div>
 
                 {/* Local Video (Top Right on Mobile) */}
-                {hasStartedMatch && !showPaywall && (
+                {hasStartedMatch && !showPaywall && !showAuthModal && (
                     <div className="absolute top-4 right-4 md:top-auto md:bottom-24 md:left-6 md:right-auto z-[100] w-24 md:w-48 aspect-[3/4] bg-neutral-900 rounded-2xl md:rounded-[2rem] overflow-hidden shadow-2xl border border-white/20 transition-all duration-500">
                         {localVideoTrack ? (
                             <VideoTrack
