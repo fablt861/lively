@@ -71,6 +71,7 @@ export default function AdminPage() {
     const [modelPage, setModelPage] = useState(1);
     const [modelTotalPages, setModelTotalPages] = useState(1);
     const [selectedImage, setSelectedImage] = useState<{ images: string[], index: number } | null>(null);
+    const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
     const [blockedKeywords, setBlockedKeywords] = useState<string[]>([]);
     const [newKeyword, setNewKeyword] = useState("");
     const [countrySearch, setCountrySearch] = useState("");
@@ -1325,7 +1326,10 @@ export default function AdminPage() {
                                     {teaserStats?.videos?.map((v: any) => (
                                         <tr key={v.id} className="group hover:bg-white/[0.01] transition-colors">
                                             <td className="p-6">
-                                                <div className="relative w-20 h-12 rounded-lg bg-black border border-white/10 overflow-hidden group-hover:border-indigo-500/50 transition-colors">
+                                                <div 
+                                                    className="relative w-20 h-12 rounded-lg bg-black border border-white/10 overflow-hidden group-hover:border-indigo-500/50 transition-colors cursor-pointer"
+                                                    onClick={() => setSelectedVideo(v.path)}
+                                                >
                                                     <video 
                                                         src={v.path} 
                                                         className="w-full h-full object-cover opacity-50 hover:opacity-100 transition-opacity" 
@@ -2243,6 +2247,39 @@ export default function AdminPage() {
                     </div>
                 )}
                 </main>
+            
+            {/* Video Lightbox */}
+            {selectedVideo && (
+                <div 
+                    className="fixed inset-0 z-[110] flex items-center justify-center bg-black/95 backdrop-blur-md p-4 md:p-10 animate-in fade-in duration-300 pointer-events-auto"
+                    onClick={() => setSelectedVideo(null)}
+                >
+                    <div className="relative max-w-4xl w-full flex flex-col items-center animate-in zoom-in-95 duration-300">
+                        <div className="w-full bg-black rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(79,70,229,0.3)] border border-white/10">
+                            <video 
+                                src={selectedVideo} 
+                                controls 
+                                autoPlay 
+                                className="w-full max-h-[70vh] object-contain"
+                                onClick={(e) => e.stopPropagation()}
+                            />
+                        </div>
+
+                        {/* Top controls - Consistent with Photo Lightbox */}
+                        <button 
+                            onClick={() => setSelectedVideo(null)}
+                            className="absolute top-0 right-0 -mt-14 md:-mr-8 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors text-white border border-white/10 shadow-xl"
+                        >
+                            <XCircle size={32} />
+                        </button>
+
+                        <div className="mt-6 flex items-center gap-3 bg-white/5 border border-white/10 px-6 py-3 rounded-full animate-in slide-in-from-bottom-4 duration-500">
+                            <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(79,70,229,1)]" />
+                            <span className="text-indigo-300 font-black text-xs uppercase tracking-widest">Lecture Teaser</span>
+                        </div>
+                    </div>
+                </div>
+            )}
             
             {/* Photo Lightbox */}
             {selectedImage && (
