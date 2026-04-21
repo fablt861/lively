@@ -427,8 +427,8 @@ async function transitionFromBlock(roomId, session, blockData) {
         const settings = await getSettings();
 
         // 1. Calculate Payout (Natural end = Full gain)
-        const totalBlockGain = parseFloat(blockData?.blockGain || settings.blockModelGain || 25);
-        const durationMin = parseInt(blockData?.blockDurationMin || settings.blockDurationMin || 30);
+        const totalBlockGain = parseFloat(blockData?.blockGain || session?.blockGain || settings.blockModelGain || 25);
+        const durationMin = parseInt(blockData?.blockDurationMin || session?.blockDurationMin || settings.blockDurationMin || 30);
         
         console.log(`[Billing Transition] Room ${roomId}: Block ended. Crediting model ${modelId} with $${totalBlockGain}`);
 
@@ -544,7 +544,7 @@ async function getModelStats(modelId) {
 
     return {
         balance: parseFloat(balanceStr || '0'),
-        history: historyStrs.map(h => JSON.parse(h)),
+        history: history,
         pseudo: profile.pseudo || 'Model',
         photoProfile: profile.photo_profile || ''
     };

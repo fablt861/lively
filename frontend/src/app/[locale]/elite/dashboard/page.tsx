@@ -341,7 +341,7 @@ export default function DashboardPage() {
                             <span className="font-medium tracking-wide uppercase text-xs md:text-sm">{t('dashboard.balance_title')}</span>
                         </div>
                         <div className="text-5xl md:text-7xl font-extralight text-white mb-6 font-mono">
-                            ${loading ? "..." : stats?.balance.toFixed(2)}
+                            ${loading || !stats ? "..." : (stats.balance || 0).toFixed(2)}
                         </div>
                         <div className="flex flex-col sm:flex-row flex-wrap gap-4 items-stretch sm:items-center">
                             <button 
