@@ -13,6 +13,7 @@ interface ProfileInfo {
     oldPassword?: string;
     newPassword?: string;
     confirmPassword?: string;
+    totpEnabled?: boolean;
 }
 
 interface ProfileSettingsModalProps {
@@ -40,6 +41,13 @@ export function ProfileSettingsModal({ isOpen, onClose, userId, role, onProfileU
     const [showOldPass, setShowOldPass] = useState(false);
     const [showNewPass, setShowNewPass] = useState(false);
     const [showConfirmPass, setShowConfirmPass] = useState(false);
+    
+    // TOTP State
+    const [totpSetupMode, setTotpSetupMode] = useState(false);
+    const [totpQrUrl, setTotpQrUrl] = useState("");
+    const [totpSecret, setTotpSecret] = useState("");
+    const [totpCode, setTotpCode] = useState("");
+    const [totpActionLoading, setTotpActionLoading] = useState(false);
 
     useEffect(() => {
         if (isOpen && userId) {
@@ -62,7 +70,8 @@ export function ProfileSettingsModal({ isOpen, onClose, userId, role, onProfileU
                         pseudo: data.pseudo || "",
                         email: data.email || "",
                         phone: data.phone || "",
-                        photoProfile: data.photoProfile || ""
+                        photoProfile: data.photoProfile || "",
+                        totpEnabled: !!data.totpEnabled
                     });
                     setLoading(false);
                 })
@@ -172,6 +181,82 @@ export function ProfileSettingsModal({ isOpen, onClose, userId, role, onProfileU
             setError(t('billing.network_error'));
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handleInitiateTotp = async () => {
+        setTotpActionLoading(true);
+        setError(null);
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/totp/generate`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: info.email })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                setTotpQrUrl(data.qrCodeUrl);
+                setTotpSecret(data.secret);
+                setTotpSetupMode(true);
+            } else {
+                setError(t(data.error) || t('billing.network_error'));
+            }
+        } catch (err) {
+            setError(t('billing.network_error'));
+        } finally {
+            setTotpActionLoading(false);
+        }
+    };
+
+    const handleVerifyTotp = async () => {
+        setTotpActionLoading(true);
+        setError(null);
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/totp/verify-setup`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: info.email, secret: totpSecret, code: totpCode })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                setInfo(prev => ({ ...prev, totpEnabled: true }));
+                setTotpSetupMode(false);
+                setSuccess(true);
+                setTimeout(() => setSuccess(false), 2000);
+            } else {
+                setError(t(data.error) || t('auth.error.invalid_totp'));
+            }
+        } catch (err) {
+            setError(t('billing.network_error'));
+        } finally {
+            setTotpActionLoading(false);
+            setTotpCode("");
+        }
+    };
+
+    const handleDisableTotp = async () => {
+        if (!totpCode || totpCode.length !== 6) return setError(t('profile.2fa_enter_code'));
+        setTotpActionLoading(true);
+        setError(null);
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/totp/disable`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: info.email, code: totpCode })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                setInfo(prev => ({ ...prev, totpEnabled: false }));
+                setSuccess(true);
+                setTimeout(() => setSuccess(false), 2000);
+            } else {
+                setError(t(data.error) || t('auth.error.invalid_totp'));
+            }
+        } catch (err) {
+            setError(t('billing.network_error'));
+        } finally {
+            setTotpActionLoading(false);
+            setTotpCode("");
         }
     };
 
@@ -382,6 +467,92 @@ export function ProfileSettingsModal({ isOpen, onClose, userId, role, onProfileU
                                         </div>
                                     )}
                                 </div>
+
+                                {/* Google Authenticator 2FA Section */}
+                                {role === 'model' && (
+                                    <div className="col-span-1 md:col-span-2 pt-4">
+                                        <div className="w-full flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl">
+                                            <div className="flex items-center gap-3">
+                                                <ShieldCheck size={16} className={info.totpEnabled ? "text-green-500" : "text-white/40"} />
+                                                <div>
+                                                    <span className="text-[10px] uppercase font-black tracking-widest">{t('profile.2fa_title') || 'Two-Factor Auth'}</span>
+                                                    <p className="text-white/50 text-xs">{info.totpEnabled ? t('profile.2fa_enabled_desc') || 'Secured by App' : t('profile.2fa_disabled_desc') || 'Not Active'}</p>
+                                                </div>
+                                            </div>
+                                            {!info.totpEnabled && !totpSetupMode && (
+                                                <button
+                                                    type="button"
+                                                    onClick={handleInitiateTotp}
+                                                    disabled={totpActionLoading}
+                                                    className="px-4 py-2 bg-indigo-500/20 text-indigo-400 border border-indigo-500/50 rounded-xl text-xs font-bold hover:bg-indigo-500/30 transition-colors"
+                                                >
+                                                    {totpActionLoading ? "..." : t('profile.2fa_enable') || 'Enable'}
+                                                </button>
+                                            )}
+                                        </div>
+
+                                        {totpSetupMode && (
+                                            <div className="mt-4 p-6 bg-white/5 border border-white/10 rounded-2xl animate-in slide-in-from-top-4 fade-in">
+                                                <p className="text-white/80 text-sm mb-4 text-center">{t('profile.2fa_scan_qr') || 'Scan this QR code with Google Authenticator.'}</p>
+                                                {totpQrUrl && (
+                                                    <div className="flex justify-center mb-6">
+                                                        <img src={totpQrUrl} alt="QR Code" className="w-48 h-48 rounded-xl p-2 bg-white" />
+                                                    </div>
+                                                )}
+                                                <div className="flex justify-center gap-2 mb-6">
+                                                    <input 
+                                                        type="text" 
+                                                        required 
+                                                        maxLength={6}
+                                                        pattern="\d{6}"
+                                                        placeholder="• • • • • •" 
+                                                        className="w-full max-w-xs bg-neutral-800 border border-white/30 rounded-xl py-3 text-center text-xl tracking-[0.5em] text-white focus:outline-none focus:border-indigo-500/50 font-mono" 
+                                                        value={totpCode} 
+                                                        onChange={e => setTotpCode(e.target.value.replace(/\D/g, ''))} 
+                                                    />
+                                                </div>
+                                                <div className="flex gap-4">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => { setTotpSetupMode(false); setTotpCode(""); }}
+                                                        className="flex-1 py-3 text-white/50 text-xs font-bold uppercase tracking-widest bg-white/5 rounded-xl hover:bg-white/10 transition-colors"
+                                                    >
+                                                        {t('common.cancel') || 'Cancel'}
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleVerifyTotp}
+                                                        disabled={totpActionLoading || totpCode.length !== 6}
+                                                        className="flex-1 py-3 bg-indigo-600 text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-indigo-500 transition-colors disabled:opacity-50"
+                                                    >
+                                                        {totpActionLoading ? "..." : t('common.verify') || 'Verify'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {info.totpEnabled && (
+                                            <div className="mt-4 p-6 bg-red-500/10 border border-red-500/20 rounded-2xl flex flex-col sm:flex-row items-center gap-4">
+                                                <input 
+                                                    type="text" 
+                                                    maxLength={6}
+                                                    placeholder={t('profile.2fa_enter_code') || 'Current 6-digit Code'} 
+                                                    className="w-full sm:flex-1 bg-neutral-800 border border-red-500/30 rounded-xl py-3 px-4 text-white text-center sm:text-left focus:outline-none focus:border-red-500/50 font-mono tracking-widest" 
+                                                    value={totpCode} 
+                                                    onChange={e => setTotpCode(e.target.value.replace(/\D/g, ''))} 
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={handleDisableTotp}
+                                                    disabled={totpActionLoading || totpCode.length !== 6}
+                                                    className="w-full sm:w-auto px-6 py-3 bg-red-600 text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-red-500 transition-colors disabled:opacity-50"
+                                                >
+                                                    {totpActionLoading ? "..." : t('profile.2fa_disable') || 'Disable 2FA'}
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}

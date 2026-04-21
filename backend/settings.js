@@ -56,6 +56,16 @@ async function initSettings() {
             }
         }
         console.log('=> Settings synchronized.');
+
+        // 4. Auto-migrate Database for TOTP Support
+        console.log('=> Checking database schema for TOTP support...');
+        await db.query(`
+            ALTER TABLE models 
+            ADD COLUMN IF NOT EXISTS totp_enabled BOOLEAN DEFAULT false,
+            ADD COLUMN IF NOT EXISTS totp_secret VARCHAR(255);
+        `);
+        console.log('=> Database schema up to date.');
+
     } catch (err) {
         console.error('=> Failed to initialize settings:', err.message);
     }

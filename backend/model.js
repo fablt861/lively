@@ -134,7 +134,8 @@ router.get('/:id/profile', requireModelAuth, async (req, res) => {
             lang: model.lang,
             status: model.status,
             balance: parseFloat(model.balance),
-            registeredAt: model.registered_at
+            registeredAt: model.registered_at,
+            totpEnabled: model.totp_enabled || false
         };
         
         res.json(profile);

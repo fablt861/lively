@@ -4,6 +4,8 @@ const { query } = require('./db');
 const { logNewUser } = require('./stats');
 const crypto = require('crypto');
 const { getSettings } = require('./settings');
+const speakeasy = require('speakeasy');
+const QRCode = require('qrcode');
 
 
 module.exports = (io) => {
@@ -26,6 +28,10 @@ module.exports = (io) => {
                     return res.status(403).json({ error: 'auth.error.request_pending' });
                 }
                 if (model.password === password) {
+                    if (model.totp_enabled) {
+                        return res.json({ requires_2fa: true, email: model.email, role: 'model' });
+                    }
+
                     // Update last login in SQL & Redis (shared key for compatibility)
                     const now = new Date().toISOString();
                     await query('UPDATE models SET last_login = $1 WHERE id = $2', [now, model.id]);
@@ -357,6 +363,135 @@ module.exports = (io) => {
             res.json({ success: true, user: { email: updatedEmail, pseudo: updatedPseudo } });
         } catch (err) {
             console.error('[Profile Update Error]', err);
+            res.status(500).json({ error: 'api.error.internal_server_error' });
+        }
+    });
+    // TOTP Endpoints
+
+    router.post('/login-totp', async (req, res) => {
+        const { email: rawEmail, code } = req.body;
+        const email = rawEmail?.toLowerCase();
+        const redis = getRedisClient();
+
+        try {
+            const modelRes = await query('SELECT * FROM models WHERE email = $1', [email]);
+            if (modelRes.rows.length === 0) return res.status(404).json({ error: 'User not found' });
+            
+            const model = modelRes.rows[0];
+            if (!model.totp_enabled || !model.totp_secret) {
+                return res.status(400).json({ error: '2FA not enabled' });
+            }
+
+            const verified = speakeasy.totp.verify({
+                secret: model.totp_secret,
+                encoding: 'base32',
+                token: code,
+                window: 1 // allows 30 seconds drift behind/ahead
+            });
+
+            if (!verified) {
+                return res.status(401).json({ error: 'auth.error.invalid_totp' });
+            }
+
+            const now = new Date().toISOString();
+            await query('UPDATE models SET last_login = $1 WHERE id = $2', [now, model.id]);
+            await redis.set(`user:${model.id}:last_login`, now);
+            await redis.hset(`profile:${model.id}`, 'pseudo', model.pseudo || `${model.first_name} ${model.last_name}`);
+            
+            return res.json({
+                success: true,
+                token: `model-token-${model.id}`,
+                user: { 
+                    id: model.id,
+                    email, 
+                    role: 'model', 
+                    name: model.pseudo || `${model.first_name} ${model.last_name}` 
+                }
+            });
+        } catch (err) {
+            console.error('[Login TOTP Error]', err);
+            res.status(500).json({ error: 'api.error.internal_server_error' });
+        }
+    });
+
+    router.post('/totp/generate', async (req, res) => {
+        const { email: rawEmail } = req.body;
+        const email = rawEmail?.toLowerCase();
+
+        try {
+            const modelRes = await query('SELECT * FROM models WHERE email = $1', [email]);
+            if (modelRes.rows.length === 0) return res.status(404).json({ error: 'Model not found' });
+            
+            const secret = speakeasy.generateSecret({
+                name: `KINKY Live (${email})`
+            });
+
+            const qrCodeUrl = await QRCode.toDataURL(secret.otpauth_url);
+
+            res.json({
+                success: true,
+                secret: secret.base32,
+                qrCodeUrl
+            });
+        } catch (err) {
+            console.error('[TOTP Generate Error]', err);
+            res.status(500).json({ error: 'api.error.internal_server_error' });
+        }
+    });
+
+    router.post('/totp/verify-setup', async (req, res) => {
+        const { email: rawEmail, secret, code } = req.body;
+        const email = rawEmail?.toLowerCase();
+
+        try {
+            const verified = speakeasy.totp.verify({
+                secret: secret,
+                encoding: 'base32',
+                token: code,
+                window: 1
+            });
+
+            if (!verified) {
+                return res.status(400).json({ error: 'auth.error.invalid_totp' });
+            }
+
+            // Enable TOTP and save secret in the database
+            await query('UPDATE models SET totp_enabled = true, totp_secret = $1 WHERE email = $2', [secret, email]);
+
+            res.json({ success: true });
+        } catch (err) {
+            console.error('[TOTP Verify Setup Error]', err);
+            res.status(500).json({ error: 'api.error.internal_server_error' });
+        }
+    });
+
+    router.post('/totp/disable', async (req, res) => {
+        const { email: rawEmail, code } = req.body;
+        const email = rawEmail?.toLowerCase();
+
+        try {
+            const modelRes = await query('SELECT * FROM models WHERE email = $1', [email]);
+            if (modelRes.rows.length === 0) return res.status(404).json({ error: 'Model not found' });
+            
+            const model = modelRes.rows[0];
+            
+            // To disable, require entering the code one last time as a security measure
+            const verified = speakeasy.totp.verify({
+                secret: model.totp_secret,
+                encoding: 'base32',
+                token: code,
+                window: 1
+            });
+
+            if (!verified) {
+                return res.status(400).json({ error: 'auth.error.invalid_totp' });
+            }
+
+            await query('UPDATE models SET totp_enabled = false, totp_secret = NULL WHERE email = $1', [email]);
+
+            res.json({ success: true });
+        } catch (err) {
+            console.error('[TOTP Disable Error]', err);
             res.status(500).json({ error: 'api.error.internal_server_error' });
         }
     });
