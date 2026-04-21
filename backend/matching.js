@@ -202,12 +202,8 @@ function setupMatching(io, socket) {
             socket.data.country = socket.country;
             console.log(`[GeoIP] Socket ${socket.id} (IP: ${userIp}) detected from: ${socket.country}`);
 
-            // Rate Limit Check (IP or ID)
-            const identifier = id || userIp;
-            if (await checkRateLimit(identifier)) {
-                console.log(`[RateLimit] Throttling join_queue for ${identifier}`);
-                return;
-            }
+            if (isProcessing) return;
+            isProcessing = true;
 
             // Hydrate and Check Credits for Registered Users
             if (role === 'user' && id) {
@@ -269,12 +265,7 @@ function setupMatching(io, socket) {
 
     socket.on('next', async () => {
         if (isProcessing) return;
-        
-        const identifier = socket.userEmail || socket.userIp;
-        if (await checkRateLimit(identifier)) {
-            console.log(`[RateLimit] Throttling next for ${identifier}`);
-            return;
-        }
+        isProcessing = true;
 
         isProcessing = true;
         try {
@@ -735,6 +726,24 @@ async function handleJoinQueue(io, socket) {
             const usersCount = await redis.llen(QUEUE_USERS);
             console.log(`[Queue Status] Models: ${modelsCount}, Users: ${usersCount}. Socket ${socket.id} is waiting.`);
             socket.emit('waiting', { status: 'waiting for partner', position: isModel ? modelsCount : usersCount }); 
+            
+            // --- NEW: Delayed self-healing match after 2.5 seconds ---
+            setTimeout(async () => {
+                try {
+                    // Check if socket is still in a room or disconnected
+                    if (socket.currentRoom || !io.sockets.sockets.has(socket.id)) return;
+                    
+                    // Verify if still in queue
+                    const isInQueue = await redis.lrange(myQueue, 0, -1);
+                    if (!isInQueue.includes(socket.id)) return;
+                    
+                    console.log(`[Self-Heal] Socket ${socket.id} still waiting after 2.5s. Rerunning matching...`);
+                    // Call matching again safely
+                    await handleJoinQueue(io, socket);
+                } catch (e) {
+                    console.error(`[Self-Heal] Error for ${socket.id}:`, e);
+                }
+            }, 2500);
         }
     } catch (err) {
         console.error(`[Queue Error] Crash in handleJoinQueue for ${socket.id}:`, err);
@@ -788,15 +797,15 @@ async function disconnectFromRoom(io, socket, reason = 'unknown') {
         }
 
         // --- MULTI-SERVER SAFE RE-QUEUE ---
-        if (partnerSocketId) {
-            const isDirectCall = roomId.startsWith('direct-call-');
-            if (blockDataRaw || isDirectCall) {
-                console.log(`[Auto-Next] Gating auto-requeue for partner ID ${partnerSocketId} (Private/Direct detected)`);
-                io.to(partnerSocketId).emit('clean_room', { roomId }); 
-            } else {
-                console.log(`[Auto-Next] Sending force_requeue to partner ID ${partnerSocketId}`);
-                io.to(partnerSocketId).emit('force_requeue', { lastRoomId: roomId });
-            }
+        const isDirectCall = roomId.startsWith('direct-call-');
+        if (blockDataRaw || isDirectCall) {
+            console.log(`[Auto-Next] Gating auto-requeue (Private/Direct detected)`);
+            io.to(roomId).emit('clean_room', { roomId }); 
+            if (partnerSocketId) io.to(partnerSocketId).emit('clean_room', { roomId });
+        } else {
+            console.log(`[Auto-Next] Sending force_requeue to room ${roomId}`);
+            io.to(roomId).emit('force_requeue', { lastRoomId: roomId });
+            if (partnerSocketId) io.to(partnerSocketId).emit('force_requeue', { lastRoomId: roomId });
         }
     }
 }

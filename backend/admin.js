@@ -774,8 +774,8 @@ router.post('/maintenance/migrate-redis-uuid', requireAuth, async (req, res) => 
 router.get('/realtime', requireAuth, async (req, res) => {
     try {
         const sockets = await io.fetchSockets();
-        const modelsOnline = sockets.filter(s => s.role === 'model').length;
-        const usersOnline = sockets.filter(s => s.role === 'user').length;
+        const modelsOnline = sockets.filter(s => (s.data?.role || s.role) === 'model').length;
+        const usersOnline = sockets.filter(s => (s.data?.role || s.role) === 'user').length;
         const rooms = await redis.hgetall('billing:active_rooms');
         const activeCallsCount = Object.keys(rooms).length;
 
@@ -797,11 +797,11 @@ router.get('/realtime', requireAuth, async (req, res) => {
 
         for (const id of waitingModelsIds) {
             const s = sockets.find(s => s.id === id);
-            if (s) queueDetails.models.push({ id, name: s.modelName || 'Model', email: s.userEmail });
+            if (s) queueDetails.models.push({ id, name: (s.data?.pseudo || s.modelName || 'Model'), email: (s.data?.userEmail || s.userEmail) });
         }
         for (const id of waitingUsersIds) {
             const s = sockets.find(s => s.id === id);
-            if (s) queueDetails.users.push({ id, type: s.userEmail ? 'registered' : 'guest', name: s.userName || 'Guest', ip: s.userIp });
+            if (s) queueDetails.users.push({ id, type: (s.data?.userEmail || s.userEmail) ? 'registered' : 'guest', name: (s.data?.pseudo || s.userName || 'Guest'), ip: (s.data?.userIp || s.userIp) });
         }
 
         res.json({

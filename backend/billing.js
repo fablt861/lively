@@ -279,12 +279,18 @@ async function startBilling(roomId, userId, modelId, userSocketId, modelSocketId
 
 async function stopBilling(roomId, reason = 'unknown') {
     try {
-        const sessionStr = await redis.hget(ACTIVE_ROOMS_KEY, roomId);
-    if (!sessionStr) return;
+        // ALWAYS notify the room first so clients don't get stuck, even if Redis DB lacks the entry
+        if (ioInstance) {
+            console.log(`[Billing] Emitting partner_left to room ${roomId} (Reason: ${reason})`);
+            ioInstance.to(roomId).emit('partner_left', { reason, roomId });
+        }
 
-    // Atomically take ownership of this session to prevent double-billing
-    const deletedCount = await redis.hdel(ACTIVE_ROOMS_KEY, roomId);
-    if (deletedCount === 0) return;
+        const sessionStr = await redis.hget(ACTIVE_ROOMS_KEY, roomId);
+        if (!sessionStr) return;
+
+        // Atomically take ownership of this session to prevent double-billing
+        const deletedCount = await redis.hdel(ACTIVE_ROOMS_KEY, roomId);
+        if (deletedCount === 0) return;
 
     const session = JSON.parse(sessionStr);
     const durationSec = Math.floor((Date.now() - session.startTime) / 1000);
@@ -398,13 +404,6 @@ async function stopBilling(roomId, reason = 'unknown') {
         // Clean up reconnection mappings
         await redis.del(`user_active_room:${userId}`);
         await redis.del(`user_active_room:${modelId}`);
-
-        // Notify BOTH parties that the call is officially over from the server's perspective
-        // (WORKS globally with ioInstance.to(roomId))
-        if (ioInstance) {
-            console.log(`[Billing] Emitting partner_left to room ${roomId} (Reason: ${reason})`);
-            ioInstance.to(roomId).emit('partner_left', { reason });
-        }
     }
 
     // Final Sync to Postgres (Source of Truth)

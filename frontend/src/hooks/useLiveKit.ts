@@ -151,6 +151,16 @@ export function useLiveKit(
       .on(RoomEvent.Disconnected, () => {
         setIsCallConnected(false);
       })
+      .on(RoomEvent.ParticipantDisconnected, (participant) => {
+        console.log(`[LiveKit] Participant ${participant.identity} disconnected.`);
+        // Emit a fake Socket event locally so VideoRoom.tsx handles it gracefully
+        socket?.emit('partner_left', { reason: 'livekit_drop' });
+        // Manually trigger the listener if needed
+        const listeners = (socket as any).listeners('partner_left');
+        if (listeners) {
+             listeners.forEach((fn: Function) => fn({ reason: 'livekit_drop_local' }));
+        }
+      })
       .on(RoomEvent.ConnectionStateChanged, (state) => {
         if (state === ConnectionState.Reconnecting) setConnectionQuality('reconnecting');
         else if (state === ConnectionState.Connected) setConnectionQuality('excellent');
@@ -287,7 +297,11 @@ export function useLiveKit(
       }
     });
 
-    socket.on("partner_left", () => {
+    socket.on("partner_left", (data: any) => {
+      if (data?.roomId && currentRoomIdRef.current && data.roomId !== currentRoomIdRef.current) {
+         console.log(`[Socket] Ignored partner_left from stale/parallel room (${data.roomId}). Current: ${currentRoomIdRef.current}`);
+         return;
+      }
       room.disconnect();
       setIsCallConnected(false);
       setIsConnecting(false);
