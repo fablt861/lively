@@ -232,12 +232,10 @@ export default function Home() {
                                         return;
                                     }
 
-                                    if (token) {
-                                        if (role === 'model') {
-                                            window.location.href = `/${language}/elite/dashboard`;
-                                        } else {
-                                            window.location.href = `/${language}/live`;
-                                        }
+                                    if (role === 'model') {
+                                        window.location.href = `/${language}/elite/dashboard`;
+                                    } else if (role === 'user') {
+                                        window.location.href = `/${language}/live`;
                                     } else {
                                         setShowGenderModal(true);
                                     }
@@ -320,12 +318,13 @@ export default function Home() {
                         setShowAgeModal(false);
 
                         // After age verification, trigger the next logical step
-                        const token = localStorage.getItem('kinky_token');
-                        if (!token) {
-                            setShowGenderModal(true);
+                        const role = localStorage.getItem('kinky_user_role');
+                        if (role === 'model') {
+                            window.location.href = `/${language}/elite/dashboard`;
+                        } else if (role === 'user') {
+                            window.location.href = `/${language}/live`;
                         } else {
-                            const role = localStorage.getItem('kinky_user_role');
-                            window.location.href = role === 'model' ? `/${language}/elite/dashboard` : `/${language}/live`;
+                            setShowGenderModal(true);
                         }
                     }}
                 />
