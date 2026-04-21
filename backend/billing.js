@@ -481,4 +481,21 @@ async function activateBilling(roomId) {
     }
 }
 
+async function getModelStats(modelId) {
+    const normalizedId = modelId.toLowerCase();
+    const balanceStr = await redis.get(`model:${normalizedId}:balance`);
+    const historyStrs = await redis.lrange(`model:${normalizedId}:history`, 0, 50);
+    
+    // FETCH PROFILE FROM SQL (Source of Truth)
+    const modelRes = await query('SELECT pseudo, photo_profile FROM models WHERE id = $1', [normalizedId]);
+    const profile = modelRes.rows[0] || {};
+
+    return {
+        balance: parseFloat(balanceStr || '0'),
+        history: historyStrs.map(h => JSON.parse(h)),
+        pseudo: profile.pseudo || 'Model',
+        photoProfile: profile.photo_profile || ''
+    };
+}
+
 module.exports = { startBilling, stopBilling, initBillingLoop, getModelStats, activateBilling };
