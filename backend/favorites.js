@@ -61,6 +61,37 @@ router.get('/check', async (req, res) => {
     }
 });
 
+// Check if a user is eligible to favorite a model (Cumulative 3 min or already favorited once)
+router.get('/eligibility', async (req, res) => {
+    const { userId, modelId } = req.query;
+    if (!userId || !modelId) {
+        return res.status(400).json({ error: 'api.error.missing_params' });
+    }
+
+    try {
+        // 1. Check if they are ALREADY in favorites (if so, they are obviously eligible)
+        const favResult = await query(
+            'SELECT 1 FROM favorites WHERE user_id = $1 AND model_id = $2',
+            [userId, modelId]
+        );
+        if (favResult.rows.length > 0) {
+            return res.json({ isEligible: true });
+        }
+
+        // 2. Check cumulative call time from persistent SQL table
+        const sessionResult = await query(
+            'SELECT SUM(duration_sec) as total_duration FROM call_sessions WHERE user_id = $1 AND model_id = $2',
+            [userId, modelId]
+        );
+        
+        const totalDuration = parseInt(sessionResult.rows[0].total_duration || '0');
+        res.json({ isEligible: totalDuration >= 180 });
+    } catch (err) {
+        console.error('[Favorites Eligibility Check Error]', err);
+        res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+
 // List all favorite models for a user
 router.get('/:userId', async (req, res) => {
     const { userId } = req.params;

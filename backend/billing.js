@@ -372,6 +372,24 @@ async function stopBilling(roomId, reason = 'unknown') {
         await redis.lpush(`model:${modelId}:history`, JSON.stringify(historyEntry));
         await redis.lpush(`user:${userId}:history`, JSON.stringify(historyEntry));
 
+        // 3. PERSISTENT SQL HISTORY (For Cumulative Favorites & Reliable Model Dashboard)
+        try {
+            await query(`
+                INSERT INTO call_sessions (
+                    user_id, model_id, duration_sec, model_earned, 
+                    normal_earned, private_earned, is_private, user_spent_credits
+                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            `, [
+                userId, modelId, durationSec, 
+                historyEntry.modelEarned, historyEntry.normalEarned, 
+                historyEntry.privateEarned, historyEntry.isPrivate, 
+                historyEntry.userSpentCredits
+            ]);
+            console.log(`[Billing] Session persisted to call_sessions table for user:${userId} model:${modelId}`);
+        } catch (dbErr) {
+            console.error('[Billing DB Error] Failed to persist session:', dbErr.message);
+        }
+
         // Mark as seen if call lasted > 15 seconds (Anti-Rebound)
         if (durationSec > 15) {
             await markAsSeen(userId, modelId);
@@ -484,7 +502,41 @@ async function activateBilling(roomId) {
 async function getModelStats(modelId) {
     const normalizedId = modelId.toLowerCase();
     const balanceStr = await redis.get(`model:${normalizedId}:balance`);
-    const historyStrs = await redis.lrange(`model:${normalizedId}:history`, 0, 50);
+    
+    // FETCH PERSISTENT HISTORY FROM SQL (instead of Redis 50-limit list)
+    let history = [];
+    try {
+        const historyRes = await query(`
+            SELECT 
+                user_id as "userId",
+                model_id as "modelId",
+                duration_sec as "durationSec",
+                model_earned as "modelEarned",
+                normal_earned as "normalEarned",
+                private_earned as "privateEarned",
+                is_private as "isPrivate",
+                user_spent_credits as "userSpentCredits",
+                EXTRACT(EPOCH FROM created_at) * 1000 as timestamp
+            FROM call_sessions
+            WHERE model_id = $1
+            ORDER BY created_at DESC
+            LIMIT 500
+        `, [normalizedId]);
+        
+        history = historyRes.rows.map(row => ({
+            ...row,
+            modelEarned: parseFloat(row.modelEarned),
+            normalEarned: parseFloat(row.normalEarned),
+            privateEarned: parseFloat(row.privateEarned),
+            userSpentCredits: parseFloat(row.userSpentCredits),
+            timestamp: parseInt(row.timestamp)
+        }));
+    } catch (err) {
+        console.error('[Billing History Error]', err);
+        // Fallback to Redis if SQL fails for any reason
+        const historyStrs = await redis.lrange(`model:${normalizedId}:history`, 0, 50);
+        history = historyStrs.map(h => JSON.parse(h));
+    }
     
     // FETCH PROFILE FROM SQL (Source of Truth)
     const modelRes = await query('SELECT pseudo, photo_profile FROM models WHERE id = $1', [normalizedId]);

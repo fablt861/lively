@@ -248,6 +248,7 @@ export function VideoRoom({
     const [showNextConfirm, setShowNextConfirm] = useState(false);
     const [privateSummary, setPrivateSummary] = useState<Record<string, unknown> | null>(null);
     const [isRequeuingBlocked, setIsRequeuingBlocked] = useState(false);
+    const [isEligibleForFavorite, setIsEligibleForFavorite] = useState(false);
     const [isFavorite, setIsFavorite] = useState(false);
     const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
     const [showBlockRefused, setShowBlockRefused] = useState(false);
@@ -344,26 +345,43 @@ export function VideoRoom({
 
     // Favorites Management
     useEffect(() => {
-        if (role === 'user' && partnerInfo?.id) {
+        if (partnerInfo?.id && role === 'user') {
             const userId = localStorage.getItem('kinky_user_id');
             if (userId) {
+                // 1. Check current favorite status
                 fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/favorites/check?userId=${userId}&modelId=${partnerInfo.id}`)
                     .then(res => res.json())
                     .then(data => setIsFavorite(data.isFavorite))
                     .catch(console.error);
+
+                // 2. Check cumulative eligibility (3 mins total or once favorited)
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/favorites/eligibility?userId=${userId}&modelId=${partnerInfo.id}`)
+                    .then(res => res.json())
+                    .then(data => setIsEligibleForFavorite(data.isEligible))
+                    .catch(console.error);
             }
         } else {
             setIsFavorite(false);
+            setIsEligibleForFavorite(false);
         }
     }, [partnerInfo?.id, role]);
+
+    // Update eligibility locally if we reach 3 minutes in the CURRENT call
+    useEffect(() => {
+        if (!isEligibleForFavorite && currCallDuration >= 180 && role === 'user') {
+            console.log("[VideoRoom] Eligibility threshold reached in current call!");
+            setIsEligibleForFavorite(true);
+        }
+    }, [currCallDuration, isEligibleForFavorite, role]);
 
     const toggleFavorite = async () => {
         if (role !== 'user' || !partnerInfo?.id || isTogglingFavorite) return;
         const userId = localStorage.getItem('kinky_user_id');
         if (!userId) return;
 
-        // --- 3 MIN RULE ---
-        if (!isFavorite && currCallDuration < 180) {
+        // --- CUMULATIVE & PERMANENT ELIGIBILITY RULE ---
+        // If not a favorite and NOT eligible (haven't reached 3 mins total in history), show rule modal.
+        if (!isFavorite && !isEligibleForFavorite) {
             setShowFavoriteRuleModal(true);
             return;
         }
