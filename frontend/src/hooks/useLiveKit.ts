@@ -401,6 +401,7 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
     connectionQuality,
     previewStream,
     isSocketConnected,
+    setIsMatching,
     finishMatching: () => setIsConnecting(false),
     handleOutOfCredits: () => {},
     retryCamera: () => {},

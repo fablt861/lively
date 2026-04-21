@@ -97,6 +97,7 @@ interface VideoRoomProps {
     isVideoMuted?: boolean;
     setIsAudioMuted?: (muted: boolean) => void;
     setIsVideoMuted?: (muted: boolean) => void;
+    setIsMatching: (matching: boolean) => void;
 }
 
 export function VideoRoom({
@@ -134,6 +135,7 @@ export function VideoRoom({
     isVideoMuted = false,
     setIsAudioMuted,
     setIsVideoMuted,
+    setIsMatching,
 }: VideoRoomProps) {
     const { t, language } = useTranslation();
     const router = useRouter();
