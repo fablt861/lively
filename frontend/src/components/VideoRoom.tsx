@@ -817,7 +817,7 @@ export function VideoRoom({
         const searchTimeout = setTimeout(() => {
             console.log("[Teaser] Moving to playing step");
             setTeaserStep('playing');
-        }, 2000);
+        }, 1000);
 
         // C. Final Termination (Credits hit 0)
         const endTimeout = setTimeout(() => {
