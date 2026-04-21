@@ -130,6 +130,10 @@ export function useLiveKit(role: "user" | "model" | null, isEnabled: boolean = t
       .on(RoomEvent.Connected, () => {
         setIsMatching(false);
         setIsCallConnected(true);
+        if (socket) {
+          console.log("[Socket] Emitting call_active after LiveKit connect");
+          socket.emit('call_active');
+        }
       })
       .on(RoomEvent.Disconnected, () => {
         setIsCallConnected(false);

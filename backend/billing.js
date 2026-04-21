@@ -141,10 +141,23 @@ function initBillingLoop(io) {
                     const isActuallyBlocked = isBlockedActive || !!blockData;
                     const rateModelUsdPerSec = isActuallyBlocked ? 0 : parseFloat((activeRate / 60.0).toFixed(6));
 
+                    // --- NEW: Connection-Based Billing Hack ---
+                    // Don't bill if the call hasn't "really" started (Connecting phase)
+                    // But safety-force start after 15 seconds to prevent abuse
+                    const elapsedMs = Date.now() - session.startTime;
+                    if (session.isStarted === false && elapsedMs < 15000) {
+                        // console.log(`[Billing Pending] Room ${roomId} is still connecting (${Math.floor(elapsedMs/1000)}s)`);
+                        continue;
+                    } else if (session.isStarted === false && elapsedMs >= 15000) {
+                        console.log(`[Billing Safety] Room ${roomId} exceeded 15s connecting. Safety-starting billing.`);
+                        session.isStarted = true;
+                        await redis.hset(ACTIVE_ROOMS_KEY, roomId, JSON.stringify(session));
+                    }
+
                     // 2. Decrement User Credits
                     let remaining = 0;
                     const isRegisteredUser = session.userId && session.userId.length > 20; // UUID vs IP heuristic
- 
+
                     if (isRegisteredUser) {
                         remaining = await redis.incrbyfloat(`user:${session.userId}:credits`, -rateUserCreditsPerSec);
                         
@@ -248,6 +261,7 @@ async function startBilling(roomId, userId, modelId, userSocketId, modelSocketId
         userSocketId,
         modelSocketId,
         startTime: Date.now(),
+        isStarted: false, // Wait for call_active signal
         earnedUsd: 0,
         spentCredits: 0,
         userCountryCode
@@ -450,21 +464,21 @@ async function transitionFromBlock(roomId, session, blockData) {
     }
 }
 
-async function getModelStats(modelId) {
-    const normalizedId = modelId.toLowerCase();
-    const balanceStr = await redis.get(`model:${normalizedId}:balance`);
-    const historyStrs = await redis.lrange(`model:${normalizedId}:history`, 0, 50);
-    
-    // FETCH PROFILE FROM SQL (Source of Truth)
-    const modelRes = await query('SELECT pseudo, photo_profile FROM models WHERE id = $1', [normalizedId]);
-    const profile = modelRes.rows[0] || {};
+async function activateBilling(roomId) {
+    try {
+        const sessionStr = await redis.hget(ACTIVE_ROOMS_KEY, roomId);
+        if (!sessionStr) return;
+        const session = JSON.parse(sessionStr);
+        if (session.isStarted) return; // Already started
 
-    return {
-        balance: parseFloat(balanceStr || '0'),
-        history: historyStrs.map(h => JSON.parse(h)),
-        pseudo: profile.pseudo || 'Model',
-        photoProfile: profile.photo_profile || ''
-    };
+        console.log(`[Billing Activation] Live signal received for room ${roomId}. Starting meters.`);
+        session.isStarted = true;
+        // Update startTime to now so the first used second is the one where they actually see each other
+        session.startTime = Date.now(); 
+        await redis.hset(ACTIVE_ROOMS_KEY, roomId, JSON.stringify(session));
+    } catch (err) {
+        console.error('[Billing Activation Error]', err.message);
+    }
 }
 
-module.exports = { startBilling, stopBilling, initBillingLoop, getModelStats };
+module.exports = { startBilling, stopBilling, initBillingLoop, getModelStats, activateBilling };

@@ -1,6 +1,6 @@
 const { getRedisClient } = require('./redis');
 const redis = getRedisClient();
-const { startBilling, stopBilling } = require('./billing');
+const { startBilling, stopBilling, activateBilling } = require('./billing');
 const { getSettings } = require('./settings');
 const { markAsSeen } = require('./moderation');
 const { hydrateUserCredits } = require('./balance');
@@ -124,6 +124,18 @@ function setupMatching(io, socket) {
             console.log(`[Identify] Socket ${socket.id} IP: ${socket.userIp}, Country: ${socket.countryCode}`);
         } catch (err) {
             console.error('[Identify Error]', err);
+        }
+    });
+
+    socket.on('call_active', async () => {
+        try {
+            const roomId = socket.currentRoom || await redis.get(`socket_room:${socket.id}`);
+            if (roomId) {
+                console.log(`[Socket] call_active received from ${socket.id} for room ${roomId}`);
+                await activateBilling(roomId);
+            }
+        } catch (err) {
+            console.error('[call_active Error]', err);
         }
     });
 
