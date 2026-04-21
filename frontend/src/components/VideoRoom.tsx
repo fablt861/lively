@@ -232,12 +232,6 @@ export function VideoRoom({
             console.log('[Auto-Start] Direct call ready (Camera + Socket), joining room...');
             handleStartMatch();
         }
-        // Condition B: Standard call with already active camera from previous session 
-        // (Wait for socket to be sure we don't 'burn' our hasStartedMatch flag)
-        else if (!isDirectCall && previewStream && isSocketConnected) {
-             console.log('[Auto-Start] Standard call auto-skip (Camera + Socket), joining queue...');
-             handleStartMatch();
-        }
     }, [isDirectCall, previewStream, isSocketConnected, hasStartedMatch]);
 
 
