@@ -288,6 +288,7 @@ export function useLiveKit(
         
         // Publish local tracks
         await room.localParticipant.enableCameraAndMicrophone();
+        setIsConnecting(false);
         
         // Initial sync after publication using Refs to avoid closure staleness
         console.log("[LiveKit] Initial publication sync:", { audio: isAudioMutedRef.current, video: isVideoMutedRef.current });
@@ -296,6 +297,10 @@ export function useLiveKit(
         
       } catch (err) {
         console.error("[LiveKit] Connection error:", err);
+        setIsConnecting(false);
+        setIsMatching(true);
+        room.disconnect();
+        socket.emit('stop'); // Abort backend session to prevent unfair billing
       }
     });
 
