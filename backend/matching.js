@@ -16,6 +16,14 @@ redis.on('error', (err) => {
     console.error('[Redis Error] Could not connect. Is Redis running?', err.message);
 });
 
+function getClientIp(socket) {
+    const forwarded = socket.handshake.headers['x-forwarded-for'];
+    if (forwarded) {
+        return forwarded.split(',')[0].trim();
+    }
+    return socket.handshake.address;
+}
+
 async function resolvePseudo(id, role, emailFallback) {
     if (!id) return emailFallback ? emailFallback.split('@')[0] : 'Guest';
     
@@ -97,8 +105,10 @@ function setupMatching(io, socket) {
             socket.data.userId = id;
 
             // Detect IP and Country
-            const forwarded = socket.handshake.headers['x-forwarded-for'];
-            socket.userIp = forwarded ? forwarded.split(',')[0].trim() : socket.handshake.address;
+            // Detect IP and Country
+            const userIp = getClientIp(socket);
+            socket.userIp = userIp;
+            socket.data.userIp = userIp;
             socket.countryCode = detectCountry(socket);
             socket.data.countryCode = socket.countryCode;
 
@@ -191,10 +201,11 @@ function setupMatching(io, socket) {
             }
 
             // Get IP for guest tracking
-            const userIp = socket.handshake.headers['x-forwarded-for'] || socket.handshake.address;
+            // Get IP for guest tracking
+            const userIp = getClientIp(socket);
             socket.userIp = userIp;
             socket.data.userIp = userIp;
-            
+ Broadway            
             // NEW: Get Country for Geo-Blocking
             const geo = geoip.lookup(userIp);
             socket.country = geo ? geo.country : 'Unknown';

@@ -291,6 +291,12 @@ export function VideoRoom({
     console.log(`[VideoRoom Render] isConnected: ${isConnected}, isSocket: ${isSocketConnected}, isMatching: ${isMatching}, remoteVideoTrack (bool): ${!!remoteVideoTrack}`);
 
     const handleNext = (force = false) => {
+        // --- HARD GATING: Block ANY re-matching if a modal is open ---
+        if (showAuthModalRef.current || showPaywallRef.current) {
+            console.log("[handleNext] Aborting: Modal is open.");
+            return;
+        }
+
         if (!force && isBlockedRef.current) {
             setShowNextConfirm(true);
             return;
