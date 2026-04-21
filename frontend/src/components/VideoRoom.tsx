@@ -439,9 +439,13 @@ export function VideoRoom({
                 if (accountStatus === 'guest') {
                     setAuthModalMode('signup');
                     setShowAuthModal(true);
+                    showAuthModalRef.current = true; // Synchronous gating for race condition
                 } else {
                     setShowPaywall(true);
+                    showPaywallRef.current = true; // Synchronous gating for race condition
                 }
+
+                setIsMatching(false); // Stop searching visually
 
                 // --- NEW: Force Physical Disconnect ---
                 // Even though the socket is still connected (to allow for top-up/recovery),
@@ -482,9 +486,13 @@ export function VideoRoom({
                     if (accountStatus === 'guest') {
                         setAuthModalMode('signup');
                         setShowAuthModal(true);
+                        showAuthModalRef.current = true; // Sync gating
                     } else {
                         setShowPaywall(true);
+                        showPaywallRef.current = true; // Sync gating
                     }
+
+                    setIsMatching(false); // Stop searching visually
 
                     // --- NEW: Force Physical Disconnect ---
                     if (room) {
