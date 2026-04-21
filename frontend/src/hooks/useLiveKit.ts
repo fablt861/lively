@@ -49,6 +49,7 @@ export function useLiveKit(
   // Sync refs with state
   const showAuthModalRef = useRef(showAuthModal);
   const showPaywallRef = useRef(showPaywall);
+  const socketRef = useRef(socket);
 
   useEffect(() => {
     isAudioMutedRef.current = isAudioMuted;
@@ -58,7 +59,8 @@ export function useLiveKit(
   useEffect(() => {
     showAuthModalRef.current = showAuthModal;
     showPaywallRef.current = showPaywall;
-  }, [showAuthModal, showPaywall]);
+    socketRef.current = socket;
+  }, [showAuthModal, showPaywall, socket]);
 
   // 1. Preview Stream (for PreMatchModal)
   useEffect(() => {
@@ -143,9 +145,9 @@ export function useLiveKit(
       .on(RoomEvent.Connected, () => {
         setIsMatching(false);
         setIsCallConnected(true);
-        if (socket) {
+        if (socketRef.current) {
           console.log("[Socket] Emitting call_active after LiveKit connect");
-          socket.emit('call_active');
+          socketRef.current.emit('call_active');
         }
       })
       .on(RoomEvent.Disconnected, () => {
@@ -154,9 +156,9 @@ export function useLiveKit(
       .on(RoomEvent.ParticipantDisconnected, (participant) => {
         console.log(`[LiveKit] Participant ${participant.identity} disconnected.`);
         // Emit a fake Socket event locally so VideoRoom.tsx handles it gracefully
-        socket?.emit('partner_left', { reason: 'livekit_drop' });
+        socketRef.current?.emit('partner_left', { reason: 'livekit_drop' });
         // Manually trigger the listener if needed
-        const listeners = socket ? (socket as any).listeners('partner_left') : [];
+        const listeners = socketRef.current ? (socketRef.current as any).listeners('partner_left') : [];
         if (listeners && listeners.length > 0) {
              listeners.forEach((fn: Function) => fn({ reason: 'livekit_drop_local' }));
         }
