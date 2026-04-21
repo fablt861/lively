@@ -102,7 +102,7 @@ app.use('/api/report', reportRoutes);
 app.use('/api/favorites', favoritesRoutes);
 
 app.use('/api/admin', adminRoutes(io));
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutes(io));
 app.use('/api/elite', modelRoutes);
 
 app.get('/api/video/token', async (req, res) => {

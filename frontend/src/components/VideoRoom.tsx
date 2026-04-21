@@ -973,13 +973,10 @@ export function VideoRoom({
     const userCreditsRef = useRef(userCredits);
     useEffect(() => { userCreditsRef.current = userCredits; }, [userCredits]);
 
-    // Visual Throttling: Sync displayedCredits with userCredits every 20 seconds
+    // Visual Throttling: Sync displayedCredits with userCredits every 20 seconds during calls
+    // to prevent the counter from jumping every second.
     useEffect(() => {
         if (role !== 'user' || !isConnected || isMatching || !remoteVideoTrack) {
-            // Not in an active call, keep sync active for UI changes like purchases
-            if (userCredits !== null && (displayedCredits === null || Math.abs((displayedCredits || 0) - userCredits) > 20)) {
-                setDisplayedCredits(userCredits);
-            }
             return;
         }
 
@@ -991,6 +988,14 @@ export function VideoRoom({
         return () => clearInterval(interval);
     }, [role, isConnected, isMatching, !!remoteVideoTrack]);
 
+    // Immediate sync for large credit changes (e.g. Purchase or initial load)
+    useEffect(() => {
+        if (userCredits !== null && (displayedCredits === null || Math.abs((displayedCredits || 0) - userCredits) > 10)) {
+            console.log(`[Socket Sync] Large balance change detected (${Math.abs((displayedCredits || 0) - userCredits)}). Syncing immediately.`);
+            setDisplayedCredits(userCredits);
+        }
+    }, [userCredits]);
+ Broadway
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
