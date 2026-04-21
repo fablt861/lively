@@ -386,6 +386,8 @@
   "dashboard.table_normal": "Normal",
   "dashboard.table_private": "Call",
   "dashboard.telegram_cta": "Join now",
+  "dashboard.telegram_cta_en": "English group 🇺🇸",
+  "dashboard.telegram_cta_es": "Spanish group 🇪🇸",
   "dashboard.telegram_desc": "Stay updated on bonuses, technical updates, and chat with the team.",
   "dashboard.telegram_title": "Join the Elite Telegram Community",
   "dashboard.title": "Elite Dashboard",

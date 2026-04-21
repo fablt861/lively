@@ -284,14 +284,24 @@ export default function DashboardPage() {
                         </div>
                     </div>
                 </div>
-                <a 
-                    href="https://t.me/+__YgonRl2681ODA0" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="w-full md:w-auto text-center whitespace-nowrap px-6 md:px-8 py-3 md:py-4 bg-cyan-500 hover:bg-cyan-400 text-white rounded-full font-bold transition-all duration-300 shadow-lg shadow-cyan-500/20 hover:scale-105"
-                >
-                    {t('dashboard.telegram_cta')}
-                </a>
+                <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                    <a 
+                        href="https://t.me/+__YgonRl2681ODA0" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex-1 md:flex-none text-center whitespace-nowrap px-6 md:px-8 py-3 md:py-4 bg-cyan-600 hover:bg-cyan-500 text-white rounded-full font-bold transition-all duration-300 shadow-lg shadow-cyan-600/20 hover:scale-105"
+                    >
+                        {t('dashboard.telegram_cta_en')}
+                    </a>
+                    <a 
+                        href="https://t.me/+Otlo048V92ozY2Y0" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex-1 md:flex-none text-center whitespace-nowrap px-6 md:px-8 py-3 md:py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-bold transition-all duration-300 shadow-lg shadow-blue-600/20 hover:scale-105"
+                    >
+                        {t('dashboard.telegram_cta_es')}
+                    </a>
+                </div>
             </div>
 
             {/* Strict Rules Warning Section */}

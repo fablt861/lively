@@ -346,6 +346,8 @@
   "dashboard.table_normal": "Normal",
   "dashboard.table_private": "Llamada",
   "dashboard.telegram_cta": "Únete ahora",
+  "dashboard.telegram_cta_en": "Grupo inglés 🇺🇸",
+  "dashboard.telegram_cta_es": "Grupo español 🇪🇸",
   "dashboard.telegram_desc": "Mantente informado sobre bonos, actualizaciones técnicas y chatea con el equipo.",
   "dashboard.telegram_title": "Únete a la comunidad Elite Telegram",
   "dashboard.title": "Panel de Control Elite",
