@@ -995,7 +995,6 @@ export function VideoRoom({
             setDisplayedCredits(userCredits);
         }
     }, [userCredits]);
- Broadway
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
