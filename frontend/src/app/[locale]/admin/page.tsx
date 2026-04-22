@@ -2,7 +2,7 @@
 
 // STAGING_DEPLOY_FORCE: 2026-04-15_v2
 import { useState, useEffect } from "react";
-import { Users, Video, DollarSign, Activity, Settings, Lock, CheckCircle, XCircle, Clock, Globe, Mail, Zap, UserCheck, ShieldCheck, ChevronLeft, ChevronRight, AlertCircle, ShieldAlert, Sparkles, FileText, History as HistoryIcon } from "lucide-react";
+import { Users, Video, DollarSign, Activity, Settings, Lock, CheckCircle, XCircle, Clock, Globe, Mail, Zap, UserCheck, ShieldCheck, ChevronLeft, ChevronRight, AlertCircle, ShieldAlert, Sparkles, FileText, History as HistoryIcon, Menu, X } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { countries } from "@/utils/countries";
@@ -41,6 +41,7 @@ export default function AdminPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [activeTab, setActiveTabState] = useState("stats");
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const setActiveTab = (tab: string) => {
         setActiveTabState(tab);
@@ -387,51 +388,69 @@ export default function AdminPage() {
     }
 
     return (
-        <div className="min-h-screen bg-neutral-950 text-white font-sans flex">
-            {/* Sidebar */}
-            <aside className="w-64 bg-neutral-900 border-r border-white/5 flex flex-col z-10">
-                <div className="p-6 text-2xl font-black tracking-tighter text-white border-b border-white/5">
+        <div className="min-h-screen bg-neutral-950 text-white font-sans flex flex-col md:flex-row h-[100dvh] overflow-hidden">
+            {/* Mobile Header */}
+            <div className="md:hidden flex items-center justify-between p-4 bg-neutral-900 border-b border-white/5 z-40 relative flex-shrink-0">
+                <div className="text-xl font-black tracking-tighter text-white">
                     KI<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">+</span>NKY <span className="text-xs font-light tracking-widest text-neutral-500 ml-1">ADMIN</span>
                 </div>
-                <nav className="flex-1 p-4 space-y-2">
-                    <button onClick={() => setActiveTab('stats')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'stats' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors">
+                    {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
+            </div>
+
+            {/* Sidebar Overlay */}
+            {isMobileMenuOpen && (
+                <div 
+                    className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-sm"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                />
+            )}
+
+            {/* Sidebar */}
+            <aside className={`fixed md:relative top-0 left-0 h-[100dvh] md:h-full w-64 bg-neutral-900 border-r border-white/5 flex flex-col z-50 transform transition-transform duration-300 md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                <div className="p-6 text-2xl font-black tracking-tighter text-white border-b border-white/5 hidden md:block">
+                    KI<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">+</span>NKY <span className="text-xs font-light tracking-widest text-neutral-500 ml-1">ADMIN</span>
+                </div>
+                <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+                    <button onClick={() => { setActiveTab('stats'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'stats' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <Activity size={20} /> {t('admin.nav.dashboard')}
                     </button>
-                    <button onClick={() => setActiveTab('users')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'users' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                    <button onClick={() => { setActiveTab('users'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'users' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <Users size={20} /> {t('admin.nav.users')}
                     </button>
-                    <button onClick={() => setActiveTab('models')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'models' ? 'bg-pink-500/20 text-pink-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                    <button onClick={() => { setActiveTab('models'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'models' ? 'bg-pink-500/20 text-pink-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <Video size={20} /> {t('admin.nav.models')}
                     </button>
-                    <button onClick={() => setActiveTab('validations')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'validations' ? 'bg-amber-500/20 text-amber-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                    <button onClick={() => { setActiveTab('validations'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'validations' ? 'bg-amber-500/20 text-amber-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <Clock size={20} /> {t('admin.nav.pending')} {pendingModels.length > 0 && <span className="ml-auto bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{pendingModels.length}</span>}
                     </button>
-                    <button onClick={() => setActiveTab('payouts')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'payouts' ? 'bg-green-500/20 text-green-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                    <button onClick={() => { setActiveTab('payouts'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'payouts' ? 'bg-green-500/20 text-green-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <DollarSign size={20} /> {t('admin.nav.payouts')} {payoutRequests.length > 0 && <span className="ml-auto bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{payoutRequests.length}</span>}
                     </button>
-                    <button onClick={() => setActiveTab('finances')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'finances' ? 'bg-amber-500/20 text-amber-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                    <button onClick={() => { setActiveTab('finances'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'finances' ? 'bg-amber-500/20 text-amber-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <DollarSign size={20} /> {t('admin.nav.finances')}
                     </button>
-                    <button onClick={() => setActiveTab('reports')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'reports' ? 'bg-orange-500/20 text-orange-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                    <button onClick={() => { setActiveTab('reports'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'reports' ? 'bg-orange-500/20 text-orange-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <ShieldAlert size={20} /> {t('admin.nav.reports')} {reports.filter(r => r.status === 'active').length > 0 && <span className="ml-auto bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{reports.filter(r => r.status === 'active').length}</span>}
                     </button>
-                    <button onClick={() => setActiveTab('realtime')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'realtime' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                    <button onClick={() => { setActiveTab('realtime'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'realtime' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <Zap size={20} className={activeTab === 'realtime' ? 'animate-pulse text-indigo-400' : ''} /> {t('admin.nav.realtime')}
                     </button>
-                    <button onClick={() => setActiveTab('moderation')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'moderation' ? 'bg-red-500/20 text-red-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                    <button onClick={() => { setActiveTab('moderation'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'moderation' ? 'bg-red-500/20 text-red-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <ShieldAlert size={20} /> {t('admin.nav.moderation')}
                     </button>
-                    <button onClick={() => setActiveTab('marketing')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'marketing' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                    <button onClick={() => { setActiveTab('marketing'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'marketing' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <Globe size={20} /> {t('admin.nav.marketing')}
                     </button>
-                    <button onClick={() => setActiveTab('teaser')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'teaser' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                    <button onClick={() => { setActiveTab('teaser'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'teaser' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <Video size={20} /> {t('admin.nav.teaser')}
                     </button>
                     <div className="pt-4 mt-4 border-t border-white/5 space-y-2">
-                        <button onClick={() => setActiveTab('settings')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'settings' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                        <button onClick={() => { setActiveTab('settings'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'settings' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                             <Settings size={20} /> {t('admin.nav.settings')}
                         </button>
-                        <button onClick={() => setActiveTab('maintenance')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'maintenance' ? 'bg-red-500/20 text-red-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                        <button onClick={() => { setActiveTab('maintenance'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'maintenance' ? 'bg-red-500/20 text-red-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                             <Activity size={20} /> {t('admin.nav.maintenance') || 'Maintenance'}
                         </button>
                         <button
@@ -452,7 +471,7 @@ export default function AdminPage() {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 p-10 overflow-y-auto">
+            <main className="flex-1 p-4 md:p-10 overflow-y-auto">
                 {activeTab === 'stats' && stats && (
                     <div className="space-y-8 animate-in fade-in duration-500">
                         <h2 className="text-3xl font-light">{t('admin.stats.title')}</h2>
@@ -476,7 +495,7 @@ export default function AdminPage() {
                         </div>
 
                         <div className="bg-neutral-900 border border-white/5 rounded-3xl overflow-hidden shadow-2xl">
-                            <table className="w-full text-left">
+                            <div className="overflow-x-auto w-full"><table className="w-full text-left whitespace-nowrap md:whitespace-normal">
                                 <thead className="bg-white/[0.02] border-b border-white/5">
                                     <tr>
                                         <th className="p-5 text-neutral-400 font-medium tracking-wider text-sm uppercase">{t('admin.table.date')}</th>
@@ -502,7 +521,7 @@ export default function AdminPage() {
                                         </tr>
                                     ))}
                                 </tbody>
-                            </table>
+                            </table></div>
                         </div>
                     </div>
                 )}
@@ -1284,7 +1303,7 @@ export default function AdminPage() {
                         </div>
 
                         <div className="bg-neutral-900 border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
-                            <table className="w-full text-left">
+                            <div className="overflow-x-auto w-full"><table className="w-full text-left whitespace-nowrap md:whitespace-normal">
                                 <thead className="bg-white/[0.02] border-b border-white/5">
                                     <tr>
                                         <th className="p-6 text-neutral-500 font-bold text-[10px] uppercase tracking-widest">Aperçu</th>
@@ -1372,7 +1391,7 @@ export default function AdminPage() {
                                         </tr>
                                     )}
                                 </tbody>
-                            </table>
+                            </table></div>
                         </div>
                     </div>
                 )}
@@ -1400,7 +1419,7 @@ export default function AdminPage() {
                         )}
 
                         <div className="bg-neutral-900 border border-white/5 rounded-3xl overflow-hidden">
-                            <table className="w-full text-left">
+                            <div className="overflow-x-auto w-full"><table className="w-full text-left whitespace-nowrap md:whitespace-normal">
                                 <thead className="bg-white/[0.02] border-b border-white/5">
                                     <tr>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.user_pseudo')}</th>
@@ -1482,7 +1501,7 @@ export default function AdminPage() {
                                         </tr>
                                     ))}
                                 </tbody>
-                            </table>
+                            </table></div>
                         </div>
 
                         {/* Pagination for Users */}
@@ -1515,7 +1534,7 @@ export default function AdminPage() {
                         <h2 className="text-3xl font-light">{t('admin.models.title')}</h2>
 
                         <div className="bg-neutral-900 border border-white/5 rounded-3xl overflow-hidden">
-                            <table className="w-full text-left">
+                            <div className="overflow-x-auto w-full"><table className="w-full text-left whitespace-nowrap md:whitespace-normal">
                                 <thead className="bg-white/[0.02] border-b border-white/5">
                                     <tr>
                                         <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.table.model_name')}</th>
@@ -1644,7 +1663,7 @@ export default function AdminPage() {
                                         </tr>
                                     ))}
                                 </tbody>
-                            </table>
+                            </table></div>
                         </div>
 
                         {/* Pagination for Models */}
@@ -1682,7 +1701,7 @@ export default function AdminPage() {
                             </div>
                         ) : (
                             <div className="bg-neutral-900 border border-white/5 rounded-3xl overflow-hidden shadow-2xl">
-                                <table className="w-full text-left">
+                                <div className="overflow-x-auto w-full"><table className="w-full text-left whitespace-nowrap md:whitespace-normal">
                                     <thead className="bg-white/[0.02] border-b border-white/5">
                                         <tr>
                                             <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.payouts.table_model')}</th>
@@ -1767,7 +1786,7 @@ export default function AdminPage() {
                                             </tr>
                                         ))}
                                     </tbody>
-                                </table>
+                                </table></div>
                             </div>
                         )}
 
@@ -1789,7 +1808,7 @@ export default function AdminPage() {
                                 </div>
                             ) : (
                                 <div className="bg-neutral-900 border border-white/5 rounded-3xl overflow-hidden shadow-2xl opacity-80 hover:opacity-100 transition-opacity">
-                                    <table className="w-full text-left">
+                                    <div className="overflow-x-auto w-full"><table className="w-full text-left whitespace-nowrap md:whitespace-normal">
                                         <thead className="bg-white/[0.02] border-b border-white/5">
                                             <tr>
                                                 <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.common.model_info')}</th>
@@ -1820,7 +1839,7 @@ export default function AdminPage() {
                                                 </tr>
                                             ))}
                                         </tbody>
-                                    </table>
+                                    </table></div>
                                 </div>
                             )}
                         </div>
@@ -1940,7 +1959,7 @@ export default function AdminPage() {
 
                         {marketingTab === 'user' ? (
                             <div className="bg-neutral-900 border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-xl">
-                                <table className="w-full text-left">
+                                <div className="overflow-x-auto w-full"><table className="w-full text-left whitespace-nowrap md:whitespace-normal">
                                     <thead className="bg-white/[0.02] border-b border-white/5">
                                         <tr>
                                             <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.source')}</th>
@@ -2009,11 +2028,11 @@ export default function AdminPage() {
                                             );
                                         })}
                                     </tbody>
-                                </table>
+                                </table></div>
                             </div>
                         ) : (
                             <div className="bg-neutral-900 border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-xl">
-                                <table className="w-full text-left">
+                                <div className="overflow-x-auto w-full"><table className="w-full text-left whitespace-nowrap md:whitespace-normal">
                                     <thead className="bg-white/[0.02] border-b border-white/5">
                                         <tr>
                                             <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.marketing.table.source')}</th>
@@ -2077,7 +2096,7 @@ export default function AdminPage() {
                                             );
                                         })}
                                     </tbody>
-                                </table>
+                                </table></div>
                             </div>
                         )}
                     </div>
@@ -2114,7 +2133,7 @@ export default function AdminPage() {
                         </div>
 
                         <div className="bg-neutral-900 border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-xl">
-                            <table className="w-full text-left">
+                            <div className="overflow-x-auto w-full"><table className="w-full text-left whitespace-nowrap md:whitespace-normal">
                                 <thead className="bg-white/[0.02] border-b border-white/5">
                                     <tr>
                                         <th className="p-6 text-neutral-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('admin.finances.table.month')}</th>
@@ -2154,7 +2173,7 @@ export default function AdminPage() {
                                         </tr>
                                     ))}
                                 </tbody>
-                            </table>
+                            </table></div>
                         </div>
                     </div>
                 )}
