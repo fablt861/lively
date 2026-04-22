@@ -89,9 +89,9 @@ router.post('/:id/payout-request', requireModelAuth, async (req, res) => {
             const email = modelEmailRes.rows[0].email;
 
             await query(`
-                INSERT INTO payouts (id, model_id, model_email, amount, status, created_at)
-                VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP)
-            `, [payoutId, id, email, balance, 'pending']);
+                INSERT INTO payouts (id, model_id, model_email, amount, status, created_at, payment_method, billing_snapshot)
+                VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, $6, $7)
+            `, [payoutId, id, email, balance, 'pending', billingInfo.method, JSON.stringify(billingInfo)]);
             
             // Deduct in Redis (Real-time source)
             await redis.set(`model:${id}:balance`, '0');

@@ -489,24 +489,79 @@ router.post('/elite/:id/disable-2fa', requireAuth, async (req, res) => {
     }
 });
 
+// Admin Payouts Summary (Aggregated by method, respecting Saturday 23:59:59 Paris cut-off)
+router.get('/payouts/summary', requireAuth, async (req, res) => {
+    try {
+        // Calculate the most recent Saturday cut-off
+        const now = new Date();
+        const day = now.getDay(); // 0 is Sunday, 6 is Saturday
+        const daysSinceSat = (day + 1) % 7;
+        const lastSaturday = new Date(now);
+        lastSaturday.setDate(now.getDate() - daysSinceSat);
+        lastSaturday.setHours(23, 59, 59, 999);
+
+        const summaryRes = await query(`
+            SELECT 
+                payment_method as method, 
+                COUNT(*) as count, 
+                SUM(amount) as total
+            FROM payouts 
+            WHERE status = 'pending' AND created_at <= $1
+            GROUP BY payment_method
+        `, [lastSaturday]);
+        
+        const summary = {
+            bank: { count: 0, total: 0 },
+            paxum: { count: 0, total: 0 },
+            crypto: { count: 0, total: 0 }
+        };
+
+        summaryRes.rows.forEach(row => {
+            if (summary[row.method]) {
+                summary[row.method] = {
+                    count: parseInt(row.count),
+                    total: parseFloat(row.total)
+                };
+            }
+        });
+
+        res.json({ 
+            summary, 
+            cutoff: lastSaturday.toISOString(),
+            isPastCutoff: true // Any pending payout before last Sat is technically past its cut-off
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+
 // Admin Payouts List (Pending)
 router.get('/payouts/pending', requireAuth, async (req, res) => {
     try {
+        // We show all pending payouts, but perhaps we should mark those after cut-off
         const payoutRes = await query('SELECT * FROM payouts WHERE status = $1 ORDER BY created_at DESC', ['pending']);
-        // Compatibility with frontend format (requires billing_info)
-        const list = [];
-        for (const p of payoutRes.rows) {
-            const modelRes = await query('SELECT billing_info FROM models WHERE id = $1', [p.model_id]);
-            list.push({
-                id: p.id,
-                modelId: p.model_id,
-                modelEmail: p.model_email,
-                amount: parseFloat(p.amount),
-                status: p.status,
-                billingInfo: modelRes.rows[0]?.billing_info || {},
-                createdAt: p.created_at
-            });
+        
+        // Compatibility with frontend format (prefers snapshot if available)
+        const list = payoutRes.rows.map(p => ({
+            id: p.id,
+            modelId: p.model_id,
+            modelEmail: p.model_email,
+            amount: parseFloat(p.amount),
+            status: p.status,
+            method: p.payment_method,
+            billingInfo: p.billing_snapshot || {},
+            createdAt: p.created_at
+        }));
+
+        for (let i = 0; i < list.length; i++) {
+            if (!list[i].billingInfo || Object.keys(list[i].billingInfo).length === 0) {
+                const modelRes = await query('SELECT billing_info FROM models WHERE id = $1', [list[i].modelId]);
+                list[i].billingInfo = modelRes.rows[0]?.billing_info || {};
+                list[i].method = list[i].method || list[i].billingInfo.method;
+            }
         }
+
         res.json(list);
     } catch (err) {
         console.error(err);

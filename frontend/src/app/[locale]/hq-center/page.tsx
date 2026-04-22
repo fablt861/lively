@@ -56,6 +56,7 @@ export default function AdminPage() {
     const [users, setUsers] = useState<any[]>([]);
     const [models, setModels] = useState<any[]>([]);
     const [payoutRequests, setPayoutRequests] = useState<any[]>([]);
+    const [payoutSummary, setPayoutSummary] = useState<any>(null);
     const [payoutHistory, setPayoutHistory] = useState<any[]>([]);
     const [reports, setReports] = useState<any[]>([]);
     const [financesStats, setFinancesStats] = useState<any>(null);
@@ -150,14 +151,55 @@ export default function AdminPage() {
         }
     };
 
+    const fetchPayoutSummary = async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/payouts/summary`, { headers: { Authorization: `Bearer ${token}` } });
+            const data = await res.json();
+            setPayoutSummary(data);
+        } catch (err) {
+            console.error("Fetch Payout Summary Error:", err);
+        }
+    };
+
     const fetchPayoutRequests = async () => {
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/payouts/pending`, { headers: { Authorization: `Bearer ${token}` } });
             const data = await res.json();
             if (Array.isArray(data)) setPayoutRequests(data);
+            fetchPayoutSummary();
         } catch (err) {
             console.error("Fetch Payouts Error:", err);
         }
+    };
+
+    const downloadPayoutCSV = (method: string) => {
+        const requests = payoutRequests.filter(p => (p.method || p.billingInfo?.method) === method);
+        if (!requests.length) return alert(t('admin.payouts.no_requests') || "No requests for this method.");
+
+        let csvContent = "";
+        if (method === 'paxum') {
+            csvContent = requests.map(p => {
+                const email = p.billingInfo?.paxumEmail || p.modelEmail;
+                return `${email},${p.amount.toFixed(2)},USD,Payout Weekly,${p.id}`;
+            }).join("\n");
+        } else if (method === 'crypto') {
+            csvContent = requests.map(p => `${p.billingInfo?.cryptoAddress},${p.amount.toFixed(2)}`).join("\n");
+        } else if (method === 'bank') {
+            csvContent = requests.map(p => {
+                const info = p.billingInfo || {};
+                return `${info.name},${info.bankIban},${info.bankSwift},${p.amount.toFixed(2)},USD,Payout Kinky`;
+            }).join("\n");
+        }
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", `payouts_${method}_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     const fetchPayoutHistory = async () => {
@@ -1727,6 +1769,52 @@ export default function AdminPage() {
                 {activeTab === 'payouts' && (
                     <div className="space-y-8 animate-in fade-in duration-500">
                         <h2 className="text-3xl font-light">{t('admin.payouts.title')}</h2>
+
+                        {/* Weekly Summary Row */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {[
+                                { id: 'bank', icon: Landmark, label: t('billing.method_bank'), color: 'text-blue-400' },
+                                { id: 'crypto', icon: Wallet, label: t('billing.method_crypto'), color: 'text-indigo-400' },
+                                { id: 'paxum', icon: Mail, label: 'Paxum', color: 'text-pink-400' }
+                            ].map(m => (
+                                <div key={m.id} className="bg-neutral-900 border border-white/5 p-6 rounded-3xl relative overflow-hidden group">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className={`w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center ${m.color}`}>
+                                            <m.icon size={20} />
+                                        </div>
+                                        <div className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+                                            {payoutSummary?.summary?.[m.id]?.count || 0} {t('admin.payouts.requests') || "Requests"}
+                                        </div>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <div className="text-xs text-neutral-500 font-medium">{m.label}</div>
+                                        <div className="text-2xl font-bold text-white font-mono">
+                                            ${(payoutSummary?.summary?.[m.id]?.total || 0).toFixed(2)}
+                                        </div>
+                                    </div>
+                                    <div className="mt-6 flex flex-col gap-2">
+                                        <button 
+                                            onClick={() => downloadPayoutCSV(m.id)}
+                                            className="w-full bg-white/5 hover:bg-white/10 text-white text-[10px] font-bold py-2 rounded-xl border border-white/5 transition-all flex items-center justify-center gap-2"
+                                        >
+                                            <FileText size={14} />
+                                            {t('admin.payouts.download_csv') || "Download CSV"}
+                                        </button>
+                                        
+                                        {/* Final Export Button (Visible after Sat midnight) */}
+                                        {payoutSummary?.cutoff && new Date() > new Date(payoutSummary.cutoff) && (
+                                            <button 
+                                                onClick={() => downloadPayoutCSV(m.id)}
+                                                className="w-full bg-indigo-500 hover:bg-indigo-400 text-white text-[10px] font-black py-2 rounded-xl transition-all flex items-center justify-center gap-2 animate-pulse"
+                                            >
+                                                <Zap size={14} />
+                                                {t('admin.payouts.final_export') || "FINAL EXPORT"}
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
 
                         {payoutRequests.length === 0 ? (
                             <div className="bg-neutral-900 border border-white/5 rounded-3xl p-12 text-center text-neutral-500">
