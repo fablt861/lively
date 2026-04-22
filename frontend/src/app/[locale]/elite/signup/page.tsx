@@ -478,21 +478,23 @@ export default function ModelSignupPage() {
                                         { id: 'id', title: t('model.signup.step4_photo_id'), label: t('model.signup.step4_instruction2'), photo: photoId },
                                         { id: 'selfie', title: t('model.signup.step4_photo_selfie'), label: t('model.signup.step4_instruction3'), photo: photoIdSelfie }
                                     ].map((p, idx) => (
-                                        <div key={idx} className={`p-3 rounded-2xl border transition-all duration-300 ${p.photo ? 'bg-green-500/10 border-green-500/40' : 'bg-black/40 border-white/5 group hover:border-white/20'}`}>
-                                            <div className="flex items-center justify-between mb-2">
-                                                <p className="font-bold text-[10px] uppercase tracking-widest text-white/50">
-                                                    {idx + 1}. {p.title} <span className="text-pink-500 text-xs leading-none">*</span>
+                                        <div key={idx} className={`p-4 rounded-[2rem] border transition-all duration-300 flex flex-col h-full ${p.photo ? 'bg-green-500/10 border-green-500/40' : 'bg-black/40 border-white/5 group hover:border-white/20'}`}>
+                                            <div className="flex items-center justify-between mb-3">
+                                                <p className="font-bold text-xs uppercase tracking-widest text-white/50">
+                                                    {idx + 1}. {p.title} <span className="text-pink-500 leading-none">*</span>
                                                 </p>
-                                                {p.photo && <CheckCircle2 className="text-green-500" size={16} />}
+                                                {p.photo && <CheckCircle2 className="text-green-500" size={18} />}
                                             </div>
                                             {p.id === 'profile' && (
-                                                <div className="inline-block px-2 py-0.5 mb-1.5 rounded bg-pink-500/20 border border-pink-500/30 text-pink-400 text-[8px] font-bold uppercase tracking-widest">
-                                                    {t('model.signup.public_profile_badge')}
+                                                <div className="mb-2">
+                                                    <div className="inline-block px-2.5 py-1 rounded bg-pink-500/20 border border-pink-500/30 text-pink-400 text-[10px] font-bold uppercase tracking-widest shadow-sm">
+                                                        {t('model.signup.public_profile_badge')}
+                                                    </div>
                                                 </div>
                                             )}
-                                            <p className="text-[10px] font-medium mb-3 text-white/90 leading-tight h-8 line-clamp-2">{p.label}</p>
+                                            <p className="text-sm font-medium mb-5 text-white/90 leading-relaxed text-balance flex-1">{p.label}</p>
                                             
-                                            <div className={`relative group/photo overflow-hidden rounded-xl aspect-[4/3] flex items-center justify-center border transition-all ${p.id === 'profile' ? 'bg-black/40 border-pink-500/20 ring-1 ring-pink-500/10' : 'bg-black/60 border-white/5'}`}>
+                                            <div className={`relative group/photo overflow-hidden rounded-2xl aspect-[4/3] flex items-center justify-center border transition-all mt-auto ${p.id === 'profile' ? 'bg-black/40 border-pink-500/20 ring-1 ring-pink-500/10' : 'bg-black/60 border-white/5'}`}>
                                                 {p.photo ? (
                                                     <NextImage src={p.photo} alt="Verification" fill className="object-cover" unoptimized={true} />
                                                 ) : (
