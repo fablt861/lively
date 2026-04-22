@@ -47,7 +47,7 @@ export default function ModelLandingPage() {
             </nav>
 
             {/* Combined Hero & Simulator - 2 Columns */}
-            <header className="relative z-10 max-w-7xl mx-auto w-full px-6 pt-8 pb-16 md:py-20 lg:py-24">
+            <header className="relative z-10 max-w-7xl mx-auto w-full px-6 pt-4 lg:pt-8 pb-16 md:pb-20 lg:pb-24">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-12 items-center">
                     {/* Left: Content */}
                     <div className="space-y-8 animate-in fade-in slide-in-from-left-8 duration-700">
