@@ -12,7 +12,7 @@ export function MarketingTracker() {
         if (typeof window === "undefined" || hasTracked.current) return;
         
         // Don't track visits to the admin panel
-        if (pathname?.includes("/admin")) return;
+        if (pathname?.includes("/hq-center") || pathname?.includes("/admin")) return;
 
         // Detect if we are on a model landing page
         const type = pathname?.includes("/elite") ? "model" : "user";

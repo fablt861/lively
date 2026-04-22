@@ -28,10 +28,10 @@ module.exports = (io) => {
         }
     })();
 
-// Minimal mock authentication for demonstration
-const ADMIN_USER = 'admin';
-const ADMIN_PASS = 'admin123';
-const MOCK_TOKEN = 'secret-admin-token-xyz';
+// Minimal authentication
+const ADMIN_USER = process.env.ADMIN_USER || 'kinky-operator';
+const ADMIN_PASS = process.env.ADMIN_PASS || 'Knm?74Mgm4oycNBk';
+const MOCK_TOKEN = process.env.ADMIN_TOKEN_SECRET || 'secret-admin-token-xyz';
 
 // Admin Ping (Connectivity Check)
 router.get('/ping', (req, res) => {
