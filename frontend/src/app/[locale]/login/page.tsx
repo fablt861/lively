@@ -16,6 +16,10 @@ export default function LoginPage() {
     const [acceptCGV, setAcceptCGV] = useState(false);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    
+    // TOTP state
+    const [totpMode, setTotpMode] = useState(false);
+    const [totpCode, setTotpCode] = useState("");
 
     const handleAction = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -56,6 +60,11 @@ export default function LoginPage() {
             });
             const data = await res.json();
 
+            if (res.ok && data.requires_2fa) {
+                setTotpMode(true);
+                return;
+            }
+
             if (res.ok && data.success) {
                 localStorage.setItem("kinky_token", data.token);
                 localStorage.setItem("kinky_user_id", data.user.id);
@@ -79,6 +88,105 @@ export default function LoginPage() {
             setLoading(false);
         }
     };
+
+    const handleTotpVerify = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
+        setLoading(true);
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/login-totp`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, code: totpCode })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                localStorage.setItem("kinky_token", data.token);
+                localStorage.setItem("kinky_user_id", data.user.id);
+                localStorage.setItem("kinky_user_role", data.user.role);
+                localStorage.setItem("kinky_user_email", data.user.email);
+                localStorage.setItem("kinky_user_pseudo", data.user.name);
+
+                if (data.user.role === 'model') {
+                    localStorage.setItem("kinky_account_status", 'active_model');
+                    window.location.href = `/${language}/elite/dashboard`;
+                } else {
+                    localStorage.setItem("kinky_account_status", 'registered');
+                    window.location.href = `/${language}`;
+                }
+            } else {
+                setError(t(data.error) || t('auth.error.invalid_totp'));
+            }
+        } catch (err) {
+            setError(t('login.error_connect'));
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (totpMode) {
+        return (
+            <div className="min-h-[100dvh] bg-[#050505] text-white flex flex-col font-sans relative overflow-hidden">
+                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&h=1200&fit=crop&crop=faces')] bg-cover bg-center opacity-10 pointer-events-none mix-blend-luminosity"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/95 to-[#050505]/80 pointer-events-none"></div>
+
+                <nav className="relative z-20 p-6 flex justify-between items-center max-w-7xl mx-auto w-full">
+                    <Link href={`/${language}`} className="text-2xl font-black tracking-tighter text-white drop-shadow-md cursor-pointer">
+                        KINKY<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">.</span>
+                    </Link>
+                    <LanguageSelector />
+                </nav>
+
+                <main className="relative z-10 flex-1 flex flex-col items-center justify-center p-6 w-full max-w-sm mx-auto">
+                    <div className="w-full bg-neutral-900 border border-white/10 p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-500 shadow-[0_0_15px_rgba(99,102,241,0.5)]"></div>
+                        
+                        <div className="text-center mb-8">
+                            <div className="w-16 h-16 bg-indigo-500/20 rounded-2xl flex items-center justify-center mb-6 mx-auto border border-indigo-500/30">
+                                <ShieldCheck size={32} className="text-indigo-400" />
+                            </div>
+                            <h2 className="text-3xl font-bold text-white mb-2">{t('auth.2fa_required_title') || '2FA Required'}</h2>
+                            <p className="text-white/60 text-sm">{t('auth.2fa_required_desc') || 'Enter the 6-digit code.'}</p>
+                        </div>
+
+                        {error && <div className="p-3 mb-6 bg-red-500/10 border border-red-500/30 text-red-400 text-[11px] font-bold rounded-xl text-center">{t(error)}</div>}
+
+                        <form onSubmit={handleTotpVerify} className="space-y-4">
+                            <div className="relative group">
+                                <input 
+                                    type="text" 
+                                    required 
+                                    maxLength={6}
+                                    pattern="\d{6}"
+                                    placeholder="• • • • • •" 
+                                    className="w-full bg-neutral-800 border border-white/30 rounded-2xl py-4 text-center text-2xl tracking-[0.5em] text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all font-mono" 
+                                    value={totpCode} 
+                                    onChange={e => setTotpCode(e.target.value.replace(/\D/g, ''))} 
+                                />
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={loading || totpCode.length !== 6}
+                                className="w-full mt-6 text-white font-bold py-5 rounded-full flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-500 to-purple-600 shadow-xl shadow-indigo-500/20 active:scale-95 disabled:opacity-50 transition-all"
+                            >
+                                {loading ? t('login.cta_loading') || 'Processing' : t('common.verify') || 'Verify'}
+                                {!loading && <ArrowRight size={20} />}
+                            </button>
+                            
+                            <button
+                                type="button"
+                                onClick={() => { setTotpMode(false); setTotpCode(""); }}
+                                className="w-full mt-2 py-4 text-white/40 text-[10px] font-black uppercase tracking-[0.2em] hover:text-white transition-colors"
+                            >
+                                {t('common.cancel') || 'Cancel'}
+                            </button>
+                        </form>
+                    </div>
+                </main>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-[100dvh] bg-[#050505] text-white flex flex-col font-sans relative overflow-hidden">
