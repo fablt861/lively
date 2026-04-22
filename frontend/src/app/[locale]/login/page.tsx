@@ -14,7 +14,8 @@ export default function LoginPage() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [pseudo, setPseudo] = useState("");
     const [acceptCGV, setAcceptCGV] = useState(false);
-    const [error, setError] = useState("");
+    const [apiError, setApiError] = useState("");
+    const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
     
     // TOTP state
@@ -23,17 +24,18 @@ export default function LoginPage() {
 
     const handleAction = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError("");
+        setApiError("");
+        setValidationErrors({});
+        const newErrors: Record<string, string> = {};
 
         if (mode === 'signup') {
-            if (password !== confirmPassword) {
-                return setError(t('login.error_password_match'));
-            }
-            if (!acceptCGV) {
-                return setError(t('login.error_cgv'));
-            }
-            if (pseudo.length < 3) {
-                return setError(t('login.error_pseudo_short'));
+            if (password !== confirmPassword) newErrors.confirmPassword = t('login.error_password_match');
+            if (!acceptCGV) newErrors.cgv = t('login.error_cgv');
+            if (pseudo.length < 3) newErrors.pseudo = t('login.error_pseudo_short');
+            
+            if (Object.keys(newErrors).length > 0) {
+                setValidationErrors(newErrors);
+                return;
             }
         }
 
@@ -80,10 +82,10 @@ export default function LoginPage() {
                     window.location.href = `/${language}`;
                 }
             } else {
-                setError(data.error || t('login.error_invalid'));
+                setApiError(data.error || t('login.error_invalid'));
             }
         } catch (err) {
-            setError(t('login.error_connect'));
+            setApiError(t('login.error_connect'));
         } finally {
             setLoading(false);
         }
@@ -115,10 +117,10 @@ export default function LoginPage() {
                     window.location.href = `/${language}`;
                 }
             } else {
-                setError(t(data.error) || t('auth.error.invalid_totp'));
+                setApiError(t(data.error) || t('auth.error.invalid_totp'));
             }
         } catch (err) {
-            setError(t('login.error_connect'));
+            setApiError(t('login.error_connect'));
         } finally {
             setLoading(false);
         }
@@ -149,7 +151,7 @@ export default function LoginPage() {
                             <p className="text-white/60 text-sm">{t('auth.2fa_required_desc') || 'Enter the 6-digit code.'}</p>
                         </div>
 
-                        {error && <div className="p-3 mb-6 bg-red-500/10 border border-red-500/30 text-red-400 text-[11px] font-bold rounded-xl text-center">{t(error)}</div>}
+                        {apiError && <div className="p-3 mb-6 bg-red-500/10 border border-red-500/30 text-red-400 text-[11px] font-bold rounded-xl text-center">{t(apiError)}</div>}
 
                         <form onSubmit={handleTotpVerify} className="space-y-4">
                             <div className="relative group">
@@ -230,12 +232,12 @@ export default function LoginPage() {
                         </button>
                     </div>
 
-                    {error && <div className="p-3 mb-6 bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-2xl text-center animate-in fade-in duration-300">{t(error)}</div>}
+                    {apiError && <div className="p-3 mb-6 bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-2xl text-center animate-in fade-in duration-300">{t(apiError)}</div>}
 
                     <form onSubmit={handleAction} className="space-y-4">
                         {mode === 'signup' && (
                             <div className="relative group">
-                                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
+                                <User className="absolute left-4 top-[28px] -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
                                 <input
                                     type="text"
                                     required
@@ -244,11 +246,12 @@ export default function LoginPage() {
                                     value={pseudo}
                                     onChange={e => setPseudo(e.target.value)}
                                 />
+                                {validationErrors.pseudo && <p className="text-orange-400 text-xs mt-1 pl-4">{validationErrors.pseudo}</p>}
                             </div>
                         )}
 
                         <div className="relative group">
-                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
+                            <Mail className="absolute left-4 top-[28px] -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
                             <input
                                 type="email"
                                 required
@@ -260,7 +263,7 @@ export default function LoginPage() {
                         </div>
 
                         <div className="relative group">
-                            <Zap className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
+                            <Zap className="absolute left-4 top-[28px] -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
                             <input
                                 type="password"
                                 required
@@ -274,7 +277,7 @@ export default function LoginPage() {
                         {mode === 'signup' && (
                             <>
                                 <div className="relative group">
-                                    <Zap className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
+                                    <Zap className="absolute left-4 top-[28px] -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
                                     <input
                                         type="password"
                                         required
@@ -283,6 +286,7 @@ export default function LoginPage() {
                                         value={confirmPassword}
                                         onChange={e => setConfirmPassword(e.target.value)}
                                     />
+                                    {validationErrors.confirmPassword && <p className="text-orange-400 text-xs mt-1 pl-4">{validationErrors.confirmPassword}</p>}
                                 </div>
                                 <div className="pt-2">
                                     <label className="flex items-center gap-3 cursor-pointer group">
@@ -307,6 +311,7 @@ export default function LoginPage() {
                                             ))}
                                         </span>
                                     </label>
+                                    {validationErrors.cgv && <p className="text-orange-400 text-xs mt-1 pl-8">{validationErrors.cgv}</p>}
                                 </div>
                             </>
                         )}

@@ -19,19 +19,27 @@ export function UnifiedAuthModal({ onSuccess, onClose, initialMode = "login" }: 
     const [confirmPassword, setConfirmPassword] = useState("");
     const [pseudo, setPseudo] = useState("");
     const [acceptCGV, setAcceptCGV] = useState(false);
-    const [error, setError] = useState("");
+    const [apiError, setApiError] = useState("");
+    const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
     const [totpMode, setTotpMode] = useState(false);
     const [totpCode, setTotpCode] = useState("");
 
     const handleAction = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError("");
+        setApiError("");
+        setValidationErrors({});
+        const newErrors: Record<string, string> = {};
 
         if (mode === 'signup') {
-            if (password !== confirmPassword) return setError(t('auth.error.password_match'));
-            if (!acceptCGV) return setError(t('auth.error.cgv'));
-            if (pseudo.length < 3) return setError(t('auth.error.pseudo_short'));
+            if (password !== confirmPassword) newErrors.confirmPassword = t('auth.error.password_match');
+            if (!acceptCGV) newErrors.cgv = t('auth.error.cgv');
+            if (pseudo.length < 3) newErrors.pseudo = t('auth.error.pseudo_short');
+            
+            if (Object.keys(newErrors).length > 0) {
+                setValidationErrors(newErrors);
+                return;
+            }
         }
 
         setLoading(true);
@@ -64,10 +72,10 @@ export function UnifiedAuthModal({ onSuccess, onClose, initialMode = "login" }: 
             if (res.ok && data.success) {
                 onSuccess(data.user.id, data.user.email, data.user.role, data.user.name, data.user.credits || 0);
             } else {
-                setError(t(data.error) || t('auth.error.invalid'));
+                setApiError(t(data.error) || t('auth.error.invalid'));
             }
         } catch (err) {
-            setError(t('auth.error.network'));
+            setApiError(t('auth.error.network'));
         } finally {
             setLoading(false);
         }
@@ -75,7 +83,7 @@ export function UnifiedAuthModal({ onSuccess, onClose, initialMode = "login" }: 
 
     const handleTotpVerify = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError("");
+        setApiError("");
         setLoading(true);
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/login-totp`, {
@@ -87,10 +95,10 @@ export function UnifiedAuthModal({ onSuccess, onClose, initialMode = "login" }: 
             if (res.ok && data.success) {
                 onSuccess(data.user.id, data.user.email, data.user.role, data.user.name, data.user.credits || 0);
             } else {
-                setError(t(data.error) || t('auth.error.invalid_totp'));
+                setApiError(t(data.error) || t('auth.error.invalid_totp'));
             }
         } catch (err) {
-            setError(t('auth.error.network'));
+            setApiError(t('auth.error.network'));
         } finally {
             setLoading(false);
         }
@@ -119,7 +127,7 @@ export function UnifiedAuthModal({ onSuccess, onClose, initialMode = "login" }: 
                         <p className="text-white/60 text-sm">{t('auth.2fa_required_desc')}</p>
                     </div>
 
-                    {error && <div className="p-3 mb-6 bg-red-500/10 border border-red-500/30 text-red-400 text-[11px] font-bold rounded-xl text-center">{error}</div>}
+                    {apiError && <div className="p-3 mb-6 bg-red-500/10 border border-red-500/30 text-red-400 text-[11px] font-bold rounded-xl text-center">{apiError}</div>}
 
                     <form onSubmit={handleTotpVerify} className="space-y-4">
                         <div className="relative group">
@@ -195,29 +203,31 @@ export function UnifiedAuthModal({ onSuccess, onClose, initialMode = "login" }: 
                     </button>
                 </div>
 
-                {error && <div className="p-3 mb-6 bg-red-500/10 border border-red-500/30 text-red-400 text-[11px] font-bold rounded-xl text-center animate-shake uppercase tracking-tight">{error}</div>}
+                {apiError && <div className="p-3 mb-6 bg-red-500/10 border border-red-500/30 text-red-400 text-[11px] font-bold rounded-xl text-center animate-shake uppercase tracking-tight">{apiError}</div>}
 
                 <form onSubmit={handleAction} className="space-y-4">
                     {mode === 'signup' && (
                         <div className="relative group">
                             <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={18} />
                             <input type="text" required placeholder={t('auth.pseudo_placeholder')} className="w-full bg-neutral-800 border border-white/30 rounded-2xl py-4 pl-12 text-sm text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all placeholder:text-white/60" value={pseudo} onChange={e => setPseudo(e.target.value)} />
+                            {validationErrors.pseudo && <p className="text-orange-400 text-[10px] mt-1 pl-4">{validationErrors.pseudo}</p>}
                         </div>
                     )}
                     <div className="relative group">
-                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white/80 transition-colors" size={18} />
+                        <Mail className="absolute left-4 top-[22px] -translate-y-1/2 text-white/40 group-focus-within:text-white/80 transition-colors" size={18} />
                         <input type="email" required placeholder={t('auth.email_placeholder')} className="w-full bg-neutral-800 border border-white/30 rounded-2xl py-4 pl-12 text-sm text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all placeholder:text-white/60" value={email} onChange={e => setEmail(e.target.value)} />
                     </div>
                     <div className="relative group">
-                        <Zap className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white/80 transition-colors" size={18} />
+                        <Zap className="absolute left-4 top-[22px] -translate-y-1/2 text-white/40 group-focus-within:text-white/80 transition-colors" size={18} />
                         <input type="password" required placeholder={t('auth.password_placeholder')} className="w-full bg-neutral-800 border border-white/30 rounded-2xl py-4 pl-12 text-sm text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all placeholder:text-white/60" value={password} onChange={e => setPassword(e.target.value)} />
                     </div>
 
                     {mode === 'signup' && (
                         <>
                             <div className="relative group">
-                                <Zap className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-white/80 transition-colors" size={18} />
+                                <Zap className="absolute left-4 top-[22px] -translate-y-1/2 text-white/40 group-focus-within:text-white/80 transition-colors" size={18} />
                                 <input type="password" required placeholder={t('auth.confirm_password_placeholder')} className="w-full bg-neutral-800 border border-white/30 rounded-2xl py-4 pl-12 text-sm text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all placeholder:text-white/60" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
+                                {validationErrors.confirmPassword && <p className="text-orange-400 text-[10px] mt-1 pl-4">{validationErrors.confirmPassword}</p>}
                             </div>
                             <div className="pt-2">
                                 <label className="flex items-center gap-3 cursor-pointer group">
@@ -242,6 +252,7 @@ export function UnifiedAuthModal({ onSuccess, onClose, initialMode = "login" }: 
                                         ))}
                                     </span>
                                 </label>
+                                {validationErrors.cgv && <p className="text-orange-400 text-[10px] mt-1 pl-6">{validationErrors.cgv}</p>}
                             </div>
                         </>
                     )}

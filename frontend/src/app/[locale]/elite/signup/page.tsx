@@ -46,7 +46,7 @@ export default function ModelSignupPage() {
     const [photoId, setPhotoId] = useState<string | null>(null);
     const [photoIdSelfie, setPhotoIdSelfie] = useState<string | null>(null);
     const [apiError, setApiError] = useState("");
-    const [validationError, setValidationError] = useState("");
+    const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
     const [compressing, setCompressing] = useState<number | null>(null);
     const [isCameraOpen, setIsCameraOpen] = useState(false);
@@ -89,55 +89,58 @@ export default function ModelSignupPage() {
     }, [step]);
 
     const validateStep = () => {
-        setValidationError("");
+        setValidationErrors({});
         setApiError("");
+        const newErrors: Record<string, string> = {};
         
         if (step === 1) {
-            if (!country) return false;
+            if (!country) newErrors.country = t('model.signup.error.fields_required');
         }
         if (step === 2) {
-            if (phone.length < 8) return false;
+            if (phone.length < 8) newErrors.phone = t('model.signup.error.fields_required');
         }
         if (step === 3) {
-            if (!firstName || !lastName || !pseudo || !dob || !email || !password) {
-                setValidationError(t('model.signup.error.fields_required'));
-                return false;
-            }
+            if (!firstName) newErrors.firstName = t('model.signup.error.fields_required');
+            if (!lastName) newErrors.lastName = t('model.signup.error.fields_required');
+            if (!pseudo) newErrors.pseudo = t('model.signup.error.fields_required');
+            if (!dob) newErrors.dob = t('model.signup.error.fields_required');
+            if (!email) newErrors.email = t('model.signup.error.fields_required');
+            if (!password) newErrors.password = t('model.signup.error.fields_required');
+
             // Email Regex
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                setValidationError(t('model.signup.error.invalid_email'));
-                return false;
+            if (email && !emailRegex.test(email)) {
+                newErrors.email = t('model.signup.error.invalid_email');
             }
             // Password length
-            if (password.length < 8) {
-                setValidationError(t('model.signup.error.password_short'));
-                return false;
+            if (password && password.length < 8) {
+                newErrors.password = t('model.signup.error.password_short');
             }
             // Password confirmation check
             if (password !== confirmPassword) {
-                setValidationError(t('model.signup.error.password_mismatch') || "Passwords do not match");
-                return false;
+                newErrors.confirmPassword = t('model.signup.error.password_mismatch') || "Passwords do not match";
             }
             // CGV Check
             if (!agreedToTerms) {
-                setValidationError(t('model.signup.error.terms_required') || "You must agree to the terms and conditions");
-                return false;
+                newErrors.terms = t('model.signup.error.terms_required') || "You must agree to the terms and conditions";
             }
             // Age Check (18+)
-            const birthDate = new Date(dob);
-            const today = new Date();
-            let age = today.getFullYear() - birthDate.getFullYear();
-            const m = today.getMonth() - birthDate.getMonth();
-            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
-            }
-            if (age < 18) {
-                setValidationError(t('model.signup.error.underage'));
-                return false;
+            if (dob) {
+                const birthDate = new Date(dob);
+                const today = new Date();
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const m = today.getMonth() - birthDate.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                if (age < 18) {
+                    newErrors.dob = t('model.signup.error.underage');
+                }
             }
         }
-        return true;
+        
+        setValidationErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
     const handleNext = () => {
@@ -284,12 +287,6 @@ export default function ModelSignupPage() {
                             </div>
                         )}
 
-                        {validationError && (
-                            <div className="mb-6 p-4 bg-orange-500/10 border border-orange-500/30 rounded-2xl text-orange-400 text-sm text-center animate-in zoom-in duration-300">
-                                {validationError}
-                            </div>
-                        )}
-
                         {/* STEP 1: PAYS */}
                         {step === 1 && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -322,6 +319,7 @@ export default function ModelSignupPage() {
                                     <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/20">
                                         <ArrowRight size={16} className="rotate-90" />
                                     </div>
+                                    {validationErrors.country && <p className="text-orange-400 text-xs mt-2 pl-4 animate-in fade-in">{validationErrors.country}</p>}
                                 </div>
                                 <button
                                     onClick={handleNext}
@@ -367,6 +365,7 @@ export default function ModelSignupPage() {
                                             placeholder={t('model.signup.step2_placeholder')}
                                             className="w-full bg-black/60 border border-white/20 rounded-2xl py-4.5 pl-12 pr-4 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40"
                                         />
+                                        {validationErrors.phone && <p className="text-orange-400 text-xs mt-2 pl-4 animate-in fade-in">{validationErrors.phone}</p>}
                                     </div>
                                 </div>
                                 <p className="text-[10px] text-white/20 text-center uppercase tracking-[0.2em] font-bold pt-4">{t('model.signup.step2_footer')}</p>
@@ -396,18 +395,22 @@ export default function ModelSignupPage() {
                                         <div className="relative group">
                                             <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
                                             <input type="text" value={firstName} onChange={e => setFirstName(e.target.value)} placeholder={t('model.signup.step3_firstName')} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" />
+                                            {validationErrors.firstName && <p className="text-orange-400 text-xs mt-1 pl-2 animate-in fade-in">{validationErrors.firstName}</p>}
                                         </div>
                                         <div className="relative group">
                                             <input type="text" value={lastName} onChange={e => setLastName(e.target.value)} placeholder={t('model.signup.step3_lastName')} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 px-4 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" />
+                                            {validationErrors.lastName && <p className="text-orange-400 text-xs mt-1 pl-2 animate-in fade-in">{validationErrors.lastName}</p>}
                                         </div>
                                     </div>
                                     <div className="relative group">
                                         <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
                                         <input type="text" value={pseudo} onChange={e => setPseudo(e.target.value)} placeholder={t('login.pseudo_placeholder')} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" />
+                                        {validationErrors.pseudo && <p className="text-orange-400 text-xs mt-1 pl-4 animate-in fade-in">{validationErrors.pseudo}</p>}
                                     </div>
                                     <div className="relative group">
-                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 text-[9px] sm:text-xs font-bold uppercase tracking-widest pointer-events-none truncate max-w-[80px] sm:max-w-none">{t('model.signup.step3_dob')}</div>
-                                        <input type="date" value={dob} onChange={e => setDob(e.target.value)} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-24 sm:pl-32 pr-4 text-white/90 focus:outline-none focus:border-white/40 transition-all [&::-webkit-calendar-picker-indicator]:filter-[invert(0.5)] text-xs sm:text-sm" />
+                                        <div className="absolute left-4 top-[28px] -translate-y-1/2 text-white/20 text-[9px] sm:text-xs font-bold uppercase tracking-widest pointer-events-none truncate max-w-[80px] sm:max-w-none">{t('model.signup.step3_dob')}</div>
+                                        <input type="date" value={dob} onChange={e => setDob(e.target.value)} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-24 sm:pl-32 pr-4 text-white/90 focus:outline-none focus:border-white/40 transition-all [&::-webkit-calendar-picker-indicator]:filter-[invert(0.5)] text-xs sm:text-sm shadow-xl" />
+                                        {validationErrors.dob && <p className="text-orange-400 text-xs mt-1 pl-4 animate-in fade-in">{validationErrors.dob}</p>}
                                     </div>
 
                                     <div className="h-px bg-white/5 w-full my-4"></div>
@@ -415,14 +418,17 @@ export default function ModelSignupPage() {
                                     <div className="relative group">
                                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
                                         <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder={t('model.signup.step3_email')} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" />
+                                        {validationErrors.email && <p className="text-orange-400 text-xs mt-1 pl-4 animate-in fade-in">{validationErrors.email}</p>}
                                     </div>
                                     <div className="relative group">
-                                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
-                                        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder={t('model.signup.step3_password')} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" />
+                                        <Lock className="absolute left-4 top-[28px] -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
+                                        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder={t('model.signup.step3_password')} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40 shadow-xl" />
+                                        {validationErrors.password && <p className="text-orange-400 text-xs mt-1 pl-4 animate-in fade-in">{validationErrors.password}</p>}
                                     </div>
                                     <div className="relative group">
-                                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
-                                        <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder={t('model.signup.step3_password_confirm') || "Confirm Password"} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" />
+                                        <Lock className="absolute left-4 top-[28px] -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={20} />
+                                        <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder={t('model.signup.step3_password_confirm') || "Confirm Password"} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40 shadow-xl" />
+                                        {validationErrors.confirmPassword && <p className="text-orange-400 text-xs mt-1 pl-4 animate-in fade-in">{validationErrors.confirmPassword}</p>}
                                     </div>
 
                                     {/* CGV Checkbox */}
@@ -441,6 +447,7 @@ export default function ModelSignupPage() {
                                                 {t('signup.terms_label_prefix')} <Link href={`/${language}/terms`} target="_blank" className="text-pink-400 hover:underline font-bold">{t('signup.terms_label_link')}</Link> {t('signup.terms_label_suffix')}
                                             </span>
                                         </label>
+                                        {validationErrors.terms && <p className="text-orange-400 text-xs mt-1 pl-8 animate-in fade-in">{validationErrors.terms}</p>}
                                     </div>
                                 </div>
 
