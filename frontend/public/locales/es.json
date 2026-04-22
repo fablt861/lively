@@ -803,9 +803,6 @@
     "auth.2fa_required_title": "2FA Requerido",
     "auth.2fa_required_desc": "Ingrese el código de 6 dígitos de su aplicación de autenticación.",
     "common.verify": "Verificar",
-    "model": {
-        "signup": {
-            "camera_retake_btn": "Tomar de nuevo"
-        }
-    }
+    "model.signup.camera_retake_btn": "Tomar de nuevo",
+    "model.signup.public_profile_badge": "Visible para los miembros"
 }

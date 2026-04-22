@@ -803,9 +803,6 @@
     "auth.2fa_required_title": "Потрібна 2FA",
     "auth.2fa_required_desc": "Введіть 6-значний код із програми для автентифікації.",
     "common.verify": "Підтвердити",
-    "model": {
-        "signup": {
-            "camera_retake_btn": "Перезняти фото"
-        }
-    }
+    "model.signup.camera_retake_btn": "Перезняти фото",
+    "model.signup.public_profile_badge": "Видимо для учасників"
 }

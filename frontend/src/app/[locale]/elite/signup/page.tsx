@@ -483,9 +483,14 @@ export default function ModelSignupPage() {
                                                 <p className="font-bold text-[10px] uppercase tracking-widest text-white/50">{idx + 1}. {t('model.signup.step4_consigne')}</p>
                                                 {p.photo && <CheckCircle2 className="text-green-500" size={16} />}
                                             </div>
+                                            {p.id === 'profile' && (
+                                                <div className="inline-block px-2 py-0.5 mb-1.5 rounded bg-pink-500/20 border border-pink-500/30 text-pink-400 text-[8px] font-bold uppercase tracking-widest">
+                                                    {t('model.signup.public_profile_badge')}
+                                                </div>
+                                            )}
                                             <p className="text-[10px] font-medium mb-3 text-white/90 leading-tight h-8 line-clamp-2">{p.label}</p>
                                             
-                                            <div className="relative group/photo overflow-hidden rounded-xl bg-black/60 aspect-[4/3] flex items-center justify-center border border-white/5">
+                                            <div className={`relative group/photo overflow-hidden rounded-xl aspect-[4/3] flex items-center justify-center border transition-all ${p.id === 'profile' ? 'bg-black/40 border-pink-500/20 ring-1 ring-pink-500/10' : 'bg-black/60 border-white/5'}`}>
                                                 {p.photo ? (
                                                     <NextImage src={p.photo} alt="Verification" fill className="object-cover" unoptimized={true} />
                                                 ) : (

@@ -802,9 +802,6 @@
     "auth.2fa_required_title": "2FA Richiesto",
     "auth.2fa_required_desc": "Inserire il codice a 6 cifre dall'app di autenticazione.",
     "common.verify": "Verifica",
-    "model": {
-        "signup": {
-            "camera_retake_btn": "Ripeti foto"
-        }
-    }
+    "model.signup.camera_retake_btn": "Ripeti foto",
+    "model.signup.public_profile_badge": "Visibile ai membri"
 }

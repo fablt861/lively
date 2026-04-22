@@ -803,9 +803,6 @@
     "auth.2fa_required_title": "Требуется 2FA",
     "auth.2fa_required_desc": "Введите 6-значный код из приложения для аутентификации.",
     "common.verify": "Подтвердить",
-    "model": {
-        "signup": {
-            "camera_retake_btn": "Переснять"
-        }
-    }
+    "model.signup.camera_retake_btn": "Переснять",
+    "model.signup.public_profile_badge": "Видно участникам"
 }

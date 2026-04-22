@@ -803,9 +803,6 @@
     "auth.2fa_required_title": "2FA Kreves",
     "auth.2fa_required_desc": "Skriv inn den 6-sifrede koden fra autentiseringsappen din.",
     "common.verify": "Bekreft",
-    "model": {
-        "signup": {
-            "camera_retake_btn": "Ta på nytt"
-        }
-    }
+    "model.signup.camera_retake_btn": "Ta på nytt",
+    "model.signup.public_profile_badge": "Synlig for medlemmer"
 }

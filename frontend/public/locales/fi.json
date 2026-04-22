@@ -803,9 +803,6 @@
     "auth.2fa_required_title": "2FA Vaaditaan",
     "auth.2fa_required_desc": "Anna 6-numeroinen koodi todennussovelluksestasi.",
     "common.verify": "Vahvista",
-    "model": {
-        "signup": {
-            "camera_retake_btn": "Ota uudelleen"
-        }
-    }
+    "model.signup.camera_retake_btn": "Ota uudelleen",
+    "model.signup.public_profile_badge": "Jäsenten nähtävissä"
 }
