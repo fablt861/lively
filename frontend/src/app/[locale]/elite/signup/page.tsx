@@ -407,9 +407,18 @@ export default function ModelSignupPage() {
                                         <input type="text" value={pseudo} onChange={e => setPseudo(e.target.value)} placeholder={t('login.pseudo_placeholder')} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-12 text-white/90 focus:outline-none focus:border-white/40 transition-all placeholder:text-white/40" />
                                         {validationErrors.pseudo && <p className="text-orange-400 text-xs mt-1 pl-4 animate-in fade-in">{validationErrors.pseudo}</p>}
                                     </div>
-                                    <div className="relative group">
-                                        <div className="absolute left-4 top-[28px] -translate-y-1/2 text-white/20 text-[9px] sm:text-xs font-bold uppercase tracking-widest pointer-events-none truncate max-w-[80px] sm:max-w-none">{t('model.signup.step3_dob')}</div>
-                                        <input type="date" value={dob} onChange={e => setDob(e.target.value)} className="w-full bg-black/60 border border-white/20 rounded-2xl py-4 pl-24 sm:pl-32 pr-4 text-white/90 focus:outline-none focus:border-white/40 transition-all [&::-webkit-calendar-picker-indicator]:filter-[invert(0.5)] text-xs sm:text-sm shadow-xl" />
+                                    <div>
+                                        <div className="relative flex items-center bg-black/60 border border-white/20 rounded-2xl shadow-xl overflow-hidden focus-within:border-white/40 transition-all">
+                                            <div className="pl-4 pr-1 text-white/40 text-[9px] sm:text-xs font-bold uppercase tracking-widest shrink-0 border-r border-white/10 py-4 mr-2">
+                                                {t('model.signup.step3_dob')}
+                                            </div>
+                                            <input 
+                                                type="date" 
+                                                value={dob} 
+                                                onChange={e => setDob(e.target.value)} 
+                                                className="w-full min-w-0 bg-transparent py-4 pr-4 pl-2 text-white/90 focus:outline-none [&::-webkit-calendar-picker-indicator]:filter-[invert(0.5)] text-xs sm:text-sm" 
+                                            />
+                                        </div>
                                         {validationErrors.dob && <p className="text-orange-400 text-xs mt-1 pl-4 animate-in fade-in">{validationErrors.dob}</p>}
                                     </div>
 

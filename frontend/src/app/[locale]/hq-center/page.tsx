@@ -388,9 +388,9 @@ export default function AdminPage() {
     }
 
     return (
-        <div className="min-h-screen bg-neutral-950 text-white font-sans flex flex-col md:flex-row h-[100dvh] overflow-hidden">
+        <div className="min-h-screen bg-neutral-950 text-white font-sans flex flex-col lg:flex-row h-[100dvh] overflow-hidden">
             {/* Mobile Header */}
-            <div className="md:hidden flex items-center justify-between p-4 bg-neutral-900 border-b border-white/5 z-40 relative flex-shrink-0">
+            <div className="lg:hidden flex items-center justify-between p-4 bg-neutral-900 border-b border-white/5 z-40 relative flex-shrink-0">
                 <div className="text-xl font-black tracking-tighter text-white">
                     KI<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">+</span>NKY <span className="text-xs font-light tracking-widest text-neutral-500 ml-1">ADMIN</span>
                 </div>
@@ -402,14 +402,14 @@ export default function AdminPage() {
             {/* Sidebar Overlay */}
             {isMobileMenuOpen && (
                 <div 
-                    className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-sm"
+                    className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm"
                     onClick={() => setIsMobileMenuOpen(false)}
                 />
             )}
 
             {/* Sidebar */}
-            <aside className={`fixed md:relative top-0 left-0 h-[100dvh] md:h-full w-64 bg-neutral-900 border-r border-white/5 flex flex-col z-50 transform transition-transform duration-300 md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                <div className="p-6 text-2xl font-black tracking-tighter text-white border-b border-white/5 hidden md:block">
+            <aside className={`fixed lg:relative top-0 left-0 h-[100dvh] lg:h-full w-64 bg-neutral-900 border-r border-white/5 flex flex-col z-50 transform transition-transform duration-300 lg:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                <div className="p-6 text-2xl font-black tracking-tighter text-white border-b border-white/5 hidden lg:block">
                     KI<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">+</span>NKY <span className="text-xs font-light tracking-widest text-neutral-500 ml-1">ADMIN</span>
                 </div>
                 <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -471,7 +471,7 @@ export default function AdminPage() {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 p-4 md:p-10 overflow-y-auto">
+            <main className="flex-1 p-4 lg:p-10 overflow-y-auto">
                 {activeTab === 'stats' && stats && (
                     <div className="space-y-8 animate-in fade-in duration-500">
                         <h2 className="text-3xl font-light">{t('admin.stats.title')}</h2>
