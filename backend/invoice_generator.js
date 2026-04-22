@@ -84,10 +84,11 @@ async function generateInvoice(payout, billingInfo) {
             doc.text(`Prestation de création de contenu numérique / Digital content creation services`, 60, itemY);
             doc.text(`$${parseFloat(payout.amount || 0).toFixed(2)}`, 450, itemY, { width: 90, align: 'right' });
 
+            const fee = parseFloat(payout.transferFee || 5);
             itemY += 20;
             doc.fillColor('#ff4444');
             doc.text(`Frais de transfert / Transfer fees`, 60, itemY);
-            doc.text(`-$${parseFloat(payout.transferFee || 5).toFixed(2)}`, 450, itemY, { width: 90, align: 'right' });
+            doc.text(`-$${fee.toFixed(2)}`, 450, itemY, { width: 90, align: 'right' });
             doc.fillColor('#000000');
 
             doc.moveTo(50, itemY + 20).lineTo(550, itemY + 20).stroke('#eeeeee');
@@ -95,7 +96,7 @@ async function generateInvoice(payout, billingInfo) {
             // --- Totals ---
             doc.moveDown(2);
             const totalY = doc.y;
-            const netAmount = (payout.netAmount || (parseFloat(payout.amount) - 5)).toFixed(2);
+            const netAmount = (parseFloat(payout.amount) - fee).toFixed(2);
             doc.fontSize(12).font('Helvetica-Bold').text('TOTAL À PAYER / TOTAL DUE:', 300, totalY);
             doc.fontSize(14).text(`$${netAmount}`, 450, totalY, { width: 90, align: 'right' });
 

@@ -562,11 +562,16 @@ router.post('/payouts/:id/approve', requireAuth, async (req, res) => {
         const year = new Date().getFullYear();
         const invoiceNumber = `PAY-${year}-${modelNumericId}-${String(invoiceSeq).padStart(3, '0')}`;
 
+        // Fetch current settings to get dynamic fee
+        const { getSettings } = require('./settings');
+        const settings = await getSettings();
+
         // Prepare object for generateInvoice (compat format)
         const payoutCompat = {
             id: payout.id,
             modelEmail: email,
             amount: parseFloat(payout.amount),
+            transferFee: parseFloat(settings.payoutFeeUsd || 5.0),
             invoiceNumber
         };
 

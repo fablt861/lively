@@ -855,5 +855,8 @@
     "billing.crypto_warning": "Attention : Assurez-vous que l'adresse correspond exactement au réseau sélectionné.",
     "billing.select_network": "Sélectionnez un réseau",
     "billing.paxum_email": "E-mail Paxum",
-    "billing.method_paxum": "Paxum"
+    "billing.method_paxum": "Paxum",
+    "admin.settings.payout_fee": "Frais de retrait ($)",
+    "billing.fee_notice": "Frais : {{fee}}$ par retrait",
+    "billing.method_usdc_polygon": "USDC (Polygon)"
 }

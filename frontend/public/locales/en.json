@@ -859,5 +859,8 @@
     "billing.crypto_warning": "Warning: Ensure the address matches the selected network exactly.",
     "billing.select_network": "Select a network",
     "billing.paxum_email": "Paxum Email",
-    "billing.method_paxum": "Paxum"
+    "billing.method_paxum": "Paxum",
+    "admin.settings.payout_fee": "Payout Fee ($)",
+    "billing.fee_notice": "Fee: {{fee}}$ per payout",
+    "billing.method_usdc_polygon": "USDC (Polygon)"
 }

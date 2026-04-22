@@ -35,34 +35,51 @@ export function ModelBillingModal({ isOpen, onClose, modelId }: ModelBillingModa
         country: "",
         method: 'bank'
     });
+    const [globalSettings, setGlobalSettings] = useState<any>(null);
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
 
     useEffect(() => {
-        if (isOpen && modelId) {
-            setLoading(true);
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/elite/${modelId}/billing`, {
-                headers: { 'Authorization': `Bearer model-token-${modelId}` }
-            })
+        if (isOpen) {
+            // Fetch Global Settings for Fees
+            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/settings`)
                 .then(res => res.json())
-                .then(data => {
-                    if (Object.keys(data).length > 0) setInfo(data);
-                    setLoading(false);
+                .then(data => setGlobalSettings(data))
+                .catch(err => console.error("Failed to fetch settings", err));
+
+            if (modelId) {
+                setLoading(true);
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/elite/${modelId}/billing`, {
+                    headers: { 'Authorization': `Bearer model-token-${modelId}` }
                 })
-                .catch(err => {
-                    console.error(err);
-                    setLoading(false);
-                });
+                    .then(res => res.json())
+                    .then(data => {
+                        if (Object.keys(data).length > 0) setInfo(data);
+                        setLoading(false);
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        setLoading(false);
+                    });
+            }
         }
     }, [isOpen, modelId]);
+
+    const payoutFee = globalSettings?.payoutFeeUsd || 5.0;
 
     const handleSave = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
         setSaving(true);
         setError(null);
         setSuccess(false);
+
+        // Force Polygon for Crypto
+        const finalInfo = { ...info };
+        if (finalInfo.method === 'crypto') {
+            finalInfo.cryptoNetwork = 'polygon';
+        }
 
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/elite/${modelId}/billing`, {
@@ -71,11 +88,12 @@ export function ModelBillingModal({ isOpen, onClose, modelId }: ModelBillingModa
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer model-token-${modelId}`
                 },
-                body: JSON.stringify(info)
+                body: JSON.stringify(finalInfo)
             });
 
             if (res.ok) {
                 setSuccess(true);
+                if (finalInfo.method === 'crypto') setInfo(finalInfo);
                 setTimeout(() => setSuccess(false), 3000);
             } else {
                 setError(t('billing.save_error'));
@@ -174,16 +192,20 @@ export function ModelBillingModal({ isOpen, onClose, modelId }: ModelBillingModa
                                     {[
                                         { id: 'bank', icon: Landmark, label: t('billing.method_bank') },
                                         { id: 'paxum', icon: Mail, label: t('billing.method_paxum') },
-                                        { id: 'crypto', icon: Wallet, label: t('billing.method_crypto') }
+                                        { id: 'crypto', icon: Wallet, label: t('billing.method_usdc_polygon') }
                                     ].map(m => (
                                         <button
                                             key={m.id}
                                             type="button"
                                             onClick={() => setInfo({...info, method: m.id as any})}
-                                            className={`flex flex-col items-center justify-center p-4 rounded-2xl border transition-all gap-2 ${info.method === m.id ? 'bg-indigo-500/10 border-indigo-500 text-indigo-400' : 'bg-white/5 border-white/5 text-neutral-500 hover:border-white/10'}`}
+                                            className={`relative flex flex-col items-center justify-center p-4 rounded-2xl border transition-all gap-2 ${info.method === m.id ? 'bg-indigo-500/10 border-indigo-500 text-indigo-400' : 'bg-white/5 border-white/5 text-neutral-500 hover:border-white/10'}`}
                                         >
                                             <m.icon size={24} />
                                             <span className="text-[10px] font-bold uppercase tracking-tighter text-center">{m.label}</span>
+                                            {/* Fee Badge */}
+                                            <div className="mt-1 px-2 py-0.5 rounded-full bg-white/5 text-[8px] font-black tracking-widest text-neutral-500">
+                                                {t('billing.fee_notice', { fee: payoutFee })}
+                                            </div>
                                         </button>
                                     ))}
                                 </div>
@@ -333,24 +355,11 @@ export function ModelBillingModal({ isOpen, onClose, modelId }: ModelBillingModa
                                     </div>
                                 )}
                                 {info.method === 'crypto' && (
-                                    <div className="space-y-6 animate-in fade-in slide-in-from-top-2">
+                                    <div className="space-y-6 animate-in fade-in slide-in-from-top-2 duration-300">
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2">{t('billing.crypto_network')}</label>
-                                            <div className="relative">
-                                                <select 
-                                                    required
-                                                    value={info.cryptoNetwork || ""}
-                                                    onChange={e => setInfo({...info, cryptoNetwork: e.target.value as any})}
-                                                    className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all appearance-none cursor-pointer"
-                                                >
-                                                    <option value="" disabled>{t('billing.select_network')}</option>
-                                                    <option value="trc20">{t('billing.network_tron')}</option>
-                                                    <option value="erc20">{t('billing.network_eth')}</option>
-                                                    <option value="polygon">{t('billing.network_polygon')}</option>
-                                                </select>
-                                                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">
-                                                    <ChevronDown size={16} />
-                                                </div>
+                                            <div className="w-full bg-indigo-500/10 border border-indigo-500/20 rounded-2xl px-5 py-4 text-indigo-400 font-bold text-sm">
+                                                USDC (Polygon / MATIC Network)
                                             </div>
                                         </div>
                                         <div className="space-y-2">
@@ -361,7 +370,7 @@ export function ModelBillingModal({ isOpen, onClose, modelId }: ModelBillingModa
                                                 value={info.cryptoAddress || ""}
                                                 onChange={e => setInfo({...info, cryptoAddress: e.target.value})}
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all font-mono text-sm"
-                                                placeholder="0x... ou T..."
+                                                placeholder="0x..."
                                             />
                                         </div>
                                         <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl">

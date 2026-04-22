@@ -867,6 +867,19 @@ export default function AdminPage() {
                                     </div>
                                     <p className="text-[10px] text-neutral-500 mt-2 font-medium italic">{t('admin.settings.auto_pack_desc')}</p>
                                 </div>
+                                <div className="space-y-1">
+                                    <label className="block text-[10px] text-neutral-500 font-bold uppercase tracking-widest mb-2">{t('admin.settings.payout_fee')}</label>
+                                    <div className="relative">
+                                        <span className="absolute left-3 top-3.5 text-white/30">$</span>
+                                        <input type="number" 
+                                            step="0.01"
+                                            value={settings.payoutFeeUsd || 5.0} 
+                                            onChange={e => setSettings({ ...settings, payoutFeeUsd: parseFloat(e.target.value) })}
+                                            className="w-full bg-black/50 border border-white/10 rounded-xl p-3 pl-8 text-white focus:outline-none focus:border-indigo-500 transition-colors font-mono" 
+                                        />
+                                    </div>
+                                    <p className="text-[10px] text-neutral-500 mt-2 font-medium italic">Frais appliqués à chaque demande de retrait</p>
+                                </div>
                             </div>
                         </div>
 

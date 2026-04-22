@@ -28,7 +28,8 @@ const DEFAULT_SETTINGS = {
     blockSpecialPackPrice: 59,
     restrictedCountries: [],
     teaserEnabled: false,
-    ageVerificationPopup: true
+    ageVerificationPopup: true,
+    payoutFeeUsd: 5.0
 };
 
 

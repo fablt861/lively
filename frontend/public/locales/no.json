@@ -817,5 +817,8 @@
     "billing.crypto_warning": "Advarsel: Pass på at adressen samsvarer nøyaktig med det valgte nettverket.",
     "billing.select_network": "Velg nettverk",
     "billing.paxum_email": "Paxum Email Index",
-    "billing.method_paxum": "Paxum"
+    "billing.method_paxum": "Paxum",
+    "admin.settings.payout_fee": "Payout Fee ($)",
+    "billing.fee_notice": "Fee: {{fee}}$ per payout",
+    "billing.method_usdc_polygon": "USDC (Polygon)"
 }
