@@ -589,68 +589,217 @@ router.get('/payouts/history', requireAuth, async (req, res) => {
     }
 });
 
-// Admin Payout Approve (Mark as Paid)
+// Admin Payout History Weekly (Grouped by Saturday cutoff)
+router.get('/payouts/history/weekly', requireAuth, async (req, res) => {
+    try {
+        const historyRes = await query(`
+            WITH week_data AS (
+                SELECT 
+                    id, amount, payment_method, processed_at,
+                    (DATE_TRUNC('week', created_at + interval '1 day') - interval '1 day' + interval '23 hours 59 minutes 59 seconds') as week_ending
+                FROM payouts
+                WHERE status = 'paid'
+            )
+            SELECT 
+                week_ending,
+                payment_method as method,
+                SUM(amount) as total,
+                COUNT(*) as count
+            FROM week_data
+            GROUP BY week_ending, payment_method
+            ORDER BY week_ending DESC
+        `);
+        
+        const weeks = {};
+        historyRes.rows.forEach(row => {
+            const date = new Date(row.week_ending).toISOString().split('T')[0];
+            if (!weeks[date]) weeks[date] = { date, bank: { total: 0, count: 0 }, paxum: { total: 0, count: 0 }, crypto: { total: 0, count: 0 } };
+            if (weeks[date][row.method]) {
+                weeks[date][row.method] = { total: parseFloat(row.total), count: parseInt(row.count) };
+            }
+        });
+
+        res.json(Object.values(weeks));
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Admin Payout History Months (For ZIP view)
+router.get('/payouts/history/months', requireAuth, async (req, res) => {
+    try {
+        const monthsRes = await query(`
+            SELECT DISTINCT TO_CHAR(processed_at, 'YYYY-MM') as month, COUNT(*) as count
+            FROM payouts
+            WHERE status = 'paid'
+            GROUP BY month
+            ORDER BY month DESC
+        `);
+        res.json(monthsRes.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// CORE LOGIC: Approve Single Payout
+const approveSinglePayout = async (payoutId, settings, redis, query, generateInvoice) => {
+    const payoutRes = await query('SELECT * FROM payouts WHERE id = $1', [payoutId]);
+    if (payoutRes.rows.length === 0) throw new Error('Payout not found');
+    const payout = payoutRes.rows[0];
+    
+    // Fetch snapshot or billing info
+    const modelRes = await query('SELECT billing_info FROM models WHERE id = $1', [payout.model_id]);
+    const billingInfo = payout.billing_snapshot || modelRes.rows[0]?.billing_info || {};
+
+    // Get/Generate Model Numeric ID
+    let modelNumericId = await redis.get(`model:${payout.model_id}:numeric_id`);
+    if (!modelNumericId) {
+        const nextId = await redis.incr('models:global_id_counter');
+        modelNumericId = `M${String(nextId).padStart(3, '0')}`;
+        await redis.set(`model:${payout.model_id}:numeric_id`, modelNumericId);
+    }
+
+    // Generate Invoice Number
+    const invoiceSeq = await redis.incr('invoices:global_sequence');
+    const year = new Date().getFullYear();
+    const invoiceNumber = `PAY-${year}-${modelNumericId}-${String(invoiceSeq).padStart(3, '0')}`;
+
+    const payoutCompat = {
+        id: payout.id,
+        modelEmail: payout.model_email.toLowerCase(),
+        amount: parseFloat(payout.amount),
+        transferFee: parseFloat(settings.payoutFeeUsd || 5.0),
+        invoiceNumber,
+        processedAt: new Date()
+    };
+
+    // GENERATE PDF
+    const invoiceFile = await generateInvoice(payoutCompat, billingInfo);
+    if (!invoiceFile) throw new Error('Invoice file generation failed');
+
+    // Update SQL
+    await query(`
+        UPDATE payouts SET 
+            status = 'paid', 
+            processed_at = CURRENT_TIMESTAMP, 
+            invoice_number = $1, 
+            invoice_file = $2
+        WHERE id = $3
+    `, [invoiceNumber, invoiceFile, payoutId]);
+
+    return { id: payoutId, invoiceNumber, invoiceFile };
+};
+
+// Admin Payout Approve (Individual)
 router.post('/payouts/:id/approve', requireAuth, async (req, res) => {
     try {
-        const id = req.params.id;
-        const payoutRes = await query('SELECT * FROM payouts WHERE id = $1', [id]);
-        if (payoutRes.rows.length === 0) return res.status(404).json({ error: 'api.error.not_found' });
+        const { getSettings } = require('./settings');
+        const settings = await getSettings();
+        const result = await approveSinglePayout(req.params.id, settings, redis, query, generateInvoice);
+        res.json({ success: true, ...result });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
+    }
+});
 
-        const payout = payoutRes.rows[0];
-        const modelId = payout.model_id;
-        const email = payout.model_email.toLowerCase();
-        
-        // Fetch billing info
-        const modelRes = await query('SELECT billing_info FROM models WHERE id = $1', [modelId]);
-        const billingInfo = modelRes.rows[0]?.billing_info || {};
+// Admin Batch Payout Approve
+router.post('/payouts/batch-approve', requireAuth, async (req, res) => {
+    const { method, cutoff } = req.body;
+    if (!method || !cutoff) return res.status(400).json({ error: 'Missing method or cutoff' });
 
-        // 1. Get or Generate Model Numeric ID
-        let modelNumericId = await redis.get(`model:${payout.model_id}:numeric_id`);
-        if (!modelNumericId) {
-            const nextId = await redis.incr('models:global_id_counter');
-            modelNumericId = `M${String(nextId).padStart(3, '0')}`;
-            await redis.set(`model:${payout.model_id}:numeric_id`, modelNumericId);
+    try {
+        const payoutsToApprove = await query(
+            "SELECT id FROM payouts WHERE status = 'pending' AND payment_method = $1 AND created_at <= $2",
+            [method, cutoff]
+        );
+
+        if (payoutsToApprove.rows.length === 0) {
+            return res.status(404).json({ error: 'No pending payouts found.' });
         }
 
-        // 2. Generate Sequential Invoice Number
-        const invoiceSeq = await redis.incr('invoices:global_sequence');
-        const year = new Date().getFullYear();
-        const invoiceNumber = `PAY-${year}-${modelNumericId}-${String(invoiceSeq).padStart(3, '0')}`;
+        const { getSettings } = require('./settings');
+        const settings = await getSettings();
+        const results = { success: 0, failed: 0, errors: [] };
 
-        // Fetch current settings to get dynamic fee
+        for (const p of payoutsToApprove.rows) {
+            try {
+                await approveSinglePayout(p.id, settings, redis, query, generateInvoice);
+                results.success++;
+            } catch (err) {
+                results.failed++;
+                results.errors.push({ id: p.id, error: err.message });
+            }
+        }
+
+        res.json(results);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Admin Bulk Invoice ZIP Download
+router.get('/payouts/invoices/bulk', requireAuth, async (req, res) => {
+    const { month } = req.query; // YYYY-MM
+    if (!month) return res.status(400).json({ error: 'Month is required' });
+
+    try {
+        const archiver = require('archiver');
+        const fs = require('fs');
+        const path = require('path');
+        const invoicesDir = '/tmp/lively_invoices';
+
+        const payoutRes = await query(`
+            SELECT * FROM payouts 
+            WHERE status = 'paid' AND TO_CHAR(processed_at, 'YYYY-MM') = $1
+        `, [month]);
+
+        if (payoutRes.rows.length === 0) {
+            return res.status(404).json({ error: 'No invoices found for this month.' });
+        }
+
+        const archive = archiver('zip', { zlib: { level: 9 } });
+        res.attachment(`invoices_${month}.zip`);
+        archive.pipe(res);
+
         const { getSettings } = require('./settings');
         const settings = await getSettings();
 
-        // Prepare object for generateInvoice (compat format)
-        const payoutCompat = {
-            id: payout.id,
-            modelEmail: email,
-            amount: parseFloat(payout.amount),
-            transferFee: parseFloat(settings.payoutFeeUsd || 5.0),
-            invoiceNumber
-        };
-
-        // GENERATE INVOICE
-        let invoiceFile;
-        try {
-            invoiceFile = await generateInvoice(payoutCompat, billingInfo);
-            if (!invoiceFile) throw new Error('Invoice file generation failed');
-        } catch (pdfErr) {
-            console.error('[Invoice Generation Critical Error]', pdfErr);
-            return res.status(500).json({ error: 'Failed to generate invoice PDF.' });
+        for (const p of payoutRes.rows) {
+            let filePath = path.join(invoicesDir, p.invoice_file);
+            
+            // Regenerate if missing
+            if (!fs.existsSync(filePath)) {
+                try {
+                    const modelRes = await query('SELECT billing_info FROM models WHERE id = $1', [p.model_id]);
+                    const billingInfo = p.billing_snapshot || modelRes.rows[0]?.billing_info || {};
+                    const payoutCompat = {
+                        id: p.id,
+                        modelEmail: p.model_email,
+                        amount: parseFloat(p.amount),
+                        transferFee: parseFloat(settings.payoutFeeUsd || 5.0),
+                        invoiceNumber: p.invoice_number,
+                        processedAt: p.processed_at
+                    };
+                    await generateInvoice(payoutCompat, billingInfo);
+                } catch (err) {
+                    console.error(`Failed to regenerate invoice ${p.id}:`, err);
+                    continue;
+                }
+            }
+            
+            if (fs.existsSync(filePath)) {
+                archive.file(filePath, { name: p.invoice_file });
+            }
         }
 
-        // Update SQL
-        await query(`
-            UPDATE payouts SET 
-                status = $1, processed_at = CURRENT_TIMESTAMP, invoice_number = $2, invoice_file = $3
-            WHERE id = $4
-        `, ['paid', invoiceNumber, invoiceFile, id]);
-
-        res.json({ success: true, invoiceFile });
+        archive.finalize();
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'api.error.internal_server_error' });
+        if (!res.headersSent) res.status(500).json({ error: err.message });
     }
 });
 

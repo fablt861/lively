@@ -57,7 +57,12 @@ export default function AdminPage() {
     const [models, setModels] = useState<any[]>([]);
     const [payoutRequests, setPayoutRequests] = useState<any[]>([]);
     const [payoutSummary, setPayoutSummary] = useState<any>(null);
+    const [payoutSubTab, setPayoutSubTab] = useState<'pending' | 'history'>('pending');
+    const [weeklyHistory, setWeeklyHistory] = useState<any[]>([]);
+    const [monthlyArchives, setMonthlyArchives] = useState<any[]>([]);
     const [payoutHistory, setPayoutHistory] = useState<any[]>([]);
+    const [isApprovatingBatch, setIsApprovatingBatch] = useState<string | null>(null);
+    const [isDownloadingZip, setIsDownloadingZip] = useState<string | null>(null);
     const [reports, setReports] = useState<any[]>([]);
     const [financesStats, setFinancesStats] = useState<any>(null);
     const [marketingTab, setMarketingTab] = useState<'user' | 'model'>('user');
@@ -172,8 +177,82 @@ export default function AdminPage() {
         }
     };
 
-    const downloadPayoutCSV = (method: string) => {
-        const requests = payoutRequests.filter(p => (p.method || p.billingInfo?.method) === method);
+    const fetchWeeklyHistory = async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/payouts/history/weekly`, { headers: { Authorization: `Bearer ${token}` } });
+            const data = await res.json();
+            if (Array.isArray(data)) setWeeklyHistory(data);
+        } catch (err) {
+            console.error("Fetch Weekly History Error:", err);
+        }
+    };
+
+    const fetchMonthlyArchives = async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/payouts/history/months`, { headers: { Authorization: `Bearer ${token}` } });
+            const data = await res.json();
+            if (Array.isArray(data)) setMonthlyArchives(data);
+        } catch (err) {
+            console.error("Fetch Monthly Archives Error:", err);
+        }
+    };
+
+    const approveBatchPayout = async (method: string, cutoff: string) => {
+        if (!confirm(t('admin.payouts.confirm_batch_approve') || `Approve all pending ${method} payouts requested before Saturday?`)) return;
+        
+        setIsApprovatingBatch(method);
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/payouts/batch-approve`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ method, cutoff })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert(t('admin.payouts.batch_approve_success', { success: data.success }) || `Successfully processed ${data.success} payouts.`);
+                fetchPayoutRequests();
+                fetchPayoutSummary();
+            } else {
+                alert(data.error || "Batch approval failed");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Network error during batch approval");
+        } finally {
+            setIsApprovatingBatch(null);
+        }
+    };
+
+    const downloadMonthlyInvoicesZip = async (month: string) => {
+        setIsDownloadingZip(month);
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/payouts/invoices/bulk?month=${month}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `invoices_${month}.zip`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            } else {
+                const err = await res.json();
+                alert(err.error || "Bulk download failed");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Connection error during monthly ZIP download");
+        } finally {
+            setIsDownloadingZip(null);
+        }
+    };
+
+    const downloadPayoutCSV = (method: string, historicalRequests?: any[]) => {
+        const sourceData = historicalRequests || payoutRequests;
+        const requests = sourceData.filter(p => (p.method || p.billingInfo?.method) === method);
         if (!requests.length) return alert(t('admin.payouts.no_requests') || "No requests for this method.");
 
         let csvContent = "";
@@ -1768,53 +1847,82 @@ export default function AdminPage() {
 
                 {activeTab === 'payouts' && (
                     <div className="space-y-8 animate-in fade-in duration-500">
-                        <h2 className="text-3xl font-light">{t('admin.payouts.title')}</h2>
-
-                        {/* Weekly Summary Row */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {[
-                                { id: 'bank', icon: Landmark, label: t('billing.method_bank'), color: 'text-blue-400' },
-                                { id: 'crypto', icon: Wallet, label: t('billing.method_crypto'), color: 'text-indigo-400' },
-                                { id: 'paxum', icon: Mail, label: 'Paxum', color: 'text-pink-400' }
-                            ].map(m => (
-                                <div key={m.id} className="bg-neutral-900 border border-white/5 p-6 rounded-3xl relative overflow-hidden group">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <div className={`w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center ${m.color}`}>
-                                            <m.icon size={20} />
-                                        </div>
-                                        <div className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
-                                            {payoutSummary?.summary?.[m.id]?.count || 0} {t('admin.payouts.requests') || "Requests"}
-                                        </div>
-                                    </div>
-                                    <div className="space-y-1">
-                                        <div className="text-xs text-neutral-500 font-medium">{m.label}</div>
-                                        <div className="text-2xl font-bold text-white font-mono">
-                                            ${(payoutSummary?.summary?.[m.id]?.total || 0).toFixed(2)}
-                                        </div>
-                                    </div>
-                                    <div className="mt-6 flex flex-col gap-2">
-                                        <button 
-                                            onClick={() => downloadPayoutCSV(m.id)}
-                                            className="w-full bg-white/5 hover:bg-white/10 text-white text-[10px] font-bold py-2 rounded-xl border border-white/5 transition-all flex items-center justify-center gap-2"
-                                        >
-                                            <FileText size={14} />
-                                            {t('admin.payouts.download_csv') || "Download CSV"}
-                                        </button>
-                                        
-                                        {/* Final Export Button (Visible after Sat midnight) */}
-                                        {payoutSummary?.cutoff && new Date() > new Date(payoutSummary.cutoff) && (
-                                            <button 
-                                                onClick={() => downloadPayoutCSV(m.id)}
-                                                className="w-full bg-indigo-500 hover:bg-indigo-400 text-white text-[10px] font-black py-2 rounded-xl transition-all flex items-center justify-center gap-2 animate-pulse"
-                                            >
-                                                <Zap size={14} />
-                                                {t('admin.payouts.final_export') || "FINAL EXPORT"}
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
+                        <div className="flex items-center justify-between">
+                            <h2 className="text-3xl font-light">{t('admin.payouts.title')}</h2>
+                            
+                            {/* Sub-tabs for Payouts */}
+                            <div className="flex bg-white/5 p-1 rounded-2xl border border-white/5">
+                                <button 
+                                    onClick={() => setPayoutSubTab('pending')}
+                                    className={`px-6 py-2 rounded-xl text-xs font-bold transition-all ${payoutSubTab === 'pending' ? 'bg-white/10 text-white shadow-xl' : 'text-neutral-500 hover:text-white'}`}
+                                >
+                                    {t('admin.payouts.tab_pending') || "À payer"}
+                                </button>
+                                <button 
+                                    onClick={() => {
+                                        setPayoutSubTab('history');
+                                        fetchWeeklyHistory();
+                                        fetchMonthlyArchives();
+                                    }}
+                                    className={`px-6 py-2 rounded-xl text-xs font-bold transition-all ${payoutSubTab === 'history' ? 'bg-white/10 text-white shadow-xl' : 'text-neutral-500 hover:text-white'}`}
+                                >
+                                    {t('admin.payouts.tab_history') || "Historique"}
+                                </button>
+                            </div>
                         </div>
+
+                        {payoutSubTab === 'pending' ? (
+                            <>
+                                {/* Weekly Summary Row */}
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    {[
+                                        { id: 'bank', icon: Landmark, label: t('billing.method_bank'), color: 'text-blue-400' },
+                                        { id: 'crypto', icon: Wallet, label: t('billing.method_crypto'), color: 'text-indigo-400' },
+                                        { id: 'paxum', icon: Mail, label: 'Paxum', color: 'text-pink-400' }
+                                    ].map(m => (
+                                        <div key={m.id} className="bg-neutral-900 border border-white/5 p-6 rounded-3xl relative overflow-hidden group">
+                                            <div className="flex items-center justify-between mb-4">
+                                                <div className={`w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center ${m.color}`}>
+                                                    <m.icon size={20} />
+                                                </div>
+                                                <div className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+                                                    {payoutSummary?.summary?.[m.id]?.count || 0} {t('admin.payouts.requests') || "Requests"}
+                                                </div>
+                                            </div>
+                                            <div className="space-y-1">
+                                                <div className="text-xs text-neutral-500 font-medium">{m.label}</div>
+                                                <div className="text-2xl font-bold text-white font-mono">
+                                                    ${(payoutSummary?.summary?.[m.id]?.total || 0).toFixed(2)}
+                                                </div>
+                                            </div>
+                                            <div className="mt-6 flex flex-col gap-2">
+                                                <button 
+                                                    onClick={() => downloadPayoutCSV(m.id)}
+                                                    className="w-full bg-white/5 hover:bg-white/10 text-white text-[10px] font-bold py-2 rounded-xl border border-white/5 transition-all flex items-center justify-center gap-2"
+                                                >
+                                                    <FileText size={14} />
+                                                    {t('admin.payouts.download_csv') || "Download CSV"}
+                                                </button>
+                                                
+                                                {/* Batch Approve Button (Visible after Sat midnight) */}
+                                                {(payoutSummary?.summary?.[m.id]?.count || 0) > 0 && payoutSummary?.cutoff && new Date() > new Date(payoutSummary.cutoff) && (
+                                                    <button 
+                                                        disabled={isApprovatingBatch === m.id}
+                                                        onClick={() => approveBatchPayout(m.id, payoutSummary.cutoff)}
+                                                        className="w-full bg-indigo-500 hover:bg-indigo-400 text-white text-[10px] font-black py-2 rounded-xl transition-all flex items-center justify-center gap-2 animate-pulse disabled:opacity-50"
+                                                    >
+                                                        {isApprovatingBatch === m.id ? (
+                                                            <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                        ) : (
+                                                            <CheckCircle size={14} />
+                                                        )}
+                                                        {t('admin.payouts.batch_approve') || `MARQUER TOUS COMME PAYÉS`}
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
 
                         {payoutRequests.length === 0 ? (
                             <div className="bg-neutral-900 border border-white/5 rounded-3xl p-12 text-center text-neutral-500">
@@ -1909,61 +2017,99 @@ export default function AdminPage() {
                                     </tbody>
                                 </table></div>
                             </div>
-                        )}
+                        ) : (
+                            <div className="space-y-12 animate-in slide-in-from-bottom-4 duration-500">
+                                {/* Weekly History List */}
+                                <div className="space-y-6">
+                                    <h3 className="text-xl font-light text-white/50 flex items-center gap-3">
+                                        <HistoryIcon size={20} />
+                                        {t('admin.payouts.weekly_history_title') || "Historique des semaines passées"}
+                                    </h3>
+                                    
+                                    <div className="grid grid-cols-1 gap-4">
+                                        {weeklyHistory.length === 0 ? (
+                                            <div className="bg-neutral-900/50 border border-white/5 rounded-3xl p-8 text-center text-neutral-600 text-sm italic">
+                                                {t('admin.payouts.no_history') || "Aucun historique disponible."}
+                                            </div>
+                                        ) : (
+                                            weeklyHistory.map((week, idx) => (
+                                                <div key={idx} className="bg-neutral-900 border border-white/5 p-6 rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-white/10 transition-all">
+                                                    <div className="space-y-1">
+                                                        <div className="text-sm font-bold text-white">
+                                                            {t('admin.payouts.week_ending', { date: new Date(week.date).toLocaleDateString() }) || `Semaine se terminant le ${new Date(week.date).toLocaleDateString()}`}
+                                                        </div>
+                                                        <div className="text-[10px] text-neutral-500 uppercase tracking-widest font-black">
+                                                            {week.bank.count + week.paxum.count + week.crypto.count} {t('admin.payouts.total_paid') || "Modèles payés"}
+                                                        </div>
+                                                    </div>
 
-                        {/* Processed Payouts History */}
-                        <div className="pt-12">
-                            <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-xl font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-3">
-                                    <HistoryIcon size={20} className="text-indigo-500" />
-                                    {t('admin.payouts.history_title')}
-                                </h3>
-                                <div className="text-[10px] font-black text-neutral-500 uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/5">
-                                    {payoutHistory.length} {t('admin.payouts.invoices_generated')}
+                                                    <div className="flex flex-wrap gap-4">
+                                                        {['bank', 'crypto', 'paxum'].map(m => (
+                                                            <div key={m} className="px-4 py-2 bg-white/5 rounded-2xl border border-white/5">
+                                                                <div className="text-[8px] text-neutral-500 uppercase font-black mb-1">{m}</div>
+                                                                <div className="text-sm font-mono font-bold text-white">
+                                                                    ${(week[m]?.total || 0).toFixed(2)}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+
+                                                    <div className="flex gap-2">
+                                                        <button 
+                                                            onClick={async () => {
+                                                                alert("L'export CSV historique utilise le même format que l'export en cours.");
+                                                            }}
+                                                            className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 text-neutral-400 hover:text-white transition-all"
+                                                            title="Download CSV"
+                                                        >
+                                                            <FileText size={18} />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Monthly ZIP Archive List */}
+                                <div className="space-y-6 pt-6 border-t border-white/5">
+                                    <h3 className="text-xl font-light text-white/50 flex items-center gap-3">
+                                        <Lock size={20} />
+                                        {t('admin.payouts.monthly_archives_title') || "Archives Mensuelles (Factures ZIP)"}
+                                    </h3>
+                                    
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                        {monthlyArchives.map((archive, idx) => (
+                                            <div key={idx} className="bg-neutral-900 border border-white/5 p-6 rounded-3xl group hover:border-indigo-500/50 transition-all">
+                                                <div className="flex items-center justify-between mb-4">
+                                                    <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                                                        <FileText size={20} />
+                                                    </div>
+                                                    <div className="text-[10px] font-black text-neutral-500 uppercase">
+                                                        {archive.count} {t('admin.payouts.invoices') || "Factures"}
+                                                    </div>
+                                                </div>
+                                                <div className="text-lg font-bold text-white mb-6 uppercase tracking-wider">
+                                                    {archive.month}
+                                                </div>
+                                                <button 
+                                                    disabled={isDownloadingZip === archive.month}
+                                                    onClick={() => downloadMonthlyInvoicesZip(archive.month)}
+                                                    className="w-full bg-white/5 hover:bg-indigo-500 text-white text-[10px] font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 group-hover:shadow-lg group-hover:shadow-indigo-500/20 disabled:opacity-50"
+                                                >
+                                                    {isDownloadingZip === archive.month ? (
+                                                        <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                    ) : (
+                                                        <Zap size={14} />
+                                                    )}
+                                                    {t('admin.payouts.download_zip') || "TÉLÉCHARGER ZIP"}
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
-                            
-                            {payoutHistory.length === 0 ? (
-                                <div className="bg-neutral-900 border border-white/5 rounded-3xl p-12 text-center text-neutral-500 italic">
-                                    {t('admin.payouts.history_empty')}
-                                </div>
-                            ) : (
-                                <div className="bg-neutral-900 border border-white/5 rounded-3xl overflow-hidden shadow-2xl opacity-80 hover:opacity-100 transition-opacity">
-                                    <div className="overflow-x-auto w-full"><table className="w-full text-left whitespace-nowrap md:whitespace-normal">
-                                        <thead className="bg-white/[0.02] border-b border-white/5">
-                                            <tr>
-                                                <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.common.model_info')}</th>
-                                                <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.common.amount')}</th>
-                                                <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.common.processed_at')}</th>
-                                                <th className="p-5 text-neutral-400 font-medium text-xs uppercase text-right">{t('admin.common.invoice')}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-white/5">
-                                            {payoutHistory.map((p, i) => (
-                                                <tr key={i} className="hover:bg-white/[0.01] transition-colors">
-                                                    <td className="p-5 text-sm">
-                                                        <div className="font-bold text-white">{p.invoiceNumber || p.id}</div>
-                                                        <div className="text-[10px] text-neutral-500 font-mono italic">{p.modelEmail}</div>
-                                                    </td>
-                                                    <td className="p-5 font-mono text-green-400 font-bold">${p.amount.toFixed(2)}</td>
-                                                    <td className="p-5 text-neutral-500 text-xs">
-                                                        {new Date(p.processedAt).toLocaleString()}
-                                                    </td>
-                                                    <td className="p-5 text-right">
-                                                        <button 
-                                                            onClick={() => window.open(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.kinky.live'}/api/admin/payouts/invoice/${p.id}?token=${token}`, '_blank')}
-                                                            className="inline-flex items-center gap-2 bg-indigo-500/10 hover:bg-indigo-500 text-indigo-400 hover:text-white px-4 py-2 rounded-xl border border-indigo-500/20 transition-all font-bold text-[10px] uppercase tracking-widest"
-                                                        >
-                                                            <FileText size={14} /> {t('common.download')}
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table></div>
-                                </div>
-                            )}
-                        </div>
+                        )}
                     </div>
                 )}
 
