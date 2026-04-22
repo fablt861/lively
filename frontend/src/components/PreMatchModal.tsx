@@ -14,6 +14,16 @@ export function PreMatchModal({ localStream, onJoin, role = "user" }: PreMatchMo
     const { t } = useTranslation();
     const videoRef = useRef<HTMLVideoElement>(null);
     const [step, setStep] = useState<"camera" | "earnings">("camera");
+    const [settings, setSettings] = useState<any>(null);
+
+    useEffect(() => {
+        if (step === "earnings") {
+            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/settings`)
+                .then(res => res.json())
+                .then(data => setSettings(data))
+                .catch(console.error);
+        }
+    }, [step]);
 
     useEffect(() => {
         if (videoRef.current && localStream) {
@@ -74,27 +84,49 @@ export function PreMatchModal({ localStream, onJoin, role = "user" }: PreMatchMo
                         </p>
 
                         <div className="space-y-3 md:space-y-4">
-                            <div className="flex justify-between items-center p-3.5 md:p-4 bg-white/5 rounded-2xl md:rounded-3xl border border-white/10 transition-colors hover:bg-white/10">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-indigo-400" />
-                                    <span className="text-white/90 text-xs md:text-sm font-semibold tracking-wide">{t('prematch.range_1')}</span>
-                                </div>
-                                <span className="text-indigo-400 font-black text-base md:text-lg">{t('prematch.rate_1')}</span>
-                            </div>
-                            <div className="flex justify-between items-center p-3.5 md:p-4 bg-indigo-500/10 rounded-2xl md:rounded-3xl border border-indigo-500/20 transition-colors hover:bg-indigo-500/20">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-indigo-500" />
-                                    <span className="text-white/90 text-xs md:text-sm font-semibold tracking-wide">{t('prematch.range_2')}</span>
-                                </div>
-                                <span className="text-indigo-400 font-black text-base md:text-lg">{t('prematch.rate_2')}</span>
-                            </div>
-                            <div className="flex justify-between items-center p-3.5 md:p-4 bg-pink-500/10 rounded-2xl md:rounded-3xl border border-pink-500/20 transition-colors hover:bg-pink-500/20">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-pink-500" />
-                                    <span className="text-white/90 text-xs md:text-sm font-semibold tracking-wide">{t('prematch.range_3')}</span>
-                                </div>
-                                <span className="text-pink-400 font-black text-base md:text-lg">{t('prematch.rate_3')}</span>
-                            </div>
+                            {settings ? (
+                                <>
+                                    {settings.payoutTiers?.map((tier: any, index: number) => {
+                                        const isFirst = index === 0;
+                                        const isSecond = index === 1;
+                                        const dotColor = isFirst ? 'bg-indigo-400' : isSecond ? 'bg-indigo-500' : 'bg-pink-500';
+                                        const textColor = isFirst ? 'text-indigo-400' : isSecond ? 'text-indigo-400' : 'text-pink-400';
+                                        const bgColor = isFirst ? 'bg-white/5' : isSecond ? 'bg-indigo-500/10' : 'bg-pink-500/10';
+                                        const borderColor = isFirst ? 'border-white/10' : isSecond ? 'border-indigo-500/20' : 'border-pink-500/20';
+                                        const hoverBg = isFirst ? 'hover:bg-white/10' : isSecond ? 'hover:bg-indigo-500/20' : 'hover:bg-pink-500/20';
+
+                                        return (
+                                            <div key={index} className={`flex justify-between items-center p-3.5 md:p-4 ${bgColor} rounded-2xl md:rounded-3xl border ${borderColor} transition-colors ${hoverBg}`}>
+                                                <div className="flex items-center gap-3">
+                                                    <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${dotColor}`} />
+                                                    <span className="text-white/90 text-xs md:text-sm font-semibold tracking-wide">
+                                                        &gt; {tier.minMinutes} min
+                                                    </span>
+                                                </div>
+                                                <span className={`${textColor} font-black text-base md:text-lg`}>
+                                                    ${tier.rate.toFixed(2)} / min
+                                                </span>
+                                            </div>
+                                        );
+                                    })}
+
+                                    {settings.blockModelGain && (
+                                        <div className="flex justify-between items-center p-3.5 md:p-4 bg-amber-500/10 rounded-2xl md:rounded-3xl border border-amber-500/20 transition-colors hover:bg-amber-500/20">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-amber-500" />
+                                                <span className="text-white/90 text-xs md:text-sm font-semibold tracking-wide">
+                                                    Private ({settings.blockDurationMin} min)
+                                                </span>
+                                            </div>
+                                            <span className="text-amber-400 font-black text-base md:text-lg">
+                                                ${settings.blockModelGain}
+                                            </span>
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <div className="text-white/50 text-center text-sm py-4 animate-pulse">Loading rates...</div>
+                            )}
                         </div>
 
                         <div className="mt-6 md:mt-8 flex items-center gap-2.5 text-[9px] md:text-[11px] text-white/40 font-black uppercase tracking-[0.2em] text-center justify-center bg-black/20 py-2.5 md:py-3 rounded-full">
