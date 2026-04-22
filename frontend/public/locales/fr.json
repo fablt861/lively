@@ -840,5 +840,10 @@
     "profile.2fa_disable": "Désactiver",
     "auth.2fa_required_title": "Vérification 2FA requise",
     "auth.2fa_required_desc": "Veuillez entrer le code généré par votre application.",
-    "common.verify": "Vérifier"
+    "common.verify": "Vérifier",
+    "model": {
+        "signup": {
+            "camera_retake_btn": "Reprendre la photo"
+        }
+    }
 }

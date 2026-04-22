@@ -802,5 +802,10 @@
     "profile.2fa_disable": "2FA uitschakelen",
     "auth.2fa_required_title": "2FA Vereist",
     "auth.2fa_required_desc": "Voer de 6-cijferige code van uw authenticatie-app in.",
-    "common.verify": "Verifiëren"
+    "common.verify": "Verifiëren",
+    "model": {
+        "signup": {
+            "camera_retake_btn": "Foto opnieuw maken"
+        }
+    }
 }

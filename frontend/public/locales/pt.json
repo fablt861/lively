@@ -802,5 +802,10 @@
     "profile.2fa_disable": "Desativar 2FA",
     "auth.2fa_required_title": "2FA Necessário",
     "auth.2fa_required_desc": "Insira o código de 6 dígitos do seu aplicativo de autenticação.",
-    "common.verify": "Verificar"
+    "common.verify": "Verificar",
+    "model": {
+        "signup": {
+            "camera_retake_btn": "Tirar novamente"
+        }
+    }
 }

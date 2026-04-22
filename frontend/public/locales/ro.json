@@ -802,5 +802,10 @@
     "profile.2fa_disable": "Dezactivați 2FA",
     "auth.2fa_required_title": "2FA Necesar",
     "auth.2fa_required_desc": "Introduceți codul din 6 cifre din aplicația de autentificare.",
-    "common.verify": "Verifică"
+    "common.verify": "Verifică",
+    "model": {
+        "signup": {
+            "camera_retake_btn": "Refaceți fotografia"
+        }
+    }
 }

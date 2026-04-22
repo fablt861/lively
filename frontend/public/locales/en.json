@@ -844,5 +844,10 @@
     "profile.2fa_disable": "Disable 2FA",
     "auth.2fa_required_title": "2FA Required",
     "auth.2fa_required_desc": "Enter the 6-digit code from your authenticator app.",
-    "common.verify": "Verify"
+    "common.verify": "Verify",
+    "model": {
+        "signup": {
+            "camera_retake_btn": "Retake photo"
+        }
+    }
 }

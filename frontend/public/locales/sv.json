@@ -802,5 +802,10 @@
     "profile.2fa_disable": "Inaktivera 2FA",
     "auth.2fa_required_title": "2FA Krävs",
     "auth.2fa_required_desc": "Ange den 6-siffriga koden från din autentiseringsapp.",
-    "common.verify": "Verifiera"
+    "common.verify": "Verifiera",
+    "model": {
+        "signup": {
+            "camera_retake_btn": "Ta om"
+        }
+    }
 }

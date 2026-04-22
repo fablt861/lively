@@ -113,15 +113,18 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
                             </div>
                             <p className="text-white/60 max-w-xs mx-auto">{error}</p>
                         </div>
-                    ) : capturedImage ? (
-                        <img src={capturedImage} alt="Captured" className="w-full h-full object-contain" />
                     ) : (
                         <>
+                            <img 
+                                src={capturedImage || ''} 
+                                alt="Captured" 
+                                className={`w-full h-full object-contain ${!capturedImage ? 'hidden' : ''}`} 
+                            />
                             <video 
                                 ref={videoRef} 
                                 autoPlay 
                                 playsInline 
-                                className={`w-full h-full object-cover ${facingMode === 'user' ? 'scale-x-[-1]' : ''}`}
+                                className={`w-full h-full object-cover ${facingMode === 'user' ? 'scale-x-[-1]' : ''} ${capturedImage ? 'hidden' : ''}`}
                             />
                             {isLoading && (
                                 <div className="absolute inset-0 flex items-center justify-center bg-black/40">
@@ -160,7 +163,7 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
                                     className="px-8 py-4 rounded-full bg-white/5 hover:bg-white/10 text-white font-bold transition-all active:scale-95 flex items-center gap-2"
                                 >
                                     <RefreshCw size={18} />
-                                    {t('model.signup.camera_cancel_btn') || "Retake"}
+                                    {t('model.signup.camera_retake_btn') || "Retake"}
                                 </button>
                                 <button 
                                     onClick={saveAndClose}

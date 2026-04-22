@@ -802,5 +802,10 @@
     "profile.2fa_disable": "Отключить 2FA",
     "auth.2fa_required_title": "Требуется 2FA",
     "auth.2fa_required_desc": "Введите 6-значный код из приложения для аутентификации.",
-    "common.verify": "Подтвердить"
+    "common.verify": "Подтвердить",
+    "model": {
+        "signup": {
+            "camera_retake_btn": "Переснять"
+        }
+    }
 }
