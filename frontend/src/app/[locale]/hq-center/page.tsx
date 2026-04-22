@@ -2017,6 +2017,7 @@ export default function AdminPage() {
                                     </tbody>
                                 </table></div>
                             </div>
+                        </>
                         ) : (
                             <div className="space-y-12 animate-in slide-in-from-bottom-4 duration-500">
                                 {/* Weekly History List */}
