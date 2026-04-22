@@ -845,5 +845,7 @@
     "model.signup.public_profile_badge": "Visible par les membres",
     "model.signup.step4_photo_profile": "Photo de profil",
     "model.signup.step4_photo_id": "Pièce d'identité",
-    "model.signup.step4_photo_selfie": "Selfie avec pièce d'identité"
+    "model.signup.step4_photo_selfie": "Selfie avec pièce d'identité",
+    "admin.settings.age_popup_title": "Popup Vérification 18+",
+    "admin.settings.age_popup_desc": "Affiche la demande de confirmation de majorité à l'arrivée sur le site."
 }

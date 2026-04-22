@@ -807,5 +807,7 @@
     "model.signup.public_profile_badge": "Vizibil pentru membri",
     "model.signup.step4_photo_profile": "Poză de profil",
     "model.signup.step4_photo_id": "Document de identitate",
-    "model.signup.step4_photo_selfie": "Selfie cu ID"
+    "model.signup.step4_photo_selfie": "Selfie cu ID",
+    "admin.settings.age_popup_title": "Popup de verificare 18+",
+    "admin.settings.age_popup_desc": "Afișează confirmarea de verificare a vârstei la sosirea pe site."
 }

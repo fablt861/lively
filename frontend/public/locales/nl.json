@@ -807,5 +807,7 @@
     "model.signup.public_profile_badge": "Zichtbaar voor leden",
     "model.signup.step4_photo_profile": "Profielfoto",
     "model.signup.step4_photo_id": "Identiteitsbewijs",
-    "model.signup.step4_photo_selfie": "Selfie met ID"
+    "model.signup.step4_photo_selfie": "Selfie met ID",
+    "admin.settings.age_popup_title": "18+ Verificatie Popup",
+    "admin.settings.age_popup_desc": "Toont de leeftijdsverificatiebevestiging bij aankomst op de site."
 }

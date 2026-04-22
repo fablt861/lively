@@ -807,5 +807,7 @@
     "model.signup.public_profile_badge": "Jäsenten nähtävissä",
     "model.signup.step4_photo_profile": "Profiilikuva",
     "model.signup.step4_photo_id": "Henkilöllisyystodistus",
-    "model.signup.step4_photo_selfie": "Selfie ja ID"
+    "model.signup.step4_photo_selfie": "Selfie ja ID",
+    "admin.settings.age_popup_title": "18+ Vahvistus-popup",
+    "admin.settings.age_popup_desc": "Näyttää ikävahvistuksen saavuttaessa sivustolle."
 }

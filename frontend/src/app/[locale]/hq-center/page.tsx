@@ -871,6 +871,26 @@ export default function AdminPage() {
                         </div>
 
                         <div className="bg-neutral-900 border border-white/5 p-8 rounded-3xl space-y-6 shadow-2xl relative overflow-hidden group">
+                            <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -mr-16 -mt-16 transition-colors ${settings.ageVerificationPopup ? 'bg-indigo-500/20' : 'bg-neutral-500/10'}`} />
+                            
+                            <div className="flex items-center justify-between">
+                                <div className="space-y-1">
+                                    <h3 className="text-xl font-medium text-white flex items-center gap-2">
+                                        <ShieldCheck className={settings.ageVerificationPopup ? 'text-indigo-400' : 'text-neutral-500'} size={20} />
+                                        {t('admin.settings.age_popup_title')}
+                                    </h3>
+                                    <p className="text-xs text-neutral-500">{t('admin.settings.age_popup_desc')}</p>
+                                </div>
+                                <button 
+                                    onClick={() => setSettings({ ...settings, ageVerificationPopup: !settings.ageVerificationPopup })}
+                                    className={`w-14 h-8 rounded-full p-1 transition-all duration-300 flex items-center ${settings.ageVerificationPopup ? 'bg-indigo-500' : 'bg-neutral-700'}`}
+                                >
+                                    <div className={`w-6 h-6 bg-white rounded-full shadow-lg transition-all duration-300 transform ${settings.ageVerificationPopup ? 'translate-x-6' : 'translate-x-0'}`} />
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="bg-neutral-900 border border-white/5 p-8 rounded-3xl space-y-6 shadow-2xl relative overflow-hidden group">
                             <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -mr-16 -mt-16 transition-colors ${settings.maintenanceMode ? 'bg-red-500/20' : 'bg-green-500/10'}`} />
                             
                             <div className="flex items-center justify-between">

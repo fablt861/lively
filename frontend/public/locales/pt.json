@@ -807,5 +807,7 @@
     "model.signup.public_profile_badge": "Visível para membros",
     "model.signup.step4_photo_profile": "Foto de perfil",
     "model.signup.step4_photo_id": "Documento de identidade",
-    "model.signup.step4_photo_selfie": "Selfie com documento"
+    "model.signup.step4_photo_selfie": "Selfie com documento",
+    "admin.settings.age_popup_title": "Popup de verificação de 18+",
+    "admin.settings.age_popup_desc": "Mostra a confirmação de verificação de idade ao chegar ao site."
 }

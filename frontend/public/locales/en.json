@@ -849,5 +849,7 @@
     "model.signup.public_profile_badge": "Visible to members",
     "model.signup.step4_photo_profile": "Profile Picture",
     "model.signup.step4_photo_id": "ID Document",
-    "model.signup.step4_photo_selfie": "Selfie with ID"
+    "model.signup.step4_photo_selfie": "Selfie with ID",
+    "admin.settings.age_popup_title": "18+ Verification Popup",
+    "admin.settings.age_popup_desc": "Shows the age verification confirmation when arriving on the site."
 }

@@ -807,5 +807,7 @@
     "model.signup.public_profile_badge": "Synlig for medlemmer",
     "model.signup.step4_photo_profile": "Profilbilde",
     "model.signup.step4_photo_id": "ID-dokument",
-    "model.signup.step4_photo_selfie": "Selfie med ID"
+    "model.signup.step4_photo_selfie": "Selfie med ID",
+    "admin.settings.age_popup_title": "18+ Verifiserings-popup",
+    "admin.settings.age_popup_desc": "Viser aldersverifiseringsbekreftelsen ved ankomst til nettstedet."
 }

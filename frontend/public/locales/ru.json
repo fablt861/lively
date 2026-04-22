@@ -807,5 +807,7 @@
     "model.signup.public_profile_badge": "Видно участникам",
     "model.signup.step4_photo_profile": "Фото профиля",
     "model.signup.step4_photo_id": "Удостоверение личности",
-    "model.signup.step4_photo_selfie": "Селфи с документом"
+    "model.signup.step4_photo_selfie": "Селфи с документом",
+    "admin.settings.age_popup_title": "Всплывающее окно подтверждения 18+",
+    "admin.settings.age_popup_desc": "Показывает подтверждение возраста при входе на сайт."
 }

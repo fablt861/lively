@@ -23,6 +23,7 @@ export default function Home() {
     const [modelEarnings, setModelEarnings] = useState(0);
     const [showAgeModal, setShowAgeModal] = useState(false);
     const [isAgeVerified, setIsAgeVerified] = useState(false);
+    const [settings, setSettings] = useState<any>(null);
 
     useEffect(() => {
         const storedPseudo = localStorage.getItem('kinky_user_pseudo');
@@ -67,6 +68,18 @@ export default function Home() {
                 })
                 .catch(console.error);
         }
+        
+        // Fetch global settings
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/settings`)
+            .then(res => res.json())
+            .then(data => {
+                setSettings(data);
+                // Trigger age modal only if enabled in settings and not already verified
+                if (data.ageVerificationPopup && localStorage.getItem('kinky_age_verified') !== 'true') {
+                    setShowAgeModal(true);
+                }
+            })
+            .catch(console.error);
     }, [showPaywall]);
 
     const handleLogout = () => {
