@@ -93,7 +93,7 @@ export default function LoginPage() {
 
     const handleTotpVerify = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError("");
+        setApiError("");
         setLoading(true);
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/auth/login-totp`, {
