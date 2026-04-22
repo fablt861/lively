@@ -809,5 +809,13 @@
     "model.signup.step4_photo_id": "Henkilöllisyystodistus",
     "model.signup.step4_photo_selfie": "Selfie ja ID",
     "admin.settings.age_popup_title": "18+ Vahvistus-popup",
-    "admin.settings.age_popup_desc": "Näyttää ikävahvistuksen saavuttaessa sivustolle."
+    "admin.settings.age_popup_desc": "Näyttää ikävahvistuksen saavuttaessa sivustolle.",
+    "billing.crypto_network": "Verkko (Blockchain)",
+    "billing.network_tron": "Tron (TRC20) - Suositeltu (Alhaiset kulut)",
+    "billing.network_eth": "Ethereum (ERC20)",
+    "billing.network_polygon": "Polygon",
+    "billing.crypto_warning": "Varoitus: Varmista, että osoite vastaa täsmälleen valittua verkkoa.",
+    "billing.select_network": "Valitse verkko",
+    "billing.paxum_email": "Paxum Email Index",
+    "billing.method_paxum": "Paxum"
 }

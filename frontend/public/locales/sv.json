@@ -809,5 +809,13 @@
     "model.signup.step4_photo_id": "ID-handling",
     "model.signup.step4_photo_selfie": "Selfie med ID",
     "admin.settings.age_popup_title": "18+ Verifierings-popup",
-    "admin.settings.age_popup_desc": "Visar åldersverifieringsbekräftelsen vid ankomst till webbplatsen."
+    "admin.settings.age_popup_desc": "Visar åldersverifieringsbekräftelsen vid ankomst till webbplatsen.",
+    "billing.crypto_network": "Nätverk (Blockchain)",
+    "billing.network_tron": "Tron (TRC20) - Rekommenderas (Låga avgifter)",
+    "billing.network_eth": "Ethereum (ERC20)",
+    "billing.network_polygon": "Polygon",
+    "billing.crypto_warning": "Varning: Se till att adressen matchar det valda nätverket exakt.",
+    "billing.select_network": "Välj nätverk",
+    "billing.paxum_email": "Paxum Email Index",
+    "billing.method_paxum": "Paxum"
 }

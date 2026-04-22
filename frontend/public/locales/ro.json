@@ -809,5 +809,13 @@
     "model.signup.step4_photo_id": "Document de identitate",
     "model.signup.step4_photo_selfie": "Selfie cu ID",
     "admin.settings.age_popup_title": "Popup de verificare 18+",
-    "admin.settings.age_popup_desc": "Afișează confirmarea de verificare a vârstei la sosirea pe site."
+    "admin.settings.age_popup_desc": "Afișează confirmarea de verificare a vârstei la sosirea pe site.",
+    "billing.crypto_network": "Rețea (Blockchain)",
+    "billing.network_tron": "Tron (TRC20) - Recomandat (Taxe mici)",
+    "billing.network_eth": "Ethereum (ERC20)",
+    "billing.network_polygon": "Polygon",
+    "billing.crypto_warning": "Avertisment: Asigurați-vă că adresa corespunde exact rețelei selectate.",
+    "billing.select_network": "Selectați o rețea",
+    "billing.paxum_email": "Paxum Email Index",
+    "billing.method_paxum": "Paxum"
 }

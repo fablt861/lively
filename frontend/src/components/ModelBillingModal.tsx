@@ -9,15 +9,16 @@ interface BillingInfo {
     name: string;
     address: string;
     country: string;
-    method: 'bank' | 'paypal' | 'crypto';
+    method: 'bank' | 'paxum' | 'crypto';
     bankCountry?: string;
     bankIban?: string;
     bankSwift?: string;
     bankRouting?: string;
     bankAccount?: string;
     bankSortCode?: string;
-    paypalEmail?: string;
+    paxumEmail?: string;
     cryptoAddress?: string;
+    cryptoNetwork?: 'trc20' | 'erc20' | 'polygon';
 }
 
 interface ModelBillingModalProps {
@@ -57,8 +58,8 @@ export function ModelBillingModal({ isOpen, onClose, modelId }: ModelBillingModa
         }
     }, [isOpen, modelId]);
 
-    const handleSave = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSave = async (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
         setSaving(true);
         setError(null);
         setSuccess(false);
@@ -109,12 +110,12 @@ export function ModelBillingModal({ isOpen, onClose, modelId }: ModelBillingModa
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
                     
                     {loading ? (
                         <div className="py-20 text-center text-neutral-500 animate-pulse">{t('dashboard.history_loading')}</div>
                     ) : (
-                        <>
+                        <div className="space-y-8">
                             {/* Basic Info Group */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
@@ -172,7 +173,7 @@ export function ModelBillingModal({ isOpen, onClose, modelId }: ModelBillingModa
                                 <div className="grid grid-cols-3 gap-4">
                                     {[
                                         { id: 'bank', icon: Landmark, label: t('billing.method_bank') },
-                                        { id: 'paypal', icon: Mail, label: t('billing.method_paypal') },
+                                        { id: 'paxum', icon: Mail, label: t('billing.method_paxum') },
                                         { id: 'crypto', icon: Wallet, label: t('billing.method_crypto') }
                                     ].map(m => (
                                         <button
@@ -182,14 +183,14 @@ export function ModelBillingModal({ isOpen, onClose, modelId }: ModelBillingModa
                                             className={`flex flex-col items-center justify-center p-4 rounded-2xl border transition-all gap-2 ${info.method === m.id ? 'bg-indigo-500/10 border-indigo-500 text-indigo-400' : 'bg-white/5 border-white/5 text-neutral-500 hover:border-white/10'}`}
                                         >
                                             <m.icon size={24} />
-                                            <span className="text-[10px] font-bold uppercase tracking-tighter">{m.label}</span>
+                                            <span className="text-[10px] font-bold uppercase tracking-tighter text-center">{m.label}</span>
                                         </button>
                                     ))}
                                 </div>
                             </div>
 
                             {/* Dynamic Fields */}
-                            <div className="p-6 bg-white/[0.02] border border-white/5 rounded-3xl space-y-6">
+                            <div className="p-6 bg-white/[0.02] border border-white/5 rounded-3xl space-y-6 animate-in fade-in slide-in-from-top-2 duration-300">
                                 {info.method === 'bank' && (
                                     <>
                                         <div className="space-y-2">
@@ -318,34 +319,62 @@ export function ModelBillingModal({ isOpen, onClose, modelId }: ModelBillingModa
                                         )}
                                     </>
                                 )}
-                                {info.method === 'paypal' && (
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2">{t('billing.paypal_email')}</label>
+                                {info.method === 'paxum' && (
+                                    <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2">{t('billing.paxum_email')}</label>
                                         <input 
                                             type="email"
                                             required
-                                            value={info.paypalEmail || ""}
-                                            onChange={e => setInfo({...info, paypalEmail: e.target.value})}
+                                            value={info.paxumEmail || ""}
+                                            onChange={e => setInfo({...info, paxumEmail: e.target.value})}
                                             className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all"
+                                            placeholder="votre@email-paxum.com"
                                         />
                                     </div>
                                 )}
                                 {info.method === 'crypto' && (
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2">{t('billing.crypto_address')}</label>
-                                        <input 
-                                            type="text"
-                                            required
-                                            value={info.cryptoAddress || ""}
-                                            onChange={e => setInfo({...info, cryptoAddress: e.target.value})}
-                                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all font-mono"
-                                        />
+                                    <div className="space-y-6 animate-in fade-in slide-in-from-top-2">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2">{t('billing.crypto_network')}</label>
+                                            <div className="relative">
+                                                <select 
+                                                    required
+                                                    value={info.cryptoNetwork || ""}
+                                                    onChange={e => setInfo({...info, cryptoNetwork: e.target.value as any})}
+                                                    className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all appearance-none cursor-pointer"
+                                                >
+                                                    <option value="" disabled>{t('billing.select_network')}</option>
+                                                    <option value="trc20">{t('billing.network_tron')}</option>
+                                                    <option value="erc20">{t('billing.network_eth')}</option>
+                                                    <option value="polygon">{t('billing.network_polygon')}</option>
+                                                </select>
+                                                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">
+                                                    <ChevronDown size={16} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-2">{t('billing.crypto_address')}</label>
+                                            <input 
+                                                type="text"
+                                                required
+                                                value={info.cryptoAddress || ""}
+                                                onChange={e => setInfo({...info, cryptoAddress: e.target.value})}
+                                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all font-mono text-sm"
+                                                placeholder="0x... ou T..."
+                                            />
+                                        </div>
+                                        <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl">
+                                            <p className="text-[10px] text-amber-500 font-bold leading-relaxed">
+                                                {t('billing.crypto_warning')}
+                                            </p>
+                                        </div>
                                     </div>
                                 )}
                             </div>
-                        </>
+                        </div>
                     )}
-                </form>
+                </div>
 
                 {/* Footer */}
                 <div className="p-8 border-t border-white/5 bg-white/[0.01]">

@@ -809,5 +809,13 @@
     "model.signup.step4_photo_id": "Посвідчення особи",
     "model.signup.step4_photo_selfie": "Селфі з документом",
     "admin.settings.age_popup_title": "Спливаюче вікно підтвердження 18+",
-    "admin.settings.age_popup_desc": "Показує підтвердження віку при вході на сайт."
+    "admin.settings.age_popup_desc": "Показує підтвердження віку при вході на сайт.",
+    "billing.crypto_network": "Мережа (Blockchain)",
+    "billing.network_tron": "Tron (TRC20) - Рекомендовано (Низька комісія)",
+    "billing.network_eth": "Ethereum (ERC20)",
+    "billing.network_polygon": "Polygon",
+    "billing.crypto_warning": "Попередження: Переконайтеся, що адреса точно відповідає обраній мережі.",
+    "billing.select_network": "Виберіть мережу",
+    "billing.paxum_email": "Paxum Email Index",
+    "billing.method_paxum": "Paxum"
 }

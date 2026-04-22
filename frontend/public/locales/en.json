@@ -851,5 +851,13 @@
     "model.signup.step4_photo_id": "ID Document",
     "model.signup.step4_photo_selfie": "Selfie with ID",
     "admin.settings.age_popup_title": "18+ Verification Popup",
-    "admin.settings.age_popup_desc": "Shows the age verification confirmation when arriving on the site."
+    "admin.settings.age_popup_desc": "Shows the age verification confirmation when arriving on the site.",
+    "billing.crypto_network": "Network (Blockchain)",
+    "billing.network_tron": "Tron (TRC20) - Recommended (Low fees)",
+    "billing.network_eth": "Ethereum (ERC20)",
+    "billing.network_polygon": "Polygon",
+    "billing.crypto_warning": "Warning: Ensure the address matches the selected network exactly.",
+    "billing.select_network": "Select a network",
+    "billing.paxum_email": "Paxum Email",
+    "billing.method_paxum": "Paxum"
 }
