@@ -804,5 +804,8 @@
     "auth.2fa_required_desc": "Введіть 6-значний код із програми для автентифікації.",
     "common.verify": "Підтвердити",
     "model.signup.camera_retake_btn": "Перезняти фото",
-    "model.signup.public_profile_badge": "Видимо для учасників"
+    "model.signup.public_profile_badge": "Видимо для учасників",
+    "model.signup.step4_photo_profile": "Фото профілю",
+    "model.signup.step4_photo_id": "Посвідчення особи",
+    "model.signup.step4_photo_selfie": "Селфі з документом"
 }

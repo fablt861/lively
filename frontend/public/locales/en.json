@@ -846,5 +846,8 @@
     "auth.2fa_required_desc": "Enter the 6-digit code from your authenticator app.",
     "common.verify": "Verify",
     "model.signup.camera_retake_btn": "Retake photo",
-    "model.signup.public_profile_badge": "Visible to members"
+    "model.signup.public_profile_badge": "Visible to members",
+    "model.signup.step4_photo_profile": "Profile Picture",
+    "model.signup.step4_photo_id": "ID Document",
+    "model.signup.step4_photo_selfie": "Selfie with ID"
 }

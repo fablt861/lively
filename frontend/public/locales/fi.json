@@ -804,5 +804,8 @@
     "auth.2fa_required_desc": "Anna 6-numeroinen koodi todennussovelluksestasi.",
     "common.verify": "Vahvista",
     "model.signup.camera_retake_btn": "Ota uudelleen",
-    "model.signup.public_profile_badge": "Jäsenten nähtävissä"
+    "model.signup.public_profile_badge": "Jäsenten nähtävissä",
+    "model.signup.step4_photo_profile": "Profiilikuva",
+    "model.signup.step4_photo_id": "Henkilöllisyystodistus",
+    "model.signup.step4_photo_selfie": "Selfie ja ID"
 }

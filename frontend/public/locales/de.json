@@ -803,5 +803,8 @@
     "auth.2fa_required_desc": "Geben Sie den 6-stelligen Code aus Ihrer Authentifizierungs-App ein.",
     "common.verify": "Überprüfen",
     "model.signup.camera_retake_btn": "Foto wiederholen",
-    "model.signup.public_profile_badge": "Für Mitglieder sichtbar"
+    "model.signup.public_profile_badge": "Für Mitglieder sichtbar",
+    "model.signup.step4_photo_profile": "Profilbild",
+    "model.signup.step4_photo_id": "Ausweisdokument",
+    "model.signup.step4_photo_selfie": "Selfie mit Ausweis"
 }

@@ -804,5 +804,8 @@
     "auth.2fa_required_desc": "Ange den 6-siffriga koden från din autentiseringsapp.",
     "common.verify": "Verifiera",
     "model.signup.camera_retake_btn": "Ta om",
-    "model.signup.public_profile_badge": "Synlig för medlemmar"
+    "model.signup.public_profile_badge": "Synlig för medlemmar",
+    "model.signup.step4_photo_profile": "Profilbild",
+    "model.signup.step4_photo_id": "ID-handling",
+    "model.signup.step4_photo_selfie": "Selfie med ID"
 }

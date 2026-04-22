@@ -804,5 +804,8 @@
     "auth.2fa_required_desc": "Introduceți codul din 6 cifre din aplicația de autentificare.",
     "common.verify": "Verifică",
     "model.signup.camera_retake_btn": "Refaceți fotografia",
-    "model.signup.public_profile_badge": "Vizibil pentru membri"
+    "model.signup.public_profile_badge": "Vizibil pentru membri",
+    "model.signup.step4_photo_profile": "Poză de profil",
+    "model.signup.step4_photo_id": "Document de identitate",
+    "model.signup.step4_photo_selfie": "Selfie cu ID"
 }

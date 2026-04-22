@@ -474,13 +474,15 @@ export default function ModelSignupPage() {
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     {[
-                                        { id: 'profile', label: t('model.signup.step4_instruction1'), photo: photoProfile },
-                                        { id: 'id', label: t('model.signup.step4_instruction2'), photo: photoId },
-                                        { id: 'selfie', label: t('model.signup.step4_instruction3'), photo: photoIdSelfie }
+                                        { id: 'profile', title: t('model.signup.step4_photo_profile'), label: t('model.signup.step4_instruction1'), photo: photoProfile },
+                                        { id: 'id', title: t('model.signup.step4_photo_id'), label: t('model.signup.step4_instruction2'), photo: photoId },
+                                        { id: 'selfie', title: t('model.signup.step4_photo_selfie'), label: t('model.signup.step4_instruction3'), photo: photoIdSelfie }
                                     ].map((p, idx) => (
                                         <div key={idx} className={`p-3 rounded-2xl border transition-all duration-300 ${p.photo ? 'bg-green-500/10 border-green-500/40' : 'bg-black/40 border-white/5 group hover:border-white/20'}`}>
                                             <div className="flex items-center justify-between mb-2">
-                                                <p className="font-bold text-[10px] uppercase tracking-widest text-white/50">{idx + 1}. {t('model.signup.step4_consigne')}</p>
+                                                <p className="font-bold text-[10px] uppercase tracking-widest text-white/50">
+                                                    {idx + 1}. {p.title} <span className="text-pink-500 text-xs leading-none">*</span>
+                                                </p>
                                                 {p.photo && <CheckCircle2 className="text-green-500" size={16} />}
                                             </div>
                                             {p.id === 'profile' && (
