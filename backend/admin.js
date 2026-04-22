@@ -500,7 +500,7 @@ router.get('/payouts/summary', requireAuth, async (req, res) => {
         lastSaturday.setDate(now.getDate() - daysSinceSat);
         lastSaturday.setHours(23, 59, 59, 999);
 
-        const summaryRes = await query(`
+        const readyRes = await query(`
             SELECT 
                 payment_method as method, 
                 COUNT(*) as count, 
@@ -510,15 +510,40 @@ router.get('/payouts/summary', requireAuth, async (req, res) => {
             GROUP BY payment_method
         `, [lastSaturday]);
         
-        const summary = {
+        const ongoingRes = await query(`
+            SELECT 
+                payment_method as method, 
+                COUNT(*) as count, 
+                SUM(amount) as total
+            FROM payouts 
+            WHERE status = 'pending' AND created_at > $1
+            GROUP BY payment_method
+        `, [lastSaturday]);
+        
+        const ready = {
             bank: { count: 0, total: 0 },
             paxum: { count: 0, total: 0 },
             crypto: { count: 0, total: 0 }
         };
 
-        summaryRes.rows.forEach(row => {
-            if (summary[row.method]) {
-                summary[row.method] = {
+        const ongoing = {
+            bank: { count: 0, total: 0 },
+            paxum: { count: 0, total: 0 },
+            crypto: { count: 0, total: 0 }
+        };
+
+        readyRes.rows.forEach(row => {
+            if (ready[row.method]) {
+                ready[row.method] = {
+                    count: parseInt(row.count),
+                    total: parseFloat(row.total)
+                };
+            }
+        });
+
+        ongoingRes.rows.forEach(row => {
+            if (ongoing[row.method]) {
+                ongoing[row.method] = {
                     count: parseInt(row.count),
                     total: parseFloat(row.total)
                 };
@@ -526,9 +551,10 @@ router.get('/payouts/summary', requireAuth, async (req, res) => {
         });
 
         res.json({ 
-            summary, 
+            ready, 
+            ongoing,
             cutoff: lastSaturday.toISOString(),
-            isPastCutoff: true // Any pending payout before last Sat is technically past its cut-off
+            isPastCutoff: true 
         });
     } catch (err) {
         console.error(err);
