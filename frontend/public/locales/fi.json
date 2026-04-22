@@ -801,5 +801,6 @@
     "profile.2fa_enter_code": "Nykyinen 6-numeroinen koodi",
     "profile.2fa_disable": "Poista 2FA käytöstä",
     "auth.2fa_required_title": "2FA Vaaditaan",
-    "auth.2fa_required_desc": "Anna 6-numeroinen koodi todennussovelluksestasi."
+    "auth.2fa_required_desc": "Anna 6-numeroinen koodi todennussovelluksestasi.",
+    "common.verify": "Vahvista"
 }

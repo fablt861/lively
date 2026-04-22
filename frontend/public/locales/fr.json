@@ -839,5 +839,6 @@
     "profile.2fa_enter_code": "Code actuel à 6 chiffres",
     "profile.2fa_disable": "Désactiver",
     "auth.2fa_required_title": "Vérification 2FA requise",
-    "auth.2fa_required_desc": "Veuillez entrer le code généré par votre application."
+    "auth.2fa_required_desc": "Veuillez entrer le code généré par votre application.",
+    "common.verify": "Vérifier"
 }

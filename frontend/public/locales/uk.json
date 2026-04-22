@@ -801,5 +801,6 @@
     "profile.2fa_enter_code": "Поточний 6-значний код",
     "profile.2fa_disable": "Вимкнути 2FA",
     "auth.2fa_required_title": "Потрібна 2FA",
-    "auth.2fa_required_desc": "Введіть 6-значний код із програми для автентифікації."
+    "auth.2fa_required_desc": "Введіть 6-значний код із програми для автентифікації.",
+    "common.verify": "Підтвердити"
 }

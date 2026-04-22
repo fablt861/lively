@@ -801,5 +801,6 @@
     "profile.2fa_enter_code": "Nåværende 6-sifret kode",
     "profile.2fa_disable": "Deaktiver 2FA",
     "auth.2fa_required_title": "2FA Kreves",
-    "auth.2fa_required_desc": "Skriv inn den 6-sifrede koden fra autentiseringsappen din."
+    "auth.2fa_required_desc": "Skriv inn den 6-sifrede koden fra autentiseringsappen din.",
+    "common.verify": "Bekreft"
 }

@@ -800,5 +800,6 @@
     "profile.2fa_enter_code": "Aktueller 6-stelliger Code",
     "profile.2fa_disable": "2FA deaktivieren",
     "auth.2fa_required_title": "2FA Erforderlich",
-    "auth.2fa_required_desc": "Geben Sie den 6-stelligen Code aus Ihrer Authentifizierungs-App ein."
+    "auth.2fa_required_desc": "Geben Sie den 6-stelligen Code aus Ihrer Authentifizierungs-App ein.",
+    "common.verify": "Überprüfen"
 }
