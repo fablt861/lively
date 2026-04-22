@@ -383,6 +383,7 @@ router.get('/elite', requireAuth, async (req, res) => {
                 totalGains: parseFloat(m.total_gains),
                 totalPayouts: parseFloat(m.total_payouts),
                 status: m.status,
+                totpEnabled: m.totp_enabled || false,
                 marketing: { src: m.marketing_src, camp: m.marketing_camp, ad: m.marketing_ad },
                 photoProfile: m.photo_profile,
                 photoProfileReg: m.photo_profile_reg || m.photo_profile,
@@ -472,6 +473,16 @@ router.post('/elite/:id/reset-balance', requireAuth, async (req, res) => {
         await query('UPDATE models SET balance = $1 WHERE id = $2', [amount, id]);
         await redis.set(`model:${id}:balance`, amount.toString());
         
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+
+router.post('/elite/:id/disable-2fa', requireAuth, async (req, res) => {
+    try {
+        const id = req.params.id;
+        await query('UPDATE models SET totp_enabled = false, totp_secret = NULL WHERE id = $1', [id]);
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: 'api.error.internal_server_error' });

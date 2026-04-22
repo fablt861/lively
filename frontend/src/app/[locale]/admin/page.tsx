@@ -1621,6 +1621,25 @@ export default function AdminPage() {
                                                 >
                                                     {m.status === 'disabled' ? t('admin.status.active') : t('admin.status.disabled')}
                                                 </button>
+                                                {m.totpEnabled && (
+                                                    <button
+                                                        onClick={async () => {
+                                                            if (confirm(t('common.confirm_action'))) {
+                                                                const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite/${m.id}/disable-2fa`, {
+                                                                    method: "POST",
+                                                                    headers: { Authorization: `Bearer ${token}` }
+                                                                });
+                                                                if (res.ok) {
+                                                                    alert(t('common.success') || 'Succès');
+                                                                    fetchModels();
+                                                                }
+                                                            }
+                                                        }}
+                                                        className="text-[10px] font-bold px-3 py-2 rounded-lg transition-colors ml-2 bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-white border border-amber-500/20"
+                                                    >
+                                                        DISABLE 2FA
+                                                    </button>
+                                                )}
                                             </td>
                                         </tr>
                                     ))}
