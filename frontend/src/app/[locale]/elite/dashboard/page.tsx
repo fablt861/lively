@@ -453,8 +453,6 @@ export default function DashboardPage() {
                                         <tr className="border-b border-white/5 bg-white/[0.02]">
                                             <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_date')}</th>
                                             <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_calls')}</th>
-                                            <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_normal')}</th>
-                                            <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">{t('dashboard.table_private')}</th>
                                             <th className="p-4 md:p-8 text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] text-right">{t('dashboard.table_earned')}</th>
                                         </tr>
                                     </thead>
@@ -466,12 +464,6 @@ export default function DashboardPage() {
                                                 </td>
                                                 <td className="p-4 md:p-8 text-neutral-500 font-mono text-sm">
                                                     {t('dashboard.sessions_count', { count: day.calls })}
-                                                </td>
-                                                <td className="p-4 md:p-8 text-neutral-400 font-mono text-sm">
-                                                    ${day.normalEarned.toFixed(2)}
-                                                </td>
-                                                <td className="p-4 md:p-8 text-indigo-400 font-mono text-sm font-bold">
-                                                    ${day.privateEarned.toFixed(2)}
                                                 </td>
                                                 <td className="p-4 md:p-8 text-right font-mono text-green-400 font-bold text-lg">
                                                     +${day.modelEarned.toFixed(2)}
