@@ -70,12 +70,6 @@ router.post('/:id/payout-request', requireModelAuth, async (req, res) => {
         const modelRes = await query('SELECT billing_info FROM models WHERE id = $1', [id]);
         if (modelRes.rows.length === 0) return res.status(404).json({ error: 'Model not found' });
         
-        const billingInfo = modelRes.rows[0].billing_info;
-
-        if (balance < 100) {
-            return res.status(400).json({ error: 'payout.error.insufficient_balance' });
-        }
-
         const billingInfo = modelRes.rows[0].billing_info || {};
 
         if (balance < 100) {
