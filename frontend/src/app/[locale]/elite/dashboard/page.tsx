@@ -175,7 +175,13 @@ export default function DashboardPage() {
             if (!groups[dateStr]) {
                 groups[dateStr] = { date: dateStr, durationSec: 0, modelEarned: 0, normalEarned: 0, privateEarned: 0, calls: 0 };
             }
-            groups[dateStr].durationSec += h.durationSec;
+            
+            // On retire 5 secondes de "temps technique" (handshake/chargement) par session 
+            // pour que la durée affichée corresponde à la durée réellement facturée.
+            const TECHNICAL_OVERHEAD = 5; 
+            const billableDuration = Math.max(0, h.durationSec - TECHNICAL_OVERHEAD);
+            
+            groups[dateStr].durationSec += billableDuration;
             groups[dateStr].modelEarned += h.modelEarned;
 
             // Legacy Fallback: if granular fields are missing, assume it's all Normal
