@@ -8,9 +8,9 @@ export function Footer() {
     const { t, language } = useTranslation();
     const pathname = usePathname();
 
-    // Do not show footer in the video chat interface
-    const isRoom = pathname.includes("/live") || pathname.includes("/elite/dashboard");
-    if (isRoom) {
+    // Do not show footer in the video chat interface or admin dashboard
+    const isHidden = pathname.includes("/live") || pathname.includes("/elite/dashboard") || pathname.includes("/hq-center");
+    if (isHidden) {
         return null;
     }
 
