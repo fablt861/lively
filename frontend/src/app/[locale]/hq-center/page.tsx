@@ -1907,8 +1907,20 @@ export default function AdminPage() {
 
                 {activeTab === 'payouts' && (
                     <div className="space-y-8 animate-in fade-in duration-500">
-                        <div className="flex items-center justify-between">
-                            <h2 className="text-3xl font-light">{t('admin.payouts.title')}</h2>
+                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                            <div>
+                                <h2 className="text-3xl font-light mb-2">{t('admin.payouts.title')}</h2>
+                                <div className="flex flex-wrap gap-3">
+                                    <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-full">
+                                        <Clock size={14} className="text-amber-500" />
+                                        <span className="text-[10px] font-black uppercase text-amber-200 tracking-wider">Cut-off: Samedi 23:59:59 Paris</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 px-3 py-1.5 rounded-full">
+                                        <CheckCircle size={14} className="text-indigo-400" />
+                                        <span className="text-[10px] font-black uppercase text-indigo-200 tracking-wider">Review & Paiement: Lundi / Mardi</span>
+                                    </div>
+                                </div>
+                            </div>
                             
                             {/* Sub-tabs for Payouts */}
                             <div className="flex bg-white/5 p-1 rounded-2xl border border-white/5">
@@ -2000,14 +2012,14 @@ export default function AdminPage() {
                                                                     <button 
                                                                         disabled={isApprovatingBatch === m.id}
                                                                         onClick={() => approveBatchPayout(m.id, payoutSummary.cutoff)}
-                                                                        className="w-full bg-green-500/80 hover:bg-green-400 text-white text-[10px] font-black py-2 rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 mt-1"
+                                                                        className="w-full bg-green-500 hover:bg-green-400 text-white text-[10px] font-black py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 mt-1 shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:shadow-[0_0_25px_rgba(34,197,94,0.5)] animate-in slide-in-from-top-2 duration-500"
                                                                     >
                                                                         {isApprovatingBatch === m.id ? (
                                                                             <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                                                         ) : (
                                                                             <CheckCircle size={14} />
                                                                         )}
-                                                                        {t('admin.payouts.batch_approve') || `MARK AS ALL PAID`}
+                                                                        {t('admin.payouts.batch_approve') || `VALIDATE ALL AS PAID`}
                                                                     </button>
                                                                 )}
                                                             </div>
