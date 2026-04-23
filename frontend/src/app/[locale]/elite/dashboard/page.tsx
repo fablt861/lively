@@ -114,7 +114,9 @@ export default function DashboardPage() {
                 fetchPayouts(); // Refresh history (show pending)
             } else {
                 if (data.error === 'payout.error.missing_billing_info') {
-                    setPayoutMessage({ text: t('dashboard.payout_error_billing'), type: 'error' });
+                    setPayoutMessage({ text: t('dashboard.payout_error_billing') || "Please complete all fields in your Billing Settings before requesting a payout.", type: 'error' });
+                } else if (data.error === 'payout.error.insufficient_balance') {
+                    setPayoutMessage({ text: t('dashboard.payout_error_min') || "Minimum balance of $100 required.", type: 'error' });
                 } else {
                     setPayoutMessage({ text: data.error || "Error", type: 'error' });
                 }

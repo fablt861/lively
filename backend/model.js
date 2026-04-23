@@ -76,7 +76,42 @@ router.post('/:id/payout-request', requireModelAuth, async (req, res) => {
             return res.status(400).json({ error: 'payout.error.insufficient_balance' });
         }
 
-        if (!billingInfo || Object.keys(billingInfo).length === 0) {
+        const billingInfo = modelRes.rows[0].billing_info || {};
+
+        if (balance < 100) {
+            return res.status(400).json({ error: 'payout.error.insufficient_balance' });
+        }
+
+        // Deep validation of billing info
+        const isInfoComplete = (info) => {
+            if (!info.name || !info.address || !info.country || !info.method) return false;
+            
+            if (info.method === 'bank') {
+                if (!info.bankCountry) return false;
+                const sepaCountries = ['FR', 'DE', 'IT', 'ES', 'NL', 'BE', 'LU', 'IE', 'PT', 'GR', 'AT', 'FI', 'EE', 'LV', 'LT', 'SK', 'SI', 'MT', 'CY', 'CH', 'LI', 'NO', 'IS', 'HR', 'MC', 'SM', 'AD', 'VA'];
+                if (sepaCountries.includes(info.bankCountry)) {
+                    return !!(info.bankIban && info.bankSwift);
+                } else if (info.bankCountry === 'US') {
+                    return !!(info.bankRouting && info.bankAccount);
+                } else if (info.bankCountry === 'GB') {
+                    return !!(info.bankSortCode && info.bankAccount);
+                } else {
+                    return !!(info.bankSwift && info.bankAccount);
+                }
+            }
+            
+            if (info.method === 'paxum') {
+                return !!info.paxumEmail;
+            }
+            
+            if (info.method === 'crypto') {
+                return !!info.cryptoAddress;
+            }
+            
+            return false;
+        };
+
+        if (!isInfoComplete(billingInfo)) {
             return res.status(400).json({ error: 'payout.error.missing_billing_info' });
         }
 
