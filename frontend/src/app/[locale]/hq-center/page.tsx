@@ -1926,6 +1926,12 @@ export default function AdminPage() {
                                                     <span className="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded-lg border border-green-500/20">
                                                         {t('admin.payouts.week_ending', { date: new Date(payoutSummary.cutoff).toLocaleDateString() }) || `Jusqu'au ${new Date(payoutSummary.cutoff).toLocaleDateString()}`}
                                                     </span>
+                                                    <div className="ml-auto flex items-center gap-3 bg-white/[0.03] border border-white/5 px-4 py-2 rounded-2xl">
+                                                        <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{t('common.total') || "Total Global"}</span>
+                                                        <span className="text-xl font-mono font-bold text-green-400 animate-in fade-in zoom-in duration-500">
+                                                            ${Object.values(payoutSummary.ready || {}).reduce((acc: number, curr: any) => acc + (curr.total || 0), 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                                        </span>
+                                                    </div>
                                                 </h3>
                                             </div>
                                             
@@ -1991,6 +1997,12 @@ export default function AdminPage() {
                                                     <span className="text-xs bg-white/5 text-neutral-500 px-2 py-1 rounded-lg border border-white/10">
                                                         {t('admin.payouts.since_date', { date: new Date(payoutSummary.cutoff).toLocaleDateString() }) || `Depuis le ${new Date(payoutSummary.cutoff).toLocaleDateString()}`}
                                                     </span>
+                                                    <div className="ml-auto flex items-center gap-3 bg-white/[0.03] border border-white/5 px-4 py-2 rounded-2xl opacity-60">
+                                                        <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{t('common.total') || "Total Global"}</span>
+                                                        <span className="text-xl font-mono font-bold text-white leading-none">
+                                                            ${Object.values(payoutSummary.ongoing || {}).reduce((acc: number, curr: any) => acc + (curr.total || 0), 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                                        </span>
+                                                    </div>
                                                 </h3>
                                             </div>
 
