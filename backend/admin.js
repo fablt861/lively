@@ -294,7 +294,7 @@ router.get('/users', requireAuth, async (req, res) => {
         if (search) {
             whereClause = ' WHERE email ILIKE $1 OR pseudo ILIKE $1';
             countParams = [`%${search}%`];
-            usersParams = [limit, offset, `%${search}%`];
+            usersParams = [`%${search}%`, limit, offset];
         }
 
         const countRes = await query(`SELECT COUNT(*) FROM users ${whereClause}`, countParams);
@@ -304,7 +304,7 @@ router.get('/users', requireAuth, async (req, res) => {
             SELECT * FROM users 
             ${whereClause}
             ORDER BY registered_at DESC 
-            LIMIT $1 OFFSET $2
+            LIMIT ${search ? '$2 OFFSET $3' : '$1 OFFSET $2'}
         `, usersParams);
 
         const users = await Promise.all(userRes.rows.map(async u => {
