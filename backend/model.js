@@ -84,28 +84,34 @@ router.post('/:id/payout-request', requireModelAuth, async (req, res) => {
 
         // Deep validation of billing info
         const isInfoComplete = (info) => {
-            if (!info.name || !info.address || !info.country || !info.method) return false;
+            if (!info) return false;
+            
+            // Check mandatory base fields (must exist and not be empty after trimming)
+            const requiredBase = ['name', 'address', 'country', 'method'];
+            for (const field of requiredBase) {
+                if (!info[field] || String(info[field]).trim() === '') return false;
+            }
             
             if (info.method === 'bank') {
-                if (!info.bankCountry) return false;
+                if (!info.bankCountry || String(info.bankCountry).trim() === '') return false;
                 const sepaCountries = ['FR', 'DE', 'IT', 'ES', 'NL', 'BE', 'LU', 'IE', 'PT', 'GR', 'AT', 'FI', 'EE', 'LV', 'LT', 'SK', 'SI', 'MT', 'CY', 'CH', 'LI', 'NO', 'IS', 'HR', 'MC', 'SM', 'AD', 'VA'];
                 if (sepaCountries.includes(info.bankCountry)) {
-                    return !!(info.bankIban && info.bankSwift);
+                    return !!(info.bankIban && String(info.bankIban).trim() !== '' && info.bankSwift && String(info.bankSwift).trim() !== '');
                 } else if (info.bankCountry === 'US') {
-                    return !!(info.bankRouting && info.bankAccount);
+                    return !!(info.bankRouting && String(info.bankRouting).trim() !== '' && info.bankAccount && String(info.bankAccount).trim() !== '');
                 } else if (info.bankCountry === 'GB') {
-                    return !!(info.bankSortCode && info.bankAccount);
+                    return !!(info.bankSortCode && String(info.bankSortCode).trim() !== '' && info.bankAccount && String(info.bankAccount).trim() !== '');
                 } else {
-                    return !!(info.bankSwift && info.bankAccount);
+                    return !!(info.bankSwift && String(info.bankSwift).trim() !== '' && info.bankAccount && String(info.bankAccount).trim() !== '');
                 }
             }
             
             if (info.method === 'paxum') {
-                return !!info.paxumEmail;
+                return !!(info.paxumEmail && String(info.paxumEmail).trim() !== '');
             }
             
             if (info.method === 'crypto') {
-                return !!info.cryptoAddress;
+                return !!(info.cryptoAddress && String(info.cryptoAddress).trim() !== '');
             }
             
             return false;

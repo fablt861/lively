@@ -81,6 +81,34 @@ export function ModelBillingModal({ isOpen, onClose, modelId }: ModelBillingModa
             finalInfo.cryptoNetwork = 'polygon';
         }
 
+        // Validate mandatory fields
+        if (!info.name?.trim() || !info.address?.trim() || !info.country?.trim()) {
+            setError(t('billing.error_all_fields') || "All fields marked with * are required.");
+            setSaving(false);
+            return;
+        }
+
+        // Validate method specific fields
+        if (info.method === 'bank') {
+            if (!info.bankCountry) {
+                setError(t('billing.error_bank_country') || "Bank country is required.");
+                setSaving(false);
+                return;
+            }
+        } else if (info.method === 'paxum') {
+            if (!info.paxumEmail?.trim()) {
+                setError(t('billing.error_paxum') || "Paxum email is required.");
+                setSaving(false);
+                return;
+            }
+        } else if (info.method === 'crypto') {
+            if (!info.cryptoAddress?.trim()) {
+                setError(t('billing.error_crypto') || "Wallet address is required.");
+                setSaving(false);
+                return;
+            }
+        }
+
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/elite/${modelId}/billing`, {
                 method: 'POST',
