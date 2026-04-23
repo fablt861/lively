@@ -85,6 +85,24 @@ export default function AdminPage() {
     const [showCountryResults, setShowCountryResults] = useState(false);
     const [userSearch, setUserSearch] = useState("");
     const [modelSearch, setModelSearch] = useState("");
+    const [reviewModalOpen, setReviewModalOpen] = useState(false);
+    const [reviewMethod, setReviewMethod] = useState<'bank' | 'paxum' | 'crypto' | null>(null);
+    const [reviewSection, setReviewSection] = useState<'ready' | 'ongoing'>('ready');
+
+    const postponePayout = async (id: string) => {
+        if (!confirm(t('admin.payouts.confirm_postpone') || "Reporter ce paiement à la semaine prochaine ?")) return;
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/payouts/${id}/postpone`, {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (res.ok) {
+                fetchPayoutRequests();
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -1960,8 +1978,19 @@ export default function AdminPage() {
                                                             </div>
                                                             <div className="mt-6 flex flex-col gap-2">
                                                                 <button 
+                                                                    onClick={() => {
+                                                                        setReviewMethod(m.id as any);
+                                                                        setReviewSection('ready');
+                                                                        setReviewModalOpen(true);
+                                                                    }}
+                                                                    className="w-full bg-white/5 hover:bg-white/10 text-white text-[10px] font-bold py-3 rounded-xl border border-white/5 transition-all flex items-center justify-center gap-2"
+                                                                >
+                                                                    <Search size={14} />
+                                                                    DÉTAILS & REVIEW
+                                                                </button>
+                                                                <button 
                                                                     onClick={() => downloadPayoutCSV(m.id)}
-                                                                    className="w-full bg-white/5 hover:bg-white/10 text-white text-[10px] font-bold py-2 rounded-xl border border-white/5 transition-all flex items-center justify-center gap-2"
+                                                                    className="w-full bg-white/5 hover:bg-white/10 text-white text-[10px] font-bold py-2 rounded-xl border border-white/5 transition-all flex items-center justify-center gap-2 opacity-50"
                                                                 >
                                                                     <FileText size={14} />
                                                                     {t('admin.payouts.download_csv') || "Download CSV"}
@@ -1971,14 +2000,14 @@ export default function AdminPage() {
                                                                     <button 
                                                                         disabled={isApprovatingBatch === m.id}
                                                                         onClick={() => approveBatchPayout(m.id, payoutSummary.cutoff)}
-                                                                        className="w-full bg-indigo-500 hover:bg-indigo-400 text-white text-[10px] font-black py-2 rounded-xl transition-all flex items-center justify-center gap-2 animate-pulse disabled:opacity-50"
+                                                                        className="w-full bg-green-500/80 hover:bg-green-400 text-white text-[10px] font-black py-2 rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 mt-1"
                                                                     >
                                                                         {isApprovatingBatch === m.id ? (
                                                                             <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                                                         ) : (
                                                                             <CheckCircle size={14} />
                                                                         )}
-                                                                        {t('admin.payouts.batch_approve') || `MARQUER TOUS COMME PAYÉS`}
+                                                                        {t('admin.payouts.batch_approve') || `MARK AS ALL PAID`}
                                                                     </button>
                                                                 )}
                                                             </div>
@@ -2029,10 +2058,21 @@ export default function AdminPage() {
                                                                     ${(data.total || 0).toFixed(2)}
                                                                 </div>
                                                             </div>
-                                                            <div className="mt-6">
+                                                            <div className="mt-6 flex flex-col gap-2">
+                                                                <button 
+                                                                    onClick={() => {
+                                                                        setReviewMethod(m.id as any);
+                                                                        setReviewSection('ongoing');
+                                                                        setReviewModalOpen(true);
+                                                                    }}
+                                                                    className="w-full bg-white/5 hover:bg-white/10 text-white text-[10px] font-bold py-3 rounded-xl border border-white/5 transition-all flex items-center justify-center gap-2"
+                                                                >
+                                                                    <Search size={14} />
+                                                                    DÉTAILS & REVIEW
+                                                                </button>
                                                                 <button 
                                                                     onClick={() => downloadPayoutCSV(m.id)}
-                                                                    className="w-full bg-white/5 hover:bg-white/10 text-white text-[10px] font-bold py-2 rounded-xl border border-white/5 transition-all flex items-center justify-center gap-2"
+                                                                    className="w-full bg-white/5 hover:bg-white/10 text-white text-[10px] font-bold py-2 rounded-xl border border-white/5 transition-all flex items-center justify-center gap-2 opacity-50"
                                                                 >
                                                                     <FileText size={14} />
                                                                     {t('admin.payouts.download_csv') || "Download CSV"}
@@ -2046,100 +2086,6 @@ export default function AdminPage() {
                                     </div>
                                 )}
 
-                        {payoutRequests.length === 0 ? (
-                            <div className="bg-neutral-900 border border-white/5 rounded-3xl p-12 text-center text-neutral-500">
-                                {t('admin.payouts.empty')}
-                            </div>
-                        ) : (
-                            <div className="bg-neutral-900 border border-white/5 rounded-3xl overflow-hidden shadow-2xl">
-                                <div className="overflow-x-auto w-full"><table className="w-full text-left whitespace-nowrap md:whitespace-normal">
-                                    <thead className="bg-white/[0.02] border-b border-white/5">
-                                        <tr>
-                                            <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.payouts.table_model')}</th>
-                                            <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.payouts.table_amount')}</th>
-                                            <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.payouts.table_method')}</th>
-                                            <th className="p-5 text-neutral-400 font-medium text-xs uppercase">{t('admin.payouts.table_details')}</th>
-                                            <th className="p-5 text-neutral-400 font-medium text-xs uppercase text-right">{t('admin.table.action')}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-white/5">
-                                        {payoutRequests.map((p, i) => (
-                                            <tr key={i} className="hover:bg-white/[0.01] transition-colors">
-                                                <td className="p-5">
-                                                    <div className="font-bold text-white">{p.billingInfo.name}</div>
-                                                    <div className="text-xs text-neutral-500 font-mono">{p.modelEmail}</div>
-                                                </td>
-                                                <td className="p-5 font-mono text-green-400 font-bold text-lg">${p.amount.toFixed(2)}</td>
-                                                <td className="p-5">
-                                                    <span className="bg-white/5 text-neutral-300 text-[10px] font-black uppercase px-2 py-1 rounded-md border border-white/10 italic">
-                                                        {t(`billing.method_${p.billingInfo.method}`)}
-                                                    </span>
-                                                </td>
-                                                <td className="p-5">
-                                                    <div className="text-xs text-neutral-400 space-y-1">
-                                                        {p.billingInfo.method === 'bank' && (
-                                                            <>
-                                                                <div>{t('common.iban')}: <span className="text-white font-mono">{p.billingInfo.bankIban}</span></div>
-                                                                <div>{t('common.swift')}: <span className="text-white font-mono">{p.billingInfo.bankSwift}</span></div>
-                                                            </>
-                                                        )}
-                                                        {p.billingInfo.method === 'paypal' && (
-                                                            <div>{t('admin.model.email')}: <span className="text-white font-mono">{p.billingInfo.paypalEmail}</span></div>
-                                                        )}
-                                                        {p.billingInfo.method === 'crypto' && (
-                                                            <div>{t('common.wallet')}: <span className="text-white font-mono truncate max-w-[200px] block">{p.billingInfo.cryptoAddress}</span></div>
-                                                        )}
-                                                        <div className="pt-1 mt-1 border-t border-white/5 text-[10px] italic">
-                                                            {p.billingInfo.address}, {p.billingInfo.country}
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td className="p-5 text-right space-x-2">
-                                                    <button
-                                                        onClick={async () => {
-                                                            if (confirm(t('admin.payouts.confirm_reject') || "Reject this payout and refund the balance?")) {
-                                                                await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/payouts/${p.id}/reject`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
-                                                                fetchPayoutRequests();
-                                                            }
-                                                        }}
-                                                        className="bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[10px] font-bold px-3 py-2 rounded-lg border border-red-500/20 transition-all"
-                                                    >
-                                                        {t('admin.payouts.reject')}
-                                                    </button>
-                                                    <button
-                                                        onClick={async () => {
-                                                            if (confirm(t('admin.payouts.confirm_approve') || "Confirm that this payout has been processed and paid?")) {
-                                                                const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/payouts/${p.id}/approve`, { 
-                                                                    method: "POST", 
-                                                                    headers: { Authorization: `Bearer ${token}` } 
-                                                                });
-                                                                
-                                                                if (response.ok) {
-                                                                    fetchPayoutRequests();
-                                                                    fetchPayoutHistory();
-                                                                    alert(t('admin.payouts.approve_success') || "Payout approved and invoice generated successfully.");
-                                                                } else {
-                                                                    try {
-                                                                        const err = await response.json();
-                                                                        alert(`Error: ${err.error || "Failed to approve payout"}`);
-                                                                    } catch (jsonErr) {
-                                                                        const raw = await response.text();
-                                                                        alert(`Server Error (Status ${response.status}): ${raw.substring(0, 100)}`);
-                                                                    }
-                                                                }
-                                                            }
-                                                        }}
-                                                        className="bg-green-500 hover:bg-green-400 text-white text-[10px] font-bold px-3 py-2 rounded-lg transition-all shadow-lg shadow-green-500/20"
-                                                    >
-                                                        {t('admin.payouts.approve')}
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table></div>
-                            </div>
-                        )}
                         </>
                         ) : (
                             <div className="space-y-12 animate-in slide-in-from-bottom-4 duration-500">
@@ -2727,7 +2673,7 @@ export default function AdminPage() {
                         {typeof selectedImage.images[selectedImage.index] !== 'string' && (selectedImage.images[selectedImage.index] as any).label && (
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-12 bg-pink-600 text-white px-6 py-2 rounded-full font-bold text-sm shadow-xl animate-in slide-in-from-top-4 duration-300">
                                 {(selectedImage.images[selectedImage.index] as any).label}
-                            </div>
+                                </div>
                         )}
                         
                         {/* Info / Close */}
@@ -2746,6 +2692,117 @@ export default function AdminPage() {
                                     className={`w-2 h-2 rounded-full transition-all duration-300 ${i === selectedImage.index ? 'bg-pink-500 w-8 shadow-[0_0_10px_rgba(236,72,153,0.5)]' : 'bg-white/20'}`} 
                                 />
                             ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Payout Review Modal */}
+            {reviewModalOpen && reviewMethod && (
+                <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-in fade-in duration-300">
+                    <div className="bg-neutral-900 border border-white/10 w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[80vh] animate-in zoom-in-95 duration-300">
+                        {/* Header */}
+                        <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
+                            <div className="flex items-center gap-4">
+                                <div className="p-3 bg-white/5 rounded-2xl text-indigo-400">
+                                    {reviewMethod === 'bank' ? <Landmark size={24} /> : reviewMethod === 'crypto' ? <Wallet size={24} /> : <Mail size={24} />}
+                                </div>
+                                <div>
+                                    <h4 className="text-xl font-bold uppercase tracking-tighter">
+                                        Payout Review: {reviewMethod.toUpperCase()}
+                                    </h4>
+                                    <p className="text-xs text-neutral-500 font-medium">
+                                        {reviewSection === 'ready' ? "Dernière Semaine (Ready to Pay)" : "Semaine en cours (Ongoing)"}
+                                    </p>
+                                </div>
+                            </div>
+                            <button 
+                                onClick={() => setReviewModalOpen(false)}
+                                className="p-2 bg-white/5 hover:bg-white/10 rounded-full transition-colors text-white/50 hover:text-white"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        {/* List */}
+                        <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+                            {payoutRequests.filter(p => {
+                                const isMethod = p.method === reviewMethod;
+                                const date = new Date(p.createdAt);
+                                const cutoff = new Date(payoutSummary.cutoff);
+                                const isReady = date <= cutoff;
+                                return isMethod && (reviewSection === 'ready' ? isReady : !isReady);
+                            }).length === 0 ? (
+                                <div className="py-20 text-center text-neutral-500 italic">Aucune transaction trouvée pour ce filtre.</div>
+                            ) : (
+                                payoutRequests.filter(p => {
+                                    const isMethod = p.method === reviewMethod;
+                                    const date = new Date(p.createdAt);
+                                    const cutoff = new Date(payoutSummary.cutoff);
+                                    const isReady = date <= cutoff;
+                                    return isMethod && (reviewSection === 'ready' ? isReady : !isReady);
+                                }).map((p, i) => (
+                                    <div key={i} className="bg-white/[0.02] border border-white/5 p-5 rounded-2xl flex flex-col md:flex-row items-center gap-6 group hover:border-white/10 transition-all">
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-3 mb-1">
+                                                <span className="font-bold text-white text-lg">{p.billingInfo.name}</span>
+                                                <span className="text-[10px] bg-white/5 text-neutral-500 px-2 py-0.5 rounded-full border border-white/5">{p.modelEmail}</span>
+                                            </div>
+                                            <div className="text-xs text-neutral-400 space-y-1 font-medium bg-black/20 p-3 rounded-xl border border-white/5">
+                                                {p.method === 'bank' && (
+                                                    <div className="grid grid-cols-2 gap-x-4">
+                                                        <div><span className="text-neutral-600 block text-[9px] uppercase font-black">IBAN</span> <span className="font-mono text-white tracking-tighter">{p.billingInfo.bankIban}</span></div>
+                                                        <div><span className="text-neutral-600 block text-[9px] uppercase font-black">SWIFT/BIC</span> <span className="font-mono text-white tracking-tighter">{p.billingInfo.bankSwift || p.billingInfo.bankBic}</span></div>
+                                                    </div>
+                                                )}
+                                                {p.method === 'crypto' && (
+                                                    <div><span className="text-neutral-600 block text-[9px] uppercase font-black">Polygon Wallet (USDC)</span> <span className="font-mono text-white break-all">{p.billingInfo.cryptoAddress}</span></div>
+                                                )}
+                                                {p.method === 'paxum' && (
+                                                    <div><span className="text-neutral-600 block text-[9px] uppercase font-black">Paxum Email</span> <span className="font-mono text-white">{p.billingInfo.paxumEmail || p.billingInfo.email}</span></div>
+                                                )}
+                                                <div className="pt-2 mt-2 border-t border-white/5 text-[9px] opacity-40 uppercase tracking-widest italic">
+                                                    {p.billingInfo.address}, {p.billingInfo.country}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col items-center md:items-end gap-3 min-w-[120px]">
+                                            <div className="text-2xl font-black text-green-400 font-mono italic underline decoration-green-900/50 decoration-4">
+                                                ${p.amount.toFixed(2)}
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <button 
+                                                    onClick={() => postponePayout(p.id)}
+                                                    className="p-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 rounded-xl border border-amber-500/20 transition-all flex items-center justify-center gap-2 text-[10px] font-bold"
+                                                    title="Reporter à la semaine prochaine"
+                                                >
+                                                    <Clock size={14} /> REPORTER
+                                                </button>
+                                                <button 
+                                                    onClick={async () => {
+                                                        if (confirm(t('admin.payouts.confirm_reject') || "Reject this payout and refund the balance?")) {
+                                                            await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/payouts/${p.id}/reject`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+                                                            fetchPayoutRequests();
+                                                        }
+                                                    }}
+                                                    className="p-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-xl border border-red-500/20 transition-all flex items-center justify-center gap-2 text-[10px] font-bold"
+                                                    title="Rejeter et rembourser"
+                                                >
+                                                    <XCircle size={14} /> REJETER
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+
+                        {/* Footer */}
+                        <div className="p-4 bg-white/[0.02] border-t border-white/5 text-center">
+                            <p className="text-[10px] text-neutral-600 font-black uppercase tracking-widest">
+                                Transaction review system powered by Lively Admin
+                            </p>
                         </div>
                     </div>
                 </div>

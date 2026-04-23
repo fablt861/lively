@@ -741,6 +741,18 @@ const approveSinglePayout = async (payoutId, settings, redis, query, generateInv
     return { id: payoutId, invoiceNumber, invoiceFile };
 };
 
+// Admin Payout Postpone (Moves to next week by updating timestamp)
+router.post('/payouts/:id/postpone', requireAuth, async (req, res) => {
+    try {
+        const id = req.params.id;
+        await query('UPDATE payouts SET created_at = CURRENT_TIMESTAMP WHERE id = $1 AND status = $2', [id, 'pending']);
+        res.json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'api.error.internal_server_error' });
+    }
+});
+
 // Admin Payout Approve (Individual)
 router.post('/payouts/:id/approve', requireAuth, async (req, res) => {
     try {
