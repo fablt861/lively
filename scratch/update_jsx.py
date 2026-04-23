@@ -1,172 +1,38 @@
-"use client";
+import os
 
-import { useState, useEffect } from "react";
-import { X, ShieldCheck, Landmark, Wallet, Mail, Globe, User, MapPin, ChevronDown } from "lucide-react";
-import { useTranslation } from "@/context/LanguageContext";
-import { countries } from "@/utils/countries";
+filepath = '/Users/fabrice/APPS/LC Bis/lively/frontend/src/components/ModelBillingModal.tsx'
 
-interface BillingInfo {
-    name: string;
-    address: string;
-    country: string;
-    method: 'bank' | 'paxum' | 'crypto';
-    bankCountry?: string;
-    bankIban?: string;
-    bankSwift?: string;
-    bankRouting?: string;
-    bankAccount?: string;
-    bankSortCode?: string;
-    paxumEmail?: string;
-    cryptoAddress?: string;
-    cryptoNetwork?: 'trc20' | 'erc20' | 'polygon';
-}
+with open(filepath, 'r', encoding='utf-8') as f:
+    content = f.read()
 
-interface ModelBillingModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    modelId: string;
-}
+# Replacements
+replacements = [
+    (
+        'onChange={e => setInfo({...info, country: e.target.value})}\n                                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all appearance-none cursor-pointer"',
+        'onChange={e => setInfo({...info, country: e.target.value})}\n                                            className={`w-full bg-white/5 border rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all appearance-none cursor-pointer ${validationErrors.country ? \'border-red-500/50 bg-red-500/5\' : \'border-white/10\'}`}'
+    ),
+    (
+        '</select>\n                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">\n                                            <ChevronDown size={16} />\n                                        </div>\n                                    </div>\n                                </div>',
+        '</select>\n                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">\n                                            <ChevronDown size={16} />\n                                        </div>\n                                    </div>\n                                    {validationErrors.country && <p className="text-red-500 text-[10px] mt-1 ml-2 font-bold animate-in fade-in duration-300">{validationErrors.country}</p>}\n                                </div>'
+    ),
+    (
+        'onChange={e => setInfo({...info, address: e.target.value})}\n                                        className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all resize-none"',
+        'onChange={e => setInfo({...info, address: e.target.value})}\n                                        className={`w-full bg-white/5 border rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all resize-none ${validationErrors.address ? \'border-red-500/50 bg-red-500/5\' : \'border-white/10\'}`}'
+    ),
+    (
+        'className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all resize-none"\n                                    />\n                                </div>',
+        'className={`w-full bg-white/5 border rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all resize-none ${validationErrors.address ? \'border-red-500/50 bg-red-500/5\' : \'border-white/10\'}`}\n                                    />\n                                    {validationErrors.address && <p className="text-red-500 text-[10px] mt-1 ml-2 font-bold animate-in fade-in duration-300">{validationErrors.address}</p>}\n                                </div>'
+    ),
+    # And so on for all others... 
+]
 
-export function ModelBillingModal({ isOpen, onClose, modelId }: ModelBillingModalProps) {
-    const { t, language } = useTranslation();
-    const [info, setInfo] = useState<BillingInfo>({
-        name: "",
-        address: "",
-        country: "",
-        method: 'bank'
-    });
-    const [globalSettings, setGlobalSettings] = useState<any>(null);
-    const [loading, setLoading] = useState(false);
-    const [saving, setSaving] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
-    const [success, setSuccess] = useState(false);
+# Actually, it's risky. I'll just write the WHOLE JSX block from "Form" to "Footer" using the python script.
 
-    useEffect(() => {
-        if (isOpen) {
-            // Fetch Global Settings for Fees
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/settings`)
-                .then(res => res.json())
-                .then(data => setGlobalSettings(data))
-                .catch(err => console.error("Failed to fetch settings", err));
+jsx_start = '{/* Form */}'
+jsx_end = '                {/* Footer */}'
 
-            if (modelId) {
-                setLoading(true);
-                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/elite/${modelId}/billing`, {
-                    headers: { 'Authorization': `Bearer model-token-${modelId}` }
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (Object.keys(data).length > 0) setInfo(data);
-                        setLoading(false);
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        setLoading(false);
-                    });
-            }
-        }
-    }, [isOpen, modelId]);
-
-    const payoutFee = globalSettings?.payoutFeeUsd || 5.0;
-
-    const handleSave = async (e?: React.FormEvent) => {
-        if (e) e.preventDefault();
-        setSaving(true);
-        setError(null);
-        setValidationErrors({});
-        setSuccess(false);
-
-        const newErrors: Record<string, string> = {};
-
-        // Base fields
-        if (!info.name?.trim()) newErrors.name = t('billing.error_required');
-        if (!info.country?.trim()) newErrors.country = t('billing.error_required');
-        if (!info.address?.trim()) newErrors.address = t('billing.error_required');
-
-        // Method specific
-        if (info.method === 'bank') {
-            if (!info.bankCountry) newErrors.bankCountry = t('billing.error_required');
-            const sepaCountries = ['FR', 'DE', 'IT', 'ES', 'NL', 'BE', 'LU', 'IE', 'PT', 'GR', 'AT', 'FI', 'EE', 'LV', 'LT', 'SK', 'SI', 'MT', 'CY', 'CH', 'LI', 'NO', 'IS', 'HR', 'MC', 'SM', 'AD', 'VA'];
-            if (info.bankCountry && sepaCountries.includes(info.bankCountry)) {
-                if (!info.bankIban?.trim()) newErrors.bankIban = t('billing.error_required');
-                if (!info.bankSwift?.trim()) newErrors.bankSwift = t('billing.error_required');
-            } else if (info.bankCountry === 'US') {
-                if (!info.bankRouting?.trim()) newErrors.bankRouting = t('billing.error_required');
-                if (!info.bankAccount?.trim()) newErrors.bankAccount = t('billing.error_required');
-            } else if (info.bankCountry === 'GB') {
-                if (!info.bankSortCode?.trim()) newErrors.bankSortCode = t('billing.error_required');
-                if (!info.bankAccount?.trim()) newErrors.bankAccount = t('billing.error_required');
-            } else if (info.bankCountry) {
-                if (!info.bankSwift?.trim()) newErrors.bankSwift = t('billing.error_required');
-                if (!info.bankAccount?.trim()) newErrors.bankAccount = t('billing.error_required');
-            }
-        } else if (info.method === 'paxum') {
-            if (!info.paxumEmail?.trim()) newErrors.paxumEmail = t('billing.error_required');
-        } else if (info.method === 'crypto') {
-            if (!info.cryptoAddress?.trim()) newErrors.cryptoAddress = t('billing.error_required');
-        }
-
-        if (Object.keys(newErrors).length > 0) {
-            setValidationErrors(newErrors);
-            setError(t('billing.error_all_fields'));
-            setSaving(false);
-            return;
-        }
-
-        // Force Polygon for Crypto
-        const finalInfo = { ...info };
-        if (finalInfo.method === 'crypto') {
-            finalInfo.cryptoNetwork = 'polygon';
-        }
-
-        try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/elite/${modelId}/billing`, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer model-token-${modelId}`
-                },
-                body: JSON.stringify(finalInfo)
-            });
-
-            if (res.ok) {
-                setSuccess(true);
-                if (finalInfo.method === 'crypto') setInfo(finalInfo);
-                setTimeout(() => setSuccess(false), 3000);
-            } else {
-                setError(t('billing.save_error'));
-            }
-        } catch (err) {
-            setError(t('billing.network_error'));
-        } finally {
-            setSaving(false);
-        }
-    };
-
-    if (!isOpen) return null;
-
-    return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="relative w-full max-w-2xl bg-neutral-950 border border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-                
-                {/* Header */}
-                <div className="p-8 flex items-center justify-between border-b border-white/5">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
-                            <ShieldCheck size={28} />
-                        </div>
-                        <div>
-                            <h2 className="text-2xl font-light text-white leading-tight">{t('billing.title')}</h2>
-                            <p className="text-neutral-500 text-xs font-bold uppercase tracking-widest mt-1">{t('billing.secure_desc')}</p>
-                        </div>
-                    </div>
-                    <button onClick={onClose} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all">
-                        <X size={20} />
-                    </button>
-                </div>
-
-                                {/* Form */}
+# I'll build the new block carefully.
+new_block = """                {/* Form */}
                 <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
                     
                     {loading ? (
@@ -436,19 +302,14 @@ export function ModelBillingModal({ isOpen, onClose, modelId }: ModelBillingModa
                             </div>
                         </div>
                     )}
-                </div>                {/* Footer */}
-                <div className="p-8 border-t border-white/5 bg-white/[0.01]">
-                    {error && <p className="text-red-400 text-xs font-bold mb-4 text-center">{error}</p>}
-                    {success && <p className="text-green-400 text-xs font-bold mb-4 text-center">{t('billing.save_success')}</p>}
-                    <button 
-                        disabled={saving || loading}
-                        onClick={handleSave}
-                        className="w-full bg-indigo-500 hover:bg-indigo-400 disabled:opacity-50 disabled:translate-y-0 text-white py-4 rounded-2xl font-bold tracking-widest uppercase text-sm transition-all active:scale-[0.98] shadow-xl shadow-indigo-500/20"
-                    >
-                        {saving ? t('auth.loading') : t('billing.save')}
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-}
+                </div>"""
+
+start_index = content.find(jsx_start)
+end_index = content.find(jsx_end)
+
+if start_index != -1 and end_index != -1:
+    with open(filepath, 'w', encoding='utf-8') as f:
+        f.write(content[:start_index] + new_block + content[end_index:])
+    print("Sucessfully updated JSX")
+else:
+    print(f"Could not find markers: start={start_index}, end={end_index}")
