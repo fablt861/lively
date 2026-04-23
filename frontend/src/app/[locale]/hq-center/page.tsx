@@ -2,7 +2,7 @@
 
 // STAGING_DEPLOY_FORCE: 2026-04-15_v2
 import { useState, useEffect } from "react";
-import { Users, Video, DollarSign, Activity, Settings, Lock, CheckCircle, XCircle, Clock, Globe, Mail, Zap, UserCheck, ShieldCheck, ChevronLeft, ChevronRight, AlertCircle, ShieldAlert, Sparkles, FileText, History as HistoryIcon, Menu, X, Landmark, Wallet } from "lucide-react";
+import { Users, Video, DollarSign, Activity, Settings, Lock, CheckCircle, XCircle, Clock, Globe, Mail, Zap, UserCheck, ShieldCheck, ChevronLeft, ChevronRight, AlertCircle, ShieldAlert, Sparkles, FileText, History as HistoryIcon, Menu, X, Landmark, Wallet, Search } from "lucide-react";
 import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { countries } from "@/utils/countries";
@@ -83,6 +83,8 @@ export default function AdminPage() {
     const [newKeyword, setNewKeyword] = useState("");
     const [countrySearch, setCountrySearch] = useState("");
     const [showCountryResults, setShowCountryResults] = useState(false);
+    const [userSearch, setUserSearch] = useState("");
+    const [modelSearch, setModelSearch] = useState("");
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -114,7 +116,7 @@ export default function AdminPage() {
 
     const fetchUsers = async () => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/users?page=${userPage}&limit=100`, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/users?page=${userPage}&limit=100&search=${encodeURIComponent(userSearch)}`, { headers: { Authorization: `Bearer ${token}` } });
             if (!res.ok) throw new Error(`Server returned ${res.status}`);
             const data = await res.json();
             if (data && Array.isArray(data.users)) {
@@ -136,7 +138,7 @@ export default function AdminPage() {
 
     const fetchModels = async () => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite?page=${modelPage}&limit=50`, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite?page=${modelPage}&limit=50&search=${encodeURIComponent(modelSearch)}`, { headers: { Authorization: `Bearer ${token}` } });
             if (!res.ok) throw new Error(`Server returned ${res.status}`);
             const data = await res.json();
             if (data && Array.isArray(data.models)) {
@@ -448,9 +450,13 @@ export default function AdminPage() {
 
     useEffect(() => {
         if (isLogged && token) {
+            // Debounce for search
+            const delayDebounceFn = setTimeout(() => {
+                if (activeTab === 'users') fetchUsers();
+                if (activeTab === 'models') fetchModels();
+            }, 500);
+
             if (activeTab === 'stats') fetchStats();
-            if (activeTab === 'users') fetchUsers();
-            if (activeTab === 'models') fetchModels();
             if (activeTab === 'payouts') {
                 fetchPayoutRequests();
                 fetchPayoutHistory();
@@ -473,8 +479,10 @@ export default function AdminPage() {
             fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/admin/elite/pending`, { headers: { Authorization: `Bearer ${token}` } })
                 .then(res => res.json())
                 .then(setPendingModels);
+
+            return () => clearTimeout(delayDebounceFn);
         }
-    }, [isLogged, token, activeTab, userPage, modelPage]);
+    }, [isLogged, token, activeTab, userPage, modelPage, userSearch, modelSearch]);
 
     const saveSettings = async () => {
         try {
@@ -1558,6 +1566,23 @@ export default function AdminPage() {
                                 {backendStatus === 'offline' && <span className="bg-red-500/20 text-red-400 text-[10px] font-bold px-2 py-1 rounded-md border border-red-500/20 animate-pulse">{t('admin.status.offline')}</span>}
                                 {backendStatus === 'online' && <span className="bg-green-500/20 text-green-400 text-[10px] font-bold px-2 py-1 rounded-md border border-green-500/20">{t('admin.status.online')}</span>}
                             </div>
+
+                            <div className="flex-1 max-w-sm relative">
+                                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-neutral-500">
+                                    <Search size={16} />
+                                </div>
+                                <input
+                                    type="text"
+                                    value={userSearch}
+                                    onChange={(e) => {
+                                        setUserSearch(e.target.value);
+                                        setUserPage(1); // Reset to page 1 on search
+                                    }}
+                                    placeholder={t('admin.users.search_placeholder') || "Search by email or pseudo..."}
+                                    className="w-full bg-neutral-900 border border-white/10 rounded-xl py-2 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-indigo-500/50 transition-all"
+                                />
+                            </div>
+
                             <div className="flex bg-neutral-900 border border-white/5 rounded-xl p-1">
                                 <button onClick={() => setUserFilter('all')} className={`px-4 py-2 rounded-lg text-sm transition-all ${userFilter === 'all' ? 'bg-indigo-500 text-white' : 'text-neutral-500 hover:text-white'}`}>{t('admin.users.filter_all')} ({users.length})</button>
                                 <button onClick={() => setUserFilter('buyers')} className={`px-4 py-2 rounded-lg text-sm transition-all ${userFilter === 'buyers' ? 'bg-indigo-500 text-white' : 'text-neutral-500 hover:text-white'}`}>{t('admin.users.filter_buyers')} ({users.filter(u => u.isBuyer).length})</button>
@@ -1685,7 +1710,24 @@ export default function AdminPage() {
 
                 {activeTab === 'models' && (
                     <div className="space-y-8 animate-in fade-in duration-500">
-                        <h2 className="text-3xl font-light">{t('admin.models.title')}</h2>
+                        <div className="flex items-center justify-between">
+                            <h2 className="text-3xl font-light">{t('admin.models.title')}</h2>
+                            <div className="flex-1 max-w-sm relative ml-8">
+                                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-neutral-500">
+                                    <Search size={16} />
+                                </div>
+                                <input
+                                    type="text"
+                                    value={modelSearch}
+                                    onChange={(e) => {
+                                        setModelSearch(e.target.value);
+                                        setModelPage(1); // Reset to page 1 on search
+                                    }}
+                                    placeholder={t('admin.models.search_placeholder') || "Email, pseudo, name..."}
+                                    className="w-full bg-neutral-900 border border-white/10 rounded-xl py-2 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-indigo-500/50 transition-all"
+                                />
+                            </div>
+                        </div>
 
                         <div className="bg-neutral-900 border border-white/5 rounded-3xl overflow-hidden">
                             <div className="overflow-x-auto w-full"><table className="w-full text-left whitespace-nowrap md:whitespace-normal">

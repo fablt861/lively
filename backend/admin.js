@@ -284,16 +284,28 @@ router.get('/users', requireAuth, async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 100;
+        const search = req.query.search || '';
         const offset = (page - 1) * limit;
 
-        const countRes = await query('SELECT COUNT(*) FROM users');
+        let usersParams = [limit, offset];
+        let countParams = [];
+        let whereClause = '';
+
+        if (search) {
+            whereClause = ' WHERE email ILIKE $1 OR pseudo ILIKE $1';
+            countParams = [`%${search}%`];
+            usersParams = [limit, offset, `%${search}%`];
+        }
+
+        const countRes = await query(`SELECT COUNT(*) FROM users ${whereClause}`, countParams);
         const total = parseInt(countRes.rows[0].count);
 
         const userRes = await query(`
             SELECT * FROM users 
+            ${whereClause}
             ORDER BY registered_at DESC 
             LIMIT $1 OFFSET $2
-        `, [limit, offset]);
+        `, usersParams);
 
         const users = await Promise.all(userRes.rows.map(async u => {
             const redisCredits = await redis.get(`user:${u.id}:credits`);
@@ -356,17 +368,28 @@ router.get('/elite', requireAuth, async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 100;
+        const search = req.query.search || '';
         const offset = (page - 1) * limit;
 
-        const countRes = await query('SELECT COUNT(*) FROM models WHERE status != $1', ['pending']);
+        let modelsParams = ['pending', limit, offset];
+        let countParams = ['pending'];
+        let searchClause = '';
+
+        if (search) {
+            searchClause = ' AND (email ILIKE $2 OR pseudo ILIKE $2 OR first_name ILIKE $2 OR last_name ILIKE $2)';
+            countParams = ['pending', `%${search}%`];
+            modelsParams = ['pending', `%${search}%`, limit, offset];
+        }
+
+        const countRes = await query(`SELECT COUNT(*) FROM models WHERE status != $1 ${searchClause}`, countParams);
         const total = parseInt(countRes.rows[0].count);
 
         const modelRes = await query(`
             SELECT * FROM models 
-            WHERE status != $1
+            WHERE status != $1 ${searchClause}
             ORDER BY registered_at DESC 
-            LIMIT $2 OFFSET $3
-        `, ['pending', limit, offset]);
+            LIMIT ${search ? '$3 OFFSET $4' : '$2 OFFSET $3'}
+        `, modelsParams);
 
         const models = await Promise.all(modelRes.rows.map(async m => {
             const redisBalance = await redis.get(`model:${m.id}:balance`);
