@@ -6,6 +6,7 @@ const { markAsSeen } = require('./moderation');
 const { logRevenue, logModelPayout } = require('./stats');
 const { query } = require('./db');
 const { flushSessionToPostgres } = require('./balance');
+const { getOrSet, invalidate } = require('./cache');
 
 redis.on('error', (err) => {
     console.error('[Billing Redis Error]', err.message);
@@ -401,6 +402,9 @@ async function stopBilling(roomId, reason = 'unknown') {
             await markAsSeen(userId, modelId);
         }
 
+        // Invalidate model stats cache so they see the new call immediately
+        await invalidate(`model:stats:${modelId}`);
+
         // Clean up reconnection mappings
         await redis.del(`user_active_room:${userId}`);
         await redis.del(`user_active_room:${modelId}`);
@@ -502,9 +506,10 @@ async function getModelStats(modelId) {
     const normalizedId = modelId.toLowerCase();
     const balanceStr = await redis.get(`model:${normalizedId}:balance`);
     
-    // FETCH PERSISTENT HISTORY FROM SQL (instead of Redis 50-limit list)
-    let history = [];
-    try {
+    // Use Cache for History and Profile
+    const data = await getOrSet(`model:stats:${normalizedId}`, async () => {
+        // FETCH PERSISTENT HISTORY FROM SQL
+        let history = [];
         const historyRes = await query(`
             SELECT 
                 user_id as "userId",
@@ -530,22 +535,23 @@ async function getModelStats(modelId) {
             userSpentCredits: parseFloat(row.userSpentCredits),
             timestamp: parseInt(row.timestamp)
         }));
-    } catch (err) {
-        console.error('[Billing History Error]', err);
-        // Fallback to Redis if SQL fails for any reason
-        const historyStrs = await redis.lrange(`model:${normalizedId}:history`, 0, 50);
-        history = historyStrs.map(h => JSON.parse(h));
-    }
-    
-    // FETCH PROFILE FROM SQL (Source of Truth)
-    const modelRes = await query('SELECT pseudo, photo_profile FROM models WHERE id = $1', [normalizedId]);
-    const profile = modelRes.rows[0] || {};
+
+        // FETCH PROFILE FROM SQL
+        const modelRes = await query('SELECT pseudo, photo_profile FROM models WHERE id = $1', [normalizedId]);
+        const profile = modelRes.rows[0] || {};
+
+        return {
+            history,
+            pseudo: profile.pseudo || 'Model',
+            photoProfile: profile.photo_profile || ''
+        };
+    }, 600); // 10 minutes cache (invalidated on session stop)
 
     return {
         balance: parseFloat(balanceStr || '0'),
-        history: history,
-        pseudo: profile.pseudo || 'Model',
-        photoProfile: profile.photo_profile || ''
+        history: data.history,
+        pseudo: data.pseudo,
+        photoProfile: data.photoProfile
     };
 }
 

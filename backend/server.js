@@ -4,6 +4,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 require('dotenv').config();
+const { apiLimiter, authLimiter, paymentLimiter } = require('./security');
 
 const allowedOrigins = [
   'https://staging.kinky.live',
@@ -98,6 +99,13 @@ initSettings();
 initBillingLoop(io);
 
 // Registering Routes
+app.use('/api', apiLimiter); // Protect all API routes
+
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/register', authLimiter);
+app.use('/api/admin/login', authLimiter);
+app.use('/api/auth/add-credits', paymentLimiter);
+
 app.use('/api/report', reportRoutes);
 app.use('/api/favorites', favoritesRoutes);
 

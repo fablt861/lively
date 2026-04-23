@@ -2,8 +2,12 @@ const axios = require('axios');
 
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 
-// Simple in-memory cache to reduce costs and latency
+const { getRedisClient } = require('./redis');
+const redis = getRedisClient();
+
+// Tier-1: Local in-memory cache for ultra-fast access
 const translationCache = new Map();
+const REDIS_TRANSLATION_PREFIX = 'trans:';
 
 async function translateText(text, targetLang) {
     if (!text || !targetLang) return text;
@@ -14,6 +18,18 @@ async function translateText(text, targetLang) {
 
     if (translationCache.has(cacheKey)) {
         return translationCache.get(cacheKey);
+    }
+
+    // Tier-2: Check Redis for persistent cache
+    try {
+        const redisKey = `${REDIS_TRANSLATION_PREFIX}${cacheKey}`;
+        const cached = await redis.get(redisKey);
+        if (cached) {
+            translationCache.set(cacheKey, cached); // Populate Tier-1
+            return cached;
+        }
+    } catch (err) {
+        console.error('[Translation Cache Error]', err.message);
     }
 
     // Fallback to Mock Mode if API key is missing
@@ -34,9 +50,16 @@ async function translateText(text, targetLang) {
 
         const translatedText = decodeHTMLEntities(response.data.data.translations[0].translatedText);
 
-        // Cache management: basic limit of 1000 entries
+        // Cache management: Update Tier-1 and Tier-2
         if (translationCache.size > 1000) translationCache.clear();
         translationCache.set(cacheKey, translatedText);
+        
+        try {
+            const redisKey = `${REDIS_TRANSLATION_PREFIX}${cacheKey}`;
+            await redis.set(redisKey, translatedText, 'EX', 86400 * 30); // Cache for 30 days
+        } catch (err) {
+            console.error('[Translation Redis Set Error]', err.message);
+        }
 
         return translatedText;
     } catch (error) {
