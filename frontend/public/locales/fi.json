@@ -825,5 +825,8 @@
   "billing.error_bank_country": "Ole hyvä ja valitse pankin maa.",
   "billing.error_paxum": "Ole hyvä ja syötä voimassa oleva Paxum-sähköpostiosoite.",
   "billing.error_crypto": "Ole hyvä ja syötä voimassa oleva lompakon osoite (Polygon).",
-  "billing.error_required": "Tämä kenttä on pakollinen."
+  "billing.error_required": "Tämä kenttä on pakollinen.",
+  "api.error.too_many_requests": "Liian monta pyyntöä, yritä uudelleen myöhemmin.",
+  "auth.error.too_many_attempts": "Liian monta kirjautumisyritystä, odota minuutti.",
+  "payment.error.too_many_requests": "Liian monta maksupyyntöä, hidasta vauhtia."
 }

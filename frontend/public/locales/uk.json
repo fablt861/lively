@@ -825,5 +825,8 @@
   "billing.error_bank_country": "Будь ласка, виберіть країну банку.",
   "billing.error_paxum": "Будь ласка, введіть дійсну адресу електронної пошти Paxum.",
   "billing.error_crypto": "Будь ласка, введіть дійсну адресу гаманця (Polygon).",
-  "billing.error_required": "Це поле обов'язкове для заповнення."
+  "billing.error_required": "Це поле обов'язкове для заповнення.",
+  "api.error.too_many_requests": "Забагато запитів, будь ласка, спробуйте пізніше.",
+  "auth.error.too_many_attempts": "Забагато спроб входу, будь ласка, зачекайте хвилину.",
+  "payment.error.too_many_requests": "Забагато запитів на оплату, будь ласка, сповільніться."
 }

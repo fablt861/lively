@@ -825,5 +825,8 @@
   "billing.error_bank_country": "Vă rugăm să selectați țara băncii.",
   "billing.error_paxum": "Vă rugăm să introduceți o adresă de e-mail Paxum validă.",
   "billing.error_crypto": "Vă rugăm să introduceți o adresă de portofel validă (Polygon).",
-  "billing.error_required": "Acest câmp este obligatoriu."
+  "billing.error_required": "Acest câmp este obligatoriu.",
+  "api.error.too_many_requests": "Prea multe solicitări, vă rugăm să încercați din nou mai târziu.",
+  "auth.error.too_many_attempts": "Prea multe încercări de autentificare, vă rugăm să așteptați un minut.",
+  "payment.error.too_many_requests": "Prea multe solicitări de plată, vă rugăm să încetiniți."
 }

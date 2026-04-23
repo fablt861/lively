@@ -825,5 +825,8 @@
   "billing.error_bank_country": "Por favor, seleccione el país del banco.",
   "billing.error_paxum": "Por favor, ingrese un correo electrónico de Paxum válido.",
   "billing.error_crypto": "Por favor, ingrese una dirección de billetera válida (Polygon).",
-  "billing.error_required": "Este campo es obligatorio."
+  "billing.error_required": "Este campo es obligatorio.",
+  "api.error.too_many_requests": "Demasiadas solicitudes, inténtelo de nuevo más tarde.",
+  "auth.error.too_many_attempts": "Demasiados intentos de inicio de sesión, espere un minuto.",
+  "payment.error.too_many_requests": "Demasiadas solicitudes de pago, por favor vaya más despacio."
 }

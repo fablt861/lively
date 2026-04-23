@@ -824,5 +824,8 @@
   "billing.error_bank_country": "Si prega di selezionare il paese della banca.",
   "billing.error_paxum": "Si prega di inserire un'email Paxum valida.",
   "billing.error_crypto": "Si prega di inserire un indirizzo di portafoglio valido (Polygon).",
-  "billing.error_required": "Questo campo è obbligatorio."
+  "billing.error_required": "Questo campo è obbligatorio.",
+  "api.error.too_many_requests": "Troppe richieste, riprova più tardi.",
+  "auth.error.too_many_attempts": "Troppi tentativi di accesso, attendi un minuto.",
+  "payment.error.too_many_requests": "Troppe richieste di pagamento, rallenta."
 }

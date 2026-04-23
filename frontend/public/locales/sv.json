@@ -825,5 +825,8 @@
   "billing.error_bank_country": "Vänligen välj bankens land.",
   "billing.error_paxum": "Vänligen ange en giltig Paxum-e-postadress.",
   "billing.error_crypto": "Vänligen ange en giltig plånboksadress (Polygon).",
-  "billing.error_required": "Detta fält är obligatoriskt."
+  "billing.error_required": "Detta fält är obligatoriskt.",
+  "api.error.too_many_requests": "För många förfrågningar, försök igen senare.",
+  "auth.error.too_many_attempts": "För många inloggningsförsök, vänta en minut.",
+  "payment.error.too_many_requests": "För många betalningsförfrågningar, sakta ner."
 }

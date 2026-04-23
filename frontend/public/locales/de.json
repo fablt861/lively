@@ -824,5 +824,8 @@
   "billing.error_bank_country": "Bitte wählen Sie das Land der Bank aus.",
   "billing.error_paxum": "Bitte geben Sie eine gültige Paxum-E-Mail-Adresse ein.",
   "billing.error_crypto": "Bitte geben Sie eine gültige Wallet-Adresse ein (Polygon).",
-  "billing.error_required": "Dieses Feld ist erforderlich."
+  "billing.error_required": "Dieses Feld ist erforderlich.",
+  "api.error.too_many_requests": "Zu viele Anfragen, bitte versuchen Sie es später noch einmal.",
+  "auth.error.too_many_attempts": "Zu viele Login-Versuche, bitte warten Sie eine Minute.",
+  "payment.error.too_many_requests": "Zu viele Zahlungsanfragen, bitte bremsen Sie ab."
 }

@@ -6,7 +6,7 @@ const apiLimiter = rateLimit({
     max: 200, // Limite chaque IP à 200 requêtes par fenêtre
     standardHeaders: true, 
     legacyHeaders: false,
-    message: { error: 'Too many requests, please try again later.' }
+    message: { error: 'api.error.too_many_requests' }
 });
 
 // Limiteur strict pour la connexion et l'inscription (Évite le Brute-force)
@@ -15,7 +15,7 @@ const authLimiter = rateLimit({
     max: 5, // Limite à 5 tentatives par minute
     standardHeaders: true,
     legacyHeaders: false,
-    message: { error: 'Too many login attempts, please wait a minute.' }
+    message: { error: 'auth.error.too_many_attempts' }
 });
 
 // Limiteur pour les paiements / ajout de crédits
@@ -24,7 +24,7 @@ const paymentLimiter = rateLimit({
     max: 10, // Limite à 10 tentatives
     standardHeaders: true,
     legacyHeaders: false,
-    message: { error: 'Too many payment requests, please slow down.' }
+    message: { error: 'payment.error.too_many_requests' }
 });
 
 module.exports = {

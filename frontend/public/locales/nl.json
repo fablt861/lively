@@ -825,5 +825,8 @@
   "billing.error_bank_country": "Selecteer a.u.b. het land van de bank.",
   "billing.error_paxum": "Voer a.u.b. een geldig Paxum-e-mailadres in.",
   "billing.error_crypto": "Voer a.u.b. een geldig Wallet-adres in (Polygon).",
-  "billing.error_required": "Dit veld is verplicht."
+  "billing.error_required": "Dit veld is verplicht.",
+  "api.error.too_many_requests": "Te veel verzoeken, probeer het later opnieuw.",
+  "auth.error.too_many_attempts": "Te veel inlogpogingen, wacht even.",
+  "payment.error.too_many_requests": "Te veel betalingsverzoeken, doe het rustiger aan."
 }

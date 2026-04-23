@@ -825,5 +825,8 @@
   "billing.error_bank_country": "Vennligst velg bankens land.",
   "billing.error_paxum": "Vennligst oppgi en gyldig Paxum-e-postadresse.",
   "billing.error_crypto": "Vennligst oppgi en gyldig lommebokadresse (Polygon).",
-  "billing.error_required": "Dette feltet er obligatorisk."
+  "billing.error_required": "Dette feltet er obligatorisk.",
+  "api.error.too_many_requests": "For mange forespørsler, prøv igjen senere.",
+  "auth.error.too_many_attempts": "For mange påloggingsforsøk, vennligst vent et minutt.",
+  "payment.error.too_many_requests": "For mange betalingsforespørsler, ro ned."
 }
