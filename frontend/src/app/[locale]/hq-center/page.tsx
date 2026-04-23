@@ -2008,20 +2008,22 @@ export default function AdminPage() {
                                                                     {t('admin.payouts.download_csv') || "Download CSV"}
                                                                 </button>
                                                                 
-                                                                {(data.count || 0) > 0 && (
-                                                                    <button 
-                                                                        disabled={isApprovatingBatch === m.id}
-                                                                        onClick={() => approveBatchPayout(m.id, payoutSummary.cutoff)}
-                                                                        className="w-full bg-green-500 hover:bg-green-400 text-white text-[10px] font-black py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 mt-1 shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:shadow-[0_0_25px_rgba(34,197,94,0.5)] animate-in slide-in-from-top-2 duration-500"
-                                                                    >
-                                                                        {isApprovatingBatch === m.id ? (
-                                                                            <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                                                        ) : (
-                                                                            <CheckCircle size={14} />
-                                                                        )}
-                                                                        {t('admin.payouts.batch_approve') || `VALIDATE ALL AS PAID`}
-                                                                    </button>
-                                                                )}
+                                                                <button 
+                                                                    disabled={isApprovatingBatch === m.id || (data.count || 0) === 0}
+                                                                    onClick={() => approveBatchPayout(m.id, payoutSummary.cutoff)}
+                                                                    className={`w-full text-white text-[10px] font-black py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 mt-1 ${
+                                                                        (data.count || 0) > 0 
+                                                                        ? 'bg-green-500 hover:bg-green-400 shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:shadow-[0_0_25px_rgba(34,197,94,0.5)]' 
+                                                                        : 'bg-white/5 text-neutral-600 border border-white/5 opacity-50 cursor-not-allowed'
+                                                                    }`}
+                                                                >
+                                                                    {isApprovatingBatch === m.id ? (
+                                                                        <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                                    ) : (
+                                                                        <CheckCircle size={14} />
+                                                                    )}
+                                                                    {t('admin.payouts.batch_approve') || `VALIDATE ALL AS PAID`}
+                                                                </button>
                                                             </div>
                                                         </div>
                                                     );
