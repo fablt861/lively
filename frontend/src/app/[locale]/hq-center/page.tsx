@@ -218,7 +218,10 @@ export default function AdminPage() {
     };
 
     const approveBatchPayout = async (method: string, cutoff: string) => {
-        if (!confirm(t('admin.payouts.confirm_batch_approve') || `Approve all pending ${method} payouts requested before Saturday?`)) return;
+        const methodLabel = method.toUpperCase();
+        const confirmMsg = `⚠️ ATTENTION : Vous allez marquer TOUTES les demandes ${methodLabel} comme PAYÉES.\\n\\nCette action est IRRÉVERSIBLE, elle générera les factures et mettra à jour les historiques.\\n\\nConfirmez-vous avoir bien effectué les virements pour ce groupe ?`;
+        
+        if (!confirm(confirmMsg)) return;
         
         setIsApprovatingBatch(method);
         try {
