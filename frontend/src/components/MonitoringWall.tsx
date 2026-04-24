@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Camera, Users, Zap, ExternalLink, RefreshCcw, Clock, ShieldAlert, Globe } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "@/context/LanguageContext";
