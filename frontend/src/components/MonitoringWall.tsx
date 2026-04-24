@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Camera, Users, Zap, ExternalLink, RefreshCcw, Clock, ShieldAlert } from "lucide-react";
+import { Camera, Users, Zap, ExternalLink, RefreshCcw, Clock, ShieldAlert, Globe } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "@/context/LanguageContext";
+import { SecretObserver } from "./SecretObserver";
 
 interface MonitoringRoom {
     roomId: string;
@@ -24,6 +24,7 @@ export function MonitoringWall({ token }: { token: string }) {
     const [rooms, setRooms] = useState<MonitoringRoom[]>([]);
     const [loading, setLoading] = useState(true);
     const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+    const [observingRoom, setObservingRoom] = useState<{ roomId: string; roomName: string; lkToken: string } | null>(null);
 
     const fetchRooms = async () => {
         try {
@@ -49,11 +50,21 @@ export function MonitoringWall({ token }: { token: string }) {
         return () => clearInterval(interval);
     }, [token]);
 
-    const handleJoinInvisible = (roomId: string) => {
-        // Redirect to live room with admin role
-        // The VideoRoom component will handle invisibility since we're passing role=admin
-        // and we're using the admin token logic in server.js
-        router.push(`/${language}/live?room=${roomId}&role=admin`);
+    const handleJoinInvisible = async (room: MonitoringRoom) => {
+        try {
+            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live";
+            // Get token for LiveKit direct join
+            const resp = await fetch(`${backendUrl}/api/video/token?room=${room.roomId}&identity=admin-${Date.now()}&role=admin`);
+            const { token: lkToken } = await resp.json();
+            
+            setObservingRoom({
+                roomId: room.roomId,
+                roomName: `Room: ${room.modelPseudo} / ${room.userPseudo}`,
+                lkToken
+            });
+        } catch (err) {
+            console.error("[Monitoring] Failed to get observer token", err);
+        }
     };
 
     if (loading && rooms.length === 0) {
@@ -67,6 +78,14 @@ export function MonitoringWall({ token }: { token: string }) {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
+            {observingRoom && (
+                <SecretObserver 
+                    roomName={observingRoom.roomName}
+                    token={observingRoom.lkToken}
+                    onClose={() => setObservingRoom(null)}
+                />
+            )}
+
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-3xl font-light flex items-center gap-3">
@@ -103,7 +122,7 @@ export function MonitoringWall({ token }: { token: string }) {
                             key={room.roomId} 
                             room={room} 
                             token={token} 
-                            onJoin={handleJoinInvisible} 
+                            onJoin={() => handleJoinInvisible(room)} 
                         />
                     ))}
                 </div>
@@ -112,11 +131,12 @@ export function MonitoringWall({ token }: { token: string }) {
     );
 }
 
-function RoomCard({ room, token, onJoin }: { room: MonitoringRoom, token: string, onJoin: (id: string) => void }) {
+function RoomCard({ room, token, onJoin }: { room: MonitoringRoom, token: string, onJoin: () => void }) {
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live";
     const snapshotUrl = `${backendUrl}/api/admin/monitoring/image/${room.modelId}?token=${token}&t=${room.lastSnapshotAt || Date.now()}`;
     
     const durationMin = Math.floor((Date.now() - room.startTime) / 60000);
+    const country = room.userCountryCode && room.userCountryCode !== 'Unknown' ? room.userCountryCode : null;
 
     return (
         <div className="bg-neutral-900 border border-white/5 rounded-[2rem] overflow-hidden flex flex-col group hover:border-indigo-500/30 transition-all shadow-xl">
@@ -137,8 +157,18 @@ function RoomCard({ room, token, onJoin }: { room: MonitoringRoom, token: string
                 
                 {/* Overlay Info */}
                 <div className="absolute top-3 left-3 flex gap-2">
-                    <span className="px-2 py-1 bg-black/60 backdrop-blur-md rounded-lg text-[10px] font-black text-white uppercase tracking-tighter border border-white/10">
-                        {room.userCountryCode || '??'}
+                    <span className="px-2 py-1 bg-black/60 backdrop-blur-md rounded-lg text-[10px] font-black text-white uppercase tracking-tighter border border-white/10 flex items-center gap-1">
+                        {country ? (
+                            <>
+                                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                                {country}
+                            </>
+                        ) : (
+                            <>
+                                <Globe size={10} className="text-neutral-400" />
+                                ??
+                            </>
+                        )}
                     </span>
                     <span className="px-2 py-1 bg-indigo-500/80 backdrop-blur-md rounded-lg text-[10px] font-black text-white uppercase tracking-tighter border border-white/10 animate-pulse">
                         LIVE
@@ -172,7 +202,7 @@ function RoomCard({ room, token, onJoin }: { room: MonitoringRoom, token: string
                 </div>
 
                 <button 
-                    onClick={() => onJoin(room.roomId)}
+                    onClick={onJoin}
                     className="w-full py-3 bg-white hover:bg-neutral-200 text-black rounded-2xl flex items-center justify-center gap-2 font-black uppercase tracking-widest text-xs transition-all active:scale-95"
                 >
                     <ShieldAlert size={14} /> Join Inconito
