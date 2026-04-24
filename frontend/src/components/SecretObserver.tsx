@@ -21,14 +21,17 @@ export function SecretObserver({ roomName, token, onClose }: SecretObserverProps
   const serverUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL || "wss://live.kinky.live";
 
   return (
-    <div className="fixed inset-0 z-[2000] bg-black/95 flex flex-col animate-in fade-in zoom-in duration-300">
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 sm:p-12 animate-in fade-in duration-300">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
+      
       <LiveKitRoom
         video={false}
         audio={false}
         token={token}
         serverUrl={serverUrl}
         connect={true}
-        className="flex-1 flex flex-col"
+        className="relative w-full max-w-5xl h-[80vh] bg-neutral-950 rounded-[3rem] border border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/5 bg-neutral-900/50 backdrop-blur-md">
@@ -50,7 +53,7 @@ export function SecretObserver({ roomName, token, onClose }: SecretObserverProps
         </div>
 
         {/* Video Area */}
-        <div className="flex-1 relative p-12">
+        <div className="flex-1 relative p-8">
             <ObserverContent />
         </div>
 

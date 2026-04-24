@@ -155,6 +155,16 @@ export function useLiveKit(
       })
       .on(RoomEvent.ParticipantDisconnected, (participant) => {
         console.log(`[LiveKit] Participant ${participant.identity} disconnected.`);
+        
+        // --- CRITICAL FIX: Ignore admin departures to avoid closing the room ---
+        const isParticipantAdmin = participant.metadata === 'admin' || 
+                                   (participant.metadata && JSON.parse(participant.metadata).role === 'admin');
+        
+        if (isParticipantAdmin) {
+            console.log("[LiveKit] Admin left. Ignoring departure event for UI/Billing flow.");
+            return;
+        }
+
         // Emit a fake Socket event locally so VideoRoom.tsx handles it gracefully
         socketRef.current?.emit('partner_left', { reason: 'livekit_drop' });
         // Manually trigger the listener if needed
