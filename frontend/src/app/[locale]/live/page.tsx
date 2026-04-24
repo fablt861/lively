@@ -21,7 +21,13 @@ export default function LivePage({ params }: { params: { locale: string } }) {
 
     useEffect(() => {
         const storedRole = localStorage.getItem("kinky_user_role") as "user" | "model" | null;
-        setRole(storedRole || "user");
+        const queryRole = searchParams.get('role');
+        
+        if (queryRole === 'admin') {
+            setRole('admin' as any);
+        } else {
+            setRole(storedRole || "user");
+        }
 
         // Check maintenance & launch mode
         fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live"}/api/settings`)

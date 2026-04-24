@@ -382,29 +382,35 @@ function setupMatching(io, socket) {
                 await redis.set(`queue_socket:${socket.userId}`, socket.id, 'EX', 86400);
             }
 
-            await updateQueuePositions(io, role);
-            
-            // Notify the room that someone joined
-            const myPseudo = socket.userId ? (await resolvePseudo(socket.userId, role) || 'Partner') : 'Guest';
-            socket.to(roomId).emit('partner_joined', { 
-                socketId: socket.id, 
-                role, 
-                userId: socket.userId, 
-                name: myPseudo
-            });
+            if (role !== 'admin') {
+                await updateQueuePositions(io, role);
+                
+                // Notify the room that someone joined
+                const myPseudo = socket.userId ? (await resolvePseudo(socket.userId, role) || 'Partner') : 'Guest';
+                socket.to(roomId).emit('partner_joined', { 
+                    socketId: socket.id, 
+                    role, 
+                    userId: socket.userId, 
+                    name: myPseudo
+                });
+            }
 
             // Start billing if it's a model-user pair and both are in
             const roomSockets = await io.in(roomId).fetchSockets();
             console.log(`[DirectCall Status] Room ${roomId} now has ${roomSockets.length} sockets (Expected 2 for match)`);
             
-            if (roomSockets.length === 2) {
-                const userSocket = roomSockets.find(s => s.data.role === 'user');
-                const modelSocket = roomSockets.find(s => s.data.role === 'model');
+            const userSocket = roomSockets.find(s => s.data.role === 'user');
+            const modelSocket = roomSockets.find(s => s.data.role === 'model');
 
-                console.log(`[DirectCall Detection] UserSocket: ${userSocket?.id || 'NOT FOUND'}, ModelSocket: ${modelSocket?.id || 'NOT FOUND'}`);
-
-                if (userSocket && modelSocket) {
-                    console.log(`[DirectCall] Both parties detected in room ${roomId}. Emitting matched events.`);
+            // Start billing if we have both user and model, and they just met
+            if (userSocket && modelSocket) { 
+                // Check if billing already started for this room to avoid double events
+                const { getRedisClient } = require('./redis');
+                const redis = getRedisClient();
+                const sessionStr = await redis.hget('billing:active_rooms', roomId);
+                if (sessionStr) return; // Already billed
+                
+                console.log(`[DirectCall] Both parties detected in room ${roomId}. Emitting matched events.`);
                     
                     const userId = userSocket.data.userId;
                     const modelId = modelSocket.data.userId;

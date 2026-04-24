@@ -109,12 +109,15 @@ app.use('/api/auth/add-credits', paymentLimiter);
 app.use('/api/report', reportRoutes);
 app.use('/api/favorites', favoritesRoutes);
 
+const monitoringRoutes = require('./monitoring');
+app.use('/api/admin/monitoring', monitoringRoutes(io));
+
 app.use('/api/admin', adminRoutes(io));
 app.use('/api/auth', authRoutes(io));
 app.use('/api/elite', modelRoutes);
 
 app.get('/api/video/token', async (req, res) => {
-  const { room, identity } = req.query;
+  const { room, identity, role } = req.query;
   if (!room || !identity) {
     return res.status(400).json({ error: 'Missing room or identity' });
   }
@@ -130,10 +133,14 @@ app.get('/api/video/token', async (req, res) => {
     }
 
     const at = new AccessToken(apiKey, apiSecret, { identity });
+    
+    // Set metadata for UI identification (invisibility logic)
+    at.metadata = JSON.stringify({ role: role || 'user' });
+
     at.addGrant({ 
       roomJoin: true, 
       room: room,
-      canPublish: true,
+      canPublish: role !== 'admin', // Admin is subscriber-only
       canSubscribe: true 
     });
 

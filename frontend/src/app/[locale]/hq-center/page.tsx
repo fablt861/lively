@@ -6,6 +6,8 @@ import { Users, Video, DollarSign, Activity, Settings, Lock, CheckCircle, XCircl
 import { useTranslation } from "@/context/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { countries } from "@/utils/countries";
+import { MonitoringWall } from "@/components/MonitoringWall";
+import { Camera } from "lucide-react";
 
 export default function AdminPage() {
     const { t } = useTranslation();
@@ -587,6 +589,9 @@ export default function AdminPage() {
                     <button onClick={() => { setActiveTab('realtime'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'realtime' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <Zap size={20} className={activeTab === 'realtime' ? 'animate-pulse text-indigo-400' : ''} /> {t('admin.nav.realtime')}
                     </button>
+                    <button onClick={() => { setActiveTab('monitoring'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'monitoring' ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/5 text-neutral-400'}`}>
+                        <Camera size={20} className={activeTab === 'monitoring' ? 'text-indigo-400' : ''} /> {t('admin.nav.monitoring') || 'Monitoring Live'}
+                    </button>
                     <button onClick={() => { setActiveTab('moderation'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === 'moderation' ? 'bg-red-500/20 text-red-300' : 'hover:bg-white/5 text-neutral-400'}`}>
                         <ShieldAlert size={20} /> {t('admin.nav.moderation')}
                     </button>
@@ -815,6 +820,10 @@ export default function AdminPage() {
                             </div>
                         </div>
                     </div>
+                )}
+
+                {activeTab === 'monitoring' && (
+                    <MonitoringWall token={token} />
                 )}
 
                 {activeTab === 'settings' && settings && (

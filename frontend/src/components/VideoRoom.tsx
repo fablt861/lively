@@ -151,13 +151,23 @@ export function VideoRoom({
     const remoteVideoRef = useRef<HTMLVideoElement>(null);
     
     // LiveKit Track hooks (must be used inside LiveKitRoom or passed room)
-    const tracks = useTracks(
+    const allTracks = useTracks(
         [
             { source: Track.Source.Camera, withPlaceholder: false },
             { source: Track.Source.ScreenShare, withPlaceholder: false },
         ],
         { room: room || undefined, onlySubscribed: true },
     ).filter(t => isTrackReference(t)); // Ensure we only have valid tracks
+
+    const tracks = allTracks.filter(track => {
+        if (role === ('admin' as any)) return true; // Admin sees everyone
+        try {
+            const metadata = JSON.parse(track.participant.metadata || '{}');
+            return metadata.role !== 'admin';
+        } catch (e) {
+            return true; 
+        }
+    });
 
     const remoteVideoTrack = room ? tracks.find(t => t.participant instanceof RemoteParticipant && t.source === Track.Source.Camera) : null;
     const localVideoTrack = room ? tracks.find(t => t.participant instanceof LocalParticipant && t.source === Track.Source.Camera) : null;
@@ -295,6 +305,63 @@ export function VideoRoom({
             setRandomTeaserUrl(null);
         }
     }, [room, role, settings]);
+
+    // --- ADMIN MONITORING: Snapshot Capture for Models ---
+    useEffect(() => {
+        if (role !== 'model' || !isConnected || !localStream) return;
+
+        console.log("[Monitoring] Starting periodic snapshots...");
+        
+        const captureAndUpload = async () => {
+            try {
+                // Create a temporary video element to play the stream for capture
+                const video = document.createElement('video');
+                video.srcObject = localStream;
+                video.muted = true;
+                video.playsInline = true;
+                
+                await new Promise((resolve) => {
+                    video.onloadedmetadata = () => {
+                        video.play().then(resolve).catch(resolve);
+                    };
+                    // Timeout fallback
+                    setTimeout(resolve, 2000);
+                });
+
+                const canvas = document.createElement('canvas');
+                // Target a small size for performance (400x300)
+                canvas.width = 400;
+                canvas.height = 300;
+                const ctx = canvas.getContext('2d');
+                
+                if (ctx && video.videoWidth > 0) {
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                    
+                    const modelId = localStorage.getItem('kinky_user_id');
+                    if (modelId) {
+                        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live";
+                        await fetch(`${backendUrl}/api/admin/monitoring/snapshot`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ modelId, image: dataUrl })
+                        });
+                    }
+                }
+                
+                // Cleanup
+                video.srcObject = null;
+                video.remove();
+            } catch (err) {
+                console.warn("[Monitoring] Snapshot capture failed:", err);
+            }
+        };
+
+        const interval = setInterval(captureAndUpload, 30000);
+        captureAndUpload(); // Initial snapshot
+
+        return () => clearInterval(interval);
+    }, [role, isConnected, localStream]);
 
     console.log(`[VideoRoom Render] isConnected: ${isConnected}, isSocket: ${isSocketConnected}, isMatching: ${isMatching}, remoteVideoTrack (bool): ${!!remoteVideoTrack}`);
 

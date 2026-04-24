@@ -253,7 +253,8 @@ export function useLiveKit(
 
       try {
         const identity = socket.id || "unknown";
-        const resp = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/video/token?room=${roomId}&identity=${identity}`);
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.kinky.live";
+        const resp = await fetch(`${backendUrl}/api/video/token?room=${roomId}&identity=${identity}&role=${role}`);
         const { token } = await resp.json();
 
         // Check if we were aborted while waiting for token
@@ -263,7 +264,7 @@ export function useLiveKit(
         }
 
         const url = process.env.NEXT_PUBLIC_LIVEKIT_URL || "wss://live.kinky.live";
-        console.log(`[LiveKit] Connecting to ${url} for room ${roomId}`);
+        console.log(`[LiveKit] Connecting to ${url} for room ${roomId} as ${role}`);
         
         // Safety Timeout: if we don't stabilize in 10s, abort match
         const connTimeout = setTimeout(() => {
@@ -286,8 +287,10 @@ export function useLiveKit(
           return;
         }
         
-        // Publish local tracks
-        await room.localParticipant.enableCameraAndMicrophone();
+        // Publish local tracks (Never for admins)
+        if (role !== 'admin' as any) {
+            await room.localParticipant.enableCameraAndMicrophone();
+        }
         setIsConnecting(false);
         
         // Initial sync after publication using Refs to avoid closure staleness
