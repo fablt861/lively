@@ -447,7 +447,6 @@ function setupMatching(io, socket) {
                     const userCountryCode = userSocket.data.countryCode || 'Unknown';
                     await startBilling(roomId, userId, modelId, userSocket.id, modelSocket.id, userCountryCode);
                 }
-            }
         } catch (err) {
             console.error('[DirectCall Error] Crash in join_direct_room:', err);
         }
