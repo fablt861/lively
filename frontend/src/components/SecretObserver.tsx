@@ -63,8 +63,8 @@ export function SecretObserver({ roomName, token, onClose }: SecretObserverProps
 function ObserverContent() {
     const tracks = useTracks(
         [
-            { source: Track.Source.Camera, name: "camera" },
-            { source: Track.Source.Microphone, name: "microphone" },
+            { source: Track.Source.Camera },
+            { source: Track.Source.Microphone },
         ],
         { onlySubscribed: true }
     ).filter(t => t.participant.metadata !== 'admin');
