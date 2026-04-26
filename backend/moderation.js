@@ -10,6 +10,46 @@ const PHONE_REGEX = /(\b(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}\b)|(\b(?:\+
 const URL_REGEX = /\b(?:https?:\/\/|www\.)[a-z0-9+&@#\/%?=~_|!:,.;]*[a-z0-9+&@#\/%=~_|]/gi;
 
 /**
+ * Normalizes text by removing spaces and special characters for fuzzy matching.
+ */
+function normalizeText(text) {
+    if (!text) return '';
+    return text.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+/**
+ * Checks if a message contains any violations (Emails, Phones, URLs, or Keywords).
+ * Supports fuzzy matching for keywords (e.g. "pay pal" -> "paypal").
+ */
+function containsViolation(text, keywords = []) {
+    if (!text) return false;
+
+    // 1. Direct Regex Checks
+    if (EMAIL_REGEX.test(text)) return true;
+    if (PHONE_REGEX.test(text)) return true;
+    if (URL_REGEX.test(text)) return true;
+
+    // Reset regex lastIndex because of 'g' flag
+    EMAIL_REGEX.lastIndex = 0;
+    PHONE_REGEX.lastIndex = 0;
+    URL_REGEX.lastIndex = 0;
+
+    // 2. Fuzzy Keyword Checks
+    const normalizedText = normalizeText(text);
+    if (keywords && keywords.length > 0) {
+        for (const word of keywords) {
+            if (!word || word.trim().length < 3) continue; // Skip very short words to avoid false positives
+            const normalizedWord = normalizeText(word);
+            if (normalizedWord && normalizedText.includes(normalizedWord)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+/**
  * Filter a message string based on regex and a list of keywords.
  * @param {string} text - The original message
  * @param {string[]} keywords - Array of custom keywords to block
@@ -53,12 +93,10 @@ async function markAsSeen(id1, id2) {
     const key2 = `seen:${id2.toLowerCase()}:${id1.toLowerCase()}`;
     
     // Cool down for 1 hour (3600 seconds)
-    // If they are identical (local test), we skip or use shorter TTL
     const ttl = (id1.toLowerCase() === id2.toLowerCase()) ? 5 : 3600;
     
     await redis.set(key1, '1', 'EX', ttl);
     await redis.set(key2, '1', 'EX', ttl);
-    console.log(`[Cooldown] Marked ${id1} and ${id2} as seen for ${ttl}s.`);
 }
 
-module.exports = { filterMessage, markAsSeen };
+module.exports = { filterMessage, containsViolation, markAsSeen };

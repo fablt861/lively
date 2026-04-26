@@ -44,17 +44,19 @@ function setupSignaling(io, socket) {
     socket.on('chat_message', async (message) => {
         if (!socket.currentRoom) return;
 
-        const { filterMessage } = require('./moderation');
+        const { containsViolation } = require('./moderation');
+        const { translateText } = require('./translate');
         const { getRedisClient } = require('./redis');
         const redis = getRedisClient();
 
         // 1. Fetch Blocklist
         const keywords = await redis.smembers('admin:blocklist:keywords') || [];
 
-        // 2. Filter original message
-        const sanitizedMessage = filterMessage(message, keywords);
-
-        // 3. Translation logic
+        // 2. Check for violations (Ghosting/Shadow-ban logic)
+        // Fuzzy check on original text
+        const isOriginalBad = containsViolation(message, keywords);
+        
+        // 3. Translation logic & check
         const roomSockets = await io.in(socket.currentRoom).fetchSockets();
         const partnerSocket = roomSockets.find(s => s.id !== socket.id);
         const targetLang = partnerSocket ? (partnerSocket.language || 'en') : 'en';
@@ -63,24 +65,34 @@ function setupSignaling(io, socket) {
         const normalizedTarget = targetLang.split('-')[0].toLowerCase();
         const normalizedSource = sourceLang.split('-')[0].toLowerCase();
 
-        let translated = sanitizedMessage;
+        let translated = message;
+        let isTranslatedBad = false;
+
         if (normalizedTarget !== normalizedSource) {
-            translated = await translateText(sanitizedMessage, targetLang);
-            // Re-filter after translation just in case
-            translated = filterMessage(translated, keywords);
+            translated = await translateText(message, targetLang);
+            // The translator is smart (e.g. "pay pal" -> "PayPal"), check it too!
+            isTranslatedBad = containsViolation(translated, keywords);
         }
 
-        // 4. Get Sender Pseudo and Role (Use pre-resolved identity if available)
+        // 4. Ghosting Implementation
+        if (isOriginalBad || isTranslatedBad) {
+            console.warn(`[Moderation] GHOSTED message from ${socket.id} (Role: ${socket.role}) in room ${socket.currentRoom}: "${message}" (Trans: "${translated}")`);
+            // We exit silently. The recipient never receives the message.
+            // The sender client usually performs an optimistic update, so they see their own message.
+            return;
+        }
+
+        // 5. Get Sender Pseudo and Role
         const senderPseudo = socket.data?.pseudo || socket.pseudo || 'Guest';
         const senderRole = socket.data?.role || socket.role || 'user';
 
-        // 5. Emit filtered message
+        // 6. Emit message to the partner
         socket.to(socket.currentRoom).emit('chat_message', {
             senderId: socket.id,
             senderPseudo,
             senderRole,
             text: translated, 
-            originalText: sanitizedMessage, 
+            originalText: message, 
             timestamp: Date.now()
         });
     });
