@@ -7,23 +7,7 @@ import Link from "next/link";
 export default function TermsPage() {
     const { t, language } = useTranslation();
 
-    const sections = [
-        { content: t('terms.purpose_section') },
-        { content: t('terms.manager_section') },
-        { content: t('terms.access_section') },
-        { content: t('terms.acceptance_section') },
-        { content: t('terms.payments_section') },
-        { content: t('terms.registration_section') },
-        { content: t('terms.services_section') },
-        { content: t('terms.financials_section') },
-        { content: t('terms.withdrawal_section') },
-        { content: t('terms.obligations_section') },
-        { content: t('terms.behavior_section') },
-        { content: t('terms.sanctions_section') },
-        { content: t('terms.liability_section') },
-        { content: t('terms.ip_section') },
-        { content: t('terms.jurisdiction_section') },
-    ];
+    // New CGV texts are loaded dynamically as a single block
 
     return (
         <div className="min-h-screen bg-[#050505] text-white flex flex-col font-sans selection:bg-indigo-500/30">
@@ -60,16 +44,11 @@ export default function TermsPage() {
 
                 {/* Document Body */}
                 <div className="space-y-16">
-                    {sections.map((section, idx) => (
-                        <section key={idx} className="group transition-all duration-500">
-                            <div className="text-white/50 leading-relaxed whitespace-pre-wrap font-medium text-lg">
-                                {section.content}
-                            </div>
-                            {idx !== sections.length - 1 && (
-                                <div className="mt-16 h-px w-full bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-                            )}
-                        </section>
-                    ))}
+                    <section className="group transition-all duration-500">
+                        <div className="text-white/50 leading-relaxed whitespace-pre-wrap font-medium text-lg">
+                            {t('terms.full_text')}
+                        </div>
+                    </section>
                 </div>
 
                 {/* Closing Note */}
